@@ -1,0 +1,5 @@
+/examples
+/src
+/node_modules
+.prettierignore
+.prettierrc
