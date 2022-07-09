@@ -1,5 +1,5 @@
 {
-  "name": "@nucleon/core",
+  "name": "@nucleonjs/core",
   "version": "1.0.0-alpha.1",
   "description": "The modern Node.js framework",
   "main": "dist/mod",
