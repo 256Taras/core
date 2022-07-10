@@ -36,10 +36,10 @@ export class Server {
       path: '.env',
     });
 
-    const port = env('APP_PORT') ?? 8000;
+    const port = env<number>('APP_PORT') ?? 8000;
 
     if (env('APP_DEBUG')) {
-      this.setupDevelopmentEnvironment(port as number);
+      this.setupDevelopmentEnvironment(port);
     }
 
     const app = express();
@@ -60,12 +60,12 @@ export class Server {
     }));
 
     app.use(session({
-      secret: env('APP_KEY') as string,
+      secret: env<string>('APP_KEY'),
       resave: false,
       saveUninitialized: true,
       cookie: {
         secure: true,
-        maxAge: env('SESSION_LIFETIME') as number * 60 * 60,
+        maxAge: env<number>('SESSION_LIFETIME') * 60 * 60,
       },
     }));
 
