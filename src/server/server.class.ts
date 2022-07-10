@@ -1,8 +1,12 @@
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { env } from '../config/env.function';
 import { exec } from 'child_process';
 import { existsSync, unlinkSync, writeFileSync } from 'fs';
 import express, { Request, Response } from 'express';
+import methodOverride from 'method-override';
+import session from 'express-session';
 
 export class Server {
   private setupDevelopmentEnvironment(port: number): void {
@@ -39,6 +43,31 @@ export class Server {
     }
 
     const app = express();
+
+    app.set('trust proxy', 1);
+    app.set('views', 'views');
+
+    app.use(bodyParser.json());
+
+    app.use(methodOverride((request: Request) => {
+      if (request.body && typeof request.body === 'object' && '_method' in request.body) {
+        const method = request.body._method;
+
+        delete request.body._method;
+
+        return method;
+      }
+    }));
+
+    app.use(session({
+      secret: env('APP_KEY') as string,
+      resave: false,
+      saveUninitialized: true,
+      cookie: {
+        secure: true,
+        maxAge: env('SESSION_LIFETIME') as number * 60 * 60,
+      },
+    }));
 
     app.get('/', async (request: Request, response: Response) => {
       //
