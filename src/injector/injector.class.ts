@@ -4,14 +4,12 @@ import 'reflect-metadata';
 export class Injector {
   private static singletons: Map<Constructor, any> = new Map();
 
-  public static bindSingletons(classes: Constructor[]): any[] {
+  public static bindSingletons(classes: Constructor[]): void {
     classes.map((className) => {
       const instance = new className();
 
       this.singletons.set(className, instance);
     });
-
-    return classes;
   }
 
   public static getSingleton<T = any>(className: Constructor<T>): T {
