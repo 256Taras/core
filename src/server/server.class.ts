@@ -8,6 +8,7 @@ import { encode } from 'html-entities';
 import { exec } from 'child_process';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import express, { Request, Response } from 'express';
+import { log } from '../utils/functions/log.function';
 import methodOverride from 'method-override';
 import { ServerOptions } from './interfaces/server-options.interface';
 import session from 'express-session';
@@ -130,7 +131,7 @@ export class Server {
         this.setupDevelopmentEnvironment(port);
       }
 
-      console.log(`[server] HTTP server is running at http://localhost:${port}`);
+      log(`HTTP server is running at http://localhost:${port}`);
     });
   }
 }
