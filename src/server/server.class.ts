@@ -8,9 +8,12 @@ import { exec } from 'child_process';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import express, { Request, Response } from 'express';
 import methodOverride from 'method-override';
+import { ServerOptions } from './interfaces/server-options.interface';
 import session from 'express-session';
 
 export class Server {
+  constructor(options: ServerOptions) {}
+
   private setupDevelopmentEnvironment(port: number): void {
     const tempPath = 'storage/temp/server';
 
