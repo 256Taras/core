@@ -1,5 +1,6 @@
 import * as constants from '../constants';
 import bodyParser from 'body-parser';
+import { Constructor } from '../utils/interfaces/constructor.interface';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { env } from '../config/env.function';
@@ -12,6 +13,8 @@ import { ServerOptions } from './interfaces/server-options.interface';
 import session from 'express-session';
 
 export class Server {
+  private controllers: Constructor[] = [];
+
   constructor(options: ServerOptions) {}
 
   private setupDevelopmentEnvironment(port: number): void {
