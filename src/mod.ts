@@ -4,6 +4,7 @@ export * from './http/decorators/controller.decorator';
 export * from './http/enums/code.enum';
 export * from './http/enums/method.enum';
 export * from './injector/functions/inject.function';
+export * from './routing/decorators/get.decorator';
 export * from './server/functions/create-server.function';
 export * from './server/server.class';
 export * from './utils/functions/log.function';
