@@ -111,10 +111,18 @@ export class Server {
     app.all('*', async (request: Request, response: Response) => {
       response.status(404);
 
-      response.render(`${__dirname}/../../assets/views/http`, {
+      const data = {
         status: 404,
         message: 'Not Found',
-      });
+      };
+
+      if (request.xhr || request.headers.accept?.includes('json')) {
+        response.send(data);
+
+        return;
+      }
+
+      response.render(`${__dirname}/../../assets/views/http`, data);
     });
 
     app.listen(port, () => {
