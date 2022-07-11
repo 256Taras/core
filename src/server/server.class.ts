@@ -40,10 +40,6 @@ export class Server {
 
     const port = env<number>('APP_PORT') ?? 8000;
 
-    if (env('APP_DEBUG')) {
-      this.setupDevelopmentEnvironment(port);
-    }
-
     const app = express();
 
     app.engine('atom.html', (filePath: string, variables: Record<string, any>, callback) => {
@@ -116,6 +112,10 @@ export class Server {
     });
 
     app.listen(port, () => {
+      if (env('APP_DEBUG')) {
+        this.setupDevelopmentEnvironment(port);
+      }
+
       console.log(`[server] HTTP server is running at http://localhost:${port}`);
     });
   }
