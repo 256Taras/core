@@ -1,5 +1,7 @@
 export * from './config/env.function';
 export * from './constants';
+export * from './handler/exception.class';
+export * from './handler/functions/raise.function';
 export * from './http/decorators/controller.decorator';
 export * from './http/enums/code.enum';
 export * from './http/enums/method.enum';

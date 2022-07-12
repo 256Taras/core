@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { env } from '../config/env.function';
 import { encode } from 'html-entities';
+import { Exception } from '../handler/exception.class';
 import { exec } from 'child_process';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import express, { Request, Response } from 'express';
@@ -61,11 +62,11 @@ export class Server {
           : variables[name];
   
         if (isConstant && !(name in constants)) {
-          throw new Error(`The '${name}' constant is not defined`);
+          throw new Exception(`The '${name}' constant is not defined`);
         }
   
         if (!isConstant && !(name in variables)) {
-          throw new Error(`The '${name}' variable has not been passed to the view`);
+          throw new Exception(`The '${name}' variable has not been passed to the view`);
         }
   
         variableValue = Array.isArray(variableValue) || typeof variableValue === 'object'
