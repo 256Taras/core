@@ -1,7 +1,11 @@
-import bodyParser from 'body-parser';
+import {
+  json as bodyParserJson,
+  urlencoded as bodyParserUrlencoded,
+} from 'body-parser';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Compiler } from '../views/compiler.class';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import { env } from '../config/env.function';
 import { exec } from 'child_process';
@@ -55,7 +59,9 @@ export class Server {
     app.set('view engine', 'atom.html');
 
     app.use(cookieParser());
-    app.use(bodyParser.json());
+    app.use(bodyParserJson());
+    app.use(bodyParserUrlencoded({ extended: true }));
+    app.use(cors());
 
     app.use(methodOverride((request: Request) => {
       if (request.body && typeof request.body === 'object' && '_method' in request.body) {
