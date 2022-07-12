@@ -12,7 +12,9 @@ import { exec } from 'child_process';
 import { existsSync, unlinkSync, writeFileSync } from 'fs';
 import express, { Request, Response } from 'express';
 import { log } from '../utils/functions/log.function';
+import { Method } from '../http/enums/method.enum';
 import methodOverride from 'method-override';
+import { Route } from '../routing/route.class';
 import { Router } from '../routing/router.class';
 import { ServerOptions } from './interfaces/server-options.interface';
 import session from 'express-session';
@@ -87,6 +89,17 @@ export class Server {
         maxAge: env<number>('SESSION_LIFETIME') * 60 * 60,
       },
     }));
+
+    const routes = Router.allRoutes();
+
+    routes.map((route: Route) => {
+      switch (route.method) {
+        case Method.Get:
+          app.get(route.url, route.action);
+
+          break;
+      }
+    });
 
     app.all('*', async (request: Request, response: Response) => {
       response.status(404);
