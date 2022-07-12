@@ -39,7 +39,11 @@ export class Server {
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Nucleon development server is running...');
 
-      exec(`${netPrograms[process.platform as keyof object]} http://localhost:${port}`);
+      exec(
+        `${
+          netPrograms[process.platform as keyof object]
+        } http://localhost:${port}`,
+      );
     }
   }
 
@@ -82,10 +86,6 @@ export class Server {
         maxAge: env<number>('SESSION_LIFETIME') * 60 * 60,
       },
     }));
-
-    app.get('/', async (request: Request, response: Response) => {
-      //
-    });
 
     app.all('*', async (request: Request, response: Response) => {
       response.status(404);
