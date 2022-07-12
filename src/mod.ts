@@ -5,6 +5,7 @@ export * from './handler/functions/raise.function';
 export * from './http/decorators/controller.decorator';
 export * from './http/enums/code.enum';
 export * from './http/enums/method.enum';
+export * from './injector/decorators/service.decorator';
 export * from './injector/functions/inject.function';
 export * from './routing/decorators/get.decorator';
 export * from './server/functions/create-server.function';

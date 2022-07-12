@@ -13,6 +13,7 @@ import { existsSync, unlinkSync, writeFileSync } from 'fs';
 import express, { Request, Response } from 'express';
 import { log } from '../utils/functions/log.function';
 import methodOverride from 'method-override';
+import { Router } from '../routing/router.class';
 import { ServerOptions } from './interfaces/server-options.interface';
 import session from 'express-session';
 
