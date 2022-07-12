@@ -1,13 +1,11 @@
-import * as constants from '../constants';
 import bodyParser from 'body-parser';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { Compiler } from '../views/compiler.class';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { env } from '../config/env.function';
-import { encode } from 'html-entities';
-import { Exception } from '../handler/exception.class';
 import { exec } from 'child_process';
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
+import { existsSync, unlinkSync, writeFileSync } from 'fs';
 import express, { Request, Response } from 'express';
 import { log } from '../utils/functions/log.function';
 import methodOverride from 'method-override';
@@ -50,34 +48,7 @@ export class Server {
 
     const app = express();
 
-    app.engine('atom.html', (filePath: string, variables: Record<string, any>, callback) => {
-      let compiled = readFileSync(filePath).toString();
-
-      for (const expression of compiled.matchAll(/\{([a-zA-Z0-9]*?)\}/g) ?? []) {
-        const name: string = expression[1];
-        const isConstant = name.startsWith('NUCLEON_') || name.startsWith('NODE_');
-  
-        let variableValue: string = isConstant
-          ? constants[name as keyof object]
-          : variables[name];
-  
-        if (isConstant && !(name in constants)) {
-          throw new Exception(`The '${name}' constant is not defined`);
-        }
-  
-        if (!isConstant && !(name in variables)) {
-          throw new Exception(`The '${name}' variable has not been passed to the view`);
-        }
-  
-        variableValue = Array.isArray(variableValue) || typeof variableValue === 'object'
-          ? JSON.stringify(variableValue)
-          : encode(String(variableValue));
-  
-        compiled = compiled.replace(expression[0], variableValue);
-      }
-
-      return callback(null, compiled);
-    });
+    app.engine('atom.html', Compiler.parse);
 
     app.set('trust proxy', 1);
     app.set('views', 'views');
