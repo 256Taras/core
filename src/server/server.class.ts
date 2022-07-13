@@ -12,6 +12,7 @@ import { env } from '../config/env.function';
 import { exec } from 'child_process';
 import { existsSync, unlinkSync, writeFileSync } from 'fs';
 import express, { Request, Response } from 'express';
+import { Handler } from '../handler/handler.class';
 import { log } from '../utils/functions/log.function';
 import { Method } from '../http/enums/method.enum';
 import methodOverride from 'method-override';
@@ -104,6 +105,8 @@ export class Server {
         maxAge: env<number>('SESSION_LIFETIME') * 60 * 1000,
       },
     }));
+
+    app.use(Handler.handleError);
 
     const routes = Router.allRoutes();
 
