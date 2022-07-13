@@ -70,6 +70,8 @@ export class Server {
     app.use(bodyParserUrlencoded({ extended: true }));
     app.use(cors());
 
+    app.use(express.static('public'));
+
     app.use(methodOverride((request: Request) => {
       if (request.body && typeof request.body === 'object' && '_method' in request.body) {
         const method = request.body._method;
