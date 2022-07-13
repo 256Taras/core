@@ -17,8 +17,10 @@ import { Method } from '../http/enums/method.enum';
 import methodOverride from 'method-override';
 import { Route } from '../routing/route.class';
 import { Router } from '../routing/router.class';
+import { satisfies } from 'semver';
 import { ServerOptions } from './interfaces/server-options.interface';
 import session from 'express-session';
+import { warn } from '../utils/functions/warn.function';
 
 export class Server {
   private controllers: Constructor[] = [];
@@ -26,6 +28,15 @@ export class Server {
   constructor(options: ServerOptions) {}
 
   private setupDevelopmentEnvironment(port: number): void {
+    const requiredNodeVersion = require('../../package.json').engines.node;
+
+    if (!satisfies(process.version, requiredNodeVersion)) {
+      warn(`Nucleon requires Node.js version ${requiredNodeVersion.slice(2)} or greater`);
+      warn('Update Node.js on https://nodejs.org');
+
+      process.exit(1);
+    }
+
     const tempPath = 'storage/temp/server';
 
     process.on('SIGINT', () => {
