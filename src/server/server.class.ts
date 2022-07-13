@@ -101,7 +101,7 @@ export class Server {
       saveUninitialized: true,
       cookie: {
         secure: true,
-        maxAge: env<number>('SESSION_LIFETIME') * 60 * 60,
+        maxAge: env<number>('SESSION_LIFETIME') * 60 * 60 * 1000,
       },
     }));
 
