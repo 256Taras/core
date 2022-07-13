@@ -6,6 +6,7 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Compiler } from '../views/compiler.class';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import csrf from 'csurf';
 import dotenv from 'dotenv';
 import { env } from '../config/env.function';
 import { exec } from 'child_process';
@@ -69,6 +70,7 @@ export class Server {
     app.use(bodyParserJson());
     app.use(bodyParserUrlencoded({ extended: true }));
     app.use(cors());
+    app.use(csrf());
 
     app.use(express.static('public'));
 
