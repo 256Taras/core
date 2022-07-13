@@ -1,7 +1,7 @@
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Request, Response } from 'express';
 import { Injector } from '../injector/injector.class';
 import { Method } from '../http/enums/method.enum';
+import { Request, Response } from 'express';
 import { Route } from './route.class';
 
 export class Router {
@@ -25,6 +25,10 @@ export class Router {
 
   public static delete(url: string, action: (request: Request, response: Response) => any): void {
     this.routes.push(new Route(url, Method.Delete, action));
+  }
+
+  public static options(url: string, action: (request: Request, response: Response) => any): void {
+    this.routes.push(new Route(url, Method.Options, action));
   }
 
   public static resolveController(

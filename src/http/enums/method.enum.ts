@@ -5,4 +5,5 @@ export const enum Method {
   Patch = 'patch',
   Delete = 'delete',
   Head = 'head',
+  Options = 'options',
 }

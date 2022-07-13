@@ -109,8 +109,33 @@ export class Server {
 
     routes.map((route: Route) => {
       switch (route.method) {
+        case Method.Delete:
+          app.delete(route.url, route.action);
+
+          break;
+
         case Method.Get:
           app.get(route.url, route.action);
+
+          break;
+
+        case Method.Options:
+          app.options(route.url, route.action);
+
+          break;
+
+        case Method.Patch:
+          app.patch(route.url, route.action);
+
+          break;
+
+        case Method.Post:
+          app.post(route.url, route.action);
+
+          break;
+
+        case Method.Put:
+          app.put(route.url, route.action);
 
           break;
       }
