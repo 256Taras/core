@@ -82,7 +82,7 @@ export class Server {
     app.use(bodyParserJson());
     app.use(bodyParserUrlencoded({ extended: true }));
     app.use(cors());
-    app.use(csrf());
+    app.use(csrf({ cookie: true }));
 
     app.use(express.static('public'));
 
