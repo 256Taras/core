@@ -45,6 +45,7 @@
     "html-entities": "^2.3.3",
     "method-override": "^3.0.0",
     "reflect-metadata": "^0.1.13",
-    "semver": "^7.3.7"
+    "semver": "^7.3.7",
+    "shiki": "^0.10.1"
   }
 }

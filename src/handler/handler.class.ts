@@ -1,18 +1,23 @@
-import * as constants from '../constants';
 import { env } from '../config/env.function';
 import { Exception } from './exception.class';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
+import { getHighlighter } from 'shiki';
 import { sep as directorySeparator } from 'path'
 import { Request, Response, NextFunction } from 'express';
+import { warn } from '../utils/functions/warn.function';
 
 export class Handler {
-  public static handleError(
+  public static async handleError(
     error: TypeError | Exception,
     request: Request,
     response: Response,
     _next: NextFunction,
-  ): void {
+  ): Promise<void> {
     response.status(500);
+
+    const message = error.message.charAt(0).toUpperCase() + error.message.slice(1);
+
+    warn(`Exception: ${message}`);
 
     const data = {
       status: 500,
@@ -46,20 +51,31 @@ export class Handler {
       ? fileMatch[1]
       : 'unknown';
 
-    if (file.includes('dist')) {
-      file = file.replace(/.*?\.dist./, `src${directorySeparator}`);
+    const src = readFileSync(file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1)).toString();
+
+    if (!file.includes('node_modules')) {
+      file = file.replace(/.*?\dist./, `src${directorySeparator}`);
       file = file.replace('.js', '.ts');
-      file = file.split(':')[0];
     } else {
       file = `${require('../../package.json').name} package file`;
     }
 
+    const highlighter = await getHighlighter({
+      theme: 'one-dark-pro',
+    });
+
+    const code = highlighter.codeToHtml(src, {
+      lang: 'ts',
+    });
+
     response.render(`${__dirname}/../../assets/views/exception`, {
-      message: error.message.charAt(0).toUpperCase() + error.message.slice(1),
-      nucleonVersion: constants.VERSION,
-      nodeVersion: process.versions.node,
-      file,
+      method: request.method.toUpperCase(),
+      route: request.url,
+      type: error.constructor.name,
       caller,
+      code,
+      file,
+      message,
     });
   }
 }

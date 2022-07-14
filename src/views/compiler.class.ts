@@ -7,8 +7,8 @@ export class Compiler {
   public static parse(filePath: string, variables: Record<string, any>, callback: (e: any, rendered?: string | undefined) => void) {
     let compiled = readFileSync(filePath).toString();
 
-    for (const expression of compiled.matchAll(/\{([a-zA-Z0-9]*?)\}/g) ?? []) {
-      const name: string = expression[1];
+    for (const expression of compiled.matchAll(/\{(\*?)([a-zA-Z0-9]*?)\}/g) ?? []) {
+      const name: string = expression[2];
       const isConstant = name.startsWith('NUCLEON_') || name.startsWith('NODE_');
 
       let variableValue: string = isConstant
@@ -23,9 +23,13 @@ export class Compiler {
         throw new Exception(`The '${name}' variable has not been passed to the view`);
       }
 
+      const plainValue = expression[1]
+        ? variableValue
+        : encode(variableValue);
+
       variableValue = Array.isArray(variableValue) || typeof variableValue === 'object'
         ? JSON.stringify(variableValue)
-        : encode(String(variableValue));
+        : plainValue;
 
       compiled = compiled.replace(expression[0], variableValue);
     }
