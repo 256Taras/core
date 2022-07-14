@@ -11,8 +11,9 @@ import dotenv from 'dotenv';
 import { env } from '../config/env.function';
 import { exec } from 'child_process';
 import { existsSync, unlinkSync, writeFileSync } from 'fs';
-import express, { Request, Response } from 'express';
+import express, { Request } from 'express';
 import { Handler } from '../handler/handler.class';
+import helmet from 'helmet';
 import { log } from '../utils/functions/log.function';
 import { Method } from '../http/enums/method.enum';
 import methodOverride from 'method-override';
@@ -75,9 +76,11 @@ export class Server {
     app.engine('atom.html', Compiler.parse);
 
     app.set('trust proxy', 1);
+    app.set('x-powered-by', false);
     app.set('views', 'views');
     app.set('view engine', 'atom.html');
 
+    app.use(helmet());
     app.use(cookieParser());
     app.use(bodyParserJson());
     app.use(bodyParserUrlencoded({ extended: true }));
