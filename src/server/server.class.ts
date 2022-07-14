@@ -47,9 +47,9 @@ export class Server {
     });
 
     const netPrograms = {
-      win32: 'explorer',
       darwin: 'open',
       linux: 'sensible-browser',
+      win32: 'explorer',
     };
 
     if (!existsSync(tempPath)) {
@@ -87,7 +87,7 @@ export class Server {
     app.use(express.static('public'));
 
     app.use(methodOverride((request: Request) => {
-      if (request.body && typeof request.body === 'object' && '_method' in request.body) {
+      if (request.body && '_method' in request.body) {
         const method = request.body._method;
 
         delete request.body._method;
@@ -144,22 +144,7 @@ export class Server {
       }
     });
 
-    app.all('*', async (request: Request, response: Response) => {
-      response.status(404);
-
-      const data = {
-        status: 404,
-        message: 'Not Found',
-      };
-
-      if (request.xhr || request.headers.accept?.includes('json')) {
-        response.send(data);
-
-        return;
-      }
-
-      response.render(`${__dirname}/../../assets/views/http`, data);
-    });
+    app.all('*', Handler.handleNotFound);
 
     app.listen(port, () => {
       if (env('APP_DEBUG')) {

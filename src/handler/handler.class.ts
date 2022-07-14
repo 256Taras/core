@@ -78,4 +78,21 @@ export class Handler {
       message,
     });
   }
+
+  public static handleNotFound(request: Request, response: Response): void {
+    response.status(404);
+
+    const data = {
+      status: 404,
+      message: 'Not Found',
+    };
+
+    if (request.xhr || request.headers.accept?.includes('json')) {
+      response.send(data);
+
+      return;
+    }
+
+    response.render(`${__dirname}/../../assets/views/http`, data);
+  }
 }
