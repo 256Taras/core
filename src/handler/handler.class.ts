@@ -1,5 +1,6 @@
 import { env } from '../config/env.function';
 import { Exception } from './exception.class';
+import { existsSync } from 'fs';
 import { Request, Response, NextFunction } from 'express';
 
 export class Handler {
@@ -23,7 +24,13 @@ export class Handler {
     }
 
     if (!env<boolean>('APP_DEBUG')) {
-      response.render(`${__dirname}/../../assets/views/http`, data);
+      const customTemplatePath = 'views/errors/500.atom.html';
+
+      const file = existsSync(customTemplatePath)
+        ? customTemplatePath
+        : `${__dirname}/../../assets/views/http`;
+
+      response.render(file, data);
     }
 
     response.render(`${__dirname}/../../assets/views/exception`, {
