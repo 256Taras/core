@@ -27,7 +27,12 @@ import { warn } from '../utils/functions/warn.function';
 export class Server {
   private controllers: Constructor[] = [];
 
-  constructor(options: ServerOptions) {}
+  private channels: Constructor[] = [];
+
+  constructor(options: ServerOptions) {
+    this.controllers = options.controllers;
+    this.channels = options.channels ?? [];
+  }
 
   private setupDevelopmentEnvironment(port: number): void {
     const requiredNodeVersion = require('../../package.json').engines.node;
