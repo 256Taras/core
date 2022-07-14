@@ -106,7 +106,7 @@ export class Server {
       },
     }));
 
-    app.use(Handler.handleError);
+    app.use(Handler.handleException);
 
     const routes = Router.allRoutes();
 

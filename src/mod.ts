@@ -10,6 +10,7 @@ export * from './injector/functions/inject.function';
 export * from './routing/route.namespace';
 export * from './server/functions/create-server.function';
 export * from './server/server.class';
+export * from './utils/functions/error.function';
 export * from './utils/functions/log.function';
 export * from './utils/functions/warn.function';
 export * from './utils/interfaces/constructor.interface';
