@@ -40,21 +40,23 @@ export class Handler {
       response.render(file, data);
     }
 
-    const callerLine: string | undefined = exception.stack?.split('\n')[1];
-    const callerIndex: number | undefined = callerLine?.indexOf('at ');
-    const info: string | undefined = callerLine?.slice(callerIndex ? callerIndex + 2 : 0, callerLine.length);
-    const caller: string | undefined = info?.split('(')[0];
+    const stack = exception.stack ?? 'Error\n    at <anonymous>:1:1';
 
-    const fileMatch = info?.match(/\((.*?)\)/);
+    const callerLine = stack.split('\n')[1];
+    const callerIndex = callerLine.indexOf('at ');
+    const info = callerLine.slice(callerIndex + 2, callerLine.length);
+    const caller = info.split('(')[0];
 
-    let file: string = fileMatch
+    const fileMatch = info.match(/\((.*?)\)/);
+
+    let file = fileMatch
       ? fileMatch[1]
       : 'unknown';
 
     const src = readFileSync(file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1)).toString();
 
     if (!file.includes('node_modules')) {
-      file = file.replace(/.*?\dist./, `src${directorySeparator}`);
+      file = file.replace(/.*?dist./, `src${directorySeparator}`);
       file = file.replace('.js', '.ts');
     } else {
       file = `${require('../../package.json').name} package file`;
