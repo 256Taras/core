@@ -24,7 +24,9 @@ export class Compiler {
       }
 
       if (!isConstant && !(name in variables)) {
-        throw new Exception(`The '${name}' variable has not been passed to the view`);
+        throw new Exception(
+          `The '${name}' variable has not been passed to the view`,
+        );
       }
 
       const plainValue = expression[1] ? variableValue : encode(variableValue);

@@ -1,4 +1,7 @@
-import { json as bodyParserJson, urlencoded as bodyParserUrlencoded } from 'body-parser';
+import {
+  json as bodyParserJson,
+  urlencoded as bodyParserUrlencoded,
+} from 'body-parser';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Compiler } from '../views/compiler.class';
 import cookieParser from 'cookie-parser';
@@ -35,7 +38,11 @@ export class Server {
     const requiredNodeVersion = require('../../package.json').engines.node;
 
     if (!satisfies(process.version, requiredNodeVersion)) {
-      warn(`Nucleon requires Node.js version ${requiredNodeVersion.slice(2)} or greater`);
+      warn(
+        `Nucleon requires Node.js version ${requiredNodeVersion.slice(
+          2,
+        )} or greater`,
+      );
       warn('Update Node.js on https://nodejs.org');
 
       process.exit(1);
@@ -58,7 +65,9 @@ export class Server {
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Nucleon development server is running...');
 
-      exec(`${netPrograms[process.platform as keyof object]} http://localhost:${port}`);
+      exec(
+        `${netPrograms[process.platform as keyof object]} http://localhost:${port}`,
+      );
     }
   }
 
