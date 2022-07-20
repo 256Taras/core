@@ -20,10 +20,7 @@ export class Injector {
     return this.singletons.has(className);
   }
 
-  private static getInstance<T>(
-    target: Constructor<T>,
-    ...deps: Constructor[]
-  ): T {
+  private static getInstance<T>(target: Constructor<T>, ...deps: Constructor[]): T {
     const instance = this.hasSingleton(target)
       ? this.getSingleton(target)
       : new target(...deps);

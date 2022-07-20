@@ -1,7 +1,4 @@
-import {
-  json as bodyParserJson,
-  urlencoded as bodyParserUrlencoded,
-} from 'body-parser';
+import { json as bodyParserJson, urlencoded as bodyParserUrlencoded } from 'body-parser';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Compiler } from '../views/compiler.class';
 import cookieParser from 'cookie-parser';
@@ -61,11 +58,7 @@ export class Server {
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Nucleon development server is running...');
 
-      exec(
-        `${
-          netPrograms[process.platform as keyof object]
-        } http://localhost:${port}`,
-      );
+      exec(`${netPrograms[process.platform as keyof object]} http://localhost:${port}`);
     }
   }
 
@@ -94,25 +87,29 @@ export class Server {
 
     app.use(express.static('public'));
 
-    app.use(methodOverride((request: Request) => {
-      if (request.body && '_method' in request.body) {
-        const method = request.body._method;
+    app.use(
+      methodOverride((request: Request) => {
+        if (request.body && '_method' in request.body) {
+          const method = request.body._method;
 
-        delete request.body._method;
+          delete request.body._method;
 
-        return method;
-      }
-    }));
+          return method;
+        }
+      }),
+    );
 
-    app.use(session({
-      secret: env<string>('APP_KEY'),
-      resave: false,
-      saveUninitialized: true,
-      cookie: {
-        secure: true,
-        maxAge: env<number>('SESSION_LIFETIME') * 60 * 1000,
-      },
-    }));
+    app.use(
+      session({
+        secret: env<string>('APP_KEY'),
+        resave: false,
+        saveUninitialized: true,
+        cookie: {
+          secure: true,
+          maxAge: env<number>('SESSION_LIFETIME') * 60 * 1000,
+        },
+      }),
+    );
 
     app.use(Handler.handleException);
 

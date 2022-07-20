@@ -3,7 +3,7 @@ import { error } from '../utils/functions/error.function';
 import { Exception } from './exception.class';
 import { existsSync, readFileSync } from 'fs';
 import { getHighlighter } from 'shiki';
-import { sep as directorySeparator } from 'path'
+import { sep as directorySeparator } from 'path';
 import { Request, Response, NextFunction } from 'express';
 
 export class Handler {
@@ -15,7 +15,8 @@ export class Handler {
   ): Promise<void> {
     response.status(500);
 
-    const message = exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
+    const message =
+      exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
 
     error(`Exception: ${message}`);
 
@@ -49,11 +50,11 @@ export class Handler {
 
     const fileMatch = info.match(/\((.*?)\)/);
 
-    let file = fileMatch
-      ? fileMatch[1]
-      : 'unknown';
+    let file = fileMatch ? fileMatch[1] : 'unknown';
 
-    const src = readFileSync(file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1)).toString();
+    const src = readFileSync(
+      file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1),
+    ).toString();
 
     if (!file.includes('node_modules')) {
       file = file.replace(/.*?dist./, `src${directorySeparator}`);
