@@ -3,7 +3,6 @@ import {
   urlencoded as bodyParserUrlencoded,
 } from 'body-parser';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Compiler } from '../views/compiler.class';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
@@ -22,6 +21,7 @@ import { Router } from '../routing/router.class';
 import { satisfies } from 'semver';
 import { ServerOptions } from './interfaces/server-options.interface';
 import session from 'express-session';
+import { View } from '../views/view.class';
 import { warn } from '../utils/functions/warn.function';
 
 export class Server {
@@ -80,7 +80,7 @@ export class Server {
 
     const app = express();
 
-    app.engine('atom.html', Compiler.parse);
+    app.engine('atom.html', View.parse);
 
     app.set('trust proxy', 1);
     app.set('x-powered-by', false);

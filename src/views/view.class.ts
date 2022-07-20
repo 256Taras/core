@@ -3,7 +3,7 @@ import { encode } from 'html-entities';
 import { Exception } from '../handler/exception.class';
 import { readFileSync } from 'fs';
 
-export class Compiler {
+export class View {
   public static parse(
     filePath: string,
     variables: Record<string, any>,
