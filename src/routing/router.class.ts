@@ -1,6 +1,7 @@
 import { Method } from '../http/enums/method.enum';
 import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { ViewResponse } from '../http/view-response.class';
 import { Route } from './route.class';
 import { Request, Response } from 'express';
 
@@ -53,6 +54,20 @@ export class Router {
     const result = Injector.resolve<any>(controller)[method]();
 
     return result;
+  }
+
+  public static respond(response: Response, controller: Constructor, method: string): void {
+    const data = this.resolveController(controller, method);
+
+    switch (true) {
+      case data instanceof ViewResponse:
+        response.render((data as ViewResponse).file, (data as ViewResponse).data);
+
+        break;
+
+      default:
+        response.send(data);
+    }
   }
 
   public static allRoutes(): Route[] {
