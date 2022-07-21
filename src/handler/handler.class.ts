@@ -98,4 +98,21 @@ export class Handler {
 
     response.render(`${__dirname}/../../assets/views/http`, data);
   }
+
+  public static handleInvalidToken(request: Request, response: Response): void {
+    response.status(419);
+
+    const data = {
+      status: 419,
+      message: 'Invalid Token',
+    };
+
+    if (request.xhr || request.headers.accept?.includes('json')) {
+      response.send(data);
+
+      return;
+    }
+
+    response.render(`${__dirname}/../../assets/views/http`, data);
+  }
 }

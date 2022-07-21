@@ -17,7 +17,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
 import dotenv from 'dotenv';
-import express, { Express, Request } from 'express';
+import express, { Express, Request, response } from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
@@ -82,7 +82,6 @@ export class Server<DatabaseClient> {
     server.use(bodyParserJson());
     server.use(bodyParserUrlencoded({ extended: true }));
     server.use(cors());
-    server.use(csrf({ cookie: true }));
 
     server.use(express.static('public'));
 
@@ -109,6 +108,18 @@ export class Server<DatabaseClient> {
         },
       }),
     );
+
+    server.use((request, response, next) => {
+      csrf({ cookie: true })(request, response, (error) => {
+        if (error) {
+          Handler.handleInvalidToken(request, response);
+
+          return;
+        }
+
+        next();
+      })
+    });
 
     server.use(Handler.handleException);
   }
