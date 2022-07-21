@@ -17,7 +17,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
 import dotenv from 'dotenv';
-import express, { Express, Request, response } from 'express';
+import express, { Express } from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
@@ -86,7 +86,7 @@ export class Server<DatabaseClient> {
     server.use(express.static('public'));
 
     server.use(
-      methodOverride((request: Request) => {
+      methodOverride((request) => {
         if (request.body && '_method' in request.body) {
           const method = request.body._method;
 
@@ -119,6 +119,12 @@ export class Server<DatabaseClient> {
 
         next();
       })
+    });
+
+    server.use((request, _response, next) => {
+      log(`Request: ${request.method} ${request.url}`);
+
+      next();
     });
 
     server.use(Handler.handleException);

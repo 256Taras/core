@@ -11,7 +11,7 @@ export class Handler {
     exception: TypeError | Exception,
     request: Request,
     response: Response,
-    _next: NextFunction,
+    _next?: NextFunction,
   ): Promise<void> {
     response.status(500);
 
