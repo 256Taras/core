@@ -171,10 +171,7 @@ export class Server<DatabaseClient> {
     this.registerRoutes(server);
 
     if (this.databaseClient) {
-      // @ts-ignore
-      class DatabaseClient extends this.databaseClient {}
-
-      Injector.bind([DatabaseClient]);
+      Injector.bind([this.databaseClient]);
     }
 
     const port = env<number>('APP_PORT') ?? 8000;
