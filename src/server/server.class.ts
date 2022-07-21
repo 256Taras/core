@@ -118,7 +118,7 @@ export class Server<DatabaseClient> {
         }
 
         next();
-      })
+      });
     });
 
     server.use((request, _response, next) => {
