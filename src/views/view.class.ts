@@ -1,6 +1,6 @@
 import * as constants from '../constants';
-import { encode } from 'html-entities';
 import { Exception } from '../handler/exception.class';
+import { encode } from 'html-entities';
 import { readFileSync } from 'node:fs';
 
 export class View {

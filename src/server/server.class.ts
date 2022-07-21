@@ -1,29 +1,29 @@
+import { env } from '../config/env.function';
+import { Handler } from '../handler/handler.class';
+import { Method } from '../http/enums/method.enum';
+import { Injector } from '../injector/injector.class';
+import { Route } from '../routing/route.class';
+import { Router } from '../routing/router.class';
+import { log } from '../utils/functions/log.function';
+import { warn } from '../utils/functions/warn.function';
+import { Constructor } from '../utils/interfaces/constructor.interface';
+import { View } from '../views/view.class';
+import { ServerOptions } from './interfaces/server-options.interface';
 import {
   json as bodyParserJson,
   urlencoded as bodyParserUrlencoded,
 } from 'body-parser';
-import { Constructor } from '../utils/interfaces/constructor.interface';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
 import dotenv from 'dotenv';
-import { env } from '../config/env.function';
+import express, { Express, Request } from 'express';
+import session from 'express-session';
+import helmet from 'helmet';
+import methodOverride from 'method-override';
 import { exec } from 'node:child_process';
 import { existsSync, unlinkSync, writeFileSync } from 'node:fs';
-import express, { Express, Request } from 'express';
-import { Handler } from '../handler/handler.class';
-import helmet from 'helmet';
-import { Injector } from '../injector/injector.class';
-import { log } from '../utils/functions/log.function';
-import { Method } from '../http/enums/method.enum';
-import methodOverride from 'method-override';
-import { Route } from '../routing/route.class';
-import { Router } from '../routing/router.class';
 import semver from 'semver';
-import { ServerOptions } from './interfaces/server-options.interface';
-import session from 'express-session';
-import { View } from '../views/view.class';
-import { warn } from '../utils/functions/warn.function';
 
 export class Server<DatabaseClient> {
   private databaseClient: Constructor<DatabaseClient> | null = null;

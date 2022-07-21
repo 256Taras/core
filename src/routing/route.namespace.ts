@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
 import { Router } from './router.class';
+import { Request, Response } from 'express';
 
 export namespace Route {
   export const Delete = (

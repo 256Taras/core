@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
 import { Method } from '../http/enums/method.enum';
+import { Request, Response } from 'express';
 
 export class Route {
   constructor(

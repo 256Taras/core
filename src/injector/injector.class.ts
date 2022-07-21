@@ -21,9 +21,7 @@ export class Injector {
   }
 
   private static getInstance<T>(target: Constructor<T>, ...deps: Constructor[]): T {
-    const instance = this.has(target)
-      ? this.get(target)
-      : new target(...deps);
+    const instance = this.has(target) ? this.get(target) : new target(...deps);
 
     return instance;
   }

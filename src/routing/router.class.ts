@@ -1,8 +1,8 @@
-import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Injector } from '../injector/injector.class';
 import { Method } from '../http/enums/method.enum';
-import { Request, Response } from 'express';
+import { Injector } from '../injector/injector.class';
+import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Route } from './route.class';
+import { Request, Response } from 'express';
 
 export class Router {
   private static routes: Route[] = [];
