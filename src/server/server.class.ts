@@ -13,6 +13,7 @@ import { existsSync, unlinkSync, writeFileSync } from 'node:fs';
 import express, { Request } from 'express';
 import { Handler } from '../handler/handler.class';
 import helmet from 'helmet';
+import { Injector } from '../injector/injector.class';
 import { log } from '../utils/functions/log.function';
 import { Method } from '../http/enums/method.enum';
 import methodOverride from 'method-override';
@@ -24,12 +25,15 @@ import session from 'express-session';
 import { View } from '../views/view.class';
 import { warn } from '../utils/functions/warn.function';
 
-export class Server {
+export class Server<DatabaseClient> {
+  private databaseClient: Constructor<DatabaseClient> | null = null;
+
   private controllers: Constructor[] = [];
 
   private channels: Constructor[] = [];
 
-  constructor(options: ServerOptions) {
+  constructor(options: ServerOptions<DatabaseClient>) {
+    this.databaseClient = options.databaseClient ?? null;
     this.controllers = options.controllers;
     this.channels = options.channels ?? [];
   }
@@ -159,6 +163,12 @@ export class Server {
     });
 
     app.all('*', Handler.handleNotFound);
+
+    if (this.databaseClient) {
+      class DatabaseClient extends this.databaseClient {}
+
+      Injector.bind([DatabaseClient]);
+    }
 
     app.listen(port, () => {
       if (env('APP_DEBUG')) {
