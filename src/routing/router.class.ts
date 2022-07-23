@@ -50,7 +50,7 @@ export class Router {
     this.routes.push(new Route(url, Method.Options, action));
   }
 
-  public static resolveController(controller: Constructor, method: string): any {
+  public static invokeController(controller: Constructor, method: string): any {
     const result = Injector.resolve<any>(controller)[method]();
 
     return result;
@@ -61,7 +61,7 @@ export class Router {
     controller: Constructor,
     method: string,
   ): void {
-    const data = this.resolveController(controller, method);
+    const data = this.invokeController(controller, method);
 
     switch (true) {
       case data instanceof ViewResponse:
