@@ -9,20 +9,18 @@ import { warn } from '../utils/functions/warn.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { View } from '../views/view.class';
 import { ServerOptions } from './interfaces/server-options.interface';
-import {
-  json as bodyParserJson,
-  urlencoded as bodyParserUrlencoded,
-} from 'body-parser';
+import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
+import { fileURLToPath } from 'node:url';
 import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
 import { exec } from 'node:child_process';
-import { existsSync, unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
 import semver from 'semver';
 
 export class Server<DatabaseClient> {
@@ -38,8 +36,8 @@ export class Server<DatabaseClient> {
     this.channels = options.channels ?? [];
   }
 
-  private setupDevelopmentEnvironment(port: number): void {
-    const requiredNodeVersion = require('../../package.json').engines.node;
+  private async setupDevelopmentEnvironment(port: number): Promise<void> {
+    const requiredNodeVersion = JSON.parse((await promises.readFile(`${fileURLToPath(import.meta.url)}/../../../package.json`)).toString()).engines.node;
 
     if (!semver.satisfies(process.version, requiredNodeVersion)) {
       warn(
@@ -79,8 +77,8 @@ export class Server<DatabaseClient> {
   private registerMiddleware(server: Express): void {
     server.use(helmet());
     server.use(cookieParser());
-    server.use(bodyParserJson());
-    server.use(bodyParserUrlencoded({ extended: true }));
+    server.use(bodyParser.json());
+    server.use(bodyParser.urlencoded({ extended: true }));
     server.use(cors());
 
     server.use(express.static('public'));
@@ -170,7 +168,7 @@ export class Server<DatabaseClient> {
     server.all('*', Handler.handleNotFound);
   }
 
-  public start(): void {
+  public async start(): Promise<void> {
     dotenv.config({
       path: '.env',
     });

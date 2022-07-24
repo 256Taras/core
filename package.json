@@ -2,7 +2,8 @@
   "name": "@nucleonjs/core",
   "version": "1.0.0-alpha.1",
   "description": "The modern Node.js framework",
-  "main": "dist/mod",
+  "type": "module",
+  "main": "./dist/mod",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nucleonjs/core.git"
@@ -17,6 +18,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "exports": {
+    ".": "./dist/mod.js"
   },
   "scripts": {
     "build": "tsc",

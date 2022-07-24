@@ -1,8 +1,9 @@
 import { env } from '../config/env.function';
 import { error } from '../utils/functions/error.function';
 import { Exception } from './exception.class';
+import { fileURLToPath } from 'node:url';
+import { existsSync, promises, readFileSync } from 'fs';
 import { NextFunction, Request, Response } from 'express';
-import { existsSync, readFileSync } from 'fs';
 import { sep as directorySeparator } from 'path';
 import { getHighlighter } from 'shiki';
 
@@ -36,7 +37,7 @@ export class Handler {
 
       const file = existsSync(customTemplatePath)
         ? customTemplatePath
-        : `${__dirname}/../../assets/views/http`;
+        : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
       response.render(file, data);
     }
@@ -60,7 +61,7 @@ export class Handler {
       file = file.replace(/.*?dist./, `src${directorySeparator}`);
       file = file.replace('.js', '.ts');
     } else {
-      file = `${require('../../package.json').name} package file`;
+      file = `${JSON.parse((await promises.readFile(`${fileURLToPath(import.meta.url)}/../../../package.json`)).toString()).name} package file`;
     }
 
     const highlighter = await getHighlighter({
@@ -71,7 +72,7 @@ export class Handler {
       lang: 'ts',
     });
 
-    response.render(`${__dirname}/../../assets/views/exception`, {
+    response.render(`${import.meta.url}/../../../assets/views/exception`, {
       method: request.method.toUpperCase(),
       route: request.url,
       type: exception.constructor.name,
@@ -96,7 +97,7 @@ export class Handler {
       return;
     }
 
-    response.render(`${__dirname}/../../assets/views/http`, data);
+    response.render(`${fileURLToPath(import.meta.url)}/../../../assets/views/http`, data);
   }
 
   public static handleInvalidToken(request: Request, response: Response): void {
@@ -113,6 +114,6 @@ export class Handler {
       return;
     }
 
-    response.render(`${__dirname}/../../assets/views/http`, data);
+    response.render(`${fileURLToPath(import.meta.url)}/../../assets/views/http`, data);
   }
 }
