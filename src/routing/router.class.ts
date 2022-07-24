@@ -67,34 +67,43 @@ export class Router {
     method: string,
   ): void {
     try {
-      const data = this.invokeController(controller, method);
+      const responseData = this.invokeController(controller, method);
+      const { data } = responseData;
 
       switch (true) {
-        case data instanceof JsonResponse:
-          response.json((data as JsonResponse).data);
+        case responseData instanceof JsonResponse:
+          response.json(data);
 
           break;
 
-        case data instanceof ViewResponse:
-          response.render((data as ViewResponse).file, (data as ViewResponse).data, (error: Error) => {
-            if (error) {
-              Handler.handleException(error, request, response);
-            }
-          });
+        case responseData instanceof ViewResponse:
+          const { file } = responseData as ViewResponse;
+
+          response.render(
+            file,
+            data,
+            (error: Error) => {
+              if (error) {
+                Handler.handleException(error, request, response);
+              }
+            },
+          );
 
           break;
 
-        case data instanceof RedirectResponse:
-          response.redirect((data as RedirectResponse).url);
+        case responseData instanceof RedirectResponse:
+          const { url } = responseData as RedirectResponse;
 
-          if ((data as RedirectResponse).data) {
-            request.session._redirectData = (data as RedirectResponse).data;
+          response.redirect(url);
+
+          if (data) {
+            request.session._redirectData = data;
           }
 
           break;
 
         default:
-          response.send(data);
+          response.send(responseData);
       }
     } catch (exception) {
       Handler.handleException(exception as TypeError | Exception, request, response);

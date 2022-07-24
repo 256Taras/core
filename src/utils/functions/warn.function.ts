@@ -11,5 +11,8 @@ export const warn = (data: string | number) => {
     hour12: true,
   });
 
-  console.warn(chalk.bgYellow(' NUCLEON '), chalk.yellow(`[nucleon] [${timestamp}] ${data}`));
+  console.warn(
+    chalk.bgYellow(' NUCLEON '),
+    chalk.yellow(`[nucleon] [${timestamp}] ${data}`),
+  );
 };
