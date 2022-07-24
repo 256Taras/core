@@ -2,9 +2,9 @@ import { env } from '../config/env.function';
 import { error } from '../utils/functions/error.function';
 import { Exception } from './exception.class';
 import { NextFunction, Request, Response } from 'express';
-import { existsSync, promises, readFileSync } from 'fs';
+import { existsSync, promises, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { sep as directorySeparator } from 'path';
+import { sep as directorySeparator } from 'node:path';
 import { getHighlighter } from 'shiki';
 
 export class Handler {
