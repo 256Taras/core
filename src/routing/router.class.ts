@@ -1,6 +1,7 @@
 import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { Method } from '../http/enums/method.enum';
+import { JsonResponse } from '../http/json-response.class';
 import { RedirectResponse } from '../http/redirect-response.class';
 import { ViewResponse } from '../http/view-response.class';
 import { Injector } from '../injector/injector.class';
@@ -69,6 +70,11 @@ export class Router {
       const data = this.invokeController(controller, method);
 
       switch (true) {
+        case data instanceof JsonResponse:
+          response.json((data as JsonResponse).data);
+
+          break;
+
         case data instanceof ViewResponse:
           response.render((data as ViewResponse).file, (data as ViewResponse).data, (error: Error) => {
             if (error) {
