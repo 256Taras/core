@@ -1,6 +1,7 @@
 import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { Method } from '../http/enums/method.enum';
+import { RedirectResponse } from '../http/redirect-response.class';
 import { ViewResponse } from '../http/view-response.class';
 import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
@@ -74,6 +75,15 @@ export class Router {
               Handler.handleException(error, request, response);
             }
           });
+
+          break;
+
+        case data instanceof RedirectResponse:
+          response.redirect((data as RedirectResponse).url);
+
+          if ((data as RedirectResponse).data) {
+            request.session._redirectData = (data as RedirectResponse).data;
+          }
 
           break;
 
