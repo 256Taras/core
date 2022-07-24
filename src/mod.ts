@@ -1,9 +1,3 @@
-declare module 'express-session' {
-  interface SessionData {
-    [key: string]: any;
-  }
-}
-
 export * from './config/env.function';
 export * from './constants';
 export * from './handler/exception.class';
