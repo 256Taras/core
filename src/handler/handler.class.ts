@@ -1,9 +1,9 @@
 import { env } from '../config/env.function';
 import { error } from '../utils/functions/error.function';
 import { Exception } from './exception.class';
-import { fileURLToPath } from 'node:url';
-import { existsSync, promises, readFileSync } from 'fs';
 import { NextFunction, Request, Response } from 'express';
+import { existsSync, promises, readFileSync } from 'fs';
+import { fileURLToPath } from 'node:url';
 import { sep as directorySeparator } from 'path';
 import { getHighlighter } from 'shiki';
 
@@ -61,7 +61,15 @@ export class Handler {
       file = file.replace(/.*?dist./, `src${directorySeparator}`);
       file = file.replace('.js', '.ts');
     } else {
-      file = `${JSON.parse((await promises.readFile(`${fileURLToPath(import.meta.url)}/../../../package.json`)).toString()).name} package file`;
+      file = `${
+        JSON.parse(
+          (
+            await promises.readFile(
+              `${fileURLToPath(import.meta.url)}/../../../package.json`,
+            )
+          ).toString(),
+        ).name
+      } package file`;
     }
 
     const highlighter = await getHighlighter({
@@ -97,7 +105,10 @@ export class Handler {
       return;
     }
 
-    response.render(`${fileURLToPath(import.meta.url)}/../../../assets/views/http`, data);
+    response.render(
+      `${fileURLToPath(import.meta.url)}/../../../assets/views/http`,
+      data,
+    );
   }
 
   public static handleInvalidToken(request: Request, response: Response): void {
@@ -114,6 +125,9 @@ export class Handler {
       return;
     }
 
-    response.render(`${fileURLToPath(import.meta.url)}/../../assets/views/http`, data);
+    response.render(
+      `${fileURLToPath(import.meta.url)}/../../assets/views/http`,
+      data,
+    );
   }
 }

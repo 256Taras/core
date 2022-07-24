@@ -15,12 +15,12 @@ import cors from 'cors';
 import csrf from 'csurf';
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
-import { fileURLToPath } from 'node:url';
 import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
 import { exec } from 'node:child_process';
 import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import semver from 'semver';
 
 export class Server<DatabaseClient> {
@@ -37,7 +37,13 @@ export class Server<DatabaseClient> {
   }
 
   private async setupDevelopmentEnvironment(port: number): Promise<void> {
-    const requiredNodeVersion = JSON.parse((await promises.readFile(`${fileURLToPath(import.meta.url)}/../../../package.json`)).toString()).engines.node;
+    const requiredNodeVersion = JSON.parse(
+      (
+        await promises.readFile(
+          `${fileURLToPath(import.meta.url)}/../../../package.json`,
+        )
+      ).toString(),
+    ).engines.node;
 
     if (!semver.satisfies(process.version, requiredNodeVersion)) {
       warn(
