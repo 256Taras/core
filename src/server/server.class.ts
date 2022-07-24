@@ -194,7 +194,7 @@ export class Server<DatabaseClient> {
     const port = env<number>('APP_PORT') ?? 8000;
 
     server.listen(port, () => {
-      if (env('APP_DEBUG')) {
+      if (env<boolean>('APP_DEBUG')) {
         this.setupDevelopmentEnvironment(port);
       }
 
