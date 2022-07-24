@@ -54,12 +54,6 @@ export class Router {
     this.routes.push(new Route(url, Method.Options, action));
   }
 
-  public static invokeController(controller: Constructor, method: string): any {
-    const result = Injector.resolve<any>(controller)[method]();
-
-    return result;
-  }
-
   public static respond(
     request: Request,
     response: Response,
@@ -67,7 +61,7 @@ export class Router {
     method: string,
   ): void {
     try {
-      const responseData = this.invokeController(controller, method);
+      const responseData = Injector.resolve<any>(controller)[method](...Object.values(request.params));
       const { data } = responseData;
 
       switch (true) {
