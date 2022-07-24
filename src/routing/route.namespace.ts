@@ -6,8 +6,8 @@ export namespace Route {
     url: string,
   ): ((target: any, controllerMethod: string) => void) => {
     return (target: any, controllerMethod: string) => {
-      Router.delete(url, async (_request: Request, response: Response) => {
-        Router.respond(response, target.constructor, controllerMethod);
+      Router.delete(url, async (request: Request, response: Response) => {
+        Router.respond(request, response, target.constructor, controllerMethod);
       });
     };
   };
@@ -16,8 +16,8 @@ export namespace Route {
     url: string,
   ): ((target: any, controllerMethod: string) => void) => {
     return (target: any, controllerMethod: string) => {
-      Router.get(url, async (_request: Request, response: Response) => {
-        Router.respond(response, target.constructor, controllerMethod);
+      Router.get(url, async (request: Request, response: Response) => {
+        Router.respond(request, response, target.constructor, controllerMethod);
       });
     };
   };
@@ -26,8 +26,8 @@ export namespace Route {
     url: string,
   ): ((target: any, controllerMethod: string) => void) => {
     return (target: any, controllerMethod: string) => {
-      Router.options(url, async (_request: Request, response: Response) => {
-        Router.respond(response, target.constructor, controllerMethod);
+      Router.options(url, async (request: Request, response: Response) => {
+        Router.respond(request, response, target.constructor, controllerMethod);
       });
     };
   };
@@ -36,8 +36,8 @@ export namespace Route {
     url: string,
   ): ((target: any, controllerMethod: string) => void) => {
     return (target: any, controllerMethod: string) => {
-      Router.patch(url, async (_request: Request, response: Response) => {
-        Router.respond(response, target.constructor, controllerMethod);
+      Router.patch(url, async (request: Request, response: Response) => {
+        Router.respond(request, response, target.constructor, controllerMethod);
       });
     };
   };
@@ -46,8 +46,8 @@ export namespace Route {
     url: string,
   ): ((target: any, controllerMethod: string) => void) => {
     return (target: any, controllerMethod: string) => {
-      Router.post(url, async (_request: Request, response: Response) => {
-        Router.respond(response, target.constructor, controllerMethod);
+      Router.post(url, async (request: Request, response: Response) => {
+        Router.respond(request, response, target.constructor, controllerMethod);
       });
     };
   };
@@ -56,8 +56,8 @@ export namespace Route {
     url: string,
   ): ((target: any, controllerMethod: string) => void) => {
     return (target: any, controllerMethod: string) => {
-      Router.put(url, async (_request: Request, response: Response) => {
-        Router.respond(response, target.constructor, controllerMethod);
+      Router.put(url, async (request: Request, response: Response) => {
+        Router.respond(request, response, target.constructor, controllerMethod);
       });
     };
   };

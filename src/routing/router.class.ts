@@ -1,3 +1,5 @@
+import { Exception } from '../handler/exception.class';
+import { Handler } from '../handler/handler.class';
 import { Method } from '../http/enums/method.enum';
 import { ViewResponse } from '../http/view-response.class';
 import { Injector } from '../injector/injector.class';
@@ -57,20 +59,29 @@ export class Router {
   }
 
   public static respond(
+    request: Request,
     response: Response,
     controller: Constructor,
     method: string,
   ): void {
-    const data = this.invokeController(controller, method);
+    try {
+      const data = this.invokeController(controller, method);
 
-    switch (true) {
-      case data instanceof ViewResponse:
-        response.render((data as ViewResponse).file, (data as ViewResponse).data);
+      switch (true) {
+        case data instanceof ViewResponse:
+          response.render((data as ViewResponse).file, (data as ViewResponse).data, (error: Error) => {
+            if (error) {
+              Handler.handleException(error, request, response);
+            }
+          });
 
-        break;
+          break;
 
-      default:
-        response.send(data);
+        default:
+          response.send(data);
+      }
+    } catch (exception) {
+      Handler.handleException(exception as TypeError | Exception, request, response);
     }
   }
 

@@ -8,7 +8,7 @@ import { getHighlighter } from 'shiki';
 
 export class Handler {
   public static async handleException(
-    exception: TypeError | Exception,
+    exception: Error | TypeError | Exception,
     request: Request,
     response: Response,
     _next?: NextFunction,
