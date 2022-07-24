@@ -11,5 +11,5 @@ export const log = (data: string | number) => {
     hour12: true,
   });
 
-  console.log(chalk.green(`[nucleon] [${timestamp}] ${data}`));
+  console.log(chalk.bgGreen(' NUCLEON '), chalk.green(`[${timestamp}] ${data}`));
 };
