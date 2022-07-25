@@ -1,7 +1,7 @@
 import { env } from '../config/env.function';
 import { error } from '../utils/functions/error.function';
-import { Exception } from './exception.class';
 import { View } from '../views/view.class';
+import { Exception } from './exception.class';
 import { NextFunction, Request, Response } from 'express';
 import { existsSync, promises, readFileSync } from 'node:fs';
 import { sep as directorySeparator } from 'node:path';
@@ -56,9 +56,7 @@ export class Handler {
 
     const path = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
 
-    const src = existsSync(path)
-      ? readFileSync(path).toString()
-      : '';
+    const src = existsSync(path) ? readFileSync(path).toString() : '';
 
     if (!file.includes('node_modules')) {
       file = file.replace(/.*?dist./, `src${directorySeparator}`);
@@ -83,15 +81,20 @@ export class Handler {
       lang: 'ts',
     });
 
-    View.render(request, response, `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`, {
-      method: request.method.toUpperCase(),
-      route: request.url,
-      type: exception.constructor.name,
-      caller,
-      code,
-      file,
-      message,
-    });
+    View.render(
+      request,
+      response,
+      `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`,
+      {
+        method: request.method.toUpperCase(),
+        route: request.url,
+        type: exception.constructor.name,
+        caller,
+        code,
+        file,
+        message,
+      },
+    );
   }
 
   public static handleNotFound(request: Request, response: Response): void {
@@ -108,7 +111,12 @@ export class Handler {
       return;
     }
 
-    View.render(request, response, `${fileURLToPath(import.meta.url)}/../../../assets/views/http`, data);
+    View.render(
+      request,
+      response,
+      `${fileURLToPath(import.meta.url)}/../../../assets/views/http`,
+      data,
+    );
   }
 
   public static handleInvalidToken(request: Request, response: Response): void {
@@ -125,6 +133,11 @@ export class Handler {
       return;
     }
 
-    View.render(request, response, `${fileURLToPath(import.meta.url)}/../../../assets/views/http`, data);
+    View.render(
+      request,
+      response,
+      `${fileURLToPath(import.meta.url)}/../../../assets/views/http`,
+      data,
+    );
   }
 }

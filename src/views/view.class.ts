@@ -1,8 +1,8 @@
 import * as constants from '../constants';
 import { Handler } from '../handler/handler.class';
+import { Request, Response } from 'express';
 import { encode } from 'html-entities';
 import { readFileSync } from 'node:fs';
-import { Request, Response } from 'express';
 
 export class View {
   private static rawContent: string[] = [];
@@ -16,10 +16,7 @@ export class View {
         ...data.variables,
       };
 
-      const functionHeaderData = [
-        ...Object.keys(scopeVariables),
-        `return ${value}`,
-      ];
+      const functionHeaderData = [...Object.keys(scopeVariables), `return ${value}`];
 
       const fn = new Function(...functionHeaderData);
 
@@ -34,7 +31,9 @@ export class View {
   private static parseRawDirectives(html: string): string {
     let count = 0;
 
-    for (const match of html.matchAll(/\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm) ?? []) {
+    for (const match of html.matchAll(
+      /\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm,
+    ) ?? []) {
       html = html.replace(match[0], `$$raw${count}`);
       count += 1;
 
@@ -70,7 +69,12 @@ export class View {
     return callback(null, html);
   }
 
-  public static render(request: Request, response: Response, filePath: string, data: Record<string, any>): void {
+  public static render(
+    request: Request,
+    response: Response,
+    filePath: string,
+    data: Record<string, any>,
+  ): void {
     const viewData = {
       variables: data,
     };
