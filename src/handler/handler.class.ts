@@ -1,6 +1,7 @@
 import { env } from '../config/env.function';
 import { error } from '../utils/functions/error.function';
 import { Exception } from './exception.class';
+import { View } from '../views/view.class';
 import { NextFunction, Request, Response } from 'express';
 import { existsSync, promises, readFileSync } from 'node:fs';
 import { sep as directorySeparator } from 'node:path';
@@ -51,11 +52,13 @@ export class Handler {
 
     const fileMatch = info.match(/\((.*?)\)/);
 
-    let file = fileMatch ? fileMatch[1] : 'unknown';
+    let file = fileMatch ? fileMatch[1] : '<anonymous>';
 
-    const src = readFileSync(
-      file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1),
-    ).toString();
+    const path = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
+
+    const src = existsSync(path)
+      ? readFileSync(path).toString()
+      : '';
 
     if (!file.includes('node_modules')) {
       file = file.replace(/.*?dist./, `src${directorySeparator}`);
@@ -80,7 +83,7 @@ export class Handler {
       lang: 'ts',
     });
 
-    response.render(`${import.meta.url}/../../../assets/views/exception`, {
+    View.render(request, response, `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`, {
       method: request.method.toUpperCase(),
       route: request.url,
       type: exception.constructor.name,
@@ -105,10 +108,7 @@ export class Handler {
       return;
     }
 
-    response.render(
-      `${fileURLToPath(import.meta.url)}/../../../assets/views/http`,
-      data,
-    );
+    View.render(request, response, `${fileURLToPath(import.meta.url)}/../../../assets/views/http`, data);
   }
 
   public static handleInvalidToken(request: Request, response: Response): void {
@@ -125,9 +125,6 @@ export class Handler {
       return;
     }
 
-    response.render(
-      `${fileURLToPath(import.meta.url)}/../../assets/views/http`,
-      data,
-    );
+    View.render(request, response, `${fileURLToPath(import.meta.url)}/../../../assets/views/http`, data);
   }
 }
