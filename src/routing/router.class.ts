@@ -73,10 +73,14 @@ export class Router {
         case responseData instanceof ViewResponse:
           const { file } = responseData as ViewResponse;
 
-          response.render(file, data, (error: Error) => {
+          response.render(file, data, (error: Error, html: string) => {
             if (error) {
               Handler.handleException(error, request, response);
+
+              return;
             }
+
+            response.send(html);
           });
 
           break;
