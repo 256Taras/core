@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-export const error = (data: string | number) => {
+export const error = (data: string | number, badge: string = 'nucleon') => {
   const date = new Date();
 
   const timestamp = date.toLocaleString('en-US', {
@@ -11,8 +11,5 @@ export const error = (data: string | number) => {
     hour12: true,
   });
 
-  console.error(
-    chalk.bgRed(' NUCLEON '),
-    chalk.red(`[nucleon] [${timestamp}] ${data}`),
-  );
+  console.error(chalk.bgRed(` ${badge.toUpperCase()} `), chalk.red(`[${timestamp}]  ${data}`));
 };

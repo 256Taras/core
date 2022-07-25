@@ -126,7 +126,7 @@ export class Server<DatabaseClient> {
     });
 
     server.use((request, _response, next) => {
-      log(`Request: ${request.method} ${request.url}`);
+      log(`${request.method} ${request.url}`, 'request');
 
       next();
     });
@@ -202,7 +202,7 @@ export class Server<DatabaseClient> {
         this.setupDevelopmentEnvironment(port);
       }
 
-      log(`HTTP server is running at http://localhost:${port}`);
+      log(`HTTP server is running at http://localhost:${port}`, 'server');
     });
   }
 }
