@@ -3,8 +3,8 @@ import { error } from '../utils/functions/error.function';
 import { Exception } from './exception.class';
 import { NextFunction, Request, Response } from 'express';
 import { existsSync, promises, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { sep as directorySeparator } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
 
 export class Handler {

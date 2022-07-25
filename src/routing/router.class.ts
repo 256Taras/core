@@ -61,7 +61,10 @@ export class Router {
     method: string,
   ): void {
     try {
-      const responseData = Injector.resolve<any>(controller)[method](...Object.values(request.params));
+      const responseData = Injector.resolve<any>(controller)[method](
+        ...Object.values(request.params),
+      );
+
       const { data } = responseData;
 
       switch (true) {

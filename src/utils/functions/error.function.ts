@@ -11,5 +11,8 @@ export const error = (data: string | number, badge: string = 'nucleon') => {
     hour12: true,
   });
 
-  console.error(chalk.bgRed(` ${badge.toUpperCase()} `), chalk.red(`[${timestamp}]  ${data}`));
+  console.error(
+    chalk.bgRed(` ${badge.toUpperCase()} `),
+    chalk.red(`[${timestamp}]  ${data}`),
+  );
 };

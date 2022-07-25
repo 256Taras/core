@@ -11,5 +11,8 @@ export const warn = (data: string | number, badge: string = 'nucleon') => {
     hour12: true,
   });
 
-  console.warn(chalk.bgYellow(` ${badge.toUpperCase()} `), chalk.yellow(`[${timestamp}]  ${data}`));
+  console.warn(
+    chalk.bgYellow(` ${badge.toUpperCase()} `),
+    chalk.yellow(`[${timestamp}]  ${data}`),
+  );
 };

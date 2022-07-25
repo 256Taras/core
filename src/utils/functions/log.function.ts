@@ -11,5 +11,8 @@ export const log = (data: string | number, badge: string = 'nucleon') => {
     hour12: true,
   });
 
-  console.log(chalk.bgGreen(` ${badge.toUpperCase()} `), chalk.green(`[${timestamp}]  ${data}`));
+  console.log(
+    chalk.bgGreen(` ${badge.toUpperCase()} `),
+    chalk.green(`[${timestamp}]  ${data}`),
+  );
 };
