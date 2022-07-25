@@ -19,7 +19,7 @@ export class Handler {
     const message =
       exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
 
-    error(`Exception: ${message}`);
+    error(message, 'exception');
 
     const data = {
       status: 500,
