@@ -47,8 +47,13 @@ export class Compiler {
     return html;
   }
 
-  private static parseEachDirectives(html: string, data: Record<string, any> = {}): string {
-    const matches = html.matchAll(/\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm) ?? [];
+  private static parseEachDirectives(
+    html: string,
+    data: Record<string, any> = {},
+  ): string {
+    const matches =
+      html.matchAll(/\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm) ??
+      [];
 
     for (const match of matches) {
       const value = match[2];
@@ -83,8 +88,12 @@ export class Compiler {
     return html;
   }
 
-  private static parseIfDirectives(html: string, data: Record<string, any> = {}): string {
-    const matches = html.matchAll(/\[if (not)? ?(.*?)\](\n|\r\n)?((.*?|\s*?)*?)\[\/if\]/gm) ?? [];
+  private static parseIfDirectives(
+    html: string,
+    data: Record<string, any> = {},
+  ): string {
+    const matches =
+      html.matchAll(/\[if (not)? ?(.*?)\](\n|\r\n)?((.*?|\s*?)*?)\[\/if\]/gm) ?? [];
 
     for (const match of matches) {
       const value = match[2];
@@ -116,7 +125,10 @@ export class Compiler {
     const token = '';
 
     for (const match of matches) {
-      html = html.replace(match[0], `<input type="hidden" name="_token" value="${token}">`);
+      html = html.replace(
+        match[0],
+        `<input type="hidden" name="_token" value="${token}">`,
+      );
     }
 
     return html;
@@ -126,14 +138,18 @@ export class Compiler {
     const matches = html.matchAll(/\[method '?([a-zA-z]*?)'?\]/g) ?? [];
 
     for (const match of matches) {
-      html = html.replace(match[0], `<input type="hidden" name="_method" value="${match[1].toUpperCase()}">`);
+      html = html.replace(
+        match[0],
+        `<input type="hidden" name="_method" value="${match[1].toUpperCase()}">`,
+      );
     }
 
     return html;
   }
 
   private static parseRawDirectives(html: string): string {
-    const matches = html.matchAll(/\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm) ?? [];
+    const matches =
+      html.matchAll(/\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm) ?? [];
 
     let count = 0;
 
