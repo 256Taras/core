@@ -1,14 +1,13 @@
-import { Compiler } from './compiler.class';
 import { Handler } from '../handler/handler.class';
+import { Compiler } from './compiler.class';
 import { Request, Response } from 'express';
-import { encode } from 'html-entities';
 import { readFileSync } from 'node:fs';
 
 export class View {
   public static parse(
     filePath: string,
     data: Record<string, any>,
-    callback: (e: any, rendered?: string | undefined) => void,
+    callback: (error: any, rendered?: string | undefined) => void,
   ) {
     let html = readFileSync(filePath).toString();
 

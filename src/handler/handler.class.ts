@@ -62,15 +62,11 @@ export class Handler {
       file = file.replace(/.*?dist./, `src${directorySeparator}`);
       file = file.replace('.js', '.ts');
     } else {
-      file = `${
-        JSON.parse(
-          (
-            await promises.readFile(
-              `${fileURLToPath(import.meta.url)}/../../../package.json`,
-            )
-          ).toString(),
-        ).name
-      } package file`;
+      const packageData = await promises.readFile(
+        `${fileURLToPath(import.meta.url)}/../../../package.json`,
+      );
+
+      file = `${JSON.parse(packageData.toString()).name} package file`;
     }
 
     const highlighter = await getHighlighter({

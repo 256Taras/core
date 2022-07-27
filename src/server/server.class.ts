@@ -39,13 +39,11 @@ export class Server<DatabaseClient> {
   }
 
   private async setupDevelopmentEnvironment(port: number): Promise<void> {
-    const requiredNodeVersion = JSON.parse(
-      (
-        await promises.readFile(
-          `${fileURLToPath(import.meta.url)}/../../../package.json`,
-        )
-      ).toString(),
-    ).engines.node;
+    const packageData = await promises.readFile(
+      `${fileURLToPath(import.meta.url)}/../../../package.json`,
+    );
+
+    const requiredNodeVersion = JSON.parse(packageData.toString()).engines.node;
 
     if (!semver.satisfies(process.version, requiredNodeVersion)) {
       warn(

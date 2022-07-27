@@ -1,10 +1,13 @@
 import * as constants from '../constants';
+import { encode } from 'html-entities';
 
 export class Compiler {
   private static rawContent: string[] = [];
 
   public static parseDataRenders(html: string, data: Record<string, any>): string {
-    for (const expression of html.matchAll(/\{(@?)(.*?)\}/g) ?? []) {
+    const matches = html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
+
+    for (const expression of matches) {
       const value: string = expression[2];
 
       const scopeVariables = {
@@ -24,12 +27,23 @@ export class Compiler {
     return html;
   }
 
+  public static parseTokenDirectives(html: string): string {
+    const matches = html.matchAll(/\[token\]/g) ?? [];
+    const token = '';
+
+    for (const match of matches) {
+      html = html.replace(match[0], `<input type="hidden" name="_token" value="${token}">`);
+    }
+
+    return html;
+  }
+
   public static parseRawDirectives(html: string): string {
+    const matches = html.matchAll(/\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm) ?? [];
+
     let count = 0;
 
-    for (const match of html.matchAll(
-      /\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm,
-    ) ?? []) {
+    for (const match of matches) {
       html = html.replace(match[0], `$$raw${count}`);
       count += 1;
 
