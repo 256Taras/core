@@ -1,5 +1,4 @@
 import * as constants from '../constants';
-import { encode } from 'html-entities';
 
 export class Compiler {
   private static rawContent: string[] = [];
@@ -15,7 +14,16 @@ export class Compiler {
         ...data.variables,
       };
 
-      const functionHeaderData = [...Object.keys(scopeVariables), `return ${value}`];
+      const functionHeaderData = [
+        ...Object.keys(scopeVariables),
+        `return String(${value}).replace(/[&<>'"]/g, (char) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;',
+        }[char]));`,
+      ];
 
       const fn = new Function(...functionHeaderData);
 
