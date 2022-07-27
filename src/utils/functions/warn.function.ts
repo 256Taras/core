@@ -1,18 +1,28 @@
 import chalk from 'chalk';
 
-export const warn = (data: string | number, badge: string = 'nucleon') => {
+export const warn = (data: string, type: string = 'warning') => {
   const date = new Date();
 
-  const timestamp = date.toLocaleString('en-US', {
+  const locale = 'en-us';
+
+  const day = date.toLocaleString(locale, {
     month: 'short',
     day: 'numeric',
+  });
+
+  const time = date.toLocaleString(locale, {
     hour: 'numeric',
     minute: 'numeric',
+    second: '2-digit',
     hour12: true,
   });
 
-  console.warn(
-    chalk.bgYellow(` ${badge.toUpperCase()} `),
-    chalk.yellow(`[${timestamp}]  ${data}`),
-  );
+  const timestamp = `${chalk.gray(day)} ${chalk.gray(time)} `;
+
+  const left = `${timestamp} ${chalk.hex('#f8c377').bold(data)}`;
+  const right = chalk.gray(type.toUpperCase());
+
+  const dots = chalk.gray('.'.repeat(process.stdout.columns - timestamp.length - data.length - type.length - 16));
+
+  console.warn(left, dots, right);
 };

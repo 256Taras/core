@@ -202,7 +202,7 @@ export class Server<DatabaseClient> {
         this.setupDevelopmentEnvironment(port);
       }
 
-      log(`HTTP server is running at http://localhost:${port}`, 'server');
+      log(`HTTP server running on http://localhost:${port}`);
     });
   }
 }
