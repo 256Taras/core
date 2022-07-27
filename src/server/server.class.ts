@@ -19,7 +19,7 @@ import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
 import { exec } from 'node:child_process';
-import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, promises, unlinkSync, watchFile, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import semver from 'semver';
 
@@ -63,6 +63,10 @@ export class Server<DatabaseClient> {
       unlinkSync(tempPath);
 
       process.exit();
+    });
+
+    watchFile('.env', () => {
+      log('Environment variables changed. Restart server to reflect changes');
     });
 
     const netPrograms = {
