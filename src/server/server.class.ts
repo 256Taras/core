@@ -26,6 +26,8 @@ import semver from 'semver';
 export class Server<DatabaseClient> {
   private databaseClient: Constructor<DatabaseClient> | null = null;
 
+  private defaultPort: number = 8000;
+
   private controllers: Constructor[] = [];
 
   private channels: Constructor[] = [];
@@ -82,6 +84,15 @@ export class Server<DatabaseClient> {
         `${netPrograms[process.platform as keyof object]} http://localhost:${port}`,
       );
     }
+  }
+
+  private configureServer(server: Express): void {
+    server.engine('atom.html', View.parse);
+
+    server.set('trust proxy', 1);
+    server.set('x-powered-by', false);
+    server.set('views', 'views');
+    server.set('view engine', 'atom.html');
   }
 
   private registerMiddleware(server: Express): void {
@@ -185,13 +196,7 @@ export class Server<DatabaseClient> {
 
     const server = express();
 
-    server.engine('atom.html', View.parse);
-
-    server.set('trust proxy', 1);
-    server.set('x-powered-by', false);
-    server.set('views', 'views');
-    server.set('view engine', 'atom.html');
-
+    this.configureServer(server);
     this.registerMiddleware(server);
     this.registerRoutes(server);
 
@@ -199,7 +204,7 @@ export class Server<DatabaseClient> {
       Injector.bind([this.databaseClient]);
     }
 
-    const port = env<number>('APP_PORT') ?? 8000;
+    const port = env<number>('APP_PORT') ?? this.defaultPort;
 
     server.listen(port, () => {
       if (env<boolean>('APP_DEBUG')) {
