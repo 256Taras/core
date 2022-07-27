@@ -9,11 +9,7 @@ export class View {
     data: Record<string, any>,
     callback: (error: any, rendered?: string | undefined) => void,
   ) {
-    let html = readFileSync(filePath).toString();
-
-    html = Compiler.parseRawDirectives(html);
-    html = Compiler.parseDataRenders(html, data);
-    html = Compiler.restoreRawContent(html);
+    const html = Compiler.compile(readFileSync(filePath).toString(), data);
 
     return callback(null, html);
   }
