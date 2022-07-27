@@ -5,6 +5,7 @@ export class Compiler {
 
   public static compile(html: string, data: Record<string, any>): string {
     html = this.parseRawDirectives(html);
+    html = this.parseEachDirectives(html);
     html = this.parseDataRenders(html, data);
     html = this.parseTokenDirectives(html);
     html = this.parseMethodDirectives(html);
@@ -40,6 +41,42 @@ export class Compiler {
       const returnedValue = fn(...Object.values(scopeVariables));
 
       html = html.replace(expression[0], returnedValue);
+    }
+
+    return html;
+  }
+
+  private static parseEachDirectives(html: string, data: Record<string, any> = {}): string {
+    const matches = html.matchAll(/\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm) ?? [];
+
+    for (const match of matches) {
+      const value = match[2];
+
+      const scopeVariables = {
+        ...constants,
+        ...data.variables,
+      };
+
+      const functionHeaderData = [
+        ...Object.keys(scopeVariables),
+        `return ${value};`,
+      ];
+
+      const fn = new Function(...functionHeaderData);
+
+      const iterable = fn(...Object.values(scopeVariables));
+
+      let result = '';
+
+      [...iterable].map((item: any) => {
+        for (const variable of match[4].matchAll(/\{(@?)(.*?)\}/g)) {
+          if (variable[2] === match[1]) {
+            result += match[4].replace(variable[0], String(item));
+          }
+        }
+      });
+
+      html = html.replace(match[0], result);
     }
 
     return html;
