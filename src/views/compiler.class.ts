@@ -93,7 +93,7 @@ export class Compiler {
     data: Record<string, any> = {},
   ): string {
     const matches =
-      html.matchAll(/\[if ?(.*?)\](\n|\r\n)?((.*?|\s*?)*?)\[\/if\]/gm) ?? [];
+      html.matchAll(/\[if ?(.*?)\](\s*?)?((.|\s)*?)(\[else\])((.|\s)*?)\[\/if\]/gm) ?? [];
 
     for (const match of matches) {
       const value = match[1];
@@ -115,10 +115,10 @@ export class Compiler {
       if (condition) {
         html = html.replace(match[0], match[3]);
 
-        break;
+        continue;
       }
 
-      html = html.replace(match[0], '');
+      html = html.replace(match[0], match[6]);
     }
 
     return html;
