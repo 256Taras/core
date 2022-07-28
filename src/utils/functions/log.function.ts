@@ -24,7 +24,7 @@ export const log = (data: string, type: string = 'info') => {
 
   const dots = chalk.gray(
     '.'.repeat(
-      process.stdout.columns - timestamp.length - data.length - type.length - 16,
+      process.stdout.columns - timestamp.length - data.length - type.length - 2,
     ),
   );
 

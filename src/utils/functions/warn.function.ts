@@ -26,7 +26,7 @@ export const warn = (data: string, type: string = 'warning') => {
 
   const dots = chalk.gray(
     '.'.repeat(
-      process.stdout.columns - timestamp.length - data.length - type.length - 16,
+      process.stdout.columns - timestamp.length - data.length - type.length - 2,
     ),
   );
 

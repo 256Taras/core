@@ -26,7 +26,7 @@ export const error = (data: string, type: string = 'error') => {
 
   const dots = chalk.gray(
     '.'.repeat(
-      process.stdout.columns - timestamp.length - data.length - type.length - 16,
+      process.stdout.columns - timestamp.length - data.length - type.length - 2,
     ),
   );
 
