@@ -39,7 +39,7 @@ export class Compiler {
 
       const fn = new Function(...functionHeaderData);
 
-      const returnedValue = fn(...Object.values(scopeVariables));
+      const returnedValue: any = fn(...Object.values(scopeVariables));
 
       html = html.replace(expression[0], returnedValue);
     }
@@ -70,7 +70,7 @@ export class Compiler {
 
       const fn = new Function(...functionHeaderData);
 
-      const iterable = fn(...Object.values(scopeVariables));
+      const iterable: Iterable<any> = fn(...Object.values(scopeVariables));
 
       let result = '';
 
@@ -93,10 +93,10 @@ export class Compiler {
     data: Record<string, any> = {},
   ): string {
     const matches =
-      html.matchAll(/\[if (not)? ?(.*?)\](\n|\r\n)?((.*?|\s*?)*?)\[\/if\]/gm) ?? [];
+      html.matchAll(/\[if ?(.*?)\](\n|\r\n)?((.*?|\s*?)*?)\[\/if\]/gm) ?? [];
 
     for (const match of matches) {
-      const value = match[2];
+      const value = match[1];
 
       const scopeVariables = {
         ...constants,
@@ -110,11 +110,15 @@ export class Compiler {
 
       const fn = new Function(...functionHeaderData);
 
-      const condition = fn(...Object.values(scopeVariables));
+      const condition: boolean = fn(...Object.values(scopeVariables));
 
-      if (condition || (match[1] === 'not' && !condition)) {
-        html = html.replace(match[0], match[4]);
+      if (condition) {
+        html = html.replace(match[0], match[3]);
+
+        break;
       }
+
+      html = html.replace(match[0], '');
     }
 
     return html;
