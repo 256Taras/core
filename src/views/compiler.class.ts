@@ -7,6 +7,7 @@ export class Compiler {
     html = this.parseRawDirectives(html);
     html = this.parseEachDirectives(html);
     html = this.parseDataRenders(html, data);
+    html = this.parseIfElseDirectives(html);
     html = this.parseIfDirectives(html);
     html = this.parseTokenDirectives(html);
     html = this.parseMethodDirectives(html);
@@ -89,6 +90,42 @@ export class Compiler {
   }
 
   private static parseIfDirectives(
+    html: string,
+    data: Record<string, any> = {},
+  ): string {
+    const matches =
+      html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
+
+    for (const match of matches) {
+      const value = match[1];
+
+      const scopeVariables = {
+        ...constants,
+        ...data.variables,
+      };
+
+      const functionHeaderData = [
+        ...Object.keys(scopeVariables),
+        `return ${value};`,
+      ];
+
+      const fn = new Function(...functionHeaderData);
+
+      const condition: boolean = fn(...Object.values(scopeVariables));
+
+      if (condition) {
+        html = html.replace(match[0], match[3]);
+
+        continue;
+      }
+
+      html = html.replace(match[0], '');
+    }
+
+    return html;
+  }
+
+  private static parseIfElseDirectives(
     html: string,
     data: Record<string, any> = {},
   ): string {
