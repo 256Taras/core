@@ -10,6 +10,7 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 import { View } from '../views/view.class';
 import { ServerOptions } from './interfaces/server-options.interface';
 import bodyParser from 'body-parser';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
@@ -95,6 +96,7 @@ export class Server<DatabaseClient> {
 
   private registerMiddleware(server: Express): void {
     server.use(helmet());
+    server.use(compression());
     server.use(cookieParser());
     server.use(bodyParser.json());
     server.use(bodyParser.urlencoded({ extended: true }));
