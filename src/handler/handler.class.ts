@@ -4,7 +4,6 @@ import { View } from '../views/view.class';
 import { Exception } from './exception.class';
 import { NextFunction, Request, Response } from 'express';
 import { existsSync, promises, readFileSync } from 'node:fs';
-import { sep as directorySeparator } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
 
@@ -59,7 +58,7 @@ export class Handler {
     const src = existsSync(path) ? readFileSync(path).toString() : '';
 
     if (!file.includes('node_modules')) {
-      file = file.replace(/.*?dist./, `src${directorySeparator}`);
+      file = file.replace(/.*?dist./, `src/`);
       file = file.replace('.js', '.ts');
     } else {
       const packageData = await promises.readFile(
@@ -73,7 +72,7 @@ export class Handler {
       theme: 'one-dark-pro',
     });
 
-    const code = highlighter.codeToHtml(src, {
+    const codeSnippet = highlighter.codeToHtml(src, {
       lang: 'ts',
     });
 
@@ -82,11 +81,11 @@ export class Handler {
       response,
       `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`,
       {
+        codeSnippet: src.length > 0 ? codeSnippet : null,
         method: request.method.toUpperCase(),
         route: request.url,
         type: exception.constructor.name,
         caller,
-        code,
         file,
         message,
       },

@@ -34,17 +34,20 @@
         <div class="bg-rose-600 font-normal text-white text-base rounded-lg shadow-lg shadow-rose-500/10 px-4 py-2 mr-3">{type}</div>
         {message}
       </h1>
-  
+
       <div class="flex flex-col opacity-90 my-3">
-        <code class="self-start px-2 py-1 text-sm bg-slate-100 dark:bg-gray-800 rounded-md">{method} {route}</code>
+        <code class="self-start px-2 py-1 text-sm bg-slate-100 dark:bg-gray-800 rounded-md">Node v{NODE_VERSION}</code>
+        <code class="self-start px-2 py-1 text-sm bg-slate-100 dark:bg-gray-800 rounded-md mt-2">Nucleon v{VERSION}</code>
+        <code class="self-start px-2 py-1 text-sm bg-slate-100 dark:bg-gray-800 rounded-md mt-2">{method} {route}</code>
         <code class="self-start px-2 py-1 text-sm bg-slate-100 dark:bg-gray-800 rounded-md mt-2">HTTP 500</code>
-        <code class="self-start px-2 py-1 text-sm bg-slate-100 dark:bg-gray-800 rounded-md mt-2">Node v{NODE_VERSION}</code>
 
         <p class="mt-5">File: <code class="self-start px-2 py-1 text-sm bg-slate-100 dark:bg-gray-800 rounded-md ml-1">{file}</code></p>
         <p>Called in: <code class="self-start px-2 py-1 text-sm bg-slate-100 dark:bg-gray-800 rounded-md ml-1">{caller}</code></p>
       </div>
-  
-      <div class="text-sm leading-6 shadow-lg w-full">{@code}</div>
+
+      [if codeSnippet]
+        <div class="text-sm leading-6 shadow-lg w-full">{@codeSnippet}</div>
+      [/if]
 
       <button class="flex items-center self-end bg-gradient-to-r from-purple-500 to-fuchsia-500 px-5 py-2 mt-7 rounded-xl text-white shadow-lg shadow-purple-500/20 transition-all duration-300 hover:opacity-95 hover:-translate-y-1 select-none" onclick="window.location.reload()">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

@@ -5,10 +5,10 @@ export class Compiler {
 
   public static compile(html: string, data: Record<string, any>): string {
     html = this.parseRawDirectives(html);
-    html = this.parseEachDirectives(html);
+    html = this.parseEachDirectives(html, data);
     html = this.parseDataRenders(html, data);
-    html = this.parseIfElseDirectives(html);
-    html = this.parseIfDirectives(html);
+    html = this.parseIfElseDirectives(html, data);
+    html = this.parseIfDirectives(html, data);
     html = this.parseTokenDirectives(html);
     html = this.parseMethodDirectives(html);
     html = this.restoreRawContent(html);
@@ -19,17 +19,17 @@ export class Compiler {
   private static parseDataRenders(html: string, data: Record<string, any>): string {
     const matches = html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
 
-    for (const expression of matches) {
-      const value: string = expression[2];
+    for (const match of matches) {
+      const value: string = match[2];
 
       const scopeVariables = {
         ...constants,
         ...data.variables,
       };
 
-      const functionHeaderData = [
+      const functionHeader = [
         ...Object.keys(scopeVariables),
-        `return String(${value}).replace(/[&<>'"]/g, (char) => ({
+        `return ${match[1] === '@' ? true : false} ? String(${value}) : String(${value}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
@@ -38,11 +38,11 @@ export class Compiler {
         }[char]));`,
       ];
 
-      const fn = new Function(...functionHeaderData);
+      const fn = new Function(...functionHeader);
 
       const returnedValue: any = fn(...Object.values(scopeVariables));
 
-      html = html.replace(expression[0], returnedValue);
+      html = html.replace(match[0], String(returnedValue));
     }
 
     return html;
@@ -50,7 +50,7 @@ export class Compiler {
 
   private static parseEachDirectives(
     html: string,
-    data: Record<string, any> = {},
+    data: Record<string, any>,
   ): string {
     const matches =
       html.matchAll(/\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm) ??
@@ -64,23 +64,46 @@ export class Compiler {
         ...data.variables,
       };
 
-      const functionHeaderData = [
+      const functionHeader = [
         ...Object.keys(scopeVariables),
         `return ${value};`,
       ];
 
-      const fn = new Function(...functionHeaderData);
+      const fn = new Function(...functionHeader);
 
-      const iterable: Iterable<any> = fn(...Object.values(scopeVariables));
+      const iterable: any[] = fn(...Object.values(scopeVariables));
+
+      const variableName = match[1];
 
       let result = '';
+      let counter = 0;
 
       [...iterable].map((item: any) => {
-        for (const variable of match[4].matchAll(/\{(@?)(.*?)\}/g)) {
-          if (variable[2] === match[1]) {
-            result += match[4].replace(variable[0], String(item));
-          }
+        for (const renderMatch of match[4].matchAll(/\{(@?)(.*?)\}/g)) {
+          const renderValue = renderMatch[2];
+
+          const renderScopeVariables = {
+            [variableName]: item,
+            ...constants,
+            ...data.variables,
+            $first: counter === 0,
+            $last: counter === iterable.length - 1,
+            $even: counter % 2 === 0,
+          };
+
+          const renderFunctionHeader = [
+            ...Object.keys(renderScopeVariables),
+            `return ${renderValue};`,
+          ];
+
+          const renderFn = new Function(...renderFunctionHeader);
+
+          const renderResult: any = renderFn(...Object.values(renderScopeVariables));
+
+          result += match[4].replace(renderMatch[0], String(renderResult));
         }
+
+        counter += 1;
       });
 
       html = html.replace(match[0], result);
@@ -91,7 +114,7 @@ export class Compiler {
 
   private static parseIfDirectives(
     html: string,
-    data: Record<string, any> = {},
+    data: Record<string, any>,
   ): string {
     const matches =
       html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
@@ -104,12 +127,12 @@ export class Compiler {
         ...data.variables,
       };
 
-      const functionHeaderData = [
+      const functionHeader = [
         ...Object.keys(scopeVariables),
         `return ${value};`,
       ];
 
-      const fn = new Function(...functionHeaderData);
+      const fn = new Function(...functionHeader);
 
       const condition: boolean = fn(...Object.values(scopeVariables));
 
@@ -127,7 +150,7 @@ export class Compiler {
 
   private static parseIfElseDirectives(
     html: string,
-    data: Record<string, any> = {},
+    data: Record<string, any>,
   ): string {
     const matches =
       html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)(\[else\])((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
@@ -140,12 +163,12 @@ export class Compiler {
         ...data.variables,
       };
 
-      const functionHeaderData = [
+      const functionHeader = [
         ...Object.keys(scopeVariables),
         `return ${value};`,
       ];
 
-      const fn = new Function(...functionHeaderData);
+      const fn = new Function(...functionHeader);
 
       const condition: boolean = fn(...Object.values(scopeVariables));
 
