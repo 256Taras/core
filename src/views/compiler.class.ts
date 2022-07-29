@@ -93,7 +93,7 @@ export class Compiler {
     data: Record<string, any> = {},
   ): string {
     const matches =
-      html.matchAll(/\[if ?(.*?)\](\s*?)?((.|\s)*?)(\[else\])((.|\s)*?)\[\/if\]/gm) ?? [];
+      html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)(\[else\])((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
 
     for (const match of matches) {
       const value = match[1];
@@ -152,6 +152,8 @@ export class Compiler {
   }
 
   private static parseRawDirectives(html: string): string {
+    this.rawContent = [];
+
     const matches =
       html.matchAll(/\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm) ?? [];
 
