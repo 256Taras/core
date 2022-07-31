@@ -1,3 +1,4 @@
+import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { Method } from '../http/enums/method.enum';
@@ -5,7 +6,6 @@ import { JsonResponse } from '../http/json-response.class';
 import { RedirectResponse } from '../http/redirect-response.class';
 import { ViewResponse } from '../http/view-response.class';
 import { Injector } from '../injector/injector.class';
-import { Constructor } from '../utils/interfaces/constructor.interface';
 import { View } from '../views/view.class';
 import { Route } from './route.class';
 import { Request, Response } from 'express';

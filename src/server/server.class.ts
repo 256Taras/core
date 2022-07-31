@@ -25,17 +25,13 @@ import { existsSync, promises, unlinkSync, watchFile, writeFileSync } from 'node
 import { fileURLToPath } from 'node:url';
 import semver from 'semver';
 
-export class Server<DatabaseClient> {
-  private databaseClient: Constructor<DatabaseClient> | null = null;
-
+export class Server {
   private defaultPort: number = 8000;
 
   private modules: Module[] = [];
 
-  constructor(options: ServerOptions<DatabaseClient>) {
-    const { databaseClient, modules } = options;
-
-    this.databaseClient = databaseClient ?? null;
+  constructor(options: ServerOptions) {
+    const { modules } = options;
 
     modules.map((module: Constructor<Module>) => {
       const instance = Injector.resolve<Module>(module);
@@ -204,10 +200,6 @@ export class Server<DatabaseClient> {
     this.configureServer(server);
     this.registerMiddleware(server);
     this.registerRoutes(server);
-
-    if (this.databaseClient) {
-      Injector.bind([this.databaseClient]);
-    }
 
     const port = env<number>('APP_PORT') ?? this.defaultPort;
 
