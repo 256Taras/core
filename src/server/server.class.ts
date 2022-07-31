@@ -38,7 +38,9 @@ export class Server<DatabaseClient> {
     this.databaseClient = databaseClient ?? null;
 
     modules.map((module: Constructor<Module>) => {
-      this.modules.push(new module());
+      const instance = Injector.resolve<Module>(module);
+
+      this.modules.push(instance);
     });
   }
 
