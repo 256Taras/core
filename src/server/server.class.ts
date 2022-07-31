@@ -7,7 +7,7 @@ import { Router } from '../routing/router.class';
 import { log } from '../utils/functions/log.function';
 import { warn } from '../utils/functions/warn.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Module } from './module.class';
+import { Module } from './interfaces/module.interface';
 import { View } from '../views/view.class';
 import { ServerOptions } from './interfaces/server-options.interface';
 import bodyParser from 'body-parser';
@@ -36,7 +36,10 @@ export class Server<DatabaseClient> {
     const { databaseClient, modules } = options;
 
     this.databaseClient = databaseClient ?? null;
-    this.modules = modules;
+
+    modules.map((module: Constructor<Module>) => {
+      this.modules.push(new module());
+    });
   }
 
   private async setupDevelopmentEnvironment(port: number): Promise<void> {
