@@ -17,9 +17,9 @@ export const error = (data: string, type: string = 'error') => {
     hour12: true,
   });
 
-  const timestamp = `${chalk.green.bold('$')} ${chalk.gray(
-    day,
-  )} ${chalk.gray(time)} `;
+  const timestamp = `${chalk.green.bold('$')} ${chalk.gray(day)} ${chalk.gray(
+    time,
+  )} `;
 
   const left = `${timestamp} ${chalk.red.bold(data)}`;
   const right = chalk.gray(type.toUpperCase());

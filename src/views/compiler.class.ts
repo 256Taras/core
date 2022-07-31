@@ -29,7 +29,9 @@ export class Compiler {
 
       const functionHeader = [
         ...Object.keys(scopeVariables),
-        `return ${match[1] === '@' ? true : false} ? String(${value}) : String(${value}).replace(/[&<>'"]/g, (char) => ({
+        `return ${
+          match[1] === '@' ? true : false
+        } ? String(${value}) : String(${value}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
@@ -64,10 +66,7 @@ export class Compiler {
         ...data.variables,
       };
 
-      const functionHeader = [
-        ...Object.keys(scopeVariables),
-        `return ${value};`,
-      ];
+      const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
 
       const fn = new Function(...functionHeader);
 
@@ -119,10 +118,7 @@ export class Compiler {
     return html;
   }
 
-  private static parseIfDirectives(
-    html: string,
-    data: Record<string, any>,
-  ): string {
+  private static parseIfDirectives(html: string, data: Record<string, any>): string {
     const matches =
       html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
 
@@ -134,10 +130,7 @@ export class Compiler {
         ...data.variables,
       };
 
-      const functionHeader = [
-        ...Object.keys(scopeVariables),
-        `return ${value};`,
-      ];
+      const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
 
       const fn = new Function(...functionHeader);
 
@@ -160,7 +153,9 @@ export class Compiler {
     data: Record<string, any>,
   ): string {
     const matches =
-      html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)(\[else\])((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
+      html.matchAll(
+        /\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)(\[else\])((.|\n|\r\n)*?)\[\/if\]/gm,
+      ) ?? [];
 
     for (const match of matches) {
       const value = match[1];
@@ -170,10 +165,7 @@ export class Compiler {
         ...data.variables,
       };
 
-      const functionHeader = [
-        ...Object.keys(scopeVariables),
-        `return ${value};`,
-      ];
+      const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
 
       const fn = new Function(...functionHeader);
 
