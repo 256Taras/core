@@ -17,7 +17,7 @@ export const log = (data: string, type: string = 'info') => {
     hour12: true,
   });
 
-  const timestamp = `${chalk.hex('#baa3d6').bold('$')} ${chalk.gray(day)} ${chalk.gray(time)} `;
+  const timestamp = `${chalk.green.bold('$')} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
   const left = `${timestamp} ${chalk.white.bold(data)}`;
   const right = chalk.gray(type.toUpperCase());

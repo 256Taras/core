@@ -17,7 +17,7 @@ export const warn = (data: string, type: string = 'warning') => {
     hour12: true,
   });
 
-  const timestamp = `${chalk.hex('#baa3d6').bold('$')} ${chalk.gray(
+  const timestamp = `${chalk.green.bold('$')} ${chalk.gray(
     day,
   )} ${chalk.gray(time)} `;
 
