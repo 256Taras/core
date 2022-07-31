@@ -7,6 +7,7 @@ import { Router } from '../routing/router.class';
 import { log } from '../utils/functions/log.function';
 import { warn } from '../utils/functions/warn.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { Module } from './module.class';
 import { View } from '../views/view.class';
 import { ServerOptions } from './interfaces/server-options.interface';
 import bodyParser from 'body-parser';
@@ -29,14 +30,13 @@ export class Server<DatabaseClient> {
 
   private defaultPort: number = 8000;
 
-  private controllers: Constructor[] = [];
-
-  private channels: Constructor[] = [];
+  private modules: Module[] = [];
 
   constructor(options: ServerOptions<DatabaseClient>) {
-    this.databaseClient = options.databaseClient ?? null;
-    this.controllers = options.controllers;
-    this.channels = options.channels ?? [];
+    const { databaseClient, modules } = options;
+
+    this.databaseClient = databaseClient ?? null;
+    this.modules = modules;
   }
 
   private async setupDevelopmentEnvironment(port: number): Promise<void> {

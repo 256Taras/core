@@ -1,7 +1,7 @@
 import { Constructor } from '../../utils/interfaces/constructor.interface';
+import { Module } from '../module.class';
 
 export interface ServerOptions<DatabaseClient> {
-  controllers: Constructor[];
-  channels?: Constructor[];
   databaseClient?: Constructor<DatabaseClient>;
+  modules: Module[];
 }
