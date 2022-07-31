@@ -79,17 +79,22 @@ export class Compiler {
       let counter = 0;
 
       [...iterable].map((item: any) => {
-        for (const renderMatch of match[4].matchAll(/\{(@?)(.*?)\}/g)) {
-          const renderValue = renderMatch[2];
+        let content = match[4];
 
-          const renderScopeVariables = {
-            [variableName]: item,
-            ...constants,
-            ...data.variables,
-            $first: counter === 0,
-            $last: counter === iterable.length - 1,
-            $even: counter % 2 === 0,
-          };
+        const renderScopeVariables = {
+          [variableName]: item,
+          ...constants,
+          ...data.variables,
+          $first: counter === 0,
+          $last: counter === Object.keys(iterable).length - 1,
+          $even: counter % 2 === 0,
+          $odd: counter % 2 === 1,
+        };
+
+        const renderMatches = content.matchAll(/\{(@?)(.*?)\}/g);
+
+        for (const renderMatch of renderMatches) {
+          const renderValue = renderMatch[2];
 
           const renderFunctionHeader = [
             ...Object.keys(renderScopeVariables),
@@ -100,8 +105,10 @@ export class Compiler {
 
           const renderResult: any = renderFn(...Object.values(renderScopeVariables));
 
-          result += match[4].replace(renderMatch[0], String(renderResult));
+          content = content.replace(renderMatch[0], String(renderResult));
         }
+
+        result += content;
 
         counter += 1;
       });
