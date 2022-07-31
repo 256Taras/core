@@ -17,7 +17,7 @@ export const error = (data: string, type: string = 'error') => {
     hour12: true,
   });
 
-  const timestamp = `${chalk.green.bold('$')} ${chalk.gray(day)} ${chalk.gray(
+  const timestamp = `${chalk.red.bold('$')} ${chalk.gray(day)} ${chalk.gray(
     time,
   )} `;
 

@@ -17,11 +17,13 @@ export const warn = (data: string, type: string = 'warning') => {
     hour12: true,
   });
 
-  const timestamp = `${chalk.green.bold('$')} ${chalk.gray(day)} ${chalk.gray(
+  const yellowHex = '#f8c377';
+
+  const timestamp = `${chalk.hex(yellowHex).bold('$')} ${chalk.gray(day)} ${chalk.gray(
     time,
   )} `;
 
-  const left = `${timestamp} ${chalk.hex('#f8c377').bold(data)}`;
+  const left = `${timestamp} ${chalk.hex(yellowHex).bold(data)}`;
   const right = chalk.gray(type.toUpperCase());
 
   const dots = chalk.gray(
