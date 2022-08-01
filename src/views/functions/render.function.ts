@@ -21,10 +21,9 @@ function getFileCallerURL(): string {
 export const render = (file: string, data?: Record<string, any>): ViewResponse => {
   const callerFile = getFileCallerURL();
 
-  if (file.startsWith('./') || file.startsWith('../')) {
-    file = `${callerFile}/${file};`
+  if (file.startsWith('./')) {
+    file = `${callerFile}/../${file.slice(2)}`;
   }
-  console.log(file);
 
   return new ViewResponse(file, data);
 };
