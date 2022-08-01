@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 
-import { execSync, fork } from 'node:child_process';
 import chokidar from 'chokidar';
+import { exec, fork } from 'node:child_process';
 
 const runCommand = (command: string) => {
   try {
-    execSync(command, {
-      stdio: 'pipe',
+    exec(command, (error, stdout) => {
+      console.log(stdout);
+
+      if (error) {
+        console.error(error);
+      }
     });
 
     return true;
