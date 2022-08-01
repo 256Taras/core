@@ -23,12 +23,16 @@ export const warn = (data: string, type: string = 'warning') => {
     time,
   )} `;
 
-  const left = `${timestamp} ${chalk.hex(yellowHex).bold(data)}`;
+  const maxLength = Math.trunc(process.stdout.columns / 2);
+  const main = data.length > maxLength ? data.slice(0, maxLength) + '...' : data;
+  const outputLength = (day + time + main + type).length + 18;
+
+  const left = `${timestamp} ${chalk.hex(yellowHex).bold(main)}`;
   const right = chalk.gray(type.toUpperCase());
 
   const dots = chalk.gray(
     '.'.repeat(
-      process.stdout.columns - timestamp.length - data.length - type.length - 2,
+      process.stdout.columns - outputLength,
     ),
   );
 
