@@ -61,10 +61,12 @@ export class Server {
 
     const tempPath = 'storage/temp/server';
 
-    process.on('SIGINT', () => {
-      unlinkSync(tempPath);
+    (['SIGINT', 'SIGTERM', 'SIGHUP'] as NodeJS.Signals[]).map((signal) => {
+      process.on(signal, () => {
+        unlinkSync(tempPath);
 
-      process.exit();
+        process.exit();
+      });
     });
 
     watchFile('.env', () => {
