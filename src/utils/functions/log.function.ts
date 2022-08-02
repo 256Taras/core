@@ -28,11 +28,7 @@ export const log = (data: string, type: string = 'info') => {
   const left = `${timestamp} ${chalk.white.bold(main)}`;
   const right = chalk.gray(type.toUpperCase());
 
-  const dots = chalk.gray(
-    '.'.repeat(
-      process.stdout.columns - outputLength,
-    ),
-  );
+  const dots = chalk.gray('.'.repeat(process.stdout.columns - outputLength));
 
   console.log(left, dots, right);
 };

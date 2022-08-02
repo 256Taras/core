@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import chokidar from 'chokidar';
 import { execSync, fork } from 'node:child_process';
 
@@ -27,10 +26,7 @@ switch (command) {
     });
 
     const processOptions = {
-      execArgv: [
-        '--experimental-specifier-resolution=node',
-        '--no-warnings',
-      ],
+      execArgv: ['--experimental-specifier-resolution=node', '--no-warnings'],
     };
 
     let child = fork(file, processOptions);
@@ -51,10 +47,7 @@ switch (command) {
     let ctrlC = false;
 
     process.stdin.on('data', (data) => {
-      const key = data.toString()
-        .trim()
-        .toLowerCase()
-        .charCodeAt(0);
+      const key = data.toString().trim().toLowerCase().charCodeAt(0);
 
       buffer += data.toString();
 

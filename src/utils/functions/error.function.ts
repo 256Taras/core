@@ -17,9 +17,7 @@ export const error = (data: string, type: string = 'error') => {
     hour12: true,
   });
 
-  const timestamp = `${chalk.red.bold('$')} ${chalk.gray(day)} ${chalk.gray(
-    time,
-  )} `;
+  const timestamp = `${chalk.red.bold('$')} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
   const maxLength = Math.trunc(process.stdout.columns / 2);
   const main = data.length > maxLength ? data.slice(0, maxLength) + '...' : data;
@@ -28,11 +26,7 @@ export const error = (data: string, type: string = 'error') => {
   const left = `${timestamp} ${chalk.red.bold(main)}`;
   const right = chalk.gray(type.toUpperCase());
 
-  const dots = chalk.gray(
-    '.'.repeat(
-      process.stdout.columns - outputLength,
-    ),
-  );
+  const dots = chalk.gray('.'.repeat(process.stdout.columns - outputLength));
 
   console.error(left, dots, right);
 };

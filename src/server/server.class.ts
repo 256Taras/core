@@ -62,13 +62,15 @@ export class Server {
 
     const tempPath = 'storage/temp/server';
 
-    (['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'] as (NodeJS.Signals | 'exit')[]).map((signal) => {
-      process.on(signal, () => {
-        unlinkSync(tempPath);
+    (['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'] as (NodeJS.Signals | 'exit')[]).map(
+      (signal) => {
+        process.on(signal, () => {
+          unlinkSync(tempPath);
 
-        process.exit();
-      });
-    });
+          process.exit();
+        });
+      },
+    );
 
     watchFile('.env', () => {
       log('Environment variables changed. Restart server to reflect changes');

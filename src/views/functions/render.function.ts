@@ -11,12 +11,12 @@ function getFileCallerURL(): string {
 
   let filePath: string = '';
 
-  if (result && (result.length > 1)) {
+  if (result && result.length > 1) {
     filePath = result[1];
   }
 
   return fileURLToPath(filePath);
-} 
+}
 
 export const render = (file: string, data?: Record<string, any>): ViewResponse => {
   const callerFile = getFileCallerURL();
