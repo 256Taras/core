@@ -23,7 +23,7 @@
     ".": "./dist/module.js"
   },
   "bin": {
-    "nucleon": "dist/console/console.js"
+    "nucleon": "dist/bin/console.js"
   },
   "scripts": {
     "build": "tsc",
