@@ -4,6 +4,7 @@ import { Method } from '../http/enums/method.enum';
 import { Injector } from '../injector/injector.class';
 import { Route } from '../routing/route.class';
 import { Router } from '../routing/router.class';
+import { info } from '../utils/functions/info.function';
 import { log } from '../utils/functions/log.function';
 import { warn } from '../utils/functions/warn.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
@@ -61,7 +62,7 @@ export class Server {
 
     const tempPath = 'storage/temp/server';
 
-    (['SIGINT', 'SIGTERM', 'SIGHUP'] as NodeJS.Signals[]).map((signal) => {
+    (['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'] as (NodeJS.Signals | 'exit')[]).map((signal) => {
       process.on(signal, () => {
         unlinkSync(tempPath);
 
@@ -81,6 +82,8 @@ export class Server {
 
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Nucleon development server is running...');
+
+      info('Nucleon server started [press q or esc to quit]');
 
       exec(
         `${netPrograms[process.platform as keyof object]} http://localhost:${port}`,
