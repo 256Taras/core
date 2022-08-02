@@ -1,16 +1,12 @@
 #!/usr/bin/env node
 
 import chokidar from 'chokidar';
-import { exec, fork } from 'node:child_process';
+import { execSync, fork } from 'node:child_process';
 
 const runCommand = (command: string) => {
   try {
-    exec(command, (error, stdout) => {
-      console.log(stdout);
-
-      if (error) {
-        console.error(error);
-      }
+    execSync(command, {
+      stdio: 'pipe',
     });
 
     return true;
@@ -25,7 +21,7 @@ switch (command) {
   case 'start:dev':
     const file = 'dist/main.js';
 
-    const watcher = chokidar.watch('dist', {
+    const watcher = chokidar.watch(['dist', 'node_modules/@nucleonjs/core/dist'], {
       ignoreInitial: true,
       cwd: process.cwd(),
     });
@@ -43,21 +39,38 @@ switch (command) {
       child.kill();
 
       child = fork(file, processOptions);
+
+      runCommand('copyfiles -u 1 src/**/*.html dist/');
     });
 
-    process.stdin.resume();
-
-    process.stdin.setEncoding('utf8');
+    if (process.stdin.setRawMode) {
+      process.stdin.setRawMode(true);
+    }
 
     let buffer = '';
+    let ctrlC = false;
 
     process.stdin.on('data', (data) => {
-      const key = data.toString().charCodeAt(0);
+      const key = data.toString()
+        .trim()
+        .toLowerCase()
+        .charCodeAt(0);
 
       buffer += data.toString();
 
-      if (key === 10 || key === 13 || buffer === '.exit') {
-        process.exit(0);
+      if (key === 99) {
+        if (ctrlC) {
+          process.exit();
+        }
+
+        ctrlC = true;
+      }
+
+      if ([13, 27, 101, 108, 113, NaN].includes(key) || buffer === '.exit') {
+        child.kill();
+
+        process.kill(process.pid, 'SIGINT');
+        process.exit();
       }
     });
 
