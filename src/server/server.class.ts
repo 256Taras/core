@@ -1,8 +1,6 @@
 import { env } from '../config/env.function';
 import { Handler } from '../handler/handler.class';
-import { Method } from '../http/enums/method.enum';
 import { Injector } from '../injector/injector.class';
-import { Route } from '../routing/route.class';
 import { Router } from '../routing/router.class';
 import { error } from '../utils/functions/error.function';
 import { info } from '../utils/functions/info.function';
@@ -171,41 +169,7 @@ export class Server {
   }
 
   private registerRoutes(server: Express): void {
-    const routes = Router.allRoutes();
-
-    routes.map((route: Route) => {
-      switch (route.method) {
-        case Method.Delete:
-          server.delete(route.url, route.action);
-
-          break;
-
-        case Method.Get:
-          server.get(route.url, route.action);
-
-          break;
-
-        case Method.Options:
-          server.options(route.url, route.action);
-
-          break;
-
-        case Method.Patch:
-          server.patch(route.url, route.action);
-
-          break;
-
-        case Method.Post:
-          server.post(route.url, route.action);
-
-          break;
-
-        case Method.Put:
-          server.put(route.url, route.action);
-
-          break;
-      }
-    });
+    Router.registerRoutes(server);
 
     server.all('*', Handler.handleNotFound);
   }

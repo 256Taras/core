@@ -8,7 +8,7 @@ import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { View } from '../views/view.class';
 import { Route } from './route.class';
-import { Request, Response } from 'express';
+import { Express, Request, Response } from 'express';
 
 export class Router {
   private static routes: Route[] = [];
@@ -100,7 +100,39 @@ export class Router {
     }
   }
 
-  public static allRoutes(): Route[] {
-    return this.routes;
+  public static registerRoutes(server: Express): void {
+    this.routes.map((route: Route) => {
+      switch (route.method) {
+        case Method.Delete:
+          server.delete(route.url, route.action);
+
+          break;
+
+        case Method.Get:
+          server.get(route.url, route.action);
+
+          break;
+
+        case Method.Options:
+          server.options(route.url, route.action);
+
+          break;
+
+        case Method.Patch:
+          server.patch(route.url, route.action);
+
+          break;
+
+        case Method.Post:
+          server.post(route.url, route.action);
+
+          break;
+
+        case Method.Put:
+          server.put(route.url, route.action);
+
+          break;
+      }
+    });
   }
 }
