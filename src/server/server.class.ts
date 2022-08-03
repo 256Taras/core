@@ -7,6 +7,7 @@ import { Router } from '../routing/router.class';
 import { error } from '../utils/functions/error.function';
 import { info } from '../utils/functions/info.function';
 import { log } from '../utils/functions/log.function';
+import { runCommand } from '../utils/functions/run-command.function';
 import { warn } from '../utils/functions/warn.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { View } from '../views/view.class';
@@ -22,7 +23,6 @@ import express, { Express } from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
-import { exec } from 'node:child_process';
 import { existsSync, promises, unlinkSync, watchFile, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -33,8 +33,8 @@ export class Server {
 
   private modules: Module[] = [];
 
-  constructor(options: ServerOptions) {
-    const { modules } = options;
+  constructor(private options: ServerOptions) {
+    const { modules } = this.options;
 
     modules.map((module: Constructor<Module>) => {
       const instance = Injector.resolve<Module>(module);
@@ -83,15 +83,17 @@ export class Server {
 
       info('Nucleon server started [press q or esc to quit]');
 
-      const netPrograms = {
+      const browserAliases = {
         darwin: 'open',
         linux: 'sensible-browser',
         win32: 'explorer',
       };
 
-      exec(
-        `${netPrograms[process.platform as keyof object]} http://localhost:${port}`,
-      );
+      if (this.options.config.openBrowser) {
+        runCommand(
+          `${browserAliases[process.platform as keyof object]} http://localhost:${port}`,
+        );
+      }
     }
   }
 
