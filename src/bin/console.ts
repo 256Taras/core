@@ -3,6 +3,7 @@ import { info } from '../utils/functions/info.function.js';
 import { runCommand } from '../utils/functions/run-command.function.js';
 import chokidar from 'chokidar';
 import { fork } from 'node:child_process';
+import { unlinkSync } from 'node:fs';
 
 const command = process.argv[2];
 
@@ -56,6 +57,10 @@ switch (command) {
 
       if ([...Object.values(exitKeys)].includes(key)) {
         info(`Server stopped [press ${process.platform === 'darwin' ? 'command' : 'ctrl'}+c to exit]`);
+
+        const tempPath = 'storage/temp/server';
+
+        unlinkSync(tempPath);
 
         child.kill();
 
