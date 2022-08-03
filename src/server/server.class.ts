@@ -25,6 +25,7 @@ import methodOverride from 'method-override';
 import { exec } from 'node:child_process';
 import { existsSync, promises, unlinkSync, watchFile, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { tmpdir } from 'node:os';
 import semver from 'semver';
 
 export class Server {
@@ -61,7 +62,11 @@ export class Server {
       process.exit(1);
     }
 
-    const tempPath = 'storage/temp/server';
+    watchFile('.env', () => {
+      log('Environment variables changed. Restart server to reflect changes');
+    });
+
+    const tempPath = `${tmpdir()}/nucleon`;
 
     (['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'] as (NodeJS.Signals | 'exit')[]).map(
       (signal) => {
@@ -73,20 +78,16 @@ export class Server {
       },
     );
 
-    watchFile('.env', () => {
-      log('Environment variables changed. Restart server to reflect changes');
-    });
-
-    const netPrograms = {
-      darwin: 'open',
-      linux: 'sensible-browser',
-      win32: 'explorer',
-    };
-
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Nucleon development server is running...');
 
       info('Nucleon server started [press q or esc to quit]');
+
+      const netPrograms = {
+        darwin: 'open',
+        linux: 'sensible-browser',
+        win32: 'explorer',
+      };
 
       exec(
         `${netPrograms[process.platform as keyof object]} http://localhost:${port}`,

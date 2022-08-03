@@ -4,6 +4,7 @@ import { runCommand } from '../utils/functions/run-command.function.js';
 import chokidar from 'chokidar';
 import { fork } from 'node:child_process';
 import { unlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 
 const command = process.argv[2];
 
@@ -58,7 +59,7 @@ switch (command) {
       if ([...Object.values(exitKeys)].includes(key)) {
         info(`Server stopped [press ${process.platform === 'darwin' ? 'command' : 'ctrl'}+c to exit]`);
 
-        const tempPath = 'storage/temp/server';
+        const tempPath = `${tmpdir()}/nucleon`;
 
         unlinkSync(tempPath);
 
