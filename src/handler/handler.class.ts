@@ -79,10 +79,13 @@ export class Handler {
       })
       : null;
 
+    const customViewTemplate = 'views/errors/500';
+    const viewFile = existsSync(customViewTemplate) ? customViewTemplate : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
+
     View.render(
       request,
       response,
-      `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`,
+      viewFile,
       {
         codeSnippet: (src && isAppFile) ? codeSnippet : null,
         method: request.method.toUpperCase(),
@@ -109,10 +112,13 @@ export class Handler {
       return;
     }
 
+    const customViewTemplate = 'views/errors/404';
+    const viewFile = existsSync(customViewTemplate) ? customViewTemplate : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+
     View.render(
       request,
       response,
-      `${fileURLToPath(import.meta.url)}/../../../assets/views/http`,
+      viewFile,
       data,
     );
   }
@@ -131,10 +137,13 @@ export class Handler {
       return;
     }
 
+    const customViewTemplate = 'views/errors/419';
+    const viewFile = existsSync(customViewTemplate) ? customViewTemplate : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+
     View.render(
       request,
       response,
-      `${fileURLToPath(import.meta.url)}/../../../assets/views/http`,
+      viewFile,
       data,
     );
   }
