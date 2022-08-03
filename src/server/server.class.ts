@@ -89,7 +89,7 @@ export class Server {
         win32: 'explorer',
       };
 
-      if (this.options.config.openBrowser) {
+      if (this.options.config.openBrowser ?? true) {
         runCommand(
           `${browserAliases[process.platform as keyof object]} http://localhost:${port}`,
         );

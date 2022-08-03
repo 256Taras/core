@@ -3,7 +3,7 @@ import { Module } from './module.interface';
 
 export interface ServerOptions {
   config: {
-    openBrowser: boolean;
+    openBrowser?: boolean;
   },
   modules: Constructor<Module>[];
 }
