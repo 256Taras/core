@@ -21,7 +21,12 @@ switch (command) {
   case 'start:dev':
     const file = 'dist/main.js';
 
-    const watcher = chokidar.watch(['dist', 'node_modules/@nucleonjs/core/dist'], {
+    const sourceWatcher = chokidar.watch(['dist', 'node_modules/@nucleonjs/core/dist'], {
+      ignoreInitial: true,
+      cwd: process.cwd(),
+    });
+
+    const viewWatcher = chokidar.watch(['src/**/*.html'], {
       ignoreInitial: true,
       cwd: process.cwd(),
     });
@@ -32,11 +37,15 @@ switch (command) {
 
     let child = fork(file, processOptions);
 
-    watcher.on('all', () => {
+    sourceWatcher.on('all', () => {
       child.kill();
 
       child = fork(file, processOptions);
 
+      runCommand('copyfiles -u 1 src/**/*.html dist/');
+    });
+
+    viewWatcher.on('all', () => {
       runCommand('copyfiles -u 1 src/**/*.html dist/');
     });
 
