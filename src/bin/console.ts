@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { info } from '../utils/functions/info.function.js';
 import chokidar from 'chokidar';
 import { execSync, fork } from 'node:child_process';
 
@@ -43,27 +44,17 @@ switch (command) {
       process.stdin.setRawMode(true);
     }
 
-    let buffer = '';
-    let ctrlC = false;
+    process.stdin.resume();
 
     process.stdin.on('data', (data) => {
       const key = data.toString().trim().toLowerCase().charCodeAt(0);
 
-      buffer += data.toString();
+      if ([13, 27, 101, 108, 113, NaN].includes(key)) {
+        info(`Server stopped [press ${process.platform === 'darwin' ? 'command' : 'ctrl'}+c to exit]`);
 
-      if (key === 99) {
-        if (ctrlC) {
-          process.exit();
-        }
-
-        ctrlC = true;
-      }
-
-      if ([13, 27, 101, 108, 113, NaN].includes(key) || buffer === '.exit') {
         child.kill();
 
         process.kill(process.pid, 'SIGINT');
-        process.exit();
       }
     });
 
