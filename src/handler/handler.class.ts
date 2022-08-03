@@ -75,27 +75,24 @@ export class Handler {
 
     const codeSnippet = src
       ? highlighter.codeToHtml(src, {
-        lang: 'ts',
-      })
+          lang: 'ts',
+        })
       : null;
 
     const customViewTemplate = 'views/errors/500';
-    const viewFile = existsSync(customViewTemplate) ? customViewTemplate : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
+    const viewFile = existsSync(customViewTemplate)
+      ? customViewTemplate
+      : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
 
-    View.render(
-      request,
-      response,
-      viewFile,
-      {
-        codeSnippet: (src && isAppFile) ? codeSnippet : null,
-        method: request.method.toUpperCase(),
-        route: request.url,
-        type: exception.constructor.name,
-        caller,
-        file,
-        message,
-      },
-    );
+    View.render(request, response, viewFile, {
+      codeSnippet: src && isAppFile ? codeSnippet : null,
+      method: request.method.toUpperCase(),
+      route: request.url,
+      type: exception.constructor.name,
+      caller,
+      file,
+      message,
+    });
   }
 
   public static handleNotFound(request: Request, response: Response): void {
@@ -113,14 +110,11 @@ export class Handler {
     }
 
     const customViewTemplate = 'views/errors/404';
-    const viewFile = existsSync(customViewTemplate) ? customViewTemplate : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+    const viewFile = existsSync(customViewTemplate)
+      ? customViewTemplate
+      : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    View.render(
-      request,
-      response,
-      viewFile,
-      data,
-    );
+    View.render(request, response, viewFile, data);
   }
 
   public static handleInvalidToken(request: Request, response: Response): void {
@@ -138,13 +132,10 @@ export class Handler {
     }
 
     const customViewTemplate = 'views/errors/419';
-    const viewFile = existsSync(customViewTemplate) ? customViewTemplate : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+    const viewFile = existsSync(customViewTemplate)
+      ? customViewTemplate
+      : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    View.render(
-      request,
-      response,
-      viewFile,
-      data,
-    );
+    View.render(request, response, viewFile, data);
   }
 }

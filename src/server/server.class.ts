@@ -24,8 +24,8 @@ import helmet from 'helmet';
 import methodOverride from 'method-override';
 import { exec } from 'node:child_process';
 import { existsSync, promises, unlinkSync, watchFile, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import semver from 'semver';
 
 export class Server {

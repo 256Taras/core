@@ -12,10 +12,13 @@ switch (command) {
   case 'start:dev':
     const file = 'dist/main.js';
 
-    const sourceWatcher = chokidar.watch(['dist', 'node_modules/@nucleonjs/core/dist'], {
-      ignoreInitial: true,
-      cwd: process.cwd(),
-    });
+    const sourceWatcher = chokidar.watch(
+      ['dist', 'node_modules/@nucleonjs/core/dist'],
+      {
+        ignoreInitial: true,
+        cwd: process.cwd(),
+      },
+    );
 
     const viewWatcher = chokidar.watch(['src/**/*.html'], {
       ignoreInitial: true,
@@ -57,7 +60,11 @@ switch (command) {
       const key = data.toString().trim().toLowerCase().charCodeAt(0);
 
       if ([...Object.values(exitKeys)].includes(key)) {
-        info(`Server stopped [press ${process.platform === 'darwin' ? 'command' : 'ctrl'}+c to exit]`);
+        info(
+          `Server stopped [press ${
+            process.platform === 'darwin' ? 'command' : 'ctrl'
+          }+c to exit]`,
+        );
 
         const tempPath = `${tmpdir()}/nucleon`;
 
