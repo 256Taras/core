@@ -10,37 +10,47 @@ const command = process.argv[2];
 
 switch (command) {
   case 'start:dev':
-    const file = 'dist/main.js';
+    const entryFile = 'dist/main.js';
+
+    const watcherOptions = {
+      ignoreInitial: true,
+      cwd: process.cwd(),
+    };
 
     const sourceWatcher = chokidar.watch(
       ['dist', 'node_modules/@nucleonjs/core/dist'],
-      {
-        ignoreInitial: true,
-        cwd: process.cwd(),
-      },
+      watcherOptions,
     );
 
-    const viewWatcher = chokidar.watch(['src/**/*.html'], {
-      ignoreInitial: true,
-      cwd: process.cwd(),
-    });
+    const viewWatcher = chokidar.watch(['src/**/*.html'], watcherOptions);
+    const envWatcher = chokidar.watch(['.env'], watcherOptions);
 
     const processOptions = {
       execArgv: ['--experimental-specifier-resolution=node', '--no-warnings'],
     };
 
-    let child = fork(file, processOptions);
+    let child = fork(entryFile, processOptions);
 
-    sourceWatcher.on('all', () => {
+    const restartProcess = () => {
       child.kill();
 
-      child = fork(file, processOptions);
+      child = fork(entryFile, processOptions);
+    };
+
+    sourceWatcher.on('all', () => {
+      restartProcess();
 
       runCommand('copyfiles -u 1 src/**/*.html dist/');
     });
 
     viewWatcher.on('all', () => {
       runCommand('copyfiles -u 1 src/**/*.html dist/');
+    });
+
+    envWatcher.on('all', () => {
+      info('Environment settings changed. Restarting the server...');
+
+      restartProcess();
     });
 
     if (process.stdin.setRawMode) {

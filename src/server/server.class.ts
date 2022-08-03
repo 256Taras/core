@@ -23,7 +23,7 @@ import express, { Express } from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
-import { existsSync, promises, unlinkSync, watchFile, writeFileSync } from 'node:fs';
+import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import semver from 'semver';
@@ -62,10 +62,6 @@ export class Server {
       process.exit(1);
     }
 
-    watchFile('.env', () => {
-      log('Environment variables changed. Restart server to reflect changes');
-    });
-
     const tempPath = `${tmpdir()}/nucleon`;
 
     (['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'] as (NodeJS.Signals | 'exit')[]).map(
@@ -89,7 +85,7 @@ export class Server {
         win32: 'explorer',
       };
 
-      if (this.options.config.openBrowser ?? true) {
+      if (this.options.config?.openBrowser ?? true) {
         runCommand(
           `${browserAliases[process.platform as keyof object]} http://localhost:${port}`,
         );
