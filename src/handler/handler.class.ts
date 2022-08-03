@@ -55,9 +55,10 @@ export class Handler {
 
     const path = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
 
-    const src = existsSync(path) ? readFileSync(path).toString() : '';
+    const src = existsSync(path) ? readFileSync(path).toString() : null;
+    const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 
-    if (!file.includes('node_modules')) {
+    if (isAppFile) {
       file = file.replace(/.*?dist./, `src/`);
       file = file.replace('.js', '.ts');
     } else {
@@ -72,16 +73,18 @@ export class Handler {
       theme: 'one-dark-pro',
     });
 
-    const codeSnippet = highlighter.codeToHtml(src, {
-      lang: 'ts',
-    });
+    const codeSnippet = src
+      ? highlighter.codeToHtml(src, {
+        lang: 'ts',
+      })
+      : null;
 
     View.render(
       request,
       response,
       `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`,
       {
-        codeSnippet: src.length > 0 ? codeSnippet : null,
+        codeSnippet: (src && isAppFile) ? codeSnippet : null,
         method: request.method.toUpperCase(),
         route: request.url,
         type: exception.constructor.name,

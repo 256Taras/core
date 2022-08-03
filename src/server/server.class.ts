@@ -4,6 +4,7 @@ import { Method } from '../http/enums/method.enum';
 import { Injector } from '../injector/injector.class';
 import { Route } from '../routing/route.class';
 import { Router } from '../routing/router.class';
+import { error } from '../utils/functions/error.function';
 import { info } from '../utils/functions/info.function';
 import { log } from '../utils/functions/log.function';
 import { warn } from '../utils/functions/warn.function';
@@ -112,6 +113,25 @@ export class Server {
 
     server.use(express.static('public'));
 
+    server.use((request, _response, next) => {
+      log(`${request.method} ${request.url}`, 'request');
+
+      process.on('uncaughtException', (exception: any) => {
+        if (exception !== Object(exception)) {
+          return;
+        }
+
+        const message =
+          exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
+
+        error(message, 'uncaught exception');
+
+        process.exit(1);
+      });
+
+      next();
+    });
+
     server.use(
       methodOverride((request) => {
         if (request.body && '_method' in request.body) {
@@ -146,12 +166,6 @@ export class Server {
 
         next();
       });
-    });
-
-    server.use((request, _response, next) => {
-      log(`${request.method} ${request.url}`, 'request');
-
-      next();
     });
 
     server.use(Handler.handleException);
