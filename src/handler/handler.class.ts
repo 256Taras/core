@@ -22,7 +22,7 @@ export class Handler {
     error(message, 'exception');
 
     const data = {
-      status: 500,
+      statusCode: 500,
       message: 'Server exception',
     };
 
@@ -99,7 +99,7 @@ export class Handler {
     response.status(404);
 
     const data = {
-      status: 404,
+      statusCode: 404,
       message: 'Not Found',
     };
 
@@ -121,7 +121,7 @@ export class Handler {
     response.status(419);
 
     const data = {
-      status: 419,
+      statusCode: 419,
       message: 'Invalid Token',
     };
 
