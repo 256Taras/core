@@ -1,19 +1,8 @@
 #!/usr/bin/env node
 import { info } from '../utils/functions/info.function.js';
+import { runCommand } from '../utils/functions/run-command.function.js';
 import chokidar from 'chokidar';
-import { execSync, fork } from 'node:child_process';
-
-const runCommand = (command: string) => {
-  try {
-    execSync(command, {
-      stdio: 'pipe',
-    });
-
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+import { fork } from 'node:child_process';
 
 const command = process.argv[2];
 
@@ -55,10 +44,17 @@ switch (command) {
 
     process.stdin.resume();
 
+    const exitKeys = {
+      enter: 13,
+      esc: 27,
+      q: 113,
+      any: NaN,
+    };
+
     process.stdin.on('data', (data) => {
       const key = data.toString().trim().toLowerCase().charCodeAt(0);
 
-      if ([13, 27, 101, 108, 113, NaN].includes(key)) {
+      if ([...Object.values(exitKeys)].includes(key)) {
         info(`Server stopped [press ${process.platform === 'darwin' ? 'command' : 'ctrl'}+c to exit]`);
 
         child.kill();
