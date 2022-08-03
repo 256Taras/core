@@ -29,7 +29,7 @@ import { fileURLToPath } from 'node:url';
 import semver from 'semver';
 
 export class Server {
-  private defaultPort: number = 8000;
+  private defaultPort = 8000;
 
   private modules: Module[] = [];
 
@@ -214,7 +214,7 @@ export class Server {
     server.all('*', Handler.handleNotFound);
   }
 
-  public async start(): Promise<void> {
+  public async start(port = env<number>('APP_PORT') ?? this.defaultPort): Promise<void> {
     dotenv.config({
       path: '.env',
     });
@@ -224,8 +224,6 @@ export class Server {
     this.configureServer(server);
     this.registerMiddleware(server);
     this.registerRoutes(server);
-
-    const port = env<number>('APP_PORT') ?? this.defaultPort;
 
     server.listen(port, () => {
       if (env<boolean>('APP_DEBUG')) {
