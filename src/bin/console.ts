@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { debounce } from '../utils/functions/debounce.function.js';
 import { info } from '../utils/functions/info.function.js';
 import { runCommand } from '../utils/functions/run-command.function.js';
 import chokidar from 'chokidar';
@@ -7,18 +8,6 @@ import { unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 
 const command = process.argv[2];
-
-const debounce = (callback: Function, timeout = 150) => {
-  let timer: NodeJS.Timeout;
-
-  return (...args: any[]) => {
-    clearTimeout(timer);
-
-    timer = setTimeout(() => {
-      callback.apply(this, args);
-    }, timeout);
-  };
-};
 
 switch (command) {
   case 'start:dev':

@@ -16,6 +16,7 @@ export * from './routing/route.namespace';
 export * from './server/functions/create-server.function';
 export * from './server/interfaces/module.interface';
 export * from './server/server.class';
+export * from './utils/functions/debounce.function';
 export * from './utils/functions/error.function';
 export * from './utils/functions/info.function';
 export * from './utils/functions/log.function';
