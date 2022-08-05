@@ -18,7 +18,12 @@ switch (command) {
     };
 
     const sourceWatcher = chokidar.watch(
-      ['dist', 'node_modules/@nucleonjs/core/dist'],
+      'dist',
+      watcherOptions,
+    );
+
+    const internalWatcher = chokidar.watch(
+      'node_modules/@nucleonjs/core/dist',
       watcherOptions,
     );
 
@@ -32,6 +37,8 @@ switch (command) {
     let child = fork(entryFile, processOptions);
 
     const restartProcess = () => {
+      info('Restarting the server...');
+
       child.kill();
 
       child = fork(entryFile, processOptions);
@@ -43,15 +50,13 @@ switch (command) {
       runCommand('copyfiles -u 1 src/**/*.html dist/');
     });
 
+    internalWatcher.on('change', restartProcess);
+
     viewWatcher.on('all', () => {
       runCommand('copyfiles -u 1 src/**/*.html dist/');
     });
 
-    envWatcher.on('all', () => {
-      info('Environment settings changed. Restarting the server...');
-
-      restartProcess();
-    });
+    envWatcher.on('all', restartProcess);
 
     if (process.stdin.setRawMode) {
       process.stdin.setRawMode(true);
@@ -82,7 +87,7 @@ switch (command) {
 
         child.kill();
 
-        process.kill(process.pid, 'SIGINT');
+        process.exit();
       }
     });
 
