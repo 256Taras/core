@@ -85,7 +85,9 @@ export class Server {
 
       if (this.options.config?.openBrowser ?? true) {
         runCommand(
-          `${browserAliases[process.platform as keyof object]} http://localhost:${port}`,
+          `${
+            browserAliases[process.platform as keyof object]
+          } http://localhost:${port}`,
         );
       }
     }
@@ -174,7 +176,9 @@ export class Server {
     server.all('*', Handler.handleNotFound);
   }
 
-  public async start(port = env<number>('APP_PORT') ?? this.defaultPort): Promise<void> {
+  public async start(
+    port = env<number>('APP_PORT') ?? this.defaultPort,
+  ): Promise<void> {
     dotenv.config({
       path: '.env',
     });

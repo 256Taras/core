@@ -4,6 +4,6 @@ import { Module } from './module.interface';
 export interface ServerOptions {
   config?: {
     openBrowser?: boolean;
-  },
+  };
   modules: Constructor<Module>[];
 }
