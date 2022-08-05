@@ -3,14 +3,14 @@ import { Method } from './enums/method.enum';
 export class HttpClient {
   private async fetch(
     url: string,
-    data: Record<string, any>,
+    data: BodyInit | null,
     headers: Record<string, string>,
     method: Method,
   ): Promise<any> {
     const response: Response = await fetch(url, {
       method,
       headers,
-      data,
+      body: data,
     });
 
     return response.json();
@@ -18,7 +18,7 @@ export class HttpClient {
 
   public async delete(
     url: string,
-    data: Record<string, any> = {},
+    data: BodyInit | null = null,
     headers: Record<string, string> = {},
   ): Promise<any> {
     const response = await this.fetch(url, data, headers, Method.Delete);
@@ -28,7 +28,7 @@ export class HttpClient {
 
   public async get(
     url: string,
-    data: Record<string, any> = {},
+    data: BodyInit | null = null,
     headers: Record<string, string> = {},
   ): Promise<any> {
     const response = await this.fetch(url, data, headers, Method.Get);
@@ -38,7 +38,7 @@ export class HttpClient {
 
   public async options(
     url: string,
-    data: Record<string, any> = {},
+    data: BodyInit | null = null,
     headers: Record<string, string> = {},
   ): Promise<any> {
     const response = await this.fetch(url, data, headers, Method.Options);
@@ -48,7 +48,7 @@ export class HttpClient {
 
   public async patch(
     url: string,
-    data: Record<string, any> = {},
+    data: BodyInit | null = null,
     headers: Record<string, string> = {},
   ): Promise<any> {
     const response = await this.fetch(url, data, headers, Method.Patch);
@@ -58,7 +58,7 @@ export class HttpClient {
 
   public async post(
     url: string,
-    data: Record<string, any> = {},
+    data: BodyInit | null = null,
     headers: Record<string, string> = {},
   ): Promise<any> {
     const response = await this.fetch(url, data, headers, Method.Post);
@@ -68,7 +68,7 @@ export class HttpClient {
 
   public async put(
     url: string,
-    data: Record<string, any> = {},
+    data: BodyInit | null = null,
     headers: Record<string, string> = {},
   ): Promise<any> {
     const response = await this.fetch(url, data, headers, Method.Put);
