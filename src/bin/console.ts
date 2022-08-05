@@ -8,6 +8,18 @@ import { tmpdir } from 'node:os';
 
 const command = process.argv[2];
 
+const debounce = (callback: Function, timeout = 150) => {
+  let timer: NodeJS.Timeout;
+
+  return (...args: any[]) => {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      callback.apply(this, args);
+    }, timeout);
+  };
+};
+
 switch (command) {
   case 'start:dev':
     const entryFile = 'dist/main.js';
@@ -36,13 +48,13 @@ switch (command) {
 
     let child = fork(entryFile, processOptions);
 
-    const restartProcess = () => {
+    const restartProcess = debounce(() => {
       info('Restarting the server...');
 
       child.kill();
 
       child = fork(entryFile, processOptions);
-    };
+    });
 
     sourceWatcher.on('all', () => {
       restartProcess();
