@@ -17,7 +17,7 @@
     "allowSyntheticDefaultImports": true,
     "lib": [
       "ES2022",
-      "DOM.Iterable"
+      "DOM"
     ]
   },
   "include": [
