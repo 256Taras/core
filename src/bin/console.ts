@@ -1,98 +1,32 @@
 #!/usr/bin/env node
-import { debounce } from '../utils/functions/debounce.function.js';
-import { info } from '../utils/functions/info.function.js';
-import { runCommand } from '../utils/functions/run-command.function.js';
-import { watch } from 'chokidar';
-import { fork } from 'node:child_process';
-import { unlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { error } from '../utils/functions/error.function.js';
+import { Constructor } from '../utils/interfaces/constructor.interface.js';
+import { StartDev } from './commands/start-dev.command.js';
+import { StartProd } from './commands/start-prod.command.js';
+import { Command } from './interfaces/command.interface.js';
 
-const command = process.argv[2];
+const commands: Constructor<Command>[] = [StartDev, StartProd];
 
-switch (command) {
-  case 'start:dev':
-    const entryFile = 'dist/main.js';
+commands.map((command: Constructor<Command>) => {
+  const instance: Command = new command();
 
-    const watcherOptions = {
-      ignoreInitial: true,
-      cwd: process.cwd(),
-    };
+  if (instance.signature === process.argv[2]) {
+    const requiredArguments = instance.parameters ?? [];
 
-    const sourceWatcher = watch('dist', watcherOptions);
+    const parameters: string[] = [];
 
-    const internalWatcher = watch(
-      'node_modules/@nucleonjs/core/dist',
-      watcherOptions,
-    );
+    requiredArguments.map((argument: string, index: number) => {
+      const resolved = process.argv[index + 3];
 
-    const viewWatcher = watch(['src/**/*.html'], watcherOptions);
-    const envWatcher = watch(['.env'], watcherOptions);
+      parameters.push(resolved);
 
-    const processOptions = {
-      execArgv: ['--experimental-specifier-resolution=node', '--no-warnings'],
-    };
+      if (!resolved) {
+        error(`Parameter '${argument}' is required`);
 
-    let child = fork(entryFile, processOptions);
-
-    const restartProcess = debounce(() => {
-      info('Restarting the server...');
-
-      child.kill();
-
-      child = fork(entryFile, processOptions);
-    });
-
-    sourceWatcher.on('all', () => {
-      restartProcess();
-
-      runCommand('copyfiles -u 1 src/**/*.html dist/');
-    });
-
-    internalWatcher.on('change', restartProcess);
-
-    viewWatcher.on('all', () => {
-      runCommand('copyfiles -u 1 src/**/*.html dist/');
-    });
-
-    envWatcher.on('all', restartProcess);
-
-    if (process.stdin.setRawMode) {
-      process.stdin.setRawMode(true);
-    }
-
-    process.stdin.resume();
-
-    const exitKeys = {
-      enter: 13,
-      esc: 27,
-      q: 113,
-      any: NaN,
-    };
-
-    process.stdin.on('data', (data) => {
-      const key = data.toString().trim().toLowerCase().charCodeAt(0);
-
-      if ([...Object.values(exitKeys)].includes(key)) {
-        info(
-          `Server stopped [press ${
-            process.platform === 'darwin' ? 'command' : 'ctrl'
-          }+c to exit]`,
-        );
-
-        const tempPath = `${tmpdir()}/nucleon`;
-
-        unlinkSync(tempPath);
-
-        child.kill();
-
-        process.exit();
+        process.exit(1);
       }
     });
 
-    break;
-
-  case 'start:prod':
-    runCommand('node --experimental-specifier-resolution=node dist/main.js');
-
-    break;
-}
+    instance.handle(...parameters);
+  }
+});
