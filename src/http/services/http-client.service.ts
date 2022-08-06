@@ -1,5 +1,7 @@
-import { Method } from './enums/method.enum';
+import { Method } from '../enums/method.enum';
+import { Service } from '../../injector/decorators/service.decorator';
 
+@Service()
 export class HttpClient {
   private async fetch(
     url: string,

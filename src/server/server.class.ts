@@ -1,4 +1,4 @@
-import { env } from '../config/env.function';
+import { env } from '../utils/functions/env.function';
 import { Handler } from '../handler/handler.class';
 import { Injector } from '../injector/injector.class';
 import { Router } from '../routing/router.class';

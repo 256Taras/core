@@ -1,4 +1,4 @@
-import { env } from '../config/env.function';
+import { env } from '../utils/functions/env.function';
 import { error } from '../utils/functions/error.function';
 import { View } from '../views/view.class';
 import { Exception } from './exception.class';
