@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 export * from './constants';
 export * from './handler/exception.class';
 export * from './handler/functions/raise.function';
