@@ -1,17 +1,17 @@
 {
-  "name": "@nucleonjs/core",
+  "name": "@norther/core",
   "version": "1.0.0-alpha.1",
   "description": "The modern Node.js framework",
   "type": "module",
   "main": "./dist/module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nucleonjs/core.git"
+    "url": "git+https://github.com/northerjs/core.git"
   },
   "author": "Dominik Rajkowski",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nucleonjs/core/issues"
+    "url": "https://github.com/northerjs/core/issues"
   },
   "engines": {
     "node": ">=18.3.0"
@@ -23,7 +23,7 @@
     ".": "./dist/module.js"
   },
   "bin": {
-    "nucleon": "dist/bin/console.js"
+    "norther": "dist/bin/console.js"
   },
   "scripts": {
     "build": "tsc",

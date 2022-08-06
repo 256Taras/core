@@ -22,7 +22,7 @@ export class StartDev {
     const sourceWatcher = watch('dist', watcherOptions);
 
     const internalWatcher = watch(
-      'node_modules/@nucleonjs/core/dist',
+      'node_modules/@norther/core/dist',
       watcherOptions,
     );
 
@@ -80,7 +80,7 @@ export class StartDev {
           }+c to exit]`,
         );
 
-        const tempPath = `${tmpdir()}/nucleon`;
+        const tempPath = `${tmpdir()}/norther`;
 
         unlinkSync(tempPath);
 

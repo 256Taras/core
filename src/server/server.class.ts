@@ -50,7 +50,7 @@ export class Server {
 
     if (!semver.satisfies(process.version, requiredNodeVersion)) {
       warn(
-        `Nucleon requires Node.js version ${requiredNodeVersion.slice(
+        `Norther requires Node.js version ${requiredNodeVersion.slice(
           2,
         )} or greater`,
       );
@@ -60,7 +60,7 @@ export class Server {
       process.exit(1);
     }
 
-    const tempPath = `${tmpdir()}/nucleon`;
+    const tempPath = `${tmpdir()}/norther`;
 
     (['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'] as (NodeJS.Signals | 'exit')[]).map(
       (signal) => {
@@ -73,9 +73,9 @@ export class Server {
     );
 
     if (!existsSync(tempPath)) {
-      writeFileSync(tempPath, 'Nucleon development server is running...');
+      writeFileSync(tempPath, 'Norther development server is running...');
 
-      info('Nucleon server started [press q or esc to quit]');
+      info('Norther server started [press q or esc to quit]');
 
       const browserAliases = {
         darwin: 'open',
