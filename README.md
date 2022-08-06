@@ -24,4 +24,4 @@
 <!-- omit in toc -->
 ### 📓 Table of Contents
 
-[COMING SOON]
+**COMING SOON** - currently in development
