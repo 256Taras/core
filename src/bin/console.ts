@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import 'reflect-metadata';
 import { error } from '../utils/functions/error.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { StartDev } from './commands/start-dev.command.js';
@@ -8,10 +9,10 @@ import { Command } from './interfaces/command.interface.js';
 const commands: Constructor<Command>[] = [StartDev, StartProd];
 
 commands.map((command: Constructor<Command>) => {
-  const instance: Command = new command();
+  const name = Reflect.getMetadata('signature', command);
 
-  if (instance.signature === process.argv[2]) {
-    const requiredArguments = instance.parameters ?? [];
+  if (name === process.argv[2]) {
+    const requiredArguments = Reflect.getMetadata('parameters', command) ?? [];
 
     const parameters: string[] = [];
 
@@ -26,6 +27,8 @@ commands.map((command: Constructor<Command>) => {
         process.exit(1);
       }
     });
+
+    const instance: Command = new command();
 
     instance.handle(...parameters);
   }

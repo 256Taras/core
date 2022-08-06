@@ -8,10 +8,11 @@ interface Data {
 
 export const Command = (data: Data): ClassDecorator<any> => {
   return (target: Constructor) => {
-    return class extends target {
-      public readonly signature = data.signature;
+    const { signature, parameters } = data;
 
-      public readonly parameters = data.parameters ?? [];
-    };
+    Reflect.defineMetadata('signature', signature, target);
+    Reflect.defineMetadata('parameters', parameters, target);
+
+    return target;
   };
 };

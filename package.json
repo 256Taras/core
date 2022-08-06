@@ -23,7 +23,7 @@
     ".": "./dist/module.js"
   },
   "bin": {
-    "norther": "dist/bin/console"
+    "norther": "dist/bin/console.js"
   },
   "scripts": {
     "build": "tsc",
