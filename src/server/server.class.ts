@@ -125,7 +125,9 @@ export class Server {
 
         error(message, 'uncaught exception');
 
-        process.exit(1);
+        if (!env<boolean>('APP_DEBUG')) {
+          process.exit(1);
+        }
       });
 
       next();
