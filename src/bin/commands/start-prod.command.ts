@@ -9,6 +9,6 @@ export class StartProd {
   public handle(): void {
     info('Starting production server...');
 
-    runCommand('node --experimental-specifier-resolution=node dist/main.js');
+    runCommand('node --experimental-specifier-resolution=node dist/main.js', true);
   }
 };

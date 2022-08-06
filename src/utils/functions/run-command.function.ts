@@ -1,9 +1,9 @@
 import { execSync } from 'node:child_process';
 
-export const runCommand = (command: string) => {
+export const runCommand = (command: string, showOutput = false) => {
   try {
     execSync(command, {
-      stdio: 'pipe',
+      stdio: showOutput ? 'inherit' : 'pipe',
     });
 
     return true;
