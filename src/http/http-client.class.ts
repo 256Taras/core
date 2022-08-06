@@ -16,63 +16,63 @@ export class HttpClient {
     return response.json();
   }
 
-  public async delete(
+  public async delete<T = any>(
     url: string,
     data: BodyInit | null = null,
     headers: Record<string, string> = {},
-  ): Promise<any> {
+  ): Promise<T> {
     const response = await this.fetch(url, data, headers, Method.Delete);
 
-    return response;
+    return response as T;
   }
 
-  public async get(
+  public async get<T = any>(
     url: string,
     data: BodyInit | null = null,
     headers: Record<string, string> = {},
-  ): Promise<any> {
+  ): Promise<T> {
     const response = await this.fetch(url, data, headers, Method.Get);
 
-    return response;
+    return response as T;
   }
 
-  public async options(
+  public async options<T = any>(
     url: string,
     data: BodyInit | null = null,
     headers: Record<string, string> = {},
-  ): Promise<any> {
+  ): Promise<T> {
     const response = await this.fetch(url, data, headers, Method.Options);
 
-    return response;
+    return response as T;
   }
 
-  public async patch(
+  public async patch<T = any>(
     url: string,
     data: BodyInit | null = null,
     headers: Record<string, string> = {},
-  ): Promise<any> {
+  ): Promise<T> {
     const response = await this.fetch(url, data, headers, Method.Patch);
 
-    return response;
+    return response as T;
   }
 
-  public async post(
+  public async post<T = any>(
     url: string,
     data: BodyInit | null = null,
     headers: Record<string, string> = {},
-  ): Promise<any> {
+  ): Promise<T> {
     const response = await this.fetch(url, data, headers, Method.Post);
 
-    return response;
+    return response as T;
   }
 
-  public async put(
+  public async put<T = any>(
     url: string,
     data: BodyInit | null = null,
     headers: Record<string, string> = {},
-  ): Promise<any> {
+  ): Promise<T> {
     const response = await this.fetch(url, data, headers, Method.Put);
 
-    return response;
+    return response as T;
   }
 }
