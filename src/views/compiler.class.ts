@@ -198,7 +198,7 @@ export class Compiler {
   }
 
   private static parseMethodDirectives(html: string): string {
-    const matches = html.matchAll(/\[method '?([a-zA-z]*?)'?\]/g) ?? [];
+    const matches = html.matchAll(/\[(get|post|put|patch|delete|head|options)\]/g) ?? [];
 
     for (const match of matches) {
       html = html.replace(
