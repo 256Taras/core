@@ -1,14 +1,23 @@
 import { JsonResponse } from '../json-response.class';
 import { RedirectResponse } from '../redirect-response.class';
+import { ViewResponse } from '../view-response.class';
 import { Service } from '../../injector/decorators/service.decorator';
-import { Response as Res } from 'express';
+import { Response as ExpressResponse } from 'express';
 import { Code } from '../enums/code.enum';
+import { Request } from './request.service';
+import { Handler } from '../../handler/handler.class';
 
 @Service()
 export class Response {
-  private instance: Res | null = null;
+  private instance: ExpressResponse | null = null;
 
-  public __setInstance(instance: Res): this {
+  constructor(private request: Request) {}
+
+  public __getInstance(): ExpressResponse | null {
+    return this.instance;
+  }
+
+  public __setInstance(instance: ExpressResponse): this {
     this.instance = instance;
 
     return this;
@@ -56,5 +65,9 @@ export class Response {
     this?.instance?.status(status);
 
     return new RedirectResponse(url);
+  }
+
+  public render(file: string, data: Record<string, any>): ViewResponse {
+    return new ViewResponse(file, data);
   }
 }

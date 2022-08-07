@@ -1,12 +1,16 @@
 import { Method } from '../enums/method.enum';
-import { Request as Req } from 'express';
+import { Request as ExpressRequest } from 'express';
 import { Service } from '../../injector/decorators/service.decorator';
 
 @Service()
 export class Request {
-  private instance: Req | null = null;
+  private instance: ExpressRequest | null = null;
 
-  public __setInstance(instance: Req): void {
+  public __getInstance(): ExpressRequest | null {
+    return this.instance;
+  }
+
+  public __setInstance(instance: ExpressRequest): void {
     this.instance = instance;
   }
 
