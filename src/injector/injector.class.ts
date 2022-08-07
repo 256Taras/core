@@ -7,7 +7,7 @@ export class Injector {
     if (Array.isArray(targets)) {
       targets.map((target) => {
         const instance = this.resolve<Constructor>(target);
-  
+
         this.singletons.set(target, instance);
       });
 

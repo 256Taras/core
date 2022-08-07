@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import 'reflect-metadata';
 import { error } from '../utils/functions/error.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { StartDev } from './commands/start-dev.command.js';
 import { StartProd } from './commands/start-prod.command.js';
 import { Command } from './interfaces/command.interface.js';
+import 'reflect-metadata';
 
 const commands: Constructor<Command>[] = [StartDev, StartProd];
 
