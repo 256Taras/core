@@ -59,6 +59,7 @@
     "method-override": "^3.0.0",
     "reflect-metadata": "^0.1.13",
     "semver": "^7.3.7",
-    "shiki": "^0.10.1"
+    "shiki": "^0.10.1",
+    "tslib": "^2.4.0"
   }
 }
