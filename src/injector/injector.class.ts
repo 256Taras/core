@@ -3,12 +3,20 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 export class Injector {
   private static singletons: Map<Constructor, any> = new Map();
 
-  public static bind(classes: Constructor[]): void {
-    classes.map((className) => {
-      const instance = new className();
+  public static bind(targets: Constructor | Constructor[]): void {
+    if (Array.isArray(targets)) {
+      targets.map((target) => {
+        const instance = this.resolve<Constructor>(target);
+  
+        this.singletons.set(target, instance);
+      });
 
-      this.singletons.set(className, instance);
-    });
+      return;
+    }
+
+    const instance = this.resolve<Constructor>(targets);
+
+    this.singletons.set(targets, instance);
   }
 
   public static get<T = any>(className: Constructor<T>): T {
@@ -21,7 +29,6 @@ export class Injector {
 
   public static resolve<T>(target: Constructor<T>): T {
     const deps = Reflect.getMetadata('design:paramtypes', target) ?? [];
-
     const resolved = deps.map((param: Constructor) => this.resolve(param));
 
     const instance = this.has(target) ? this.get(target) : new target(...resolved);

@@ -11,6 +11,7 @@ export * from './http/functions/redirect.function';
 export * from './http/json-response.class';
 export * from './http/redirect-response.class';
 export * from './http/services/http-client.service';
+export * from './http/services/request.service';
 export * from './http/view-response.class';
 export * from './injector/decorators/service.decorator';
 export * from './injector/functions/inject.function';
