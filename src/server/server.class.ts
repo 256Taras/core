@@ -116,7 +116,7 @@ export class Server {
     server.use(express.static('public'));
 
     server.use((request, _response, next) => {
-      Injector.get(Request)._setInstance(request);
+      Injector.get(Request).__setInstance(request);
 
       log(`${request.method} ${request.url}`, 'request');
 

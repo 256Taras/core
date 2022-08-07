@@ -6,8 +6,24 @@ import { Service } from '../../injector/decorators/service.decorator';
 export class Request {
   private instance: Req | null = null;
 
-  public _setInstance(instance: Req): void {
+  public __setInstance(instance: Req): void {
     this.instance = instance;
+  }
+
+  public accepts(types: string[]): string | never[] | false {
+    return this.instance?.accepts(...types) ?? [];
+  }
+
+  public acceptsCharsets(charsets: string[]): string | never[] | false {
+    return this.instance?.acceptsCharsets(...charsets) ?? [];
+  }
+
+  public acceptsEncodings(encodings: string[]): string | never[] | false {
+    return this.instance?.acceptsEncodings(...encodings) ?? [];
+  }
+
+  public acceptsLanguages(languages: string[]): string | never[] | false {
+    return this.instance?.acceptsLanguages(...languages) ?? [];
   }
 
   public ajax(): boolean {
@@ -26,6 +42,14 @@ export class Request {
     return this.cookies[key] ?? null;
   }
 
+  public get headers(): Record<string, any> {
+    return this.instance?.headers ?? {};
+  }
+
+  public header(header: string): string | string[] | null {
+    return this.instance?.header(header) ?? null;
+  }
+
   public host(): string | null {
     return this.instance?.hostname ?? null;
   }
@@ -40,6 +64,10 @@ export class Request {
 
   public ips(): string[] | null {
     return this.instance?.ips ?? null;
+  }
+
+  public isType(type: string): string | false {
+    return this.instance?.is(type) ?? false;
   }
 
   public method(): Method {
@@ -60,8 +88,8 @@ export class Request {
     return this.instance?.params ?? {};
   }
 
-  public param(key: string): any {
-    return this.params ? this.params[key] ?? null : null;
+  public param(param: string): any {
+    return this.params ? this.params[param] ?? null : null;
   }
 
   public path(): string | null {
