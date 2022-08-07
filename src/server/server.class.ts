@@ -13,6 +13,7 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 import { View } from '../views/view.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
+import { Service } from '../injector/decorators/service.decorator';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
@@ -30,22 +31,13 @@ import { randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import semver from 'semver';
 
+@Service()
 export class Server {
   private defaultPort = 8000;
 
   private modules: Module[] = [];
 
-  constructor(private options: ServerOptions) {
-    const { modules } = this.options;
-
-    modules.map((module: Constructor<Module>) => {
-      const instance = Injector.resolve<Module>(module);
-
-      this.modules.push(instance);
-    });
-
-    Injector.bind([Request, Response]);
-  }
+  private options: ServerOptions;
 
   private async setupDevelopmentEnvironment(port: number): Promise<void> {
     const packageData = await promises.readFile(
@@ -196,6 +188,22 @@ export class Server {
     Router.registerRoutes(server);
 
     server.all('*', Handler.handleNotFound);
+  }
+
+  public setup(options: ServerOptions): this {
+    const { modules } = options;
+
+    this.options = options;
+
+    modules.map((module: Constructor<Module>) => {
+      const instance = Injector.resolve<Module>(module);
+
+      this.modules.push(instance);
+    });
+
+    Injector.bind([Request, Response]);
+
+    return this;
   }
 
   public async start(
