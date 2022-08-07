@@ -12,6 +12,7 @@ import { View } from '../views/view.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
 import { Request } from '../http/services/request.service';
+import { Response } from '../http/services/response.service';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
@@ -41,7 +42,7 @@ export class Server {
       this.modules.push(instance);
     });
 
-    Injector.bind([Request]);
+    Injector.bind([Request, Response]);
   }
 
   private async setupDevelopmentEnvironment(port: number): Promise<void> {
@@ -115,8 +116,9 @@ export class Server {
 
     server.use(express.static('public'));
 
-    server.use((request, _response, next) => {
+    server.use((request, response, next) => {
       Injector.get(Request).__setInstance(request);
+      Injector.get(Response).__setInstance(response);
 
       log(`${request.method} ${request.url}`, 'request');
 
