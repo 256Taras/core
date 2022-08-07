@@ -20,12 +20,14 @@ import cors from 'cors';
 import csrf from 'csurf';
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
+import multer from 'multer';
 import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
 import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { randomUUID } from 'node:crypto';
+import { tmpdir } from 'node:os';
 import semver from 'semver';
 
 export class Server {
@@ -139,6 +141,17 @@ export class Server {
 
       next();
     });
+
+    server.use(multer({
+      storage: multer.diskStorage({
+        destination: (_request, _file, callback) => {
+          callback(null, tmpdir());
+        },
+        filename: (_request, _file, callback) => {
+          callback(null, randomUUID());
+        },
+      }),
+    }).array('files'));
 
     server.use(
       methodOverride((request) => {

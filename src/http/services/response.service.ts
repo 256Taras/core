@@ -1,11 +1,10 @@
+import { Code } from '../enums/code.enum';
 import { JsonResponse } from '../json-response.class';
 import { RedirectResponse } from '../redirect-response.class';
 import { ViewResponse } from '../view-response.class';
+import { Request } from './request.service';
 import { Service } from '../../injector/decorators/service.decorator';
 import { Response as ExpressResponse } from 'express';
-import { Code } from '../enums/code.enum';
-import { Request } from './request.service';
-import { Handler } from '../../handler/handler.class';
 
 @Service()
 export class Response {

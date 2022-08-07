@@ -1,6 +1,6 @@
 import { Method } from '../enums/method.enum';
-import { Request as ExpressRequest } from 'express';
 import { Service } from '../../injector/decorators/service.decorator';
+import { Express, Request as ExpressRequest } from 'express';
 
 @Service()
 export class Request {
@@ -42,8 +42,16 @@ export class Request {
     return this.instance?.cookies ?? {};
   }
 
-  public cookie(key: string): any {
-    return this.cookies[key] ?? null;
+  public cookie(cookie: string): any {
+    return this.cookies[cookie] ?? null;
+  }
+
+  public get files(): Record<string, Express.Multer.File | Express.Multer.File[]> {
+    return this.instance?.files as Record<string, Express.Multer.File | Express.Multer.File[]> ?? {};
+  }
+
+  public file(file: string): any {
+    return this.files[file] ?? null;
   }
 
   public get headers(): Record<string, any> {
