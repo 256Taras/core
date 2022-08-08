@@ -1,5 +1,7 @@
 import * as constants from '../constants';
+import { Service } from '../injector/decorators/service.decorator';
 
+@Service()
 export class Compiler {
   private rawContent: string[] = [];
 

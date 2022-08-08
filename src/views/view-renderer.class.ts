@@ -1,8 +1,10 @@
 import { Handler } from '../handler/handler.class';
 import { Compiler } from './compiler.class';
+import { Service } from '../injector/decorators/service.decorator';
 import { Request, Response } from 'express';
 import { promises } from 'node:fs';
 
+@Service()
 export class ViewRenderer {
   constructor(private compiler: Compiler, private handler: Handler) {}
 
