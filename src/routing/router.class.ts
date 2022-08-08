@@ -98,7 +98,11 @@ export class Router {
           response.send(responseData);
       }
     } catch (exception) {
-      this.handler.handleException(exception as TypeError | Exception, request, response);
+      this.handler.handleException(
+        exception as TypeError | Exception,
+        request,
+        response,
+      );
     }
   }
 

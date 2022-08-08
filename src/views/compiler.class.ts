@@ -50,10 +50,7 @@ export class Compiler {
     return html;
   }
 
-  private parseEachDirectives(
-    html: string,
-    data: Record<string, any>,
-  ): string {
+  private parseEachDirectives(html: string, data: Record<string, any>): string {
     const matches =
       html.matchAll(/\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm) ??
       [];
@@ -148,10 +145,7 @@ export class Compiler {
     return html;
   }
 
-  private parseIfElseDirectives(
-    html: string,
-    data: Record<string, any>,
-  ): string {
+  private parseIfElseDirectives(html: string, data: Record<string, any>): string {
     const matches =
       html.matchAll(
         /\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)(\[else\])((.|\n|\r\n)*?)\[\/if\]/gm,
@@ -198,7 +192,8 @@ export class Compiler {
   }
 
   private parseMethodDirectives(html: string): string {
-    const matches = html.matchAll(/\[(get|post|put|patch|delete|head|options)\]/g) ?? [];
+    const matches =
+      html.matchAll(/\[(get|post|put|patch|delete|head|options)\]/g) ?? [];
 
     for (const match of matches) {
       html = html.replace(
