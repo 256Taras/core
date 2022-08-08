@@ -123,4 +123,8 @@ export class Request {
   public subdomains(): string[] {
     return this.instance?.subdomains ?? [];
   }
+
+  public token(): string | null {
+    return this.instance?.csrfToken() ?? null;
+  }
 }
