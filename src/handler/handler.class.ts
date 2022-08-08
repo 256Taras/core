@@ -1,6 +1,6 @@
 import { env } from '../utils/functions/env.function';
 import { error } from '../utils/functions/error.function';
-import { View } from '../views/view.class';
+import { ViewRenderer } from '../views/view-renderer.class';
 import { Exception } from './exception.class';
 import { NextFunction, Request, Response } from 'express';
 import { existsSync, promises, readFileSync } from 'node:fs';
@@ -8,7 +8,9 @@ import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
 
 export class Handler {
-  public static async handleException(
+  constructor(private viewRenderer: ViewRenderer) {}
+
+  public async handleException(
     exception: Error | TypeError | Exception,
     request: Request,
     response: Response,
@@ -80,11 +82,12 @@ export class Handler {
       : null;
 
     const customViewTemplate = 'views/errors/500';
+
     const viewFile = existsSync(customViewTemplate)
       ? customViewTemplate
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
 
-    View.render(request, response, viewFile, {
+    this.viewRenderer.render(request, response, viewFile, {
       codeSnippet: src && isAppFile ? codeSnippet : null,
       method: request.method.toUpperCase(),
       route: request.url,
@@ -95,7 +98,7 @@ export class Handler {
     });
   }
 
-  public static handleNotFound(request: Request, response: Response): void {
+  public handleNotFound(request: Request, response: Response): void {
     response.status(404);
 
     const data = {
@@ -110,14 +113,15 @@ export class Handler {
     }
 
     const customViewTemplate = 'views/errors/404';
+
     const viewFile = existsSync(customViewTemplate)
       ? customViewTemplate
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    View.render(request, response, viewFile, data);
+    this.viewRenderer.render(request, response, viewFile, data);
   }
 
-  public static handleInvalidToken(request: Request, response: Response): void {
+  public handleInvalidToken(request: Request, response: Response): void {
     response.status(419);
 
     const data = {
@@ -132,10 +136,11 @@ export class Handler {
     }
 
     const customViewTemplate = 'views/errors/419';
+
     const viewFile = existsSync(customViewTemplate)
       ? customViewTemplate
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    View.render(request, response, viewFile, data);
+    this.viewRenderer.render(request, response, viewFile, data);
   }
 }

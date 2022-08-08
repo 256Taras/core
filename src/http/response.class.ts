@@ -1,9 +1,9 @@
-import { Code } from '../enums/code.enum';
-import { JsonResponse } from '../json-response.class';
-import { RedirectResponse } from '../redirect-response.class';
-import { ViewResponse } from '../view-response.class';
-import { Request } from './request.service';
-import { Service } from '../../injector/decorators/service.decorator';
+import { Code } from './enums/code.enum';
+import { JsonResponse } from './json-response.class';
+import { RedirectResponse } from './redirect-response.class';
+import { ViewResponse } from './view-response.class';
+import { Request } from './request.class';
+import { Service } from '../injector/decorators/service.decorator';
 import { Response as ExpressResponse } from 'express';
 
 @Service()

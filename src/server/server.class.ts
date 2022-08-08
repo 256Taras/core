@@ -1,6 +1,6 @@
 import { Handler } from '../handler/handler.class';
-import { Request } from '../http/services/request.service';
-import { Response } from '../http/services/response.service';
+import { Request } from '../http/request.class';
+import { Response } from '../http/response.class';
 import { Injector } from '../injector/injector.class';
 import { Router } from '../routing/router.class';
 import { env } from '../utils/functions/env.function';
@@ -10,7 +10,7 @@ import { log } from '../utils/functions/log.function';
 import { runCommand } from '../utils/functions/run-command.function';
 import { warn } from '../utils/functions/warn.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { View } from '../views/view.class';
+import { ViewRenderer } from '../views/view-renderer.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
 import { Service } from '../injector/decorators/service.decorator';
@@ -38,6 +38,8 @@ export class Server {
   private modules: Module[] = [];
 
   private options: ServerOptions;
+
+  constructor(private handler: Handler, private router: Router, private viewRenderer: ViewRenderer) {}
 
   private async setupDevelopmentEnvironment(port: number): Promise<void> {
     const packageData = await promises.readFile(
@@ -92,7 +94,7 @@ export class Server {
   }
 
   private configureServer(server: Express): void {
-    server.engine('atom.html', View.parse);
+    server.engine('atom.html', this.viewRenderer.parse);
 
     server.set('trust proxy', 1);
     server.set('x-powered-by', false);
@@ -172,7 +174,7 @@ export class Server {
     server.use((request, response, next) => {
       csrf({ cookie: true })(request, response, (error) => {
         if (error) {
-          Handler.handleInvalidToken(request, response);
+          this.handler.handleInvalidToken(request, response);
 
           return;
         }
@@ -181,13 +183,13 @@ export class Server {
       });
     });
 
-    server.use(Handler.handleException);
+    server.use(this.handler.handleException);
   }
 
   private registerRoutes(server: Express): void {
-    Router.registerRoutes(server);
+    this.router.registerRoutes(server);
 
-    server.all('*', Handler.handleNotFound);
+    server.all('*', this.handler.handleNotFound);
   }
 
   public setup(options: ServerOptions): this {

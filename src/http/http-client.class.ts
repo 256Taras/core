@@ -1,5 +1,5 @@
-import { Method } from '../enums/method.enum';
-import { Service } from '../../injector/decorators/service.decorator';
+import { Method } from './enums/method.enum';
+import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class HttpClient {

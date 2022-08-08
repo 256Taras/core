@@ -1,9 +1,9 @@
 import * as constants from '../constants';
 
 export class Compiler {
-  private static rawContent: string[] = [];
+  private rawContent: string[] = [];
 
-  public static compile(html: string, data: Record<string, any>): string {
+  public compile(html: string, data: Record<string, any>): string {
     html = this.parseRawDirectives(html);
     html = this.parseEachDirectives(html, data);
     html = this.parseDataRenders(html, data);
@@ -16,7 +16,7 @@ export class Compiler {
     return html;
   }
 
-  private static parseDataRenders(html: string, data: Record<string, any>): string {
+  private parseDataRenders(html: string, data: Record<string, any>): string {
     const matches = html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
 
     for (const match of matches) {
@@ -50,7 +50,7 @@ export class Compiler {
     return html;
   }
 
-  private static parseEachDirectives(
+  private parseEachDirectives(
     html: string,
     data: Record<string, any>,
   ): string {
@@ -118,7 +118,7 @@ export class Compiler {
     return html;
   }
 
-  private static parseIfDirectives(html: string, data: Record<string, any>): string {
+  private parseIfDirectives(html: string, data: Record<string, any>): string {
     const matches =
       html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
 
@@ -148,7 +148,7 @@ export class Compiler {
     return html;
   }
 
-  private static parseIfElseDirectives(
+  private parseIfElseDirectives(
     html: string,
     data: Record<string, any>,
   ): string {
@@ -183,7 +183,7 @@ export class Compiler {
     return html;
   }
 
-  private static parseTokenDirectives(html: string): string {
+  private parseTokenDirectives(html: string): string {
     const matches = html.matchAll(/\[token\]/g) ?? [];
     const token = '';
 
@@ -197,7 +197,7 @@ export class Compiler {
     return html;
   }
 
-  private static parseMethodDirectives(html: string): string {
+  private parseMethodDirectives(html: string): string {
     const matches = html.matchAll(/\[(get|post|put|patch|delete|head|options)\]/g) ?? [];
 
     for (const match of matches) {
@@ -210,7 +210,7 @@ export class Compiler {
     return html;
   }
 
-  private static parseRawDirectives(html: string): string {
+  private parseRawDirectives(html: string): string {
     this.rawContent = [];
 
     const matches =
@@ -228,7 +228,7 @@ export class Compiler {
     return html;
   }
 
-  private static restoreRawContent(html: string): string {
+  private restoreRawContent(html: string): string {
     const matches = html.matchAll(/\$_raw([0-9]+)/g) ?? [];
 
     for (const match of matches) {

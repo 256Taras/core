@@ -6,56 +6,58 @@ import { RedirectResponse } from '../http/redirect-response.class';
 import { ViewResponse } from '../http/view-response.class';
 import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { View } from '../views/view.class';
+import { ViewRenderer } from '../views/view-renderer.class';
 import { Route } from './route.class';
 import { Express, Request, Response } from 'express';
 
 export class Router {
-  private static routes: Route[] = [];
+  private routes: Route[] = [];
 
-  public static get(
+  constructor(private handler: Handler, private viewRenderer: ViewRenderer) {}
+
+  public get(
     url: string,
     action: (request: Request, response: Response) => any,
   ): void {
     this.routes.push(new Route(url, Method.Get, action));
   }
 
-  public static post(
+  public post(
     url: string,
     action: (request: Request, response: Response) => any,
   ): void {
     this.routes.push(new Route(url, Method.Post, action));
   }
 
-  public static put(
+  public put(
     url: string,
     action: (request: Request, response: Response) => any,
   ): void {
     this.routes.push(new Route(url, Method.Put, action));
   }
 
-  public static patch(
+  public patch(
     url: string,
     action: (request: Request, response: Response) => any,
   ): void {
     this.routes.push(new Route(url, Method.Patch, action));
   }
 
-  public static delete(
+  public delete(
     url: string,
     action: (request: Request, response: Response) => any,
   ): void {
     this.routes.push(new Route(url, Method.Delete, action));
   }
 
-  public static options(
+  public options(
     url: string,
     action: (request: Request, response: Response) => any,
   ): void {
     this.routes.push(new Route(url, Method.Options, action));
   }
 
-  public static respond(
+  public respond(
     request: Request,
     response: Response,
     controller: Constructor,
@@ -77,7 +79,7 @@ export class Router {
         case responseData instanceof ViewResponse:
           const { file } = responseData as ViewResponse;
 
-          View.render(request, response, file, data);
+          this.viewRenderer.render(request, response, file, data);
 
           break;
 
@@ -96,11 +98,11 @@ export class Router {
           response.send(responseData);
       }
     } catch (exception) {
-      Handler.handleException(exception as TypeError | Exception, request, response);
+      this.handler.handleException(exception as TypeError | Exception, request, response);
     }
   }
 
-  public static registerRoutes(server: Express): void {
+  public registerRoutes(server: Express): void {
     this.routes.map((route: Route) => {
       switch (route.method) {
         case Method.Delete:
