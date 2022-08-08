@@ -4,7 +4,7 @@ import { info } from '../../utils/functions/info.function.js';
 import { runCommand } from '../../utils/functions/run-command.function.js';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
-import { unlinkSync } from 'node:fs';
+import { existsSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 
 @Command({
@@ -82,7 +82,9 @@ export class StartDev {
 
         const tempPath = `${tmpdir()}/norther`;
 
-        unlinkSync(tempPath);
+        if (existsSync(tempPath)) {
+          unlinkSync(tempPath);
+        }
 
         child.kill();
 

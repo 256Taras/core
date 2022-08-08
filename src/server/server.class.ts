@@ -65,7 +65,9 @@ export class Server {
     (['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'] as (NodeJS.Signals | 'exit')[]).map(
       (signal) => {
         process.on(signal, () => {
-          unlinkSync(tempPath);
+          if (existsSync(tempPath)) {
+            unlinkSync(tempPath);
+          }
 
           process.exit();
         });
