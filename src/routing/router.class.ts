@@ -63,7 +63,7 @@ export class Router {
     request: Request,
     response: Response,
     controller: Constructor,
-    method: string,
+    method: string | symbol,
   ): void {
     try {
       const responseData = Injector.resolve<any>(controller)[method](
