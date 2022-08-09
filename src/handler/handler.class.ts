@@ -36,10 +36,10 @@ export class Handler {
     }
 
     if (!env<boolean>('APP_DEBUG')) {
-      const customTemplatePath = 'views/exceptions/500.atom.html';
+      const customTemplatePath = 'views/errors/500.atom.html';
 
       const file = existsSync(customTemplatePath)
-        ? customTemplatePath
+        ? 'errors/500'
         : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
       response.render(file, data);
@@ -82,10 +82,10 @@ export class Handler {
         })
       : null;
 
-    const customViewTemplate = 'views/errors/500';
+    const customViewTemplate = 'views/errors/500.atom.html';
 
     const viewFile = existsSync(customViewTemplate)
-      ? customViewTemplate
+      ? 'errors/500'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
 
     this.viewRenderer.render(response, viewFile, {
@@ -113,10 +113,10 @@ export class Handler {
       return;
     }
 
-    const customViewTemplate = 'views/errors/404';
+    const customViewTemplate = 'views/errors/404.atom.html';
 
     const viewFile = existsSync(customViewTemplate)
-      ? customViewTemplate
+      ? 'errors/404'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
     this.viewRenderer.render(response, viewFile, data);
@@ -136,10 +136,10 @@ export class Handler {
       return;
     }
 
-    const customViewTemplate = 'views/errors/419';
+    const customViewTemplate = 'views/errors/419.atom.html';
 
     const viewFile = existsSync(customViewTemplate)
-      ? customViewTemplate
+      ? 'errors/419'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
     this.viewRenderer.render(response, viewFile, data);
