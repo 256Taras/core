@@ -1,6 +1,7 @@
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
+import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Router } from '../routing/router.class';
 import { env } from '../utils/functions/env.function';
@@ -13,7 +14,6 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
-import { Service } from '../injector/decorators/service.decorator';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
@@ -22,18 +22,18 @@ import csrf from 'csurf';
 import dotenv from 'dotenv';
 import express, {
   Express,
-  NextFunction,
   Request as ExpressRequest,
   Response as ExpressResponse,
+  NextFunction,
 } from 'express';
-import multer from 'multer';
 import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
-import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import multer from 'multer';
 import { randomUUID } from 'node:crypto';
+import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import semver from 'semver';
 
 @Service()
@@ -73,7 +73,12 @@ export class Server {
 
     const tempPath = `${tmpdir()}/norther`;
 
-    const signals: (NodeJS.Signals | 'exit')[] = ['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'];
+    const signals: (NodeJS.Signals | 'exit')[] = [
+      'SIGINT',
+      'SIGTERM',
+      'SIGHUP',
+      'exit',
+    ];
 
     signals.map((signal) => {
       process.on(signal, () => {
@@ -112,13 +117,16 @@ export class Server {
     this.server.set('views', 'views');
     this.server.set('view engine', 'atom.html');
 
-    this.server.engine('atom.html', (
-      file: string,
-      data: Record<string, any>,
-      callback: (error: any, rendered?: string | undefined) => void,
-    ) => {
-      this.viewRenderer.parse(file, data, callback);
-    });
+    this.server.engine(
+      'atom.html',
+      (
+        file: string,
+        data: Record<string, any>,
+        callback: (error: any, rendered?: string | undefined) => void,
+      ) => {
+        this.viewRenderer.parse(file, data, callback);
+      },
+    );
   }
 
   private registerMiddleware(): void {
@@ -155,16 +163,18 @@ export class Server {
       next();
     });
 
-    this.server.use(multer({
-      storage: multer.diskStorage({
-        destination: (_request, _file, callback) => {
-          callback(null, tmpdir());
-        },
-        filename: (_request, _file, callback) => {
-          callback(null, randomUUID());
-        },
-      }),
-    }).array('files'));
+    this.server.use(
+      multer({
+        storage: multer.diskStorage({
+          destination: (_request, _file, callback) => {
+            callback(null, tmpdir());
+          },
+          filename: (_request, _file, callback) => {
+            callback(null, randomUUID());
+          },
+        }),
+      }).array('files'),
+    );
 
     this.server.use(
       methodOverride((request) => {
@@ -202,14 +212,16 @@ export class Server {
       });
     });
 
-    this.server.use((
-      exception: any,
-      request: ExpressRequest,
-      response: ExpressResponse,
-      _next?: NextFunction,
-    ) => {
-      this.handler.handleException(exception, request, response);
-    });
+    this.server.use(
+      (
+        exception: any,
+        request: ExpressRequest,
+        response: ExpressResponse,
+        _next?: NextFunction,
+      ) => {
+        this.handler.handleException(exception, request, response);
+      },
+    );
   }
 
   private registerRoutes(): void {

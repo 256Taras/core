@@ -1,6 +1,6 @@
-import { Compiler } from './compiler.class';
 import { Exception } from '../handler/exception.class';
 import { Service } from '../injector/decorators/service.decorator';
+import { Compiler } from './compiler.class';
 import { Response } from 'express';
 import { promises } from 'node:fs';
 
@@ -19,11 +19,7 @@ export class ViewRenderer {
     return callback(null, html);
   }
 
-  public render(
-    response: Response,
-    file: string,
-    data: Record<string, any>,
-  ): void {
+  public render(response: Response, file: string, data: Record<string, any>): void {
     const viewData = {
       variables: data,
     };

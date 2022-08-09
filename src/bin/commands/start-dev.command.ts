@@ -1,7 +1,7 @@
-import { Command } from '../decorators/command.decorator.js';
 import { debounce } from '../../utils/functions/debounce.function.js';
 import { info } from '../../utils/functions/info.function.js';
 import { runCommand } from '../../utils/functions/run-command.function.js';
+import { Command } from '../decorators/command.decorator.js';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
 import { existsSync, unlinkSync } from 'node:fs';
@@ -21,10 +21,7 @@ export class StartDev {
 
     const sourceWatcher = watch('dist', watcherOptions);
 
-    const internalWatcher = watch(
-      'node_modules/@norther/core/dist',
-      watcherOptions,
-    );
+    const internalWatcher = watch('node_modules/@norther/core/dist', watcherOptions);
 
     const viewWatcher = watch('src/**/*.html', watcherOptions);
     const envWatcher = watch('.env', watcherOptions);
@@ -92,4 +89,4 @@ export class StartDev {
       }
     });
   }
-};
+}

@@ -7,6 +7,10 @@
   ],
   "importOrderSeparation": false,
   "importOrderSortSpecifiers": true,
+  "importOrderParserPlugins": [
+    "typescript",
+    "decorators-legacy"
+  ],
   "printWidth": 85,
   "semi": true,
   "singleQuote": true,

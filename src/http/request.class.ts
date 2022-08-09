@@ -1,5 +1,5 @@
-import { Method } from './enums/method.enum';
 import { Service } from '../injector/decorators/service.decorator';
+import { Method } from './enums/method.enum';
 import { Express, Request as ExpressRequest } from 'express';
 
 @Service()
@@ -47,7 +47,12 @@ export class Request {
   }
 
   public get files(): Record<string, Express.Multer.File | Express.Multer.File[]> {
-    return this.instance?.files as Record<string, Express.Multer.File | Express.Multer.File[]> ?? {};
+    return (
+      (this.instance?.files as Record<
+        string,
+        Express.Multer.File | Express.Multer.File[]
+      >) ?? {}
+    );
   }
 
   public file(file: string): any {
@@ -84,16 +89,19 @@ export class Request {
 
   public method(): Method {
     const methods = {
-      'get': Method.Get,
-      'post': Method.Post,
-      'put': Method.Put,
-      'patch': Method.Patch,
-      'delete': Method.Delete,
-      'head': Method.Head,
-      'options': Method.Options,
+      get: Method.Get,
+      post: Method.Post,
+      put: Method.Put,
+      patch: Method.Patch,
+      delete: Method.Delete,
+      head: Method.Head,
+      options: Method.Options,
     };
 
-    return methods[(this.instance?.method ?? 'get').toLowerCase() as keyof object] ?? Method.Get;
+    return (
+      methods[(this.instance?.method ?? 'get').toLowerCase() as keyof object] ??
+      Method.Get
+    );
   }
 
   public get params(): Record<string, any> {

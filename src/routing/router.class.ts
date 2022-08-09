@@ -4,11 +4,11 @@ import { Method } from '../http/enums/method.enum';
 import { JsonResponse } from '../http/json-response.class';
 import { RedirectResponse } from '../http/redirect-response.class';
 import { ViewResponse } from '../http/view-response.class';
+import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Service } from '../injector/decorators/service.decorator';
-import { Route } from './route.class';
 import { ViewRenderer } from '../views/view-renderer.class';
+import { Route } from './route.class';
 import { Express, Request, Response } from 'express';
 
 @Service()

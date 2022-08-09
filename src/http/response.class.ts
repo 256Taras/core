@@ -1,9 +1,9 @@
+import { Service } from '../injector/decorators/service.decorator';
 import { Code } from './enums/code.enum';
 import { JsonResponse } from './json-response.class';
 import { RedirectResponse } from './redirect-response.class';
-import { ViewResponse } from './view-response.class';
 import { Request } from './request.class';
-import { Service } from '../injector/decorators/service.decorator';
+import { ViewResponse } from './view-response.class';
 import { Response as ExpressResponse } from 'express';
 
 @Service()
@@ -22,7 +22,11 @@ export class Response {
     return this;
   }
 
-  public cookie(cookie: string, value: string, options: Record<string, any> = {}): this {
+  public cookie(
+    cookie: string,
+    value: string,
+    options: Record<string, any> = {},
+  ): this {
     this.instance?.cookie(cookie, value, options);
 
     return this;

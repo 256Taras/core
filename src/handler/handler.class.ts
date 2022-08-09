@@ -1,8 +1,8 @@
+import { Service } from '../injector/decorators/service.decorator';
 import { env } from '../utils/functions/env.function';
 import { error } from '../utils/functions/error.function';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Exception } from './exception.class';
-import { Service } from '../injector/decorators/service.decorator';
 import { Request, Response } from 'express';
 import { existsSync, promises, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
