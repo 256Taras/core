@@ -115,6 +115,8 @@ export class Server {
     this.server.set('views', 'views');
     this.server.set('view engine', 'atom.html');
 
+    this.server.disable('etag');
+
     this.server.engine(
       'atom.html',
       (
@@ -138,17 +140,17 @@ export class Server {
     this.server.use(express.static('public'));
 
     this.server.use((request, response, next) => {
-      const startTime = process.hrtime();
-
       Injector.get(Request).__setInstance(request);
       Injector.get(Response).__setInstance(response);
+
+      const startTime = process.hrtime();
 
       response.on('finish', () => {
         const endTime = process.hrtime(startTime);
 
-        const elapsedTime = endTime[0] * 1000 + endTime[1] / 1e6;
+        const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
 
-        this.logger.log(`${request.method} ${request.url} ${response.statusCode}`, `request (${elapsedTime}ms)`);
+        this.logger.log(`${response.statusCode} ${request.method} ${request.url}`, `request (${elapsedTime} ms)`);
       });
 
       process.on('uncaughtException', (exception: any) => {
