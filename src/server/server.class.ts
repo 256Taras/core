@@ -20,7 +20,12 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import csrf from 'csurf';
 import dotenv from 'dotenv';
-import express, { Express } from 'express';
+import express, {
+  Express,
+  NextFunction,
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+} from 'express';
 import multer from 'multer';
 import session from 'express-session';
 import helmet from 'helmet';
@@ -39,7 +44,11 @@ export class Server {
 
   private options: ServerOptions;
 
-  constructor(private handler: Handler, private router: Router, private viewRenderer: ViewRenderer) {}
+  constructor(
+    private handler: Handler,
+    private router: Router,
+    private viewRenderer: ViewRenderer,
+  ) {}
 
   private async setupDevelopmentEnvironment(port: number): Promise<void> {
     const packageData = await promises.readFile(
@@ -96,7 +105,13 @@ export class Server {
   }
 
   private configureServer(server: Express): void {
-    server.engine('atom.html', this.viewRenderer.parse);
+    server.engine('atom.html', (
+      file: string,
+      data: Record<string, any>,
+      callback: (error: any, rendered?: string | undefined) => void,
+    ) => {
+      this.viewRenderer.parse(file, data, callback);
+    });
 
     server.set('trust proxy', 1);
     server.set('x-powered-by', false);
@@ -185,13 +200,22 @@ export class Server {
       });
     });
 
-    server.use(this.handler.handleException);
+    server.use((
+      exception: any,
+      request: ExpressRequest,
+      response: ExpressResponse,
+      _next?: NextFunction,
+    ) => {
+      this.handler.handleException(exception, request, response);
+    });
   }
 
   private registerRoutes(server: Express): void {
     this.router.registerRoutes(server);
 
-    server.all('*', this.handler.handleNotFound);
+    server.all('*', (request: ExpressRequest, response: ExpressResponse) => {
+      this.handler.handleNotFound(request, response);
+    });
   }
 
   public setup(options: ServerOptions): this {

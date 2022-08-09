@@ -1,26 +1,25 @@
-import { Handler } from '../handler/handler.class';
 import { Compiler } from './compiler.class';
+import { Exception } from '../handler/exception.class';
 import { Service } from '../injector/decorators/service.decorator';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { promises } from 'node:fs';
 
 @Service()
 export class ViewRenderer {
-  constructor(private compiler: Compiler, private handler: Handler) {}
+  constructor(private compiler: Compiler) {}
 
   public async parse(
-    filePath: string,
+    file: string,
     data: Record<string, any>,
     callback: (error: any, rendered?: string | undefined) => void,
   ) {
-    const fileContent = await promises.readFile(filePath);
+    const fileContent = await promises.readFile(file);
     const html = this.compiler.compile(fileContent.toString(), data);
 
     return callback(null, html);
   }
 
   public render(
-    request: Request,
     response: Response,
     file: string,
     data: Record<string, any>,
@@ -29,11 +28,9 @@ export class ViewRenderer {
       variables: data,
     };
 
-    response.render(file, viewData, (error: Error, html: string) => {
+    response.render(file, viewData, (error: Error, html: string): void | never => {
       if (error) {
-        this.handler.handleException(error, request, response);
-
-        return;
+        throw new Exception(error.message);
       }
 
       response.send(html);

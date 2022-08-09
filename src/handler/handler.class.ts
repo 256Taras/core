@@ -3,7 +3,7 @@ import { error } from '../utils/functions/error.function';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Exception } from './exception.class';
 import { Service } from '../injector/decorators/service.decorator';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { existsSync, promises, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
@@ -16,7 +16,6 @@ export class Handler {
     exception: Error | TypeError | Exception,
     request: Request,
     response: Response,
-    _next?: NextFunction,
   ): Promise<void> {
     response.status(500);
 
@@ -89,7 +88,7 @@ export class Handler {
       ? customViewTemplate
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
 
-    this.viewRenderer.render(request, response, viewFile, {
+    this.viewRenderer.render(response, viewFile, {
       codeSnippet: src && isAppFile ? codeSnippet : null,
       method: request.method.toUpperCase(),
       route: request.url,
@@ -120,7 +119,7 @@ export class Handler {
       ? customViewTemplate
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    this.viewRenderer.render(request, response, viewFile, data);
+    this.viewRenderer.render(response, viewFile, data);
   }
 
   public handleInvalidToken(request: Request, response: Response): void {
@@ -143,6 +142,6 @@ export class Handler {
       ? customViewTemplate
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    this.viewRenderer.render(request, response, viewFile, data);
+    this.viewRenderer.render(response, viewFile, data);
   }
 }

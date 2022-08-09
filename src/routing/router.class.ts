@@ -81,7 +81,7 @@ export class Router {
         case responseData instanceof ViewResponse:
           const { file } = responseData as ViewResponse;
 
-          this.viewRenderer.render(request, response, file, data);
+          this.viewRenderer.render(response, file, data);
 
           break;
 
