@@ -87,21 +87,9 @@ export class Logger {
     console.log(left, dots, right);
   }
 
-  public warn(data: string, type: string = 'warning'): void {
-    const day = this.getDay();
-    const time = this.getTime();
+  public warn(data: string): void {
+    const output = chalk.bold.hex(this.colorYellow)(`\n${data}\n`);
 
-    const timestamp = `${chalk.hex(this.colorYellow).bold(this.mark)} ${chalk.gray(
-      day,
-    )} ${chalk.gray(time)} `;
-
-    const mainOutput = this.truncate(data);
-
-    const left = `${timestamp} ${chalk.hex(this.colorYellow).bold(mainOutput)}`;
-    const right = chalk.gray(type.toUpperCase());
-
-    const dots = this.renderDots(day + time + mainOutput + type);
-
-    console.warn(left, dots, right);
+    console.warn(output);
   }
 }
