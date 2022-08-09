@@ -1,6 +1,6 @@
 import { Service } from '../injector/decorators/service.decorator';
 import { env } from '../utils/functions/env.function';
-import { error } from '../utils/functions/error.function';
+import { Logger } from '../logger/logger.class';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Exception } from './exception.class';
 import { Request, Response } from 'express';
@@ -10,7 +10,7 @@ import { getHighlighter } from 'shiki';
 
 @Service()
 export class Handler {
-  constructor(private viewRenderer: ViewRenderer) {}
+  constructor(private logger: Logger, private viewRenderer: ViewRenderer) {}
 
   public async handleException(
     exception: Error | TypeError | Exception,
@@ -22,7 +22,7 @@ export class Handler {
     const message =
       exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
 
-    error(message, 'exception');
+    this.logger.error(message, 'exception');
 
     const data = {
       statusCode: 500,

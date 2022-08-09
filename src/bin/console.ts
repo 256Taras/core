@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import 'reflect-metadata';
-import { error } from '../utils/functions/error.function.js';
+import { error } from '../logger/functions/error.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { StartDev } from './commands/start-dev.command.js';
 import { StartProd } from './commands/start-prod.command.js';

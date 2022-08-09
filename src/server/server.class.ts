@@ -5,12 +5,9 @@ import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Router } from '../routing/router.class';
 import { env } from '../utils/functions/env.function';
-import { error } from '../utils/functions/error.function';
-import { info } from '../utils/functions/info.function';
-import { log } from '../utils/functions/log.function';
 import { runCommand } from '../utils/functions/run-command.function';
-import { warn } from '../utils/functions/warn.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { Logger } from '../logger/logger.class';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
@@ -48,6 +45,7 @@ export class Server {
 
   constructor(
     private handler: Handler,
+    private logger: Logger,
     private router: Router,
     private viewRenderer: ViewRenderer,
   ) {}
@@ -60,13 +58,13 @@ export class Server {
     const requiredNodeVersion = JSON.parse(packageData.toString()).engines.node;
 
     if (!semver.satisfies(process.version, requiredNodeVersion)) {
-      warn(
+      this.logger.warn(
         `Norther requires Node.js version ${requiredNodeVersion.slice(
           2,
         )} or greater`,
       );
 
-      warn('Update Node.js on https://nodejs.org');
+      this.logger.warn('Update Node.js on https://nodejs.org');
 
       process.exit(1);
     }
@@ -93,7 +91,7 @@ export class Server {
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Norther development server is running...');
 
-      info('Norther server started [press q or esc to quit]');
+      this.logger.info('Norther server started [press q or esc to quit]');
 
       const browserAliases = {
         darwin: 'open',
@@ -143,7 +141,7 @@ export class Server {
       Injector.get(Request).__setInstance(request);
       Injector.get(Response).__setInstance(response);
 
-      log(`${request.method} ${request.url}`, 'request');
+      this.logger.log(`${request.method} ${request.url}`, 'request');
 
       process.on('uncaughtException', (exception: any) => {
         if (exception !== Object(exception)) {
@@ -153,7 +151,7 @@ export class Server {
         const message =
           exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
 
-        error(message, 'uncaught exception');
+          this.logger.error(message, 'uncaught exception');
 
         if (!env<boolean>('APP_DEBUG')) {
           process.exit(1);
@@ -266,7 +264,7 @@ export class Server {
         this.setupDevelopmentEnvironment(port);
       }
 
-      log(`HTTP server running on http://localhost:${port}`);
+      this.logger.log(`HTTP server running on http://localhost:${port}`);
     });
   }
 }

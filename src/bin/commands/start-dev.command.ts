@@ -1,5 +1,5 @@
 import { debounce } from '../../utils/functions/debounce.function.js';
-import { info } from '../../utils/functions/info.function.js';
+import { info } from '../../logger/functions/info.function.js';
 import { runCommand } from '../../utils/functions/run-command.function.js';
 import { Command } from '../decorators/command.decorator.js';
 import { watch } from 'chokidar';
