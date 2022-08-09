@@ -1,7 +1,7 @@
-import { debounce } from '../../utils/functions/debounce.function.js';
-import { info } from '../../logger/functions/info.function.js';
-import { runCommand } from '../../utils/functions/run-command.function.js';
-import { Command } from '../decorators/command.decorator.js';
+import { debounce } from '../../utils/functions/debounce.function';
+import { info } from '../../logger/functions/info.function';
+import { runCommand } from '../../utils/functions/run-command.function';
+import { Command } from '../decorators/command.decorator';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
 import { existsSync, unlinkSync } from 'node:fs';
@@ -30,14 +30,14 @@ export class StartDev {
       execArgv: ['--experimental-specifier-resolution=node', '--no-warnings'],
     };
 
-    let child = fork(entryFile, processOptions);
+    let childProcess = fork(entryFile, processOptions);
 
     const restartProcess = debounce(() => {
       info('Restarting the server...');
 
-      child.kill();
+      childProcess.kill();
 
-      child = fork(entryFile, processOptions);
+      childProcess = fork(entryFile, processOptions);
     }, 500);
 
     sourceWatcher.on('all', () => {
@@ -83,7 +83,7 @@ export class StartDev {
           unlinkSync(tempPath);
         }
 
-        child.kill();
+        childProcess.kill();
 
         process.exit();
       }

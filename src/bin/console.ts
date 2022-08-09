@@ -1,10 +1,16 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --experimental-specifier-resolution=node --no-warnings
 import 'reflect-metadata';
-import { error } from '../logger/functions/error.function.js';
-import { Constructor } from '../utils/interfaces/constructor.interface.js';
-import { StartDev } from './commands/start-dev.command.js';
-import { StartProd } from './commands/start-prod.command.js';
-import { Command } from './interfaces/command.interface.js';
+import { error } from '../logger/functions/error.function';
+import { Constructor } from '../utils/interfaces/constructor.interface';
+import { StartDev } from './commands/start-dev.command';
+import { StartProd } from './commands/start-prod.command';
+import { Command } from './interfaces/command.interface';
+
+process.on('uncaughtException', (exception: Error) => {
+  error(exception.message);
+
+  process.exit(1);
+});
 
 const commands: Constructor<Command>[] = [StartDev, StartProd];
 

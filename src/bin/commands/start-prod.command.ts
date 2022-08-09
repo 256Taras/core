@@ -1,6 +1,6 @@
-import { info } from '../../logger/functions/info.function.js';
-import { runCommand } from '../../utils/functions/run-command.function.js';
-import { Command } from '../decorators/command.decorator.js';
+import { info } from '../../logger/functions/info.function';
+import { runCommand } from '../../utils/functions/run-command.function';
+import { Command } from '../decorators/command.decorator';
 
 @Command({
   signature: 'start:prod',

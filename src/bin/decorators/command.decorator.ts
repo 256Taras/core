@@ -1,5 +1,5 @@
-import { Constructor } from '../../utils/interfaces/constructor.interface.js';
-import { ClassDecorator } from '../../utils/types/class-decorator.type.js';
+import { Constructor } from '../../utils/interfaces/constructor.interface';
+import { ClassDecorator } from '../../utils/types/class-decorator.type';
 
 interface Data {
   signature: string;
