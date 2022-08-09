@@ -178,7 +178,7 @@ export class Server {
       multer({
         storage: multer.diskStorage({
           destination: (_request, _file, callback) => {
-            callback(null, tmpdir());
+            callback(null, `${tmpdir()}/norther/uploads`);
           },
           filename: (_request, _file, callback) => {
             callback(null, randomUUID());
