@@ -12,6 +12,7 @@ import { ViewRenderer } from '../views/view-renderer.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
 import bodyParser from 'body-parser';
+import chalk from 'chalk';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -150,9 +151,11 @@ export class Server {
 
         const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
 
+        const timeFormatted = chalk.gray(`(${elapsedTime} ms)`);
+
         this.logger.log(
-          `${response.statusCode} ${request.method} ${request.url}`,
-          `request (${elapsedTime} ms)`,
+          `${response.statusCode} ${request.method} ${request.url} ${timeFormatted}`,
+          `request`,
         );
       });
 
