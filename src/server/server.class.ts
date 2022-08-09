@@ -3,11 +3,11 @@ import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
+import { Logger } from '../logger/logger.class';
 import { Router } from '../routing/router.class';
 import { env } from '../utils/functions/env.function';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Logger } from '../logger/logger.class';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
@@ -150,7 +150,10 @@ export class Server {
 
         const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
 
-        this.logger.log(`${response.statusCode} ${request.method} ${request.url}`, `request (${elapsedTime} ms)`);
+        this.logger.log(
+          `${response.statusCode} ${request.method} ${request.url}`,
+          `request (${elapsedTime} ms)`,
+        );
       });
 
       process.on('uncaughtException', (exception: any) => {
@@ -161,7 +164,7 @@ export class Server {
         const message =
           exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
 
-          this.logger.error(message, 'uncaught exception');
+        this.logger.error(message, 'uncaught exception');
 
         if (!env<boolean>('APP_DEBUG')) {
           process.exit(1);

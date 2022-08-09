@@ -5,12 +5,14 @@ import chalk from 'chalk';
 export class Logger {
   private readonly colorYellow = '#f8c377';
 
+  private readonly locale = 'en-us';
+
   private readonly mark = '$';
 
   private getDay(): string {
     const date = new Date();
 
-    return date.toLocaleString('en-us', {
+    return date.toLocaleString(this.locale, {
       month: 'short',
       day: 'numeric',
     });
@@ -19,7 +21,7 @@ export class Logger {
   private getTime(): string {
     const date = new Date();
 
-    return date.toLocaleString('en-us', {
+    return date.toLocaleString(this.locale, {
       hour: 'numeric',
       minute: 'numeric',
       second: '2-digit',
@@ -36,7 +38,9 @@ export class Logger {
 
   private truncate(data: string): string {
     const maxLength = Math.trunc(process.stdout.columns / 2);
-    const truncated = data.length > maxLength ? data.slice(0, maxLength) + '...' : data;
+
+    const truncated =
+      data.length > maxLength ? data.slice(0, maxLength) + '...' : data;
 
     return truncated;
   }
@@ -45,14 +49,16 @@ export class Logger {
     const day = this.getDay();
     const time = this.getTime();
 
-    const timestamp = `${chalk.red.bold(this.mark)} ${chalk.gray(day)} ${chalk.gray(time)} `;
+    const timestamp = `${chalk.red.bold(this.mark)} ${chalk.gray(day)} ${chalk.gray(
+      time,
+    )} `;
 
-    const main = this.truncate(data);
+    const mainOutput = this.truncate(data);
 
-    const left = `${timestamp} ${chalk.red.bold(main)}`;
+    const left = `${timestamp} ${chalk.red.bold(mainOutput)}`;
     const right = chalk.gray(type.toUpperCase());
 
-    const dots = this.renderDots(day + time + main + type);
+    const dots = this.renderDots(day + time + mainOutput + type);
 
     console.error(left, dots, right);
   }
@@ -67,16 +73,16 @@ export class Logger {
     const day = this.getDay();
     const time = this.getTime();
 
-    const timestamp = `${chalk.green.bold(this.mark)} ${chalk.gray(day)} ${chalk.gray(
-      time,
-    )} `;
+    const timestamp = `${chalk.green.bold(this.mark)} ${chalk.gray(
+      day,
+    )} ${chalk.gray(time)} `;
 
-    const main = this.truncate(data);
+    const mainOutput = this.truncate(data);
 
-    const left = `${timestamp} ${chalk.white.bold(main)}`;
+    const left = `${timestamp} ${chalk.white.bold(mainOutput)}`;
     const right = chalk.gray(type.toUpperCase());
 
-    const dots = this.renderDots(day + time + main + type);
+    const dots = this.renderDots(day + time + mainOutput + type);
 
     console.log(left, dots, right);
   }
@@ -89,12 +95,12 @@ export class Logger {
       day,
     )} ${chalk.gray(time)} `;
 
-    const main = this.truncate(data);
+    const mainOutput = this.truncate(data);
 
-    const left = `${timestamp} ${chalk.hex(this.colorYellow).bold(main)}`;
+    const left = `${timestamp} ${chalk.hex(this.colorYellow).bold(mainOutput)}`;
     const right = chalk.gray(type.toUpperCase());
 
-    const dots = this.renderDots(day + time + main + type);
+    const dots = this.renderDots(day + time + mainOutput + type);
 
     console.warn(left, dots, right);
   }

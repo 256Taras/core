@@ -1,5 +1,5 @@
-import { debounce } from '../../utils/functions/debounce.function';
 import { info } from '../../logger/functions/info.function';
+import { debounce } from '../../utils/functions/debounce.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 import { watch } from 'chokidar';

@@ -1,6 +1,6 @@
 import { Service } from '../injector/decorators/service.decorator';
-import { env } from '../utils/functions/env.function';
 import { Logger } from '../logger/logger.class';
+import { env } from '../utils/functions/env.function';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Exception } from './exception.class';
 import { Request, Response } from 'express';
