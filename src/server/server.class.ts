@@ -138,10 +138,18 @@ export class Server {
     this.server.use(express.static('public'));
 
     this.server.use((request, response, next) => {
+      const startTime = process.hrtime();
+
       Injector.get(Request).__setInstance(request);
       Injector.get(Response).__setInstance(response);
 
-      this.logger.log(`${request.method} ${request.url}`, 'request');
+      response.on('finish', () => {
+        const endTime = process.hrtime(startTime);
+
+        const elapsedTime = endTime[0] * 1000 + endTime[1] / 1e6;
+
+        this.logger.log(`${request.method} ${request.url} ${response.statusCode}`, `request (${elapsedTime}ms)`);
+      });
 
       process.on('uncaughtException', (exception: any) => {
         if (exception !== Object(exception)) {
