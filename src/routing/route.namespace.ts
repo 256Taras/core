@@ -1,9 +1,9 @@
-import { Injector } from '../injector/injector.class';
+import { inject } from '../injector/functions/inject.function';
 import { Router } from './router.class';
 import { Request, Response } from 'express';
 
 export namespace Route {
-  const router = Injector.resolve(Router);
+  const router = inject(Router);
 
   export const Delete = (
     url: string,

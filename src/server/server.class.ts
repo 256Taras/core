@@ -44,6 +44,8 @@ export class Server {
 
   private options: ServerOptions;
 
+  private server: Express;
+
   constructor(
     private handler: Handler,
     private router: Router,
@@ -71,17 +73,17 @@ export class Server {
 
     const tempPath = `${tmpdir()}/norther`;
 
-    (['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'] as (NodeJS.Signals | 'exit')[]).map(
-      (signal) => {
-        process.on(signal, () => {
-          if (existsSync(tempPath)) {
-            unlinkSync(tempPath);
-          }
+    const signals: (NodeJS.Signals | 'exit')[] = ['SIGINT', 'SIGTERM', 'SIGHUP', 'exit'];
 
-          process.exit();
-        });
-      },
-    );
+    signals.map((signal) => {
+      process.on(signal, () => {
+        if (existsSync(tempPath)) {
+          unlinkSync(tempPath);
+        }
+
+        process.exit();
+      });
+    });
 
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Norther development server is running...');
@@ -104,32 +106,32 @@ export class Server {
     }
   }
 
-  private configureServer(server: Express): void {
-    server.engine('atom.html', (
+  private configureServer(): void {
+    this.server.set('trust proxy', 1);
+    this.server.set('x-powered-by', false);
+    this.server.set('views', 'views');
+    this.server.set('view engine', 'atom.html');
+
+    this.server.engine('atom.html', (
       file: string,
       data: Record<string, any>,
       callback: (error: any, rendered?: string | undefined) => void,
     ) => {
       this.viewRenderer.parse(file, data, callback);
     });
-
-    server.set('trust proxy', 1);
-    server.set('x-powered-by', false);
-    server.set('views', 'views');
-    server.set('view engine', 'atom.html');
   }
 
-  private registerMiddleware(server: Express): void {
-    server.use(helmet());
-    server.use(compression());
-    server.use(cookieParser());
-    server.use(bodyParser.json());
-    server.use(bodyParser.urlencoded({ extended: true }));
-    server.use(cors());
+  private registerMiddleware(): void {
+    this.server.use(helmet());
+    this.server.use(compression());
+    this.server.use(cookieParser());
+    this.server.use(bodyParser.json());
+    this.server.use(bodyParser.urlencoded({ extended: true }));
+    this.server.use(cors());
 
-    server.use(express.static('public'));
+    this.server.use(express.static('public'));
 
-    server.use((request, response, next) => {
+    this.server.use((request, response, next) => {
       Injector.get(Request).__setInstance(request);
       Injector.get(Response).__setInstance(response);
 
@@ -153,7 +155,7 @@ export class Server {
       next();
     });
 
-    server.use(multer({
+    this.server.use(multer({
       storage: multer.diskStorage({
         destination: (_request, _file, callback) => {
           callback(null, tmpdir());
@@ -164,7 +166,7 @@ export class Server {
       }),
     }).array('files'));
 
-    server.use(
+    this.server.use(
       methodOverride((request) => {
         if (request.body && '_method' in request.body) {
           const method = request.body._method;
@@ -176,7 +178,7 @@ export class Server {
       }),
     );
 
-    server.use(
+    this.server.use(
       session({
         secret: env<string>('APP_KEY'),
         resave: false,
@@ -188,7 +190,7 @@ export class Server {
       }),
     );
 
-    server.use((request, response, next) => {
+    this.server.use((request, response, next) => {
       csrf({ cookie: true })(request, response, (error) => {
         if (error) {
           this.handler.handleInvalidToken(request, response);
@@ -200,7 +202,7 @@ export class Server {
       });
     });
 
-    server.use((
+    this.server.use((
       exception: any,
       request: ExpressRequest,
       response: ExpressResponse,
@@ -210,10 +212,10 @@ export class Server {
     });
   }
 
-  private registerRoutes(server: Express): void {
-    this.router.registerRoutes(server);
+  private registerRoutes(): void {
+    this.router.registerRoutes(this.server);
 
-    server.all('*', (request: ExpressRequest, response: ExpressResponse) => {
+    this.server.all('*', (request: ExpressRequest, response: ExpressResponse) => {
       this.handler.handleNotFound(request, response);
     });
   }
@@ -241,13 +243,13 @@ export class Server {
       path: '.env',
     });
 
-    const server = express();
+    this.server = express();
 
-    this.configureServer(server);
-    this.registerMiddleware(server);
-    this.registerRoutes(server);
+    this.configureServer();
+    this.registerMiddleware();
+    this.registerRoutes();
 
-    server.listen(port, () => {
+    this.server.listen(port, () => {
       if (env<boolean>('APP_DEBUG')) {
         this.setupDevelopmentEnvironment(port);
       }
