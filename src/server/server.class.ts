@@ -232,6 +232,7 @@ export class Server {
         exception: any,
         request: ExpressRequest,
         response: ExpressResponse,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _next?: NextFunction,
       ) => {
         this.handler.handleException(exception, request, response);
