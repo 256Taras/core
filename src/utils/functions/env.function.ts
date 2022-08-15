@@ -1,4 +1,4 @@
-export const env = <T = null>(key: string): T => {
+export const env = <T = any>(key: string): T => {
   if (!(key in process.env)) {
     return null as unknown as T;
   }
