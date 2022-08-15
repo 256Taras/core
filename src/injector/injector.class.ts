@@ -30,16 +30,17 @@ export class Injector {
 
   public static resolve<T>(target: Constructor<T>): T | never {
     if (
-      [String, Number, Boolean, RegExp, Symbol].includes(
+      [String, Number, Boolean, Symbol, RegExp].includes(
         target as unknown as
-          | SymbolConstructor
           | StringConstructor
           | NumberConstructor
           | BooleanConstructor
+          | SymbolConstructor
           | RegExpConstructor,
-      )
+      ) ||
+      ['null', 'undefined'].includes(typeof target)
     ) {
-      throw new Exception('Injector target cannot be of primitive type');
+      throw new Exception('Injected service type cannot be primitive or predefined');
     }
 
     const deps = Reflect.getMetadata('design:paramtypes', target) ?? [];
