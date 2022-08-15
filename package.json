@@ -28,6 +28,7 @@
   "scripts": {
     "build": "tsc",
     "format": "prettier \"**/*.ts\" --ignore-path ./.prettierignore --write",
+    "lint": "eslint .",
     "test": "vitest",
     "test:cov": "vitest run --coverage",
     "watch": "tsc --watch"
