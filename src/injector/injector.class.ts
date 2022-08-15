@@ -1,5 +1,5 @@
-import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Exception } from '../handler/exception.class';
+import { Constructor } from '../utils/interfaces/constructor.interface';
 
 export class Injector {
   private static cachedInstances: Map<Constructor, any> = new Map();
@@ -29,7 +29,16 @@ export class Injector {
   }
 
   public static resolve<T>(target: Constructor<T>): T | never {
-    if ([String, Number, Boolean, RegExp, Symbol].includes(target as unknown as SymbolConstructor | StringConstructor | NumberConstructor | BooleanConstructor | RegExpConstructor)) {
+    if (
+      [String, Number, Boolean, RegExp, Symbol].includes(
+        target as unknown as
+          | SymbolConstructor
+          | StringConstructor
+          | NumberConstructor
+          | BooleanConstructor
+          | RegExpConstructor,
+      )
+    ) {
       throw new Exception('Injector target cannot be of primitive type');
     }
 

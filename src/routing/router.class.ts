@@ -79,7 +79,11 @@ export class Router {
           break;
 
         case responseData instanceof ViewResponse:
-          this.viewRenderer.render(response, (responseData as ViewResponse).file, data);
+          this.viewRenderer.render(
+            response,
+            (responseData as ViewResponse).file,
+            data,
+          );
 
           break;
 
