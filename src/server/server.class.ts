@@ -11,6 +11,7 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
+import { Integer } from '../utils/types/integer.type';
 import bodyParser from 'body-parser';
 import chalk from 'chalk';
 import compression from 'compression';
@@ -36,7 +37,7 @@ import semver from 'semver';
 
 @Service()
 export class Server {
-  private defaultPort = 8000;
+  private defaultPort: Integer = 8000;
 
   private modules: Module[] = [];
 
@@ -263,7 +264,7 @@ export class Server {
   }
 
   public async start(
-    port = env<number>('APP_PORT') ?? this.defaultPort,
+    port = env<Integer>('APP_PORT') ?? this.defaultPort,
   ): Promise<void> {
     dotenv.config({
       path: '.env',

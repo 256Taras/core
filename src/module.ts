@@ -28,4 +28,5 @@ export * from './server/server.class';
 export * from './utils/functions/debounce.function';
 export * from './utils/functions/env.function';
 export * from './utils/interfaces/constructor.interface';
+export * from './utils/types/integer.type';
 export * from './views/functions/render.function';
