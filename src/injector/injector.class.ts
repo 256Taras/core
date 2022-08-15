@@ -1,4 +1,5 @@
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { Exception } from '../handler/exception.class';
 
 export class Injector {
   private static cachedInstances: Map<Constructor, any> = new Map();
@@ -27,7 +28,11 @@ export class Injector {
     return this.cachedInstances.has(className);
   }
 
-  public static resolve<T>(target: Constructor<T>): T {
+  public static resolve<T>(target: Constructor<T>): T | never {
+    if ([String, Number, Boolean, RegExp, Symbol].includes(target as unknown as SymbolConstructor | StringConstructor | NumberConstructor | BooleanConstructor | RegExpConstructor)) {
+      throw new Exception('Injector target cannot be of primitive type');
+    }
+
     const deps = Reflect.getMetadata('design:paramtypes', target) ?? [];
     const resolved = deps.map((param: Constructor) => this.resolve(param));
 
