@@ -79,16 +79,12 @@ export class Router {
           break;
 
         case responseData instanceof ViewResponse:
-          const { file } = responseData as ViewResponse;
-
-          this.viewRenderer.render(response, file, data);
+          this.viewRenderer.render(response, (responseData as ViewResponse).file, data);
 
           break;
 
         case responseData instanceof RedirectResponse:
-          const { url } = responseData as RedirectResponse;
-
-          response.redirect(url);
+          response.redirect((responseData as RedirectResponse).url);
 
           if (data) {
             request.session._redirectData = data;

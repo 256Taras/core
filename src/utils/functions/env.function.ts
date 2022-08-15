@@ -1,6 +1,6 @@
-export const env = <T extends unknown>(key: string): T => {
+export const env = <T = null>(key: string): T => {
   if (!(key in process.env)) {
-    return null as T;
+    return null as unknown as T;
   }
 
   try {
@@ -8,6 +8,6 @@ export const env = <T extends unknown>(key: string): T => {
 
     return casted;
   } catch {
-    return (process.env[key] ?? null) as T;
+    return (process.env[key] ?? null) as unknown as T;
   }
 };

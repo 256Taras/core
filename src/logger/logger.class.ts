@@ -45,7 +45,7 @@ export class Logger {
     return truncated;
   }
 
-  public error(data: string, type: string = 'error'): void {
+  public error(data: string, type = 'error'): void {
     const day = this.getDay();
     const time = this.getTime();
 
@@ -69,7 +69,7 @@ export class Logger {
     console.log(output);
   }
 
-  public log(data: string, type: string = 'info'): void {
+  public log(data: string, type = 'info'): void {
     const day = this.getDay();
     const time = this.getTime();
 
