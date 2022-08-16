@@ -1,3 +1,4 @@
+import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
@@ -266,6 +267,10 @@ export class Server {
   public async start(
     port = env<Integer>('APP_PORT') ?? this.defaultPort,
   ): Promise<void> {
+    if (!existsSync('.env')) {
+      throw new Exception('.env configuration file is missing');
+    }
+
     dotenv.config({
       path: '.env',
     });
