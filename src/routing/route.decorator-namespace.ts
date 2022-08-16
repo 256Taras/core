@@ -1,3 +1,4 @@
+import { inject } from '../injector/functions/inject.function';
 import { MethodDecorator } from '../utils/types/method-decorator.type';
 import { Router } from './router.class';
 import { Request, Response } from 'express';
@@ -7,9 +8,9 @@ interface Target extends Object {
 }
 
 export class Route {
-  constructor(private router: Router) {}
+  private static router = inject(Router);
 
-  public delete(url: string): MethodDecorator {
+  public static delete(url: string): MethodDecorator {
     return (target: Target, propertyKey: string | symbol) => {
       this.router.delete(url, async (request: Request, response: Response) => {
         this.router.respond(request, response, target.constructor, propertyKey);
@@ -17,7 +18,7 @@ export class Route {
     };
   }
 
-  public get(url: string): MethodDecorator {
+  public static get(url: string): MethodDecorator {
     return (target: Target, propertyKey: string | symbol) => {
       this.router.get(url, async (request: Request, response: Response) => {
         this.router.respond(request, response, target.constructor, propertyKey);
@@ -25,7 +26,7 @@ export class Route {
     };
   }
 
-  public options(url: string): MethodDecorator {
+  public static options(url: string): MethodDecorator {
     return (target: Target, propertyKey: string | symbol) => {
       this.router.options(url, async (request: Request, response: Response) => {
         this.router.respond(request, response, target.constructor, propertyKey);
@@ -33,7 +34,7 @@ export class Route {
     };
   }
 
-  public patch(url: string): MethodDecorator {
+  public static patch(url: string): MethodDecorator {
     return (target: Target, propertyKey: string | symbol) => {
       this.router.patch(url, async (request: Request, response: Response) => {
         this.router.respond(request, response, target.constructor, propertyKey);
@@ -41,7 +42,7 @@ export class Route {
     };
   }
 
-  public post(url: string): MethodDecorator {
+  public static post(url: string): MethodDecorator {
     return (target: Target, propertyKey: string | symbol) => {
       this.router.post(url, async (request: Request, response: Response) => {
         this.router.respond(request, response, target.constructor, propertyKey);
@@ -49,7 +50,7 @@ export class Route {
     };
   }
 
-  public put(url: string): MethodDecorator {
+  public static put(url: string): MethodDecorator {
     return (target: Target, propertyKey: string | symbol) => {
       this.router.put(url, async (request: Request, response: Response) => {
         this.router.respond(request, response, target.constructor, propertyKey);
