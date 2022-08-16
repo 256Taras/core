@@ -1,6 +1,7 @@
-import { renderResponse } from './functions/render-response.function';
 import { Service } from '../injector/decorators/service.decorator';
+import { DownloadResponse } from './download-response.class';
 import { Code } from './enums/code.enum';
+import { renderResponse } from './functions/render-response.function';
 import { JsonResponse } from './json-response.class';
 import { RedirectResponse } from './redirect-response.class';
 import { Request } from './request.class';
@@ -39,10 +40,8 @@ export class Response {
     return this;
   }
 
-  public download(file: string): this {
-    this.instance?.download(file);
-
-    return this;
+  public download(file: string): DownloadResponse {
+    return new DownloadResponse(file);
   }
 
   public end(data: any): this {

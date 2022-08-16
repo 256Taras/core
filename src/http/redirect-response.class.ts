@@ -1,3 +1,6 @@
 export class RedirectResponse {
-  constructor(public url: string, public data?: Record<string, any>) {}
+  constructor(
+    public readonly url: string,
+    public readonly data?: Record<string, any>,
+  ) {}
 }

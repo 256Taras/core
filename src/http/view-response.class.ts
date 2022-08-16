@@ -1,3 +1,6 @@
 export class ViewResponse {
-  constructor(public file: string, public data?: Record<string, any>) {}
+  constructor(
+    public readonly file: string,
+    public readonly data?: Record<string, any>,
+  ) {}
 }
