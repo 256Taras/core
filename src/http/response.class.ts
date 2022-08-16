@@ -1,3 +1,4 @@
+import { renderResponse } from './functions/render-response.function';
 import { Service } from '../injector/decorators/service.decorator';
 import { Code } from './enums/code.enum';
 import { JsonResponse } from './json-response.class';
@@ -71,6 +72,6 @@ export class Response {
   }
 
   public render(file: string, data: Record<string, any>): ViewResponse {
-    return new ViewResponse(file, data);
+    return renderResponse(file, data);
   }
 }

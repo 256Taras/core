@@ -1,7 +1,7 @@
-import { ViewResponse } from '../../http/view-response.class';
+import { ViewResponse } from '../view-response.class';
 import { getCallerFile } from '../../utils/functions/get-caller-file.function';
 
-export const render = (file: string, data?: Record<string, any>): ViewResponse => {
+export const renderResponse = (file: string, data?: Record<string, any>): ViewResponse => {
   const callerFile = getCallerFile();
 
   if (file.startsWith('./')) {
