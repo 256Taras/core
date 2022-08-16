@@ -3,17 +3,11 @@ import { Logger } from '../logger/logger.class';
 import { env } from '../utils/functions/env.function';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Exception } from './exception.class';
+import { StackFileData } from './interfaces/stack-file-data.interface';
 import { Request, Response } from 'express';
 import { existsSync, promises, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
-
-interface StackFileData {
-  caller: string;
-  content: string | null;
-  file: string;
-  isAppFile: boolean;
-}
 
 @Service()
 export class Handler {
