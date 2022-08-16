@@ -35,8 +35,7 @@ export class Injector {
           | StringConstructor
           | NumberConstructor
           | BooleanConstructor
-          | SymbolConstructor
-          | RegExpConstructor,
+          | SymbolConstructor,
       ) ||
       ['null', 'undefined'].includes(typeof target)
     ) {

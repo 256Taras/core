@@ -8,9 +8,56 @@ import { existsSync, promises, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
 
+interface StackFileData {
+  caller: string;
+  content: string | null;
+  file: string;
+  isAppFile: boolean;
+}
+
 @Service()
 export class Handler {
   constructor(private logger: Logger, private viewRenderer: ViewRenderer) {}
+
+  private async getExceptionStack(
+    exception: Error | TypeError | Exception,
+  ): Promise<StackFileData> {
+    const stack = exception.stack ?? 'Error\n    at <anonymous>:1:1';
+
+    const callerLine = stack.split('\n')[1];
+    const callerInfo = callerLine.slice(
+      callerLine.indexOf('at ') + 2,
+      callerLine.length,
+    );
+    const caller = callerInfo.split('(')[0];
+
+    const fileMatch = callerInfo.match(/\((.*?)\)/);
+
+    let file = fileMatch ? fileMatch[1] : '<anonymous>';
+
+    const path = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
+
+    const content = existsSync(path) ? readFileSync(path).toString() : null;
+    const isAppFile = !file.includes('node_modules') && !file.includes('/core');
+
+    if (isAppFile) {
+      file = file.replace(/.*?dist./, `src/`);
+      file = file.replace('.js', '.ts');
+    } else {
+      const packageData = await promises.readFile(
+        `${fileURLToPath(import.meta.url)}/../../../package.json`,
+      );
+
+      file = `${JSON.parse(packageData.toString()).name} package file`;
+    }
+
+    return {
+      caller,
+      content,
+      file,
+      isAppFile,
+    };
+  }
 
   public async handleException(
     exception: Error | TypeError | Exception,
@@ -45,39 +92,16 @@ export class Handler {
       response.render(file, data);
     }
 
-    const stack = exception.stack ?? 'Error\n    at <anonymous>:1:1';
-
-    const callerLine = stack.split('\n')[1];
-    const callerIndex = callerLine.indexOf('at ');
-    const info = callerLine.slice(callerIndex + 2, callerLine.length);
-    const caller = info.split('(')[0];
-
-    const fileMatch = info.match(/\((.*?)\)/);
-
-    let file = fileMatch ? fileMatch[1] : '<anonymous>';
-
-    const path = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
-
-    const src = existsSync(path) ? readFileSync(path).toString() : null;
-    const isAppFile = !file.includes('node_modules') && !file.includes('/core');
-
-    if (isAppFile) {
-      file = file.replace(/.*?dist./, `src/`);
-      file = file.replace('.js', '.ts');
-    } else {
-      const packageData = await promises.readFile(
-        `${fileURLToPath(import.meta.url)}/../../../package.json`,
-      );
-
-      file = `${JSON.parse(packageData.toString()).name} package file`;
-    }
+    const { caller, content, file, isAppFile } = await this.getExceptionStack(
+      exception,
+    );
 
     const highlighter = await getHighlighter({
       theme: 'one-dark-pro',
     });
 
-    const codeSnippet = src
-      ? highlighter.codeToHtml(src, {
+    const codeSnippet = content
+      ? highlighter.codeToHtml(content, {
           lang: 'ts',
         })
       : null;
@@ -89,7 +113,7 @@ export class Handler {
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
 
     this.viewRenderer.render(response, viewFile, {
-      codeSnippet: src && isAppFile ? codeSnippet : null,
+      codeSnippet: content && isAppFile ? codeSnippet : null,
       method: request.method.toUpperCase(),
       route: request.url,
       type: exception.constructor.name,
