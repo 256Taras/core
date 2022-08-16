@@ -60,18 +60,22 @@ export class Router {
     this.routes.push(new Route(url, Method.Options, action));
   }
 
-  public respond(
+  public async respond(
     request: Request,
     response: Response,
     controller: Constructor,
     method: string | symbol,
-  ): void {
+  ): Promise<void> {
     try {
       const requestParams = Object.values(request.params);
 
-      const responseData = Injector.resolve<any>(controller)[method](
+      let responseData = Injector.resolve<any>(controller)[method](
         ...requestParams,
       );
+
+      if (responseData instanceof Promise) {
+        responseData = await responseData;
+      }
 
       switch (true) {
         case responseData instanceof DownloadResponse: {
