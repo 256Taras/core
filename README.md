@@ -15,9 +15,9 @@
   </p>
 
   <h4>
-    <a href="#">Documentation</a>
+    <a href="README.md">Documentation</a>
     <span> · </span>
-    <a href="#contributing">Contributing</a>
+    <a href="CONTRIBUTING.md">Contributing</a>
   </h4>
 </div>
 
