@@ -53,7 +53,7 @@ export class Server {
     private viewRenderer: ViewRenderer,
   ) {}
 
-  private async setupDevelopmentEnvironment(port: number): Promise<void> {
+  private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
     const packageData = await promises.readFile(
       `${fileURLToPath(import.meta.url)}/../../../package.json`,
     );
