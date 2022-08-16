@@ -3,7 +3,7 @@ import { ViewResponse } from '../view-response.class';
 
 export const renderResponse = (
   file: string,
-  data?: Record<string, any>,
+  data: Record<string, any> = {},
 ): ViewResponse => {
   const callerFile = getCallerFile();
 

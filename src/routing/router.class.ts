@@ -1,6 +1,7 @@
 import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { Method } from '../http/enums/method.enum';
+import { DownloadResponse } from '../http/download-response.class';
 import { JsonResponse } from '../http/json-response.class';
 import { RedirectResponse } from '../http/redirect-response.class';
 import { ViewResponse } from '../http/view-response.class';
@@ -66,35 +67,52 @@ export class Router {
     method: string | symbol,
   ): void {
     try {
+      const requestParams = Object.values(request.params);
+
       const responseData = Injector.resolve<any>(controller)[method](
-        ...Object.values(request.params),
+        ...requestParams,
       );
 
-      const { data } = responseData;
-
       switch (true) {
-        case responseData instanceof JsonResponse:
+        case responseData instanceof DownloadResponse: {
+          const { file } = responseData as DownloadResponse;
+
+          response.download(file);
+
+          break;
+        }
+
+        case responseData instanceof JsonResponse: {
+          const { data } = responseData as JsonResponse;
+
           response.json(data);
 
           break;
+        }
 
-        case responseData instanceof ViewResponse:
+        case responseData instanceof ViewResponse: {
+          const { data, file } = responseData as ViewResponse;
+
           this.viewRenderer.render(
             response,
-            (responseData as ViewResponse).file,
+            file,
             data,
           );
 
           break;
+        }
 
-        case responseData instanceof RedirectResponse:
-          response.redirect((responseData as RedirectResponse).url);
+        case responseData instanceof RedirectResponse: {
+          const { data, url } = responseData as RedirectResponse;
+
+          response.redirect(url);
 
           if (data) {
             request.session._redirectData = data;
           }
 
           break;
+        }
 
         default:
           response.send(responseData);
