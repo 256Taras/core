@@ -27,11 +27,11 @@
   },
   "scripts": {
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "format": "prettier \"**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint .",
     "test": "vitest",
-    "test:cov": "vitest run --coverage",
-    "watch": "tsc --watch"
+    "test:cov": "vitest run --coverage"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.3.0",
