@@ -55,6 +55,8 @@ $ npm install
 $ npm link @norther/core
 ```
 
-After running these commands, run `npm start` in the `norther` directory. Your app will be available on `http://localhost:8000` by default. You can change the port in `.env` file.
+Then, to compile TypeScript code, run `npm run build:watch` command.
 
-To compile TypeScript code, run `npm run build:watch` command.
+For testing database client, you have to change the import path in the `src/database/database-client.class.ts` `@norther/core` package file: `PrismaClient` should be imported from `../../../norther/node_modules/@prisma/client` in developmnet mode. Don't forget to change it back before creating a pull request!
+
+After all these steps, run `npm start` in the `norther` directory. Your app will be available on `http://localhost:8000` by default. You can change the port in `.env` file.
