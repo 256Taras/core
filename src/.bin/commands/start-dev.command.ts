@@ -38,7 +38,7 @@ export class StartDev {
       childProcess.kill();
 
       childProcess = fork(entryFile, processOptions);
-    }, 500);
+    }, 680);
 
     sourceWatcher.on('all', () => {
       restartProcess();
