@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 
 export * from './constants';
+export * from './auth/authenticator.class';
 export * from './crypto/encrypter.class';
 export * from './database/database-client.class';
 export * from './handler/exception.class';
