@@ -1,6 +1,6 @@
 import { Service } from '../injector/decorators/service.decorator';
 import { DownloadResponse } from './download-response.class';
-import { Code } from './enums/code.enum';
+import { StatusCode } from './enums/status-code.enum';
 import { renderResponse } from './functions/render-response.function';
 import { JsonResponse } from './json-response.class';
 import { RedirectResponse } from './redirect-response.class';
@@ -64,7 +64,7 @@ export class Response {
     return new JsonResponse(data);
   }
 
-  public redirect(url: string, status: Code = Code.Found): RedirectResponse {
+  public redirect(url: string, status: StatusCode = StatusCode.Found): RedirectResponse {
     this?.instance?.status(status);
 
     return new RedirectResponse(url);
