@@ -2,6 +2,8 @@
 import 'reflect-metadata';
 import { error } from '../logger/functions/error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { DbGenerate } from './commands/db-generate.command';
+import { DbMigrate } from './commands/db-migrate.command';
 import { StartDev } from './commands/start-dev.command';
 import { StartProd } from './commands/start-prod.command';
 import { Command } from './interfaces/command.interface';
@@ -12,7 +14,7 @@ process.on('uncaughtException', (exception: Error) => {
   process.exit(1);
 });
 
-const commands: Constructor<Command>[] = [StartDev, StartProd];
+const commands: Constructor<Command>[] = [DbGenerate, DbMigrate, StartDev, StartProd];
 
 commands.map((command: Constructor<Command>) => {
   const name = Reflect.getMetadata('signature', command);
