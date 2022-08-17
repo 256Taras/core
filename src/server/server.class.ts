@@ -1,3 +1,4 @@
+import { Encrypter } from '../crypto/encrypter.class';
 import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
@@ -30,7 +31,6 @@ import session from 'express-session';
 import helmet from 'helmet';
 import methodOverride from 'method-override';
 import multer from 'multer';
-import { randomUUID } from 'node:crypto';
 import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -47,6 +47,7 @@ export class Server {
   private server: Express;
 
   constructor(
+    private encrypter: Encrypter,
     private handler: Handler,
     private logger: Logger,
     private router: Router,
@@ -186,7 +187,7 @@ export class Server {
             callback(null, `${tmpdir()}/norther/uploads`);
           },
           filename: (_request, _file, callback) => {
-            callback(null, randomUUID());
+            callback(null, this.encrypter.uuid());
           },
         }),
       }).array('files'),
