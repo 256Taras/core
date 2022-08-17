@@ -61,7 +61,7 @@ export class Handler {
     response.status(500);
 
     const message =
-      exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
+      (exception.message.charAt(0).toUpperCase() + exception.message.slice(1)).replaceAll(/\n|\r\n/g, ' ');
 
     this.logger.error(message, 'exception');
 
