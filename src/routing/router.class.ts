@@ -1,7 +1,7 @@
 import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
-import { Method } from '../http/enums/method.enum';
 import { DownloadResponse } from '../http/download-response.class';
+import { Method } from '../http/enums/method.enum';
 import { JsonResponse } from '../http/json-response.class';
 import { RedirectResponse } from '../http/redirect-response.class';
 import { ViewResponse } from '../http/view-response.class';
@@ -69,9 +69,7 @@ export class Router {
     try {
       const requestParams = Object.values(request.params);
 
-      let responseData = Injector.resolve<any>(controller)[method](
-        ...requestParams,
-      );
+      let responseData = Injector.resolve<any>(controller)[method](...requestParams);
 
       if (responseData instanceof Promise) {
         responseData = await responseData;
@@ -97,11 +95,7 @@ export class Router {
         case responseData instanceof ViewResponse: {
           const { data, file } = responseData as ViewResponse;
 
-          this.viewRenderer.render(
-            response,
-            file,
-            data,
-          );
+          this.viewRenderer.render(response, file, data);
 
           break;
         }

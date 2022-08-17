@@ -1,7 +1,7 @@
+import { Encrypter } from '../crypto/encrypter.class';
 import { DatabaseClient } from '../database/database-client.class';
 import { Exception } from '../handler/exception.class';
 import { Service } from '../injector/decorators/service.decorator';
-import { Encrypter } from '../crypto/encrypter.class';
 
 @Service()
 export class Authenticator {
@@ -13,7 +13,9 @@ export class Authenticator {
     }
 
     if (!('email' in this.db.user) || !('password' in this.db.user)) {
-      throw new Exception('User model in database must contain "email" and "password" columns');
+      throw new Exception(
+        'User model in database must contain "email" and "password" columns',
+      );
     }
 
     const user = await this.db.user.findFirst({
@@ -22,7 +24,7 @@ export class Authenticator {
       },
     });
 
-    if (user && await this.encrypter.compareHash(password, user.password)) {
+    if (user && (await this.encrypter.compareHash(password, user.password))) {
       return true;
     }
 

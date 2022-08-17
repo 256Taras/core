@@ -1,6 +1,11 @@
 import { Service } from '../injector/decorators/service.decorator';
-import { hash, compare } from 'bcrypt';
-import { createCipheriv, createDecipheriv, randomBytes, randomUUID } from 'node:crypto';
+import { compare, hash } from 'bcrypt';
+import {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  randomUUID,
+} from 'node:crypto';
 
 @Service()
 export class Encrypter {
@@ -30,10 +35,7 @@ export class Encrypter {
   public async encrypt(rawData: string): Promise<string> {
     const cipher = createCipheriv(this.ENCRYPTION_ALGORITHM, this.key, this.iv);
 
-    return Buffer.concat([
-      cipher.update(rawData),
-      cipher.final(),
-    ]).toString();
+    return Buffer.concat([cipher.update(rawData), cipher.final()]).toString();
   }
 
   public async hash(data: string): Promise<string> {

@@ -20,10 +20,10 @@
     "access": "public"
   },
   "exports": {
-    ".": "./dist/module.js"
+    ".": "./dist/module"
   },
   "bin": {
-    "norther": "dist/bin/console.js"
+    "norther": "dist/.bin/norther.js"
   },
   "scripts": {
     "build": "tsc",
