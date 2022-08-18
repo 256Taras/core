@@ -1,6 +1,6 @@
 * text=auto
 
-*.atom diff=html
+*.north diff=html
 *.north.html diff=html
 *.css diff=css
 *.html diff=html
