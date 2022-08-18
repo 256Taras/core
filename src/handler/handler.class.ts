@@ -78,7 +78,7 @@ export class Handler {
     }
 
     if (!env<boolean>('APP_DEBUG')) {
-      const customTemplatePath = 'views/errors/500.atom.html';
+      const customTemplatePath = 'views/errors/500.north.html';
 
       const file = existsSync(customTemplatePath)
         ? 'errors/500'
@@ -101,7 +101,7 @@ export class Handler {
         })
       : null;
 
-    const customViewTemplate = 'views/errors/500.atom.html';
+    const customViewTemplate = 'views/errors/500.north.html';
 
     const viewFile = existsSync(customViewTemplate)
       ? 'errors/500'
@@ -132,7 +132,7 @@ export class Handler {
       return;
     }
 
-    const customViewTemplate = 'views/errors/404.atom.html';
+    const customViewTemplate = 'views/errors/404.north.html';
 
     const viewFile = existsSync(customViewTemplate)
       ? 'errors/404'
@@ -155,7 +155,7 @@ export class Handler {
       return;
     }
 
-    const customViewTemplate = 'views/errors/419.atom.html';
+    const customViewTemplate = 'views/errors/419.north.html';
 
     const viewFile = existsSync(customViewTemplate)
       ? 'errors/419'

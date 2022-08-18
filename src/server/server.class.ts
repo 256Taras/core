@@ -122,12 +122,12 @@ export class Server {
     this.server.set('trust proxy', 1);
     this.server.set('x-powered-by', false);
     this.server.set('views', 'views');
-    this.server.set('view engine', 'atom.html');
+    this.server.set('view engine', 'north.html');
 
     this.server.disable('etag');
 
     this.server.engine(
-      'atom.html',
+      'north.html',
       (
         file: string,
         data: Record<string, any>,

@@ -1,7 +1,7 @@
 * text=auto
 
 *.atom diff=html
-*.atom.html diff=html
+*.north.html diff=html
 *.css diff=css
 *.html diff=html
 *.md diff=markdown
