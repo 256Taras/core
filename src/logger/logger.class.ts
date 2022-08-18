@@ -33,7 +33,7 @@ export class Logger {
   private renderDots(data: string): string {
     const outputLength = stripAnsi(data).length;
     const sign = '.';
-    const dots = chalk.gray(sign.repeat(process.stdout.columns - outputLength - 18));
+    const dots = chalk.gray(sign.repeat(process.stdout.columns - outputLength - 12));
 
     return dots;
   }
@@ -60,7 +60,7 @@ export class Logger {
     const left = `${timestamp} ${chalk.red.bold(mainOutput)}`;
     const right = chalk.gray(type.toUpperCase());
 
-    const dots = this.renderDots(day + time + mainOutput + type);
+    const dots = this.renderDots(timestamp + mainOutput + type);
 
     console.error(left, dots, right);
   }
@@ -84,7 +84,7 @@ export class Logger {
     const left = `${timestamp} ${chalk.white.bold(mainOutput)}`;
     const right = chalk.gray(type.toUpperCase());
 
-    const dots = this.renderDots(day + time + mainOutput + type);
+    const dots = this.renderDots(timestamp + mainOutput + type);
 
     console.log(left, dots, right);
   }
