@@ -1,5 +1,5 @@
 import { DownloadResponse } from '../download-response.class';
 
-export const downloadResponse = (file: string) => {
+export const download = (file: string) => {
   return new DownloadResponse(file);
 };

@@ -177,7 +177,7 @@ export class Server {
             break;
 
           case statusCode >= 300 && statusCode < 500:
-            formattedStatus = chalk.hex('#f8c377')(statusCode);
+            formattedStatus = chalk.hex(this.logger.colorYellow)(statusCode);
 
             break;
 

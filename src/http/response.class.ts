@@ -1,7 +1,7 @@
 import { Service } from '../injector/decorators/service.decorator';
 import { DownloadResponse } from './download-response.class';
 import { StatusCode } from './enums/status-code.enum';
-import { renderResponse } from './functions/render-response.function';
+import { view } from './functions/view.function';
 import { JsonResponse } from './json-response.class';
 import { RedirectResponse } from './redirect-response.class';
 import { Request } from './request.class';
@@ -71,6 +71,6 @@ export class Response {
   }
 
   public render(file: string, data: Record<string, any>): ViewResponse {
-    return renderResponse(file, data);
+    return view(file, data);
   }
 }

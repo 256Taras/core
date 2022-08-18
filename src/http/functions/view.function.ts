@@ -1,7 +1,7 @@
 import { getCallerFile } from '../../utils/functions/get-caller-file.function';
 import { ViewResponse } from '../view-response.class';
 
-export const renderResponse = (
+export const view = (
   file: string,
   data: Record<string, any> = {},
 ): ViewResponse => {
