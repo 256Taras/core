@@ -1,6 +1,6 @@
 import { Service } from '../injector/decorators/service.decorator';
 import { Method } from './enums/method.enum';
-import { Express, Request as ExpressRequest } from 'express';
+import { Request as ExpressRequest } from 'express';
 
 @Service()
 export class Request {
@@ -120,12 +120,16 @@ export class Request {
     return this.instance?.protocol ?? null;
   }
 
-  public get query(): any {
+  public get query(): Record<string, any> {
     return this.instance?.query ?? {};
   }
 
   public secure(): boolean {
     return this.instance?.secure ?? false;
+  }
+
+  public get session(): Record<string, any> {
+    return this.instance?.session ?? {};
   }
 
   public subdomains(): string[] {

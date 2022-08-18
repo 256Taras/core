@@ -195,7 +195,7 @@ export class Server {
         }
 
         this.logger.log(
-          `${formattedStatus} ${request.method} ${request.url} ${timeFormatted}`,
+          `${request.method} ${request.url} ${formattedStatus} ${timeFormatted}`,
           `request`,
         );
       });
