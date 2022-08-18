@@ -26,6 +26,7 @@ import express, {
   Request as ExpressRequest,
   Response as ExpressResponse,
   NextFunction,
+  static as staticFileServer,
 } from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
@@ -134,14 +135,19 @@ export class Server {
   }
 
   private registerMiddleware(): void {
-    this.server.use(helmet());
-    this.server.use(compression());
-    this.server.use(cookieParser());
-    this.server.use(bodyParser.json());
-    this.server.use(bodyParser.urlencoded({ extended: true }));
-    this.server.use(cors());
+    const mainMiddleware: any[] = [
+      helmet(),
+      compression(),
+      cookieParser(),
+      bodyParser.json(),
+      bodyParser.urlencoded({ extended: true }),
+      cors(),
+      staticFileServer('public'),
+    ];
 
-    this.server.use(express.static('public'));
+    mainMiddleware.map((middleware) => {
+      this.server.use(middleware);
+    });
 
     this.server.use((request, response, next) => {
       Injector.get(Request).__setInstance(request);
