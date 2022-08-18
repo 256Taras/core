@@ -20,12 +20,18 @@ export class Injector {
     this.cachedInstances.set(targets, instance);
   }
 
-  public static get<T = any>(className: Constructor<T>): T {
-    return this.cachedInstances.get(className);
+  public static get<T = any>(target: Constructor<T>): T {
+    if (!this.has(target)) {
+      throw new Exception(
+        `Service '${target.constructor.name}' does have not a registered instance`
+      );
+    }
+
+    return this.cachedInstances.get(target);
   }
 
-  public static has(className: Constructor): boolean {
-    return this.cachedInstances.has(className);
+  public static has(target: Constructor): boolean {
+    return this.cachedInstances.has(target);
   }
 
   public static resolve<T>(target: Constructor<T>): T | never {

@@ -14,7 +14,7 @@ export class Authenticator {
 
     if (!('email' in this.db.user) || !('password' in this.db.user)) {
       throw new Exception(
-        'User model in database must contain "email" and "password" columns',
+        `User model in database must contain 'email' and 'password' columns`,
       );
     }
 
