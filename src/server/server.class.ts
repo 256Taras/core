@@ -96,7 +96,7 @@ export class Server {
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Norther development server is running...');
 
-      this.logger.info('Norther server started [press q or esc to quit]');
+      this.logger.info(`Norther server started ${chalk.gray(`[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`)}`);
 
       const browserAliases = {
         darwin: 'open',
@@ -135,7 +135,7 @@ export class Server {
   }
 
   private registerMiddleware(): void {
-    const mainMiddleware: any[] = [
+    const mainMiddleware = [
       helmet(),
       compression(),
       cookieParser(),
@@ -159,11 +159,39 @@ export class Server {
         const endTime = process.hrtime(startTime);
 
         const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
-
         const timeFormatted = chalk.gray(`(${elapsedTime} ms)`);
 
+        const { statusCode } = response;
+
+        let formattedStatus: string;
+
+        switch (true) {
+          case statusCode >= 100 && statusCode < 200:
+            formattedStatus = chalk.blueBright(statusCode);
+
+            break;
+
+          case statusCode >= 200 && statusCode < 300:
+            formattedStatus = chalk.green(statusCode);
+
+            break;
+
+          case statusCode >= 300 && statusCode < 500:
+            formattedStatus = chalk.hex('#f8c377')(statusCode);
+
+            break;
+
+          case statusCode >= 500 && statusCode < 600:
+            formattedStatus = chalk.red(statusCode);
+
+            break;
+
+          default:
+            formattedStatus = statusCode.toString();
+        }
+
         this.logger.log(
-          `${response.statusCode} ${request.method} ${request.url} ${timeFormatted}`,
+          `${formattedStatus} ${request.method} ${request.url} ${timeFormatted}`,
           `request`,
         );
       });

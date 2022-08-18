@@ -1,13 +1,14 @@
 import { Service } from '../injector/decorators/service.decorator';
 import chalk from 'chalk';
+import stripAnsi from 'strip-ansi';
 
 @Service()
 export class Logger {
-  private readonly colorYellow = '#f8c377';
-
   private readonly locale = 'en-us';
-
+  
   private readonly mark = '$';
+
+  public readonly colorYellow = '#f8c377';
 
   private getDay(): string {
     const date = new Date();
@@ -30,8 +31,9 @@ export class Logger {
   }
 
   private renderDots(data: string): string {
-    const outputLength = data.length + 18;
-    const dots = chalk.gray('.'.repeat(process.stdout.columns - outputLength));
+    const outputLength = stripAnsi(data).length;
+    const sign = '.';
+    const dots = chalk.gray(sign.repeat(process.stdout.columns - outputLength - 18));
 
     return dots;
   }
@@ -40,7 +42,7 @@ export class Logger {
     const maxLength = Math.trunc(process.stdout.columns / 2);
 
     const truncated =
-      data.length > maxLength ? data.slice(0, maxLength) + '...' : data;
+      stripAnsi(data).length > maxLength ? data.slice(0, maxLength) + '...' : data;
 
     return truncated;
   }
