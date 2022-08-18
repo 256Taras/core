@@ -5,7 +5,7 @@ import stripAnsi from 'strip-ansi';
 @Service()
 export class Logger {
   private readonly locale = 'en-us';
-  
+
   private readonly mark = '$';
 
   public readonly colorYellow = '#f8c377';

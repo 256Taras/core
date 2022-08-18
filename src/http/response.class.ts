@@ -64,7 +64,10 @@ export class Response {
     return new JsonResponse(data);
   }
 
-  public redirect(url: string, status: StatusCode = StatusCode.Found): RedirectResponse {
+  public redirect(
+    url: string,
+    status: StatusCode = StatusCode.Found,
+  ): RedirectResponse {
     this?.instance?.status(status);
 
     return new RedirectResponse(url);

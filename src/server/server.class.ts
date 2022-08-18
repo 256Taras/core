@@ -96,7 +96,11 @@ export class Server {
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Norther development server is running...');
 
-      this.logger.info(`Norther server started ${chalk.gray(`[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`)}`);
+      this.logger.info(
+        `Norther server started ${chalk.gray(
+          `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
+        )}`,
+      );
 
       const browserAliases = {
         darwin: 'open',

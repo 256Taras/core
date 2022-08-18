@@ -1,5 +1,5 @@
-import { Integer } from '../utils/types/integer.type';
 import { Service } from '../injector/decorators/service.decorator';
+import { Integer } from '../utils/types/integer.type';
 import { compare, hash } from 'bcrypt';
 import {
   createCipheriv,

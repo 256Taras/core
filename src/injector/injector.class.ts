@@ -23,7 +23,7 @@ export class Injector {
   public static get<T = any>(target: Constructor<T>): T {
     if (!this.has(target)) {
       throw new Exception(
-        `Service '${target.constructor.name}' does have not a registered instance`
+        `Service '${target.constructor.name}' does have not a registered instance`,
       );
     }
 
