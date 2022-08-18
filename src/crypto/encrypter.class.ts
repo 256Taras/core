@@ -1,3 +1,4 @@
+import { Integer } from '../utils/types/integer.type';
 import { Service } from '../injector/decorators/service.decorator';
 import { compare, hash } from 'bcrypt';
 import {
@@ -9,9 +10,7 @@ import {
 
 @Service()
 export class Encrypter {
-  private readonly ENCRYPTION_ALGORITHM = 'aes-256-ctr';
-
-  private readonly HASH_ROUNDS = 12;
+  private readonly algorithm = 'aes-256-ctr';
 
   private iv = randomBytes(16);
 
@@ -24,22 +23,26 @@ export class Encrypter {
   }
 
   public async decrypt(encryptedData: string): Promise<string> {
-    const decipher = createDecipheriv(this.ENCRYPTION_ALGORITHM, this.key, this.iv);
+    const decipher = createDecipheriv(this.algorithm, this.key, this.iv);
 
-    return Buffer.concat([
+    const decryptedData = Buffer.concat([
       decipher.update(Buffer.from(encryptedData, 'hex')),
       decipher.final(),
-    ]).toString();
+    ]);
+
+    return decryptedData.toString();
   }
 
   public async encrypt(rawData: string): Promise<string> {
-    const cipher = createCipheriv(this.ENCRYPTION_ALGORITHM, this.key, this.iv);
+    const cipher = createCipheriv(this.algorithm, this.key, this.iv);
 
-    return Buffer.concat([cipher.update(rawData), cipher.final()]).toString();
+    const encryptedData = Buffer.concat([cipher.update(rawData), cipher.final()]);
+
+    return encryptedData.toString();
   }
 
-  public async hash(data: string): Promise<string> {
-    const hashedData = await hash(data, this.HASH_ROUNDS);
+  public async hash(data: string, saltRounds: Integer = 12): Promise<string> {
+    const hashedData = await hash(data, saltRounds);
 
     return hashedData;
   }
