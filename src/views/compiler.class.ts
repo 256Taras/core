@@ -1,9 +1,12 @@
 import * as constants from '../constants';
+import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class Compiler {
   private rawContent: string[] = [];
+
+  constructor(private request: Request) {}
 
   public compile(html: string, data: Record<string, any>): string {
     html = this.parseRawDirectives(html);
@@ -181,7 +184,7 @@ export class Compiler {
 
   private parseTokenDirectives(html: string): string {
     const matches = html.matchAll(/\[token\]/g) ?? [];
-    const token = '';
+    const token = this.request.token();
 
     for (const match of matches) {
       html = html.replace(
