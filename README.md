@@ -22,6 +22,28 @@
 </div>
 
 <!-- omit in toc -->
-### 📓 Table of Contents
+## 📓 Table of Contents
 
-**COMING SOON** - currently in development
+- [About](#about)
+- [Requirements](#requirements)
+- [Creating Project](#creating-project)
+
+## About
+
+Norther is a fast and modern web development framework for Node.js. It makes it easy to create secure and fast web applications with awesome developer experience.
+
+## Requirements
+
+Your environment has to meet few requirements:
+
+| Node.js      | NPM           |
+| -------------|-------------  |
+| 18.3.0+      | 7+            |
+
+## Creating Project
+
+To create new Norther project you can use the NPM command:
+
+```shell
+$ npm init @norther
+```
