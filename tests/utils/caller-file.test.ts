@@ -1,6 +1,6 @@
 import { callerFile } from '../../src/utils/functions/caller-file.function';
-import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
 
 describe('callerFile function', () => {
   it('returns valid file path', () => {

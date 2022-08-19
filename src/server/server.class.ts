@@ -258,7 +258,7 @@ export class Server {
     this.server.use((request, response, next) => {
       csrf({ cookie: true })(request, response, (error) => {
         if (error) {
-          this.handler.handleInvalidToken(request, response);
+          this.handler.handleInvalidToken();
 
           return;
         }
@@ -270,11 +270,11 @@ export class Server {
     this.server.use(
       (
         exception: any,
-        request: ExpressRequest,
-        response: ExpressResponse,
+        _request: ExpressRequest,
+        _response: ExpressResponse,
         _next?: NextFunction,
       ) => {
-        this.handler.handleException(exception, request, response);
+        this.handler.handleException(exception);
       },
     );
   }
@@ -282,8 +282,8 @@ export class Server {
   private registerRoutes(): void {
     this.router.registerRoutes(this.server);
 
-    this.server.all('*', (request: ExpressRequest, response: ExpressResponse) => {
-      this.handler.handleNotFound(request, response);
+    this.server.all('*', () => {
+      this.handler.handleNotFound();
     });
   }
 

@@ -1,17 +1,24 @@
+import { StatusCode } from '../http/enums/status-code.enum';
+import { Request } from '../http/request.class';
+import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Logger } from '../logger/logger.class';
 import { env } from '../utils/functions/env.function';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Exception } from './exception.class';
 import { StackFileData } from './interfaces/stack-file-data.interface';
-import { Request, Response } from 'express';
 import { existsSync, promises, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
 
 @Service()
 export class Handler {
-  constructor(private logger: Logger, private viewRenderer: ViewRenderer) {}
+  constructor(
+    private logger: Logger,
+    private request: Request,
+    private response: Response,
+    private viewRenderer: ViewRenderer,
+  ) {}
 
   private async getExceptionStack(
     exception: Error | TypeError | Exception,
@@ -55,10 +62,8 @@ export class Handler {
 
   public async handleException(
     exception: Error | TypeError | Exception,
-    request: Request,
-    response: Response,
   ): Promise<void> {
-    response.status(500);
+    this.response.status(StatusCode.InternalServerError);
 
     const message = (
       exception.message.charAt(0).toUpperCase() + exception.message.slice(1)
@@ -71,8 +76,8 @@ export class Handler {
       message: 'Server exception',
     };
 
-    if (request.xhr || request.headers.accept?.includes('json')) {
-      response.send(data);
+    if (this.request.ajax() || this.request.headers.accept?.includes('json')) {
+      this.response.send(data);
 
       return;
     }
@@ -84,7 +89,7 @@ export class Handler {
         ? 'errors/500'
         : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-      response.render(file, data);
+      this.response.render(file, data);
     }
 
     const { caller, content, file, isAppFile } = await this.getExceptionStack(
@@ -107,10 +112,10 @@ export class Handler {
       ? 'errors/500'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
 
-    this.viewRenderer.render(response, viewFile, {
+    this.viewRenderer.render(viewFile, {
       codeSnippet: content && isAppFile ? codeSnippet : null,
-      method: request.method.toUpperCase(),
-      route: request.url,
+      method: this.request.method().toUpperCase(),
+      route: this.request.path(),
       type: exception.constructor.name,
       caller,
       file,
@@ -118,16 +123,16 @@ export class Handler {
     });
   }
 
-  public handleNotFound(request: Request, response: Response): void {
-    response.status(404);
+  public handleNotFound(): void {
+    this.response.status(StatusCode.NotFound);
 
     const data = {
       statusCode: 404,
       message: 'Not Found',
     };
 
-    if (request.xhr || request.headers.accept?.includes('json')) {
-      response.send(data);
+    if (this.request.ajax() || this.request.headers.accept?.includes('json')) {
+      this.response.send(data);
 
       return;
     }
@@ -138,19 +143,19 @@ export class Handler {
       ? 'errors/404'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    this.viewRenderer.render(response, viewFile, data);
+    this.viewRenderer.render(viewFile, data);
   }
 
-  public handleInvalidToken(request: Request, response: Response): void {
-    response.status(419);
+  public handleInvalidToken(): void {
+    this.response.status(StatusCode.TokenExpired);
 
     const data = {
       statusCode: 419,
       message: 'Invalid Token',
     };
 
-    if (request.xhr || request.headers.accept?.includes('json')) {
-      response.send(data);
+    if (this.request.ajax() || this.request.headers.accept?.includes('json')) {
+      this.response.send(data);
 
       return;
     }
@@ -161,6 +166,6 @@ export class Handler {
       ? 'errors/419'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    this.viewRenderer.render(response, viewFile, data);
+    this.viewRenderer.render(viewFile, data);
   }
 }

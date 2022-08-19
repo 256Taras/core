@@ -1,12 +1,12 @@
 import { Exception } from '../handler/exception.class';
+import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Compiler } from './compiler.class';
-import { Response } from 'express';
 import { promises } from 'node:fs';
 
 @Service()
 export class ViewRenderer {
-  constructor(private compiler: Compiler) {}
+  constructor(private compiler: Compiler, private response: Response) {}
 
   public async parse(
     file: string,
@@ -19,17 +19,21 @@ export class ViewRenderer {
     return callback(null, html);
   }
 
-  public render(response: Response, file: string, data: Record<string, any>): void {
+  public render(file: string, data: Record<string, any>): void {
     const viewData = {
       variables: data,
     };
 
-    response.render(file, viewData, (error: Error, html: string): void | never => {
-      if (error) {
-        throw new Exception(error.message);
-      }
+    this.response.render(
+      file,
+      viewData,
+      (error: Error, html: string): void | never => {
+        if (error) {
+          throw new Exception(error.message);
+        }
 
-      response.send(html);
-    });
+        this.response.send(html);
+      },
+    );
   }
 }

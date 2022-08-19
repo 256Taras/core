@@ -70,7 +70,21 @@ export class Response {
     return new RedirectResponse(url);
   }
 
-  public render(file: string, data: Record<string, any>): ViewResponse {
-    return view(file, data);
+  public render(file: string, data: Record<string, any>, callback?: any): this {
+    this.instance?.render(file, data, callback);
+
+    return this;
+  }
+
+  public status(status: StatusCode): this {
+    this.instance?.status(status);
+
+    return this;
+  }
+
+  public send(data: any): this {
+    this.instance?.send(data);
+
+    return this;
   }
 }
