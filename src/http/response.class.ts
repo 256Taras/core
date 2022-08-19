@@ -4,15 +4,12 @@ import { StatusCode } from './enums/status-code.enum';
 import { view } from './functions/view.function';
 import { JsonResponse } from './json-response.class';
 import { RedirectResponse } from './redirect-response.class';
-import { Request } from './request.class';
 import { ViewResponse } from './view-response.class';
 import { Response as ExpressResponse } from 'express';
 
 @Service()
 export class Response {
   private instance: ExpressResponse | null = null;
-
-  constructor(private request: Request) {}
 
   public $getInstance(): ExpressResponse | null {
     return this.instance;
