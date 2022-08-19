@@ -27,6 +27,9 @@
 - [About](#about)
 - [Requirements](#requirements)
 - [Creating Project](#creating-project)
+- [Security](#security)
+- [Information](#information)
+- [License](#license)
 
 ## About
 
@@ -47,3 +50,17 @@ To create new Norther project you can use the NPM command:
 ```shell
 $ npm init @norther
 ```
+
+## Security
+
+If you discovered any bug or security issue please open new issue / pull request in the [repository](https://github.com/northerjs/core) or email me: dom.rajkowski@gmail.com.
+
+## Information
+
+GitHub repository: [github.com/northerjs/core](https://github.com/northerjs/core)
+
+Author: [dominiq007](https://github.com/dominiq007)
+
+## License
+
+Norther is an open-source framework licensed under the [MIT License](LICENSE).
