@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { inject } from '../../src/injector/functions/inject.function';
 import { Logger } from '../../src/logger/logger.class';
 import { describe, expect, it } from 'vitest';

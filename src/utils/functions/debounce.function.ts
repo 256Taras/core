@@ -2,10 +2,14 @@ export const debounce = (callback: (...args: unknown[]) => any, timeout = 150) =
   let timer: NodeJS.Timeout;
 
   return (...args: unknown[]) => {
+    let result: any;
+
     clearTimeout(timer);
 
     timer = setTimeout(() => {
-      callback.apply(this, args);
+      result = callback(...args);
     }, timeout);
+
+    return result;
   };
 };

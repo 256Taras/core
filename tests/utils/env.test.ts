@@ -5,6 +5,6 @@ describe('env function', () => {
   it('returns valid .env entries', () => {
     const isDebug = env<boolean>('APP_DEBUG');
 
-    expect(isDebug).toEqual(null);
+    expect(isDebug).toBe(null);
   });
 });

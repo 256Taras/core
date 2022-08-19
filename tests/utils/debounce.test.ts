@@ -6,6 +6,6 @@ describe('debounce function', () => {
     const callback = debounce(() => true);
 
     expect(callback).toEqual(expect.any(Function));
-    expect(callback()).toEqual(true);
+    expect(callback()).toBe(true);
   });
 });

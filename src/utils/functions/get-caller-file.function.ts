@@ -8,7 +8,7 @@ export const getCallerFile = () => {
   const filePathPattern = /(file:[/]{2}.+[^:0-9]):{1}[0-9]+:{1}[0-9]+/;
   const result = filePathPattern.exec(data);
 
-  let filePath = '';
+  let filePath = import.meta.url;
 
   if (result && result.length > 1) {
     filePath = result[1];
