@@ -1,5 +1,5 @@
-import { Service } from '../injector/decorators/service.decorator';
 import { Request } from '../http/request.class';
+import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class Session {

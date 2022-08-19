@@ -74,7 +74,9 @@ export class StartDev {
       if ([...Object.values(exitKeys)].includes(key)) {
         info(
           `Server stopped ${chalk.gray(
-            `[press ${chalk.white((process.platform === 'darwin' ? 'command' : 'ctrl') + '+c')} to quit]`,
+            `[press ${chalk.white(
+              (process.platform === 'darwin' ? 'command' : 'ctrl') + '+c',
+            )} to quit]`,
           )}`,
         );
 

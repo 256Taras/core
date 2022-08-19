@@ -1,5 +1,5 @@
 import { Encrypter } from '../crypto/encrypter.class';
-import { AuthUser, DatabaseClient } from '../database/database-client.class';
+import { DatabaseClient, SchemaUser } from '../database/database-client.class';
 import { Exception } from '../handler/exception.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
@@ -18,7 +18,7 @@ export class Authenticator {
 
   public async login(email: string, password: string): Promise<boolean> {
     if (!('user' in this.db)) {
-      throw new Exception('Database schema must contain a "user" table');
+      throw new Exception('Database schema must contain a User model');
     }
 
     if (!('email' in this.db.user) || !('password' in this.db.user)) {
@@ -35,7 +35,7 @@ export class Authenticator {
 
     if (user && (await this.encrypter.compareHash(password, user.password))) {
       this.session.set('_auth', true);
-      this.session.set('_auth:user', user);
+      this.session.set('_authUser', user);
 
       return true;
     }
@@ -49,7 +49,7 @@ export class Authenticator {
     this.session.destroy();
   }
 
-  public user(): AuthUser {
-    return this.session.data['_auth:user'];
+  public user(): SchemaUser {
+    return this.session.data._authUser;
   }
 }

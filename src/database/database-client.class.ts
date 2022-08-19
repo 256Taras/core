@@ -4,4 +4,4 @@ import { Service } from '../injector/decorators/service.decorator';
 @Service()
 export class DatabaseClient extends PrismaClient {}
 
-export type AuthUser = User;
+export type SchemaUser = User;
