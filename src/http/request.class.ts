@@ -6,11 +6,11 @@ import { Request as ExpressRequest } from 'express';
 export class Request {
   private instance: ExpressRequest | null = null;
 
-  public __getInstance(): ExpressRequest | null {
+  public $getInstance(): ExpressRequest | null {
     return this.instance;
   }
 
-  public __setInstance(instance: ExpressRequest): void {
+  public $setInstance(instance: ExpressRequest): void {
     this.instance = instance;
   }
 

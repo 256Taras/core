@@ -14,11 +14,11 @@ export class Response {
 
   constructor(private request: Request) {}
 
-  public __getInstance(): ExpressResponse | null {
+  public $getInstance(): ExpressResponse | null {
     return this.instance;
   }
 
-  public __setInstance(instance: ExpressResponse): this {
+  public $setInstance(instance: ExpressResponse): this {
     this.instance = instance;
 
     return this;

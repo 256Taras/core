@@ -154,8 +154,8 @@ export class Server {
     });
 
     this.server.use((request, response, next) => {
-      Injector.get(Request).__setInstance(request);
-      Injector.get(Response).__setInstance(response);
+      Injector.get(Request).$setInstance(request);
+      Injector.get(Response).$setInstance(response);
 
       const startTime = process.hrtime();
 
