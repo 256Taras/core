@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
 
-export const getCallerFile = () => {
+export const callerFile = () => {
   const error = new Error();
   const stack = error.stack?.split('\n') ?? '';
   const data = stack[3];

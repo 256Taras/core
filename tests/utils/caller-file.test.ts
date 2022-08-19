@@ -1,10 +1,10 @@
-import { getCallerFile } from '../../src/utils/functions/get-caller-file.function';
+import { callerFile } from '../../src/utils/functions/caller-file.function';
 import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 
-describe('getCallerFile function', () => {
+describe('callerFile function', () => {
   it('returns valid file path', () => {
-    const file = getCallerFile();
+    const file = callerFile();
     const fileExists = existsSync(file);
 
     expect(fileExists).toBe(true);
