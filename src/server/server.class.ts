@@ -302,7 +302,7 @@ export class Server {
 
     Injector.bind([Request, Response]);
 
-    Injector.get(Translator).setLanguage(config?.language);
+    this.translator.setLanguage(config?.language);
 
     return this;
   }

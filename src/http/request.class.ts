@@ -124,6 +124,10 @@ export class Request {
     return this.instance?.query ?? {};
   }
 
+  public redirectData(): Record<string, any> | null {
+    return this.session._redirectData ?? null;
+  }
+
   public secure(): boolean {
     return this.instance?.secure ?? false;
   }
