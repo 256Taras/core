@@ -8,66 +8,69 @@ import { ViewResponse } from '../http/view-response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { ViewRenderer } from '../views/view-renderer.class';
 import { Route } from './route.class';
-import { Express, Request, Response } from 'express';
+import { Request } from '../http/request.class';
+import { Response } from '../http/response.class';
+import { Express } from 'express';
 
 @Service()
 export class Router {
   private routes: Route[] = [];
 
-  constructor(private handler: Handler, private viewRenderer: ViewRenderer) {}
+  constructor(
+    private handler: Handler,
+    private request: Request,
+    private response: Response,
+  ) {}
 
   public get(
     url: string,
-    action: (request: Request, response: Response) => any,
+    action: () => any,
   ): void {
     this.routes.push(new Route(url, Method.Get, action));
   }
 
   public post(
     url: string,
-    action: (request: Request, response: Response) => any,
+    action: () => any,
   ): void {
     this.routes.push(new Route(url, Method.Post, action));
   }
 
   public put(
     url: string,
-    action: (request: Request, response: Response) => any,
+    action: () => any,
   ): void {
     this.routes.push(new Route(url, Method.Put, action));
   }
 
   public patch(
     url: string,
-    action: (request: Request, response: Response) => any,
+    action: () => any,
   ): void {
     this.routes.push(new Route(url, Method.Patch, action));
   }
 
   public delete(
     url: string,
-    action: (request: Request, response: Response) => any,
+    action: () => any,
   ): void {
     this.routes.push(new Route(url, Method.Delete, action));
   }
 
   public options(
     url: string,
-    action: (request: Request, response: Response) => any,
+    action: () => any,
   ): void {
     this.routes.push(new Route(url, Method.Options, action));
   }
 
   public async respond(
-    request: Request,
-    response: Response,
     controller: Constructor,
     method: string | symbol,
   ): Promise<void> {
     try {
-      const requestParams = Object.values(request.params);
+      const requestParams = Object.values(this.request.params);
 
       let responseData = Injector.resolve<any>(controller)[method](...requestParams);
 
@@ -79,7 +82,7 @@ export class Router {
         case responseData instanceof DownloadResponse: {
           const { file } = responseData as DownloadResponse;
 
-          response.download(file);
+          this.response.download(file);
 
           break;
         }
@@ -87,7 +90,7 @@ export class Router {
         case responseData instanceof JsonResponse: {
           const { data } = responseData as JsonResponse;
 
-          response.json(data);
+          this.response.json(data);
 
           break;
         }
@@ -95,7 +98,7 @@ export class Router {
         case responseData instanceof ViewResponse: {
           const { data, file } = responseData as ViewResponse;
 
-          this.viewRenderer.render(response, file, data);
+          this.response.render(file, data);
 
           break;
         }
@@ -103,24 +106,20 @@ export class Router {
         case responseData instanceof RedirectResponse: {
           const { data, url } = responseData as RedirectResponse;
 
-          response.redirect(url);
+          this.response.redirect(url);
 
           if (data) {
-            request.session._redirectData = data;
+            this.request.session._redirectData = data;
           }
 
           break;
         }
 
         default:
-          response.send(responseData);
+          this.response.send(responseData);
       }
     } catch (exception) {
-      this.handler.handleException(
-        exception as TypeError | Exception,
-        request,
-        response,
-      );
+      this.handler.handleException(exception as TypeError | Exception);
     }
   }
 

@@ -1,10 +1,6 @@
 import { Service } from '../injector/decorators/service.decorator';
-import { DownloadResponse } from './download-response.class';
 import { StatusCode } from './enums/status-code.enum';
-import { view } from './functions/view.function';
-import { JsonResponse } from './json-response.class';
-import { RedirectResponse } from './redirect-response.class';
-import { ViewResponse } from './view-response.class';
+import { Exception } from '../handler/exception.class';
 import { Response as ExpressResponse } from 'express';
 
 @Service()
@@ -37,8 +33,10 @@ export class Response {
     return this;
   }
 
-  public download(file: string): DownloadResponse {
-    return new DownloadResponse(file);
+  public download(file: string): this {
+    this.instance?.download(file);
+
+    return this;
   }
 
   public end(data: any): this {
@@ -57,21 +55,38 @@ export class Response {
     return this;
   }
 
-  public json(data?: Record<string, any> | undefined): JsonResponse {
-    return new JsonResponse(data);
+  public json(data?: Record<string, any>): this {
+    this.instance?.json(data);
+
+    return this;
   }
 
   public redirect(
     url: string,
     status: StatusCode = StatusCode.Found,
-  ): RedirectResponse {
+  ): this {
     this?.instance?.status(status);
+    this?.instance?.redirect(url);
 
-    return new RedirectResponse(url);
+    return this;
   }
 
-  public render(file: string, data: Record<string, any>, callback?: any): this {
-    this.instance?.render(file, data, callback);
+  public render(file: string, data: Record<string, any>): this {
+    const viewData = {
+      variables: data,
+    };
+
+    this.instance?.render(
+      file,
+      viewData,
+      (error: Error, html: string): void | never => {
+        if (error) {
+          throw new Exception(error.message);
+        }
+
+        this.send(html);
+      },
+    );
 
     return this;
   }

@@ -4,7 +4,6 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Logger } from '../logger/logger.class';
 import { env } from '../utils/functions/env.function';
-import { ViewRenderer } from '../views/view-renderer.class';
 import { Exception } from './exception.class';
 import { StackFileData } from './interfaces/stack-file-data.interface';
 import { existsSync, promises, readFileSync } from 'node:fs';
@@ -17,7 +16,6 @@ export class Handler {
     private logger: Logger,
     private request: Request,
     private response: Response,
-    private viewRenderer: ViewRenderer,
   ) {}
 
   private async getExceptionStack(
@@ -112,7 +110,7 @@ export class Handler {
       ? 'errors/500'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
 
-    this.viewRenderer.render(viewFile, {
+    this.response.render(viewFile, {
       codeSnippet: content && isAppFile ? codeSnippet : null,
       method: this.request.method().toUpperCase(),
       route: this.request.path(),
@@ -143,7 +141,7 @@ export class Handler {
       ? 'errors/404'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    this.viewRenderer.render(viewFile, data);
+    this.response.render(viewFile, data);
   }
 
   public handleInvalidToken(): void {
@@ -166,6 +164,6 @@ export class Handler {
       ? 'errors/419'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    this.viewRenderer.render(viewFile, data);
+    this.response.render(viewFile, data);
   }
 }
