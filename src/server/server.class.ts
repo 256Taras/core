@@ -11,6 +11,7 @@ import { env } from '../utils/functions/env.function';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
+import { Translator } from '../translator/translator.class';
 import { ViewRenderer } from '../views/view-renderer.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
@@ -52,6 +53,7 @@ export class Server {
     private handler: Handler,
     private logger: Logger,
     private router: Router,
+    private translator: Translator,
     private viewRenderer: ViewRenderer,
   ) {}
 
@@ -108,7 +110,7 @@ export class Server {
         win32: 'explorer',
       };
 
-      if (this.options.config?.openBrowser ?? true) {
+      if (this.options.config?.dev?.openBrowser ?? true) {
         runCommand(
           `${
             browserAliases[process.platform as keyof object]
@@ -288,7 +290,7 @@ export class Server {
   }
 
   public setup(options: ServerOptions): this {
-    const { modules } = options;
+    const { modules, config } = options;
 
     this.options = options;
 
@@ -299,6 +301,8 @@ export class Server {
     });
 
     Injector.bind([Request, Response]);
+
+    Injector.get(Translator).setLanguage(config?.language);
 
     return this;
   }

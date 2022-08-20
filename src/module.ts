@@ -32,6 +32,7 @@ export * from './server/functions/create-server.function';
 export * from './server/interfaces/module.interface';
 export * from './server/server.class';
 export * from './session/session.class';
+export * from './translator/functions/trans.function';
 export * from './utils/functions/debounce.function';
 export * from './utils/functions/env.function';
 export * from './utils/interfaces/constructor.interface';

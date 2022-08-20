@@ -3,7 +3,10 @@ import { Module } from './module.interface';
 
 export interface ServerOptions {
   config?: {
-    openBrowser?: boolean;
+    language?: string;
+    dev?: {
+      openBrowser?: boolean;
+    };
   };
   modules: Constructor<Module>[];
 }
