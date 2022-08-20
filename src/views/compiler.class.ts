@@ -1,12 +1,13 @@
 import * as constants from '../constants';
 import { Request } from '../http/request.class';
+import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class Compiler {
   private rawContent: string[] = [];
 
-  constructor(private request: Request) {}
+  constructor(private request: Request, private response: Response) {}
 
   public compile(html: string, data: Record<string, any>): string {
     html = this.parseRawDirectives(html);
@@ -30,6 +31,7 @@ export class Compiler {
       const scopeVariables = {
         ...constants,
         ...data.variables,
+        $request: this.request,
       };
 
       const functionHeader = [
@@ -66,6 +68,7 @@ export class Compiler {
       const scopeVariables = {
         ...constants,
         ...data.variables,
+        $request: this.request,
       };
 
       const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
@@ -84,8 +87,7 @@ export class Compiler {
 
         const renderScopeVariables = {
           [variableName]: item,
-          ...constants,
-          ...data.variables,
+          ...scopeVariables,
           $first: counter === 0,
           $last: counter === Object.keys(iterable).length - 1,
           $even: counter % 2 === 0,
