@@ -4,13 +4,13 @@ import { DownloadResponse } from '../http/download-response.class';
 import { Method } from '../http/enums/method.enum';
 import { JsonResponse } from '../http/json-response.class';
 import { RedirectResponse } from '../http/redirect-response.class';
+import { Request } from '../http/request.class';
+import { Response } from '../http/response.class';
 import { ViewResponse } from '../http/view-response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Route } from './route.class';
-import { Request } from '../http/request.class';
-import { Response } from '../http/response.class';
 import { Express } from 'express';
 
 @Service()
@@ -23,45 +23,27 @@ export class Router {
     private response: Response,
   ) {}
 
-  public get(
-    url: string,
-    action: () => any,
-  ): void {
+  public get(url: string, action: () => any): void {
     this.routes.push(new Route(url, Method.Get, action));
   }
 
-  public post(
-    url: string,
-    action: () => any,
-  ): void {
+  public post(url: string, action: () => any): void {
     this.routes.push(new Route(url, Method.Post, action));
   }
 
-  public put(
-    url: string,
-    action: () => any,
-  ): void {
+  public put(url: string, action: () => any): void {
     this.routes.push(new Route(url, Method.Put, action));
   }
 
-  public patch(
-    url: string,
-    action: () => any,
-  ): void {
+  public patch(url: string, action: () => any): void {
     this.routes.push(new Route(url, Method.Patch, action));
   }
 
-  public delete(
-    url: string,
-    action: () => any,
-  ): void {
+  public delete(url: string, action: () => any): void {
     this.routes.push(new Route(url, Method.Delete, action));
   }
 
-  public options(
-    url: string,
-    action: () => any,
-  ): void {
+  public options(url: string, action: () => any): void {
     this.routes.push(new Route(url, Method.Options, action));
   }
 

@@ -1,9 +1,9 @@
-interface Target extends Object {
+export interface MethodTarget extends Object {
   constructor: any;
 }
 
 export type MethodDecorator = <T = any>(
-  target: Target,
+  target: MethodTarget,
   propertyKey: string | symbol,
   descriptor?: TypedPropertyDescriptor<T>,
 ) => void | TypedPropertyDescriptor<T>;
