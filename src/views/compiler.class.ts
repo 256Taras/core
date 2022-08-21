@@ -1,41 +1,48 @@
 import * as constants from '../constants';
 import { Request } from '../http/request.class';
-import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { trans } from '../translator/functions/trans.function';
 
 @Service()
 export class Compiler {
+  private data: Record<string, any> = {};
+
+  private html: string;
+
   private rawContent: string[] = [];
 
   private functions = {
     trans,
   };
 
-  constructor(private request: Request, private response: Response) {}
+  constructor(private request: Request) {}
 
-  public compile(html: string, data: Record<string, any>): string {
-    html = this.parseRawDirectives(html);
-    html = this.parseEachDirectives(html, data);
-    html = this.parseDataRenders(html, data);
-    html = this.parseIfElseDirectives(html, data);
-    html = this.parseIfDirectives(html, data);
-    html = this.parseTokenDirectives(html);
-    html = this.parseMethodDirectives(html);
-    html = this.restoreRawContent(html);
+  public compile(html: string, data: Record<string, any> = {}): string {
+    this.rawContent = [];
+    this.data = data;
+    this.html = html;
 
-    return html;
+    this.parseRawDirectives();
+    this.parseEachDirectives();
+    this.parseDataRenders();
+    this.parseIfElseDirectives();
+    this.parseIfDirectives();
+    this.parseTokenDirectives();
+    this.parseMethodDirectives();
+    this.restoreRawContent();
+
+    return this.html;
   }
 
-  private parseDataRenders(html: string, data: Record<string, any>): string {
-    const matches = html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
+  private parseDataRenders(): void {
+    const matches = this.html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
 
     for (const match of matches) {
       const value: string = match[2];
 
       const scopeVariables = {
         ...constants,
-        ...data.variables,
+        ...this.data.variables,
         ...this.functions,
         $request: this.request,
       };
@@ -57,15 +64,13 @@ export class Compiler {
 
       const returnedValue: any = fn(...Object.values(scopeVariables));
 
-      html = html.replace(match[0], String(returnedValue));
+      this.html = this.html.replace(match[0], String(returnedValue));
     }
-
-    return html;
   }
 
-  private parseEachDirectives(html: string, data: Record<string, any>): string {
+  private parseEachDirectives(): void {
     const matches =
-      html.matchAll(/\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm) ??
+      this.html.matchAll(/\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm) ??
       [];
 
     for (const match of matches) {
@@ -73,7 +78,7 @@ export class Compiler {
 
       const scopeVariables = {
         ...constants,
-        ...data.variables,
+        ...this.data.variables,
         ...this.functions,
         $request: this.request,
       };
@@ -123,22 +128,20 @@ export class Compiler {
         counter += 1;
       });
 
-      html = html.replace(match[0], result);
+      this.html = this.html.replace(match[0], result);
     }
-
-    return html;
   }
 
-  private parseIfDirectives(html: string, data: Record<string, any>): string {
+  private parseIfDirectives(): void {
     const matches =
-      html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
+      this.html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
 
     for (const match of matches) {
       const value = match[1];
 
       const scopeVariables = {
         ...constants,
-        ...data.variables,
+        ...this.data.variables,
       };
 
       const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
@@ -148,20 +151,18 @@ export class Compiler {
       const condition: boolean = fn(...Object.values(scopeVariables));
 
       if (condition) {
-        html = html.replace(match[0], match[3]);
+        this.html = this.html.replace(match[0], match[3]);
 
         continue;
       }
 
-      html = html.replace(match[0], '');
+      this.html = this.html.replace(match[0], '');
     }
-
-    return html;
   }
 
-  private parseIfElseDirectives(html: string, data: Record<string, any>): string {
+  private parseIfElseDirectives(): void {
     const matches =
-      html.matchAll(
+    this.html.matchAll(
         /\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)(\[else\])((.|\n|\r\n)*?)\[\/if\]/gm,
       ) ?? [];
 
@@ -170,7 +171,7 @@ export class Compiler {
 
       const scopeVariables = {
         ...constants,
-        ...data.variables,
+        ...this.data.variables,
       };
 
       const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
@@ -180,72 +181,60 @@ export class Compiler {
       const condition: boolean = fn(...Object.values(scopeVariables));
 
       if (condition) {
-        html = html.replace(match[0], match[3]);
+        this.html = this.html.replace(match[0], match[3]);
 
         continue;
       }
 
-      html = html.replace(match[0], match[6]);
+      this.html = this.html.replace(match[0], match[6]);
     }
-
-    return html;
   }
 
-  private parseTokenDirectives(html: string): string {
-    const matches = html.matchAll(/\[token\]/g) ?? [];
+  private parseTokenDirectives(): void {
+    const matches = this.html.matchAll(/\[token\]/g) ?? [];
     const token = this.request.token();
 
     for (const match of matches) {
-      html = html.replace(
+      this.html = this.html.replace(
         match[0],
         `<input type="hidden" name="_token" value="${token}">`,
       );
     }
-
-    return html;
   }
 
-  private parseMethodDirectives(html: string): string {
+  private parseMethodDirectives(): void {
     const matches =
-      html.matchAll(/\[(get|post|put|patch|delete|head|options)\]/g) ?? [];
+      this.html.matchAll(/\[(get|post|put|patch|delete|head|options)\]/g) ?? [];
 
     for (const match of matches) {
-      html = html.replace(
+      this.html = this.html.replace(
         match[0],
         `<input type="hidden" name="_method" value="${match[1].toUpperCase()}">`,
       );
     }
-
-    return html;
   }
 
-  private parseRawDirectives(html: string): string {
-    this.rawContent = [];
-
+  private parseRawDirectives(): void {
     const matches =
-      html.matchAll(/\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm) ?? [];
+      this.html.matchAll(/\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm) ?? [];
 
     let count = 0;
 
     for (const match of matches) {
-      html = html.replace(match[0], `$_raw${count}`);
+      this.html = this.html.replace(match[0], `$_raw${count}`);
       count += 1;
 
       this.rawContent.push(match[2]);
     }
-
-    return html;
   }
 
-  private restoreRawContent(html: string): string {
-    const matches = html.matchAll(/\$_raw([0-9]+)/g) ?? [];
+  private restoreRawContent(): void {
+    const matches = this.html.matchAll(/\$_raw([0-9]+)/g) ?? [];
 
     for (const match of matches) {
       const index = parseInt(match[1]);
 
-      html = html.replace(match[0], this.rawContent[index]);
+      this.html = this.html.replace(match[0], this.rawContent[index]);
     }
-
-    return html;
   }
 }
