@@ -29,6 +29,7 @@ export class Compiler {
     this.parseIfDirectives();
     this.parseTokenDirectives();
     this.parseMethodDirectives();
+
     this.restoreRawContent();
 
     return this.html;
@@ -61,7 +62,6 @@ export class Compiler {
       ];
 
       const fn = new Function(...functionHeader);
-
       const returnedValue: any = fn(...Object.values(scopeVariables));
 
       this.html = this.html.replace(match[0], String(returnedValue));
@@ -85,11 +85,9 @@ export class Compiler {
       };
 
       const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
-
       const fn = new Function(...functionHeader);
 
       const iterable: any[] = fn(...Object.values(scopeVariables));
-
       const variableName = match[1];
 
       let result = '';
@@ -118,7 +116,6 @@ export class Compiler {
           ];
 
           const renderFn = new Function(...renderFunctionHeader);
-
           const renderResult: any = renderFn(...Object.values(renderScopeVariables));
 
           content = content.replace(renderMatch[0], String(renderResult));
@@ -143,10 +140,11 @@ export class Compiler {
       const scopeVariables = {
         ...constants,
         ...this.data.variables,
+        ...this.functions,
+        $request: this.request,
       };
 
       const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
-
       const fn = new Function(...functionHeader);
 
       const condition: boolean = fn(...Object.values(scopeVariables));
@@ -173,10 +171,11 @@ export class Compiler {
       const scopeVariables = {
         ...constants,
         ...this.data.variables,
+        ...this.functions,
+        $request: this.request,
       };
 
       const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
-
       const fn = new Function(...functionHeader);
 
       const condition: boolean = fn(...Object.values(scopeVariables));
