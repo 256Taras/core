@@ -5,4 +5,4 @@ export const trans = (text: string) => {
   const translator = inject(Translator);
 
   return translator.get(text);
-}
+};

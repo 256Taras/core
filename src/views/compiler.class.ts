@@ -9,11 +9,11 @@ export class Compiler {
 
   private html: string;
 
-  private rawContent: string[] = [];
-
   private functions = {
     trans,
   };
+
+  private rawContent: string[] = [];
 
   constructor(private request: Request) {}
 
@@ -70,8 +70,9 @@ export class Compiler {
 
   private parseEachDirectives(): void {
     const matches =
-      this.html.matchAll(/\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm) ??
-      [];
+      this.html.matchAll(
+        /\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm,
+      ) ?? [];
 
     for (const match of matches) {
       const value = match[2];
@@ -162,7 +163,7 @@ export class Compiler {
 
   private parseIfElseDirectives(): void {
     const matches =
-    this.html.matchAll(
+      this.html.matchAll(
         /\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)(\[else\])((.|\n|\r\n)*?)\[\/if\]/gm,
       ) ?? [];
 

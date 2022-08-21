@@ -1,7 +1,7 @@
 import 'reflect-metadata';
+import { Encrypter } from '../../src/crypto/encrypter.class';
 import { Injector } from '../../src/injector/injector.class';
 import { Logger } from '../../src/logger/logger.class';
-import { Encrypter } from '../../src/crypto/encrypter.class';
 import { describe, expect, it } from 'vitest';
 
 describe('Injector class', () => {
