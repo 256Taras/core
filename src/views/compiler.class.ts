@@ -2,10 +2,15 @@ import * as constants from '../constants';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
+import { trans } from '../translator/functions/trans.function';
 
 @Service()
 export class Compiler {
   private rawContent: string[] = [];
+
+  private functions = {
+    trans,
+  };
 
   constructor(private request: Request, private response: Response) {}
 
@@ -31,6 +36,7 @@ export class Compiler {
       const scopeVariables = {
         ...constants,
         ...data.variables,
+        ...this.functions,
         $request: this.request,
       };
 
@@ -68,6 +74,7 @@ export class Compiler {
       const scopeVariables = {
         ...constants,
         ...data.variables,
+        ...this.functions,
         $request: this.request,
       };
 
@@ -86,8 +93,8 @@ export class Compiler {
         let content = match[4];
 
         const renderScopeVariables = {
-          [variableName]: item,
           ...scopeVariables,
+          [variableName]: item,
           $first: counter === 0,
           $last: counter === Object.keys(iterable).length - 1,
           $even: counter % 2 === 0,
