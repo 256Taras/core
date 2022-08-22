@@ -84,6 +84,7 @@ export class Response {
   }
 
   public send(data: any): this {
+    this.header('content-type', 'text/html; charset=utf8');
     this.instance?.send(data);
 
     return this;

@@ -70,8 +70,8 @@ export class Handler {
     this.logger.error(message, 'exception');
 
     const data = {
-      statusCode: 500,
-      message: 'Server exception',
+      statusCode: StatusCode.InternalServerError,
+      message: 'Internal Server Error',
     };
 
     if (this.request.ajax() || this.request.headers.accept?.includes('json')) {
@@ -125,7 +125,7 @@ export class Handler {
     this.response.status(StatusCode.NotFound);
 
     const data = {
-      statusCode: 404,
+      statusCode: StatusCode.NotFound,
       message: 'Not Found',
     };
 
@@ -148,7 +148,7 @@ export class Handler {
     this.response.status(StatusCode.TokenExpired);
 
     const data = {
-      statusCode: 419,
+      statusCode: StatusCode.TokenExpired,
       message: 'Invalid Token',
     };
 

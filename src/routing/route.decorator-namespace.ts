@@ -8,7 +8,7 @@ export class Route {
   public static delete(url: string): MethodDecorator {
     return (target: MethodTarget, propertyKey: string | symbol) => {
       this.router.delete(url, async () => {
-        this.router.respond(target.constructor, propertyKey);
+        await this.router.respond(target.constructor, propertyKey);
       });
     };
   }
@@ -16,7 +16,7 @@ export class Route {
   public static get(url: string): MethodDecorator {
     return (target: MethodTarget, propertyKey: string | symbol) => {
       this.router.get(url, async () => {
-        this.router.respond(target.constructor, propertyKey);
+        await this.router.respond(target.constructor, propertyKey);
       });
     };
   }
@@ -24,7 +24,7 @@ export class Route {
   public static options(url: string): MethodDecorator {
     return (target: MethodTarget, propertyKey: string | symbol) => {
       this.router.options(url, async () => {
-        this.router.respond(target.constructor, propertyKey);
+        await this.router.respond(target.constructor, propertyKey);
       });
     };
   }
@@ -32,7 +32,7 @@ export class Route {
   public static patch(url: string): MethodDecorator {
     return (target: MethodTarget, propertyKey: string | symbol) => {
       this.router.patch(url, async () => {
-        this.router.respond(target.constructor, propertyKey);
+        await this.router.respond(target.constructor, propertyKey);
       });
     };
   }
@@ -40,7 +40,7 @@ export class Route {
   public static post(url: string): MethodDecorator {
     return (target: MethodTarget, propertyKey: string | symbol) => {
       this.router.post(url, async () => {
-        this.router.respond(target.constructor, propertyKey);
+        await this.router.respond(target.constructor, propertyKey);
       });
     };
   }
@@ -48,7 +48,7 @@ export class Route {
   public static put(url: string): MethodDecorator {
     return (target: MethodTarget, propertyKey: string | symbol) => {
       this.router.put(url, async () => {
-        this.router.respond(target.constructor, propertyKey);
+        await this.router.respond(target.constructor, propertyKey);
       });
     };
   }
