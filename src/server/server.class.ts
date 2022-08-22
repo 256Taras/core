@@ -37,7 +37,7 @@ export class Server {
 
   private options: ServerOptions;
 
-  private server: FastifyInstance;
+  private server = fastify();
 
   constructor(
     private handler: Handler,
@@ -130,7 +130,7 @@ export class Server {
     });
 
     await this.server.register(
-      plugin((fastify: FastifyInstance, _options: any, next: any) => {
+      plugin(async (fastify: FastifyInstance, _options: any, done: any) => {
         let startTime: [number, number];
 
         fastify.addHook('onRequest', async (request, response) => {
@@ -139,7 +139,7 @@ export class Server {
 
           startTime = process.hrtime();
 
-          //next();
+          done();
         });
 
         fastify.addHook('onResponse', async (request, response) => {
@@ -182,7 +182,7 @@ export class Server {
             `request`,
           );
 
-          //next();
+          done();
         });
       }),
     );
@@ -222,18 +222,7 @@ export class Server {
     port = env<Integer>('APP_PORT') ?? this.defaultPort,
   ): Promise<void> {
     process.on('uncaughtException', (exception: any) => {
-      if (exception !== Object(exception)) {
-        return;
-      }
-
-      const message =
-        exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
-
-      this.logger.error(message, 'uncaught exception');
-
-      if (!env<boolean>('APP_DEBUG')) {
-        process.exit(1);
-      }
+      this.handler.handleUncaughtException(exception);
     });
 
     if (!existsSync('.env')) {
@@ -244,11 +233,8 @@ export class Server {
       path: '.env',
     });
 
-    this.server = fastify({
-      pluginTimeout: 20000,
-    });
-
     await this.registerMiddleware();
+
     this.registerRoutes();
 
     await this.server.listen({ port });

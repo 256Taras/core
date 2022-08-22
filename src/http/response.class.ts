@@ -1,14 +1,14 @@
-import { Exception } from '../handler/exception.class';
 import { Service } from '../injector/decorators/service.decorator';
-import { ViewRenderer } from '../views/view-renderer.class';
+import { Compiler } from '../views/compiler.class';
 import { StatusCode } from './enums/status-code.enum';
 import { FastifyReply } from 'fastify';
+import { promises } from 'node:fs';
 
 @Service()
 export class Response {
   private instance: FastifyReply | null = null;
 
-  constructor(private viewRenderer: ViewRenderer) {}
+  constructor(private compiler: Compiler) {}
 
   public $getInstance(): FastifyReply | null {
     return this.instance;
@@ -59,14 +59,16 @@ export class Response {
   }
 
   public redirect(url: string, status: StatusCode = StatusCode.Found): this {
-    this?.instance?.status(status);
-    this?.instance?.redirect(url);
+    this.instance?.status(status);
+    this.instance?.redirect(url);
 
     return this;
   }
 
-  public render(file: string, data: Record<string, any>): this {
-    const html = this.viewRenderer.parse(file, {
+  public async render(file: string, data: Record<string, any>): Promise<this> {
+    const fileContent = await promises.readFile(`${file}.north.html`);
+
+    const html = this.compiler.compile(fileContent.toString(), {
       variables: data,
     });
 

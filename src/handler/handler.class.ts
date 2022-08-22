@@ -106,11 +106,11 @@ export class Handler {
 
     const customViewTemplate = 'views/errors/500.north.html';
 
-    const viewFile = existsSync(customViewTemplate)
+    const view = existsSync(customViewTemplate)
       ? 'errors/500'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
 
-    this.response.render(viewFile, {
+    this.response.render(view, {
       codeSnippet: content && isAppFile ? codeSnippet : null,
       method: this.request.method().toUpperCase(),
       route: this.request.path(),
@@ -137,11 +137,11 @@ export class Handler {
 
     const customViewTemplate = 'views/errors/404.north.html';
 
-    const viewFile = existsSync(customViewTemplate)
+    const view = existsSync(customViewTemplate)
       ? 'errors/404'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    this.response.render(viewFile, data);
+    this.response.render(view, data);
   }
 
   public handleInvalidToken(): void {
@@ -160,10 +160,25 @@ export class Handler {
 
     const customViewTemplate = 'views/errors/419.north.html';
 
-    const viewFile = existsSync(customViewTemplate)
+    const view = existsSync(customViewTemplate)
       ? 'errors/419'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
-    this.response.render(viewFile, data);
+    this.response.render(view, data);
+  }
+
+  public handleUncaughtException(exception: any): void {
+    if (exception !== Object(exception)) {
+      return;
+    }
+
+    const message =
+      exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
+
+    this.logger.error(message, 'uncaught exception');
+
+    if (!env<boolean>('APP_DEBUG')) {
+      process.exit(1);
+    }
   }
 }
