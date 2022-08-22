@@ -46,67 +46,14 @@ export class Server {
     private translator: Translator,
   ) {}
 
-  private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
-    const packageData = await promises.readFile(
-      `${fileURLToPath(import.meta.url)}/../../../package.json`,
-    );
-
-    const requiredNodeVersion = JSON.parse(packageData.toString()).engines.node;
-
-    if (!semver.satisfies(process.version, requiredNodeVersion)) {
-      this.logger.warn(
-        `Norther requires Node.js version ${requiredNodeVersion.slice(
-          2,
-        )} or greater`,
-      );
-
-      this.logger.warn('Update Node.js on https://nodejs.org');
-
-      process.exit(1);
-    }
-
-    const tempPath = `${tmpdir()}/norther`;
-
-    const signals: (NodeJS.Signals | 'exit')[] = [
-      'SIGINT',
-      'SIGTERM',
-      'SIGHUP',
-      'exit',
-    ];
-
-    signals.map((signal) => {
-      process.on(signal, () => {
-        if (existsSync(tempPath)) {
-          unlinkSync(tempPath);
-        }
-
-        process.exit();
-      });
+  private registerHandlers(): void {
+    this.server.setErrorHandler((exception: any) => {
+      this.handler.handleException(exception);
     });
 
-    if (!existsSync(tempPath)) {
-      writeFileSync(tempPath, 'Norther development server is running...');
-
-      this.logger.info(
-        `Norther server started ${chalk.gray(
-          `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
-        )}`,
-      );
-
-      const browserAliases = {
-        darwin: 'open',
-        linux: 'sensible-browser',
-        win32: 'explorer',
-      };
-
-      if (this.options.config?.dev?.openBrowser ?? true) {
-        runCommand(
-          `${
-            browserAliases[process.platform as keyof object]
-          } http://localhost:${port}`,
-        );
-      }
-    }
+    this.server.setNotFoundHandler(() => {
+      this.handler.handleNotFound();
+    });
   }
 
   private async registerMiddleware(): Promise<void> {
@@ -188,16 +135,67 @@ export class Server {
     );
   }
 
-  private registerRoutes(): void {
-    this.router.registerRoutes(this.server);
+  private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
+    const packageData = await promises.readFile(
+      `${fileURLToPath(import.meta.url)}/../../../package.json`,
+    );
 
-    this.server.setErrorHandler((exception: any) => {
-      this.handler.handleException(exception);
+    const requiredNodeVersion = JSON.parse(packageData.toString()).engines.node;
+
+    if (!semver.satisfies(process.version, requiredNodeVersion)) {
+      this.logger.warn(
+        `Norther requires Node.js version ${requiredNodeVersion.slice(
+          2,
+        )} or greater`,
+      );
+
+      this.logger.warn('Update Node.js on https://nodejs.org');
+
+      process.exit(1);
+    }
+
+    const tempPath = `${tmpdir()}/norther`;
+
+    const signals: (NodeJS.Signals | 'exit')[] = [
+      'SIGINT',
+      'SIGTERM',
+      'SIGHUP',
+      'exit',
+    ];
+
+    signals.map((signal) => {
+      process.on(signal, () => {
+        if (existsSync(tempPath)) {
+          unlinkSync(tempPath);
+        }
+
+        process.exit();
+      });
     });
 
-    this.server.setNotFoundHandler(() => {
-      this.handler.handleNotFound();
-    });
+    if (!existsSync(tempPath)) {
+      writeFileSync(tempPath, 'Norther development server is running...');
+
+      this.logger.info(
+        `Norther server started ${chalk.gray(
+          `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
+        )}`,
+      );
+
+      const browserAliases = {
+        darwin: 'open',
+        linux: 'sensible-browser',
+        win32: 'explorer',
+      };
+
+      if (this.options.config?.dev?.openBrowser ?? true) {
+        runCommand(
+          `${
+            browserAliases[process.platform as keyof object]
+          } http://localhost:${port}`,
+        );
+      }
+    }
   }
 
   public setup(options: ServerOptions): this {
@@ -235,7 +233,8 @@ export class Server {
 
     await this.registerMiddleware();
 
-    this.registerRoutes();
+    this.router.registerRoutes(this.server);
+    this.registerHandlers();
 
     await this.server.listen({ port });
 
