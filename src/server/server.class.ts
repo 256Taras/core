@@ -13,16 +13,16 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
+import compressionMiddleware from '@fastify/compress';
+import cookieMiddleware from '@fastify/cookie';
+import csrfMiddleware from '@fastify/csrf-protection';
+import helmetMiddleware from '@fastify/helmet';
+import multipartMiddleware from '@fastify/multipart';
+import sessionMiddleware from '@fastify/session';
+import staticServerMiddleware from '@fastify/static';
 import chalk from 'chalk';
 import dotenv from 'dotenv';
 import fastify, { FastifyInstance } from 'fastify';
-import helmetMiddleware from '@fastify/helmet';
-import cookieMiddleware from '@fastify/cookie';
-import csrfMiddleware from '@fastify/csrf-protection';
-import compressionMiddleware from '@fastify/compress';
-import sessionMiddleware from '@fastify/session';
-import multipartMiddleware from '@fastify/multipart';
-import staticServerMiddleware from '@fastify/static';
 import plugin from 'fastify-plugin';
 import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -118,7 +118,7 @@ export class Server {
 
     await this.server.register(csrfMiddleware);
     await this.server.register(compressionMiddleware);
-    
+
     await this.server.register(sessionMiddleware, {
       secret: env<string>('APP_KEY'),
     });
@@ -129,61 +129,63 @@ export class Server {
       root: '/public',
     });
 
-    await this.server.register(plugin((fastify: FastifyInstance, _options: any, next: any) => {
-      let startTime: [number, number];
+    await this.server.register(
+      plugin((fastify: FastifyInstance, _options: any, next: any) => {
+        let startTime: [number, number];
 
-      fastify.addHook('onRequest', async (request, response) => {
-        Injector.get(Request).$setInstance(request);
-        Injector.get(Response).$setInstance(response);
+        fastify.addHook('onRequest', async (request, response) => {
+          Injector.get(Request).$setInstance(request);
+          Injector.get(Response).$setInstance(response);
 
-        startTime = process.hrtime();
+          startTime = process.hrtime();
 
-        //next();
-      });
+          //next();
+        });
 
-      fastify.addHook('onResponse', async (request, response) => {
-        const endTime = process.hrtime(startTime);
+        fastify.addHook('onResponse', async (request, response) => {
+          const endTime = process.hrtime(startTime);
 
-        const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
-        const timeFormatted = chalk.gray(`(${elapsedTime} ms)`);
+          const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
+          const timeFormatted = chalk.gray(`(${elapsedTime} ms)`);
 
-        const { statusCode } = response;
+          const { statusCode } = response;
 
-        let formattedStatus: string;
+          let formattedStatus: string;
 
-        switch (true) {
-          case statusCode >= 100 && statusCode < 200:
-            formattedStatus = chalk.blueBright(statusCode);
+          switch (true) {
+            case statusCode >= 100 && statusCode < 200:
+              formattedStatus = chalk.blueBright(statusCode);
 
-            break;
+              break;
 
-          case statusCode >= 200 && statusCode < 300:
-            formattedStatus = chalk.green(statusCode);
+            case statusCode >= 200 && statusCode < 300:
+              formattedStatus = chalk.green(statusCode);
 
-            break;
+              break;
 
-          case statusCode >= 300 && statusCode < 500:
-            formattedStatus = chalk.hex(this.logger.colorYellow)(statusCode);
+            case statusCode >= 300 && statusCode < 500:
+              formattedStatus = chalk.hex(this.logger.colorYellow)(statusCode);
 
-            break;
+              break;
 
-          case statusCode >= 500 && statusCode < 600:
-            formattedStatus = chalk.red(statusCode);
+            case statusCode >= 500 && statusCode < 600:
+              formattedStatus = chalk.red(statusCode);
 
-            break;
+              break;
 
-          default:
-            formattedStatus = statusCode.toString();
-        }
+            default:
+              formattedStatus = statusCode.toString();
+          }
 
-        this.logger.log(
-          `${request.method} ${request.url} ${formattedStatus} ${timeFormatted}`,
-          `request`,
-        );
+          this.logger.log(
+            `${request.method} ${request.url} ${formattedStatus} ${timeFormatted}`,
+            `request`,
+          );
 
-        //next();
-      });
-    }));
+          //next();
+        });
+      }),
+    );
   }
 
   private registerRoutes(): void {

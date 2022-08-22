@@ -6,10 +6,7 @@ import { promises } from 'node:fs';
 export class ViewRenderer {
   constructor(private compiler: Compiler) {}
 
-  public async parse(
-    file: string,
-    data: Record<string, any>,
-  ): Promise<string> {
+  public async parse(file: string, data: Record<string, any>): Promise<string> {
     const fileContent = await promises.readFile(file);
     const html = this.compiler.compile(fileContent.toString(), data);
 

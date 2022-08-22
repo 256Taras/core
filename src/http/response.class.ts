@@ -1,7 +1,7 @@
 import { Exception } from '../handler/exception.class';
 import { Service } from '../injector/decorators/service.decorator';
-import { StatusCode } from './enums/status-code.enum';
 import { ViewRenderer } from '../views/view-renderer.class';
+import { StatusCode } from './enums/status-code.enum';
 import { FastifyReply } from 'fastify';
 
 @Service()

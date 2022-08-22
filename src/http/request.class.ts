@@ -1,7 +1,7 @@
 import { Service } from '../injector/decorators/service.decorator';
 import { Method } from './enums/method.enum';
-import { FastifyRequest } from 'fastify';
 import { MultipartFile } from '@fastify/multipart';
+import { FastifyRequest } from 'fastify';
 
 @Service()
 export class Request {
@@ -16,11 +16,14 @@ export class Request {
   }
 
   public ajax(): boolean {
-    return this.header('x-requested-with') === 'XMLHttpRequest' || (this.header('accept') ?? '').includes('application/json');
+    return (
+      this.header('x-requested-with') === 'XMLHttpRequest' ||
+      (this.header('accept') ?? '').includes('application/json')
+    );
   }
 
   public get body(): Record<string, any> {
-    return this.instance?.body as Record<string, any> ?? {};
+    return (this.instance?.body as Record<string, any>) ?? {};
   }
 
   public get cookies(): Record<string, any> {
@@ -81,7 +84,7 @@ export class Request {
   }
 
   public get params(): Record<string, any> {
-    return this.instance?.params as Record<string, any>  ?? {};
+    return (this.instance?.params as Record<string, any>) ?? {};
   }
 
   public param(param: string): any {
@@ -97,7 +100,7 @@ export class Request {
   }
 
   public get query(): Record<string, any> {
-    return this.instance?.query as Record<string, any> ?? {};
+    return (this.instance?.query as Record<string, any>) ?? {};
   }
 
   public redirectData(): Record<string, any> | null {

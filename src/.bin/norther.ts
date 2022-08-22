@@ -13,11 +13,7 @@ process.on('uncaughtException', (exception: Error) => {
   process.exit(1);
 });
 
-const commands: Constructor<Command>[] = [
-  DbMigrate,
-  StartDev,
-  StartProd,
-];
+const commands: Constructor<Command>[] = [DbMigrate, StartDev, StartProd];
 
 commands.map((command: Constructor<Command>) => {
   const name = Reflect.getMetadata('signature', command);
