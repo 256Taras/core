@@ -64,22 +64,21 @@ export class Server {
     });
 
     await this.server.register(csrfMiddleware);
+    await this.server.register(multipartMiddleware);
 
     await this.server.register(sessionMiddleware, {
       secret: env<string>('APP_KEY'),
     });
-
-    await this.server.register(multipartMiddleware);
 
     await this.server.register(staticServerMiddleware, {
       root: resolve('public'),
     });
 
     await this.server.register(
-      plugin(async (fastify: FastifyInstance, _options: PluginOptions, done: () => void) => {
+      plugin(async (server: FastifyInstance, _options: PluginOptions, done: () => void) => {
         let startTime: [number, number];
 
-        fastify.addHook('onRequest', async (request, response) => {
+        server.addHook('onRequest', async (request, response) => {
           Injector.get(Request).$setInstance(request);
           Injector.get(Response).$setInstance(response);
 
@@ -88,7 +87,7 @@ export class Server {
           done();
         });
 
-        fastify.addHook('onResponse', async (request, response) => {
+        server.addHook('onResponse', async (request, response) => {
           const endTime = process.hrtime(startTime);
 
           const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
