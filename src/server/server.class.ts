@@ -19,7 +19,6 @@ import bodyParser from 'body-parser';
 import chalk from 'chalk';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
-import cors from 'cors';
 import csrf from 'csurf';
 import dotenv from 'dotenv';
 import express, {
@@ -147,7 +146,6 @@ export class Server {
       cookieParser(),
       bodyParser.json(),
       bodyParser.urlencoded({ extended: true }),
-      cors(),
       staticFileServer('public'),
     ];
 
