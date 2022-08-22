@@ -1,41 +1,26 @@
 import { Service } from '../injector/decorators/service.decorator';
 import { Method } from './enums/method.enum';
-import { Request as ExpressRequest } from 'express';
+import { FastifyRequest } from 'fastify';
+import { MultipartFile } from '@fastify/multipart';
 
 @Service()
 export class Request {
-  private instance: ExpressRequest | null = null;
+  private instance: FastifyRequest | null = null;
 
-  public $getInstance(): ExpressRequest | null {
+  public $getInstance(): FastifyRequest | null {
     return this.instance;
   }
 
-  public $setInstance(instance: ExpressRequest): void {
+  public $setInstance(instance: FastifyRequest): void {
     this.instance = instance;
   }
 
-  public accepts(types: string[]): string | never[] | false {
-    return this.instance?.accepts(...types) ?? [];
-  }
-
-  public acceptsCharsets(charsets: string[]): string | never[] | false {
-    return this.instance?.acceptsCharsets(...charsets) ?? [];
-  }
-
-  public acceptsEncodings(encodings: string[]): string | never[] | false {
-    return this.instance?.acceptsEncodings(...encodings) ?? [];
-  }
-
-  public acceptsLanguages(languages: string[]): string | never[] | false {
-    return this.instance?.acceptsLanguages(...languages) ?? [];
-  }
-
   public ajax(): boolean {
-    return this.instance?.xhr ?? false;
+    return this.header('x-requested-with') === 'XMLHttpRequest' || (this.header('accept') ?? '').includes('application/json');
   }
 
   public get body(): Record<string, any> {
-    return this.instance?.body ?? {};
+    return this.instance?.body as Record<string, any> ?? {};
   }
 
   public get cookies(): Record<string, any> {
@@ -46,17 +31,12 @@ export class Request {
     return this.cookies[cookie] ?? null;
   }
 
-  public get files(): Record<string, Express.Multer.File | Express.Multer.File[]> {
-    return (
-      (this.instance?.files as Record<
-        string,
-        Express.Multer.File | Express.Multer.File[]
-      >) ?? {}
-    );
+  public get files(): AsyncIterableIterator<MultipartFile> | undefined {
+    return this.instance?.files();
   }
 
-  public file(file: string): any {
-    return this.files[file] ?? null;
+  public file(file: string): MultipartFile | null {
+    return this.files?.[file as keyof object] ?? null;
   }
 
   public get headers(): Record<string, any> {
@@ -64,7 +44,7 @@ export class Request {
   }
 
   public header(header: string): string | string[] | null {
-    return this.instance?.header(header) ?? null;
+    return this.instance?.headers[header] ?? null;
   }
 
   public host(): string | null {
@@ -81,10 +61,6 @@ export class Request {
 
   public ips(): string[] | null {
     return this.instance?.ips ?? null;
-  }
-
-  public isType(type: string): string | false {
-    return this.instance?.is(type) ?? false;
   }
 
   public method(): Method {
@@ -105,7 +81,7 @@ export class Request {
   }
 
   public get params(): Record<string, any> {
-    return this.instance?.params ?? {};
+    return this.instance?.params as Record<string, any>  ?? {};
   }
 
   public param(param: string): any {
@@ -113,7 +89,7 @@ export class Request {
   }
 
   public path(): string | null {
-    return this.instance?.path ?? null;
+    return this.instance?.url ?? null;
   }
 
   public protocol(): string | null {
@@ -121,7 +97,7 @@ export class Request {
   }
 
   public get query(): Record<string, any> {
-    return this.instance?.query ?? {};
+    return this.instance?.query as Record<string, any> ?? {};
   }
 
   public redirectData(): Record<string, any> | null {
@@ -129,18 +105,14 @@ export class Request {
   }
 
   public secure(): boolean {
-    return this.instance?.secure ?? false;
+    return this.protocol() === 'https';
   }
 
   public get session(): Record<string, any> {
     return this.instance?.session ?? {};
   }
 
-  public subdomains(): string[] {
-    return this.instance?.subdomains ?? [];
-  }
-
   public token(): string | null {
-    return this.instance?.csrfToken() ?? null;
+    return this.session._token ?? null;
   }
 }

@@ -1,4 +1,3 @@
-import { Encrypter } from '../crypto/encrypter.class';
 import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
@@ -12,26 +11,19 @@ import { env } from '../utils/functions/env.function';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
-import { ViewRenderer } from '../views/view-renderer.class';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
-import bodyParser from 'body-parser';
 import chalk from 'chalk';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
-import csrf from 'csurf';
 import dotenv from 'dotenv';
-import express, {
-  Express,
-  Request as ExpressRequest,
-  Response as ExpressResponse,
-  NextFunction,
-  static as staticFileServer,
-} from 'express';
-import session from 'express-session';
-import helmet from 'helmet';
-import methodOverride from 'method-override';
-import multer from 'multer';
+import fastify, { FastifyInstance } from 'fastify';
+import helmetMiddleware from '@fastify/helmet';
+import cookieMiddleware from '@fastify/cookie';
+import csrfMiddleware from '@fastify/csrf-protection';
+import compressionMiddleware from '@fastify/compress';
+import sessionMiddleware from '@fastify/session';
+import multipartMiddleware from '@fastify/multipart';
+import staticServerMiddleware from '@fastify/static';
+import plugin from 'fastify-plugin';
 import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -45,15 +37,13 @@ export class Server {
 
   private options: ServerOptions;
 
-  private server: Express;
+  private server: FastifyInstance;
 
   constructor(
-    private encrypter: Encrypter,
     private handler: Handler,
     private logger: Logger,
     private router: Router,
     private translator: Translator,
-    private viewRenderer: ViewRenderer,
   ) {}
 
   private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
@@ -119,47 +109,39 @@ export class Server {
     }
   }
 
-  private configureServer(): void {
-    this.server.set('trust proxy', 1);
-    this.server.set('x-powered-by', false);
-    this.server.set('views', 'views');
-    this.server.set('view engine', 'north.html');
+  private async registerMiddleware(): Promise<void> {
+    await this.server.register(helmetMiddleware);
 
-    this.server.disable('etag');
-
-    this.server.engine(
-      'north.html',
-      (
-        file: string,
-        data: Record<string, any>,
-        callback: (error: any, rendered?: string | undefined) => void,
-      ) => {
-        this.viewRenderer.parse(file, data, callback);
-      },
-    );
-  }
-
-  private registerMiddleware(): void {
-    const mainMiddleware = [
-      helmet(),
-      compression(),
-      cookieParser(),
-      bodyParser.json(),
-      bodyParser.urlencoded({ extended: true }),
-      staticFileServer('public'),
-    ];
-
-    mainMiddleware.map((middleware) => {
-      this.server.use(middleware);
+    await this.server.register(cookieMiddleware, {
+      secret: env<string>('APP_KEY'),
     });
 
-    this.server.use((request, response, next) => {
-      Injector.get(Request).$setInstance(request);
-      Injector.get(Response).$setInstance(response);
+    await this.server.register(csrfMiddleware);
+    await this.server.register(compressionMiddleware);
+    
+    await this.server.register(sessionMiddleware, {
+      secret: env<string>('APP_KEY'),
+    });
 
-      const startTime = process.hrtime();
+    await this.server.register(multipartMiddleware);
 
-      response.on('finish', () => {
+    await this.server.register(staticServerMiddleware, {
+      root: '/public',
+    });
+
+    await this.server.register(plugin((fastify: FastifyInstance, _options: any, next: any) => {
+      let startTime: [number, number];
+
+      fastify.addHook('onRequest', async (request, response) => {
+        Injector.get(Request).$setInstance(request);
+        Injector.get(Response).$setInstance(response);
+
+        startTime = process.hrtime();
+
+        //next();
+      });
+
+      fastify.addHook('onResponse', async (request, response) => {
         const endTime = process.hrtime(startTime);
 
         const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
@@ -198,76 +180,20 @@ export class Server {
           `${request.method} ${request.url} ${formattedStatus} ${timeFormatted}`,
           `request`,
         );
+
+        //next();
       });
-
-      next();
-    });
-
-    this.server.use(
-      multer({
-        storage: multer.diskStorage({
-          destination: (_request, _file, callback) => {
-            callback(null, `${tmpdir()}/norther/uploads`);
-          },
-          filename: (_request, _file, callback) => {
-            callback(null, this.encrypter.uuid());
-          },
-        }),
-      }).array('files'),
-    );
-
-    this.server.use(
-      methodOverride((request) => {
-        if (request.body && '_method' in request.body) {
-          const method = request.body._method;
-
-          delete request.body._method;
-
-          return method;
-        }
-      }),
-    );
-
-    this.server.use(
-      session({
-        secret: env<string>('APP_KEY'),
-        resave: false,
-        saveUninitialized: true,
-        cookie: {
-          secure: true,
-          maxAge: env<number>('SESSION_LIFETIME') * 60 * 1000,
-        },
-      }),
-    );
-
-    this.server.use((request, response, next) => {
-      csrf({ cookie: true })(request, response, (error) => {
-        if (error) {
-          this.handler.handleInvalidToken();
-
-          return;
-        }
-
-        next();
-      });
-    });
-
-    this.server.use(
-      (
-        exception: any,
-        _request: ExpressRequest,
-        _response: ExpressResponse,
-        _next?: NextFunction,
-      ) => {
-        this.handler.handleException(exception);
-      },
-    );
+    }));
   }
 
   private registerRoutes(): void {
     this.router.registerRoutes(this.server);
 
-    this.server.all('*', () => {
+    this.server.setErrorHandler((exception: any) => {
+      this.handler.handleException(exception);
+    });
+
+    this.server.setNotFoundHandler(() => {
       this.handler.handleNotFound();
     });
   }
@@ -316,18 +242,19 @@ export class Server {
       path: '.env',
     });
 
-    this.server = express();
+    this.server = fastify({
+      pluginTimeout: 20000,
+    });
 
-    this.configureServer();
-    this.registerMiddleware();
+    await this.registerMiddleware();
     this.registerRoutes();
 
-    this.server.listen(port, () => {
-      if (env<boolean>('APP_DEBUG')) {
-        this.setupDevelopmentEnvironment(port);
-      }
+    await this.server.listen({ port });
 
-      this.logger.log(`HTTP server running on http://localhost:${port}`);
-    });
+    if (env<boolean>('APP_DEBUG')) {
+      this.setupDevelopmentEnvironment(port);
+    }
+
+    this.logger.log(`HTTP server running on http://localhost:${port}`);
   }
 }

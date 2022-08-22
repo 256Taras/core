@@ -1,17 +1,20 @@
 import { Exception } from '../handler/exception.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { StatusCode } from './enums/status-code.enum';
-import { Response as ExpressResponse } from 'express';
+import { ViewRenderer } from '../views/view-renderer.class';
+import { FastifyReply } from 'fastify';
 
 @Service()
 export class Response {
-  private instance: ExpressResponse | null = null;
+  private instance: FastifyReply | null = null;
 
-  public $getInstance(): ExpressResponse | null {
+  constructor(private viewRenderer: ViewRenderer) {}
+
+  public $getInstance(): FastifyReply | null {
     return this.instance;
   }
 
-  public $setInstance(instance: ExpressResponse): this {
+  public $setInstance(instance: FastifyReply): this {
     this.instance = instance;
 
     return this;
@@ -39,15 +42,9 @@ export class Response {
     return this;
   }
 
-  public end(data: any): this {
-    this.instance?.end(data);
-
-    return this;
-  }
-
   public header(header: string, value?: any): any | this {
     if (value === undefined) {
-      return this.instance?.get(header);
+      return this.instance?.headers[header as keyof object];
     }
 
     this.instance?.header(header, value);
@@ -56,7 +53,7 @@ export class Response {
   }
 
   public json(data?: Record<string, any>): this {
-    this.instance?.json(data);
+    this.instance?.send(data);
 
     return this;
   }
@@ -69,21 +66,11 @@ export class Response {
   }
 
   public render(file: string, data: Record<string, any>): this {
-    const viewData = {
+    const html = this.viewRenderer.parse(file, {
       variables: data,
-    };
+    });
 
-    this.instance?.render(
-      file,
-      viewData,
-      (error: Error, html: string): void | never => {
-        if (error) {
-          throw new Exception(error.message);
-        }
-
-        this.send(html);
-      },
-    );
+    this.send(html);
 
     return this;
   }

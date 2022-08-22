@@ -11,7 +11,7 @@ import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Route } from './route.class';
-import { Express } from 'express';
+import { FastifyInstance } from 'fastify';
 
 @Service()
 export class Router {
@@ -105,7 +105,7 @@ export class Router {
     }
   }
 
-  public registerRoutes(server: Express): void {
+  public registerRoutes(server: FastifyInstance): void {
     this.routes.map((route: Route) => {
       switch (route.method) {
         case Method.Delete:
