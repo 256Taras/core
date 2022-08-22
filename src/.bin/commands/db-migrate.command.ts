@@ -10,5 +10,6 @@ export class DbMigrate {
     info('Running database migrations...');
 
     runCommand('npx prisma migrate dev', true);
+    runCommand('npx prisma generate', true);
   }
 }

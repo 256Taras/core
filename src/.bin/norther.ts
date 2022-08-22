@@ -2,7 +2,6 @@
 import 'reflect-metadata';
 import { error } from '../logger/functions/error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { DbGenerate } from './commands/db-generate.command';
 import { DbMigrate } from './commands/db-migrate.command';
 import { StartDev } from './commands/start-dev.command';
 import { StartProd } from './commands/start-prod.command';
@@ -15,7 +14,6 @@ process.on('uncaughtException', (exception: Error) => {
 });
 
 const commands: Constructor<Command>[] = [
-  DbGenerate,
   DbMigrate,
   StartDev,
   StartProd,
