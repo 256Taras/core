@@ -17,24 +17,6 @@ export class Compiler {
 
   constructor(private request: Request) {}
 
-  public compile(html: string, data: Record<string, any> = {}): string {
-    this.rawContent = [];
-    this.data = data;
-    this.html = html;
-
-    this.parseRawDirectives();
-    this.parseEachDirectives();
-    this.parseDataRenders();
-    this.parseIfElseDirectives();
-    this.parseIfDirectives();
-    this.parseTokenDirectives();
-    this.parseMethodDirectives();
-
-    this.restoreRawContent();
-
-    return this.html;
-  }
-
   private parseDataRenders(): void {
     const matches = this.html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
 
@@ -236,5 +218,23 @@ export class Compiler {
 
       this.html = this.html.replace(match[0], this.rawContent[index]);
     }
+  }
+
+  public compile(html: string, data: Record<string, any> = {}): string {
+    this.data = data;
+    this.html = html;
+    this.rawContent = [];
+
+    this.parseRawDirectives();
+    this.parseEachDirectives();
+    this.parseDataRenders();
+    this.parseIfElseDirectives();
+    this.parseIfDirectives();
+    this.parseTokenDirectives();
+    this.parseMethodDirectives();
+
+    this.restoreRawContent();
+
+    return this.html;
   }
 }

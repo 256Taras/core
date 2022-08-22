@@ -202,21 +202,6 @@ export class Server {
         );
       });
 
-      process.on('uncaughtException', (exception: any) => {
-        if (exception !== Object(exception)) {
-          return;
-        }
-
-        const message =
-          exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
-
-        this.logger.error(message, 'uncaught exception');
-
-        if (!env<boolean>('APP_DEBUG')) {
-          process.exit(1);
-        }
-      });
-
       next();
     });
 
@@ -310,6 +295,21 @@ export class Server {
   public async start(
     port = env<Integer>('APP_PORT') ?? this.defaultPort,
   ): Promise<void> {
+    process.on('uncaughtException', (exception: any) => {
+      if (exception !== Object(exception)) {
+        return;
+      }
+
+      const message =
+        exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
+
+      this.logger.error(message, 'uncaught exception');
+
+      if (!env<boolean>('APP_DEBUG')) {
+        process.exit(1);
+      }
+    });
+
     if (!existsSync('.env')) {
       throw new Exception('.env configuration file is missing');
     }
