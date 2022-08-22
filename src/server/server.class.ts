@@ -13,7 +13,6 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
-import compressionMiddleware from '@fastify/compress';
 import cookieMiddleware from '@fastify/cookie';
 import csrfMiddleware from '@fastify/csrf-protection';
 import helmetMiddleware from '@fastify/helmet';
@@ -23,10 +22,11 @@ import staticServerMiddleware from '@fastify/static';
 import chalk from 'chalk';
 import dotenv from 'dotenv';
 import fastify, { FastifyInstance } from 'fastify';
-import plugin from 'fastify-plugin';
+import plugin, { PluginOptions } from 'fastify-plugin';
 import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import semver from 'semver';
 
 @Service()
@@ -64,7 +64,6 @@ export class Server {
     });
 
     await this.server.register(csrfMiddleware);
-    await this.server.register(compressionMiddleware);
 
     await this.server.register(sessionMiddleware, {
       secret: env<string>('APP_KEY'),
@@ -73,11 +72,11 @@ export class Server {
     await this.server.register(multipartMiddleware);
 
     await this.server.register(staticServerMiddleware, {
-      root: '/public',
+      root: resolve('public'),
     });
 
     await this.server.register(
-      plugin(async (fastify: FastifyInstance, _options: any, done: any) => {
+      plugin(async (fastify: FastifyInstance, _options: PluginOptions, done: () => void) => {
         let startTime: [number, number];
 
         fastify.addHook('onRequest', async (request, response) => {

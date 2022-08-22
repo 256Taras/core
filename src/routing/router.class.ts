@@ -80,7 +80,7 @@ export class Router {
         case responseData instanceof ViewResponse: {
           const { data, file } = responseData as ViewResponse;
 
-          await this.response.render(file, data);
+          this.response.render(file, data);
 
           break;
         }

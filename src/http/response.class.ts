@@ -2,7 +2,7 @@ import { Service } from '../injector/decorators/service.decorator';
 import { Compiler } from '../views/compiler.class';
 import { StatusCode } from './enums/status-code.enum';
 import { FastifyReply } from 'fastify';
-import { promises } from 'node:fs';
+import { readFileSync } from 'node:fs';
 
 @Service()
 export class Response {
@@ -42,12 +42,22 @@ export class Response {
     return this;
   }
 
-  public header(header: string, value?: any): any | this {
+  public header(headers: string | Record<string, string>, value?: any): any | this {
     if (value === undefined) {
-      return this.instance?.headers[header as keyof object];
+      return this.instance?.getHeader(headers as string);
     }
 
-    this.instance?.header(header, value);
+    if (typeof headers !== 'string') {
+      this.instance?.headers(headers);
+    }
+
+    this.instance?.header(headers as string, value);
+
+    return this;
+  }
+
+  public headers(headers: Record<string, string>): this {
+    this.instance?.headers(headers);
 
     return this;
   }
@@ -65,8 +75,8 @@ export class Response {
     return this;
   }
 
-  public async render(file: string, data: Record<string, any>): Promise<this> {
-    const fileContent = await promises.readFile(`${file}.north.html`);
+  public render(file: string, data: Record<string, any>): this {
+    const fileContent = readFileSync(`${file}.north.html`);
 
     const html = this.compiler.compile(fileContent.toString(), {
       variables: data,
