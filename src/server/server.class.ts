@@ -170,16 +170,14 @@ export class Server {
   ): Promise<void> {
     let startTime: [number, number];
 
-    this.server.addHook('onRequest', async (request, response, done) => {
+    this.server.addHook('onRequest', async (request, response) => {
       Injector.get(Request).$setInstance(request);
       Injector.get(Response).$setInstance(response);
 
       startTime = process.hrtime();
-
-      done();
     });
 
-    this.server.addHook('onResponse', async (request, response, done) => {
+    this.server.addHook('onResponse', async (request, response) => {
       const endTime = process.hrtime(startTime);
 
       const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
@@ -218,8 +216,6 @@ export class Server {
         `${request.method} ${request.url} ${formattedStatus} ${timeFormatted}`,
         `request`,
       );
-
-      done();
     });
 
     await this.registerMiddleware();
