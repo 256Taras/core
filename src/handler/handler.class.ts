@@ -181,5 +181,7 @@ export class Handler {
     if (!env<boolean>('APP_DEBUG')) {
       process.exit(1);
     }
+
+    this.logger.warn('In production mode process will exit');
   }
 }
