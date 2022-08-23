@@ -46,8 +46,8 @@ export class Server {
   ) {}
 
   private registerHandlers(): void {
-    this.server.setErrorHandler((exception: any) => {
-      this.handler.handleException(exception);
+    this.server.setErrorHandler(async (exception) => {
+      await this.handler.handleException(exception);
     });
 
     this.server.setNotFoundHandler(() => {
@@ -56,7 +56,15 @@ export class Server {
   }
 
   private async registerMiddleware(): Promise<void> {
-    await this.server.register(helmetMiddleware);
+    await this.server.register(helmetMiddleware, {
+      contentSecurityPolicy: {
+        directives: {
+          ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives(),
+          'script-src': [`'self'`, `'unsafe-inline'`],
+          'script-src-attr': `'unsafe-inline'`,
+        },
+      },
+    });
 
     await this.server.register(cookieMiddleware, {
       secret: env<string>('APP_KEY'),

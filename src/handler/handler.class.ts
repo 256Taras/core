@@ -9,6 +9,7 @@ import { StackFileData } from './interfaces/stack-file-data.interface';
 import { existsSync, promises, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
+import { FastifyError } from 'fastify';
 
 @Service()
 export class Handler {
@@ -59,7 +60,7 @@ export class Handler {
   }
 
   public async handleException(
-    exception: Error | TypeError | Exception,
+    exception: Error | TypeError | Exception | FastifyError,
   ): Promise<void> {
     this.response.status(StatusCode.InternalServerError);
 
@@ -84,7 +85,7 @@ export class Handler {
       const customTemplatePath = 'views/errors/500.north.html';
 
       const file = existsSync(customTemplatePath)
-        ? 'errors/500'
+        ? 'views/errors/500'
         : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
       this.response.render(file, data);
@@ -94,12 +95,12 @@ export class Handler {
       exception,
     );
 
-    const highlighter = await getHighlighter({
+    const highlighter = getHighlighter({
       theme: 'one-dark-pro',
     });
 
     const codeSnippet = content
-      ? highlighter.codeToHtml(content, {
+      ? (await highlighter).codeToHtml(content, {
           lang: 'ts',
         })
       : null;
@@ -107,7 +108,7 @@ export class Handler {
     const customViewTemplate = 'views/errors/500.north.html';
 
     const view = existsSync(customViewTemplate)
-      ? 'errors/500'
+      ? 'views/errors/500'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
 
     this.response.render(view, {
@@ -126,7 +127,7 @@ export class Handler {
 
     const data = {
       statusCode: StatusCode.NotFound,
-      message: 'Not Found',
+      message: 'Page Not Found',
     };
 
     if (this.request.ajax() || this.request.headers.accept?.includes('json')) {
@@ -138,7 +139,7 @@ export class Handler {
     const customViewTemplate = 'views/errors/404.north.html';
 
     const view = existsSync(customViewTemplate)
-      ? 'errors/404'
+      ? 'views/errors/404'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
     this.response.render(view, data);
@@ -161,7 +162,7 @@ export class Handler {
     const customViewTemplate = 'views/errors/419.north.html';
 
     const view = existsSync(customViewTemplate)
-      ? 'errors/419'
+      ? 'views/errors/419'
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
     this.response.render(view, data);
