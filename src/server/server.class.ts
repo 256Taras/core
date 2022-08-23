@@ -21,12 +21,11 @@ import sessionMiddleware from '@fastify/session';
 import staticServerMiddleware from '@fastify/static';
 import chalk from 'chalk';
 import dotenv from 'dotenv';
-import fastify, { FastifyInstance } from 'fastify';
-import plugin, { PluginOptions } from 'fastify-plugin';
+import fastify from 'fastify';
 import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { resolve } from 'node:path';
 import semver from 'semver';
 
 @Service()
@@ -71,66 +70,8 @@ export class Server {
     });
 
     await this.server.register(staticServerMiddleware, {
-      root: resolve('public'),
+      root: path.resolve('public'),
     });
-
-    await this.server.register(
-      plugin(async (server: FastifyInstance, _options: PluginOptions, done: () => void) => {
-        let startTime: [number, number];
-
-        server.addHook('onRequest', async (request, response) => {
-          Injector.get(Request).$setInstance(request);
-          Injector.get(Response).$setInstance(response);
-
-          startTime = process.hrtime();
-
-          done();
-        });
-
-        server.addHook('onResponse', async (request, response) => {
-          const endTime = process.hrtime(startTime);
-
-          const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
-          const timeFormatted = chalk.gray(`(${elapsedTime} ms)`);
-
-          const { statusCode } = response;
-
-          let formattedStatus: string;
-
-          switch (true) {
-            case statusCode >= 100 && statusCode < 200:
-              formattedStatus = chalk.blueBright(statusCode);
-
-              break;
-
-            case statusCode >= 200 && statusCode < 300:
-              formattedStatus = chalk.green(statusCode);
-
-              break;
-
-            case statusCode >= 300 && statusCode < 500:
-              formattedStatus = chalk.hex(this.logger.colorYellow)(statusCode);
-
-              break;
-
-            case statusCode >= 500 && statusCode < 600:
-              formattedStatus = chalk.red(statusCode);
-
-              break;
-
-            default:
-              formattedStatus = statusCode.toString();
-          }
-
-          this.logger.log(
-            `${request.method} ${request.url} ${formattedStatus} ${timeFormatted}`,
-            `request`,
-          );
-
-          done();
-        });
-      }),
-    );
   }
 
   private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
@@ -197,26 +138,6 @@ export class Server {
   }
 
   public setup(options: ServerOptions): this {
-    const { modules, config } = options;
-
-    this.options = options;
-
-    modules.map((module: Constructor<Module>) => {
-      const instance = Injector.resolve<Module>(module);
-
-      this.modules.push(instance);
-    });
-
-    Injector.bind([Request, Response]);
-
-    this.translator.setLanguage(config?.language);
-
-    return this;
-  }
-
-  public async start(
-    port = env<Integer>('APP_PORT') ?? this.defaultPort,
-  ): Promise<void> {
     process.on('uncaughtException', (exception: any) => {
       this.handler.handleUncaughtException(exception);
     });
@@ -227,6 +148,78 @@ export class Server {
 
     dotenv.config({
       path: '.env',
+    });
+
+    this.options = options;
+
+    options.modules.map((module: Constructor<Module>) => {
+      const instance = Injector.resolve<Module>(module);
+
+      this.modules.push(instance);
+    });
+
+    Injector.bind([Request, Response]);
+
+    this.translator.setLanguage(options.config?.language);
+
+    return this;
+  }
+
+  public async start(
+    port = env<Integer>('APP_PORT') ?? this.defaultPort,
+  ): Promise<void> {
+    let startTime: [number, number];
+
+    this.server.addHook('onRequest', async (request, response, done) => {
+      Injector.get(Request).$setInstance(request);
+      Injector.get(Response).$setInstance(response);
+
+      startTime = process.hrtime();
+
+      done();
+    });
+
+    this.server.addHook('onResponse', async (request, response, done) => {
+      const endTime = process.hrtime(startTime);
+
+      const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
+      const timeFormatted = chalk.gray(`(${elapsedTime} ms)`);
+
+      const { statusCode } = response;
+
+      let formattedStatus: string;
+
+      switch (true) {
+        case statusCode >= 100 && statusCode < 200:
+          formattedStatus = chalk.blueBright(statusCode);
+
+          break;
+
+        case statusCode >= 200 && statusCode < 300:
+          formattedStatus = chalk.green(statusCode);
+
+          break;
+
+        case statusCode >= 300 && statusCode < 500:
+          formattedStatus = chalk.hex(this.logger.colorYellow)(statusCode);
+
+          break;
+
+        case statusCode >= 500 && statusCode < 600:
+          formattedStatus = chalk.red(statusCode);
+
+          break;
+
+        default:
+          formattedStatus = statusCode.toString();
+      }
+
+      this.logger.log(
+        `${request.method} ${request.url} ${formattedStatus} ${timeFormatted}`,
+        `request`,
+      );
+
+      done();
     });
 
     await this.registerMiddleware();
