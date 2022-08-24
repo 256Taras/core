@@ -6,10 +6,10 @@ import { Logger } from '../logger/logger.class';
 import { env } from '../utils/functions/env.function';
 import { Exception } from './exception.class';
 import { StackFileData } from './interfaces/stack-file-data.interface';
+import { FastifyError } from 'fastify';
 import { existsSync, promises, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
-import { FastifyError } from 'fastify';
 
 @Service()
 export class Handler {

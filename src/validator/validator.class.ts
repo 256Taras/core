@@ -7,11 +7,23 @@ import { isIP, isIPv4 } from 'net';
 
 @Service()
 export class Validator {
-  private emailRegexp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  private emailRegexp =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   private usernameRegexp = /^[a-z][a-z0-9]*(?:[ _-][a-z0-9]*)*$/iu;
 
   constructor(private request: Request, private response: Response) {}
+
+  private checkDateRule(value: string, isDate: boolean): boolean {
+    if (
+      (isDate && (new Date(value) as any) === 'Invalid Date') ||
+      isNaN(new Date(value) as unknown as number)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
 
   private checkEndsWithRule(value: string, search: string): boolean {
     if (!value.endsWith(search)) {
@@ -30,7 +42,7 @@ export class Validator {
   }
 
   private checkFloatRule(value: number, isFloat: boolean): boolean {
-    if (isFloat && Number.isInteger(value) || isNaN(value)) {
+    if ((isFloat && Number.isInteger(value)) || isNaN(value)) {
       return false;
     }
 
@@ -46,7 +58,7 @@ export class Validator {
   }
 
   private checkIntegerRule(value: number, isInteger: boolean): boolean {
-    if (isInteger && !Number.isInteger(value) || isNaN(value)) {
+    if ((isInteger && !Number.isInteger(value)) || isNaN(value)) {
       return false;
     }
 
@@ -85,6 +97,14 @@ export class Validator {
     return true;
   }
 
+  private checkOtherThanRule(value: string, search: string): boolean {
+    if (value === search) {
+      return false;
+    }
+
+    return true;
+  }
+
   private checkRegexpRule(value: string, regexp: RegExp): boolean {
     if (!regexp.test(value)) {
       return false;
@@ -94,7 +114,7 @@ export class Validator {
   }
 
   private checkRequiredRule(value: string, isRequired: boolean): boolean {
-    if (isRequired && !value || value === '') {
+    if ((isRequired && !value) || value === '') {
       return false;
     }
 
@@ -127,6 +147,7 @@ export class Validator {
 
   public assert(rules: ValidationRules): void {
     const ruleMapper: Record<string, any> = {
+      date: this.checkDateRule,
       endsWith: this.checkEndsWithRule,
       email: this.checkEmailRule,
       float: this.checkFloatRule,
@@ -136,6 +157,7 @@ export class Validator {
       ipv4: this.checkIpv4Rule,
       notIn: this.checkNotInRule,
       numeric: this.checkNumericRule,
+      otherThan: this.checkOtherThanRule,
       regexp: this.checkRegexpRule,
       required: this.checkRequiredRule,
       sameAs: this.checkSameAsRule,

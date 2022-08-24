@@ -1,5 +1,6 @@
 export interface ValidationRules {
   [field: string]: {
+    date?: string | Date,
     endsWith?: string;
     email?: boolean;
     float?: boolean;
@@ -9,10 +10,11 @@ export interface ValidationRules {
     ipv4?: boolean;
     notIn?: any[];
     numeric?: boolean;
+    otherThan?: string;
     regexp?: RegExp;
     required?: boolean;
     sameAs?: string;
     startsWith?: string;
-    username?: boolean,
-  }
+    username?: boolean;
+  };
 }
