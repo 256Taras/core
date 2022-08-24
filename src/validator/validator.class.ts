@@ -3,6 +3,7 @@ import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { ValidationRules } from './interfaces/validation-rules.interface';
+import { isIP, isIPv4 } from 'net';
 
 @Service()
 export class Validator {
@@ -12,8 +13,64 @@ export class Validator {
 
   constructor(private request: Request, private response: Response) {}
 
+  private checkEndsWithRule(value: string, search: string): boolean {
+    if (!value.endsWith(search)) {
+      return false;
+    }
+
+    return true;
+  }
+
   private checkEmailRule(value: string, isEmail: boolean): boolean {
     if (isEmail && !this.emailRegexp.test(value)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private checkFloatRule(value: number, isFloat: boolean): boolean {
+    if (isFloat && Number.isInteger(value) || isNaN(value)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private checkInRule(value: string, array: any[]): boolean {
+    if (!array.includes(value)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private checkIntegerRule(value: number, isInteger: boolean): boolean {
+    if (isInteger && !Number.isInteger(value) || isNaN(value)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private checkIpRule(value: string, ip: boolean): boolean {
+    if (ip && !isIP(value)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private checkIpv4Rule(value: string, ipv4: boolean): boolean {
+    if (ipv4 && !isIPv4(value)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private checkNotInRule(value: string, array: any[]): boolean {
+    if (array.includes(value)) {
       return false;
     }
 
@@ -37,7 +94,23 @@ export class Validator {
   }
 
   private checkRequiredRule(value: string, isRequired: boolean): boolean {
-    if (isRequired && !value || !String(value).length) {
+    if (isRequired && !value || value === '') {
+      return false;
+    }
+
+    return true;
+  }
+
+  private checkSameAsRule(value: string, secondField: string): boolean {
+    if (value !== this.request.input(secondField)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private checkStartsWithRule(value: string, search: string): boolean {
+    if (!value.startsWith(search)) {
       return false;
     }
 
@@ -54,10 +127,19 @@ export class Validator {
 
   public assert(rules: ValidationRules): void {
     const ruleMapper: Record<string, any> = {
+      endsWith: this.checkEndsWithRule,
       email: this.checkEmailRule,
+      float: this.checkFloatRule,
+      in: this.checkInRule,
+      integer: this.checkIntegerRule,
+      ip: this.checkIpRule,
+      ipv4: this.checkIpv4Rule,
+      notIn: this.checkNotInRule,
       numeric: this.checkNumericRule,
       regexp: this.checkRegexpRule,
       required: this.checkRequiredRule,
+      sameAs: this.checkSameAsRule,
+      startsWith: this.checkStartsWithRule,
       username: this.checkUsernameRule,
     };
 
