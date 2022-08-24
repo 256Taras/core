@@ -54,8 +54,8 @@ export class Request {
     return this.instance?.hostname ?? null;
   }
 
-  public input(key: string): any {
-    return this.body[key] ?? null;
+  public input(field: string): any {
+    return this.body[field] ?? null;
   }
 
   public ip(): string | null {
