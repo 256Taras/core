@@ -31,6 +31,8 @@ import semver from 'semver';
 
 @Service()
 export class Server {
+  private defaultHost = 'localhost';
+
   private defaultPort: Integer = 8000;
 
   private modules: Module[] = [];
@@ -177,6 +179,7 @@ export class Server {
 
   public async start(
     port = env<Integer>('APP_PORT') ?? this.defaultPort,
+    host = env<string>('APP_HOST') ?? this.defaultHost,
   ): Promise<void> {
     let startTime: [number, number];
 
@@ -235,7 +238,7 @@ export class Server {
     this.router.registerRoutes(this.server);
     this.registerHandlers();
 
-    await this.server.listen({ port });
+    await this.server.listen({ port, host });
 
     if (env<boolean>('APP_DEBUG')) {
       this.setupDevelopmentEnvironment(port);
