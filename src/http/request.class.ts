@@ -42,6 +42,10 @@ export class Request {
     return this.files?.[file as keyof object] ?? null;
   }
 
+  public has(field: string): boolean {
+    return this.input(field) ? true : false;
+  }
+
   public get headers(): Record<string, any> {
     return this.instance?.headers ?? {};
   }
