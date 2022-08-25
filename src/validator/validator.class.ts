@@ -15,11 +15,35 @@ export class Validator {
 
   constructor(private request: Request, private response: Response) {}
 
+  private validateAccepted(value: string, isAccepted: boolean): boolean {
+    if (isAccepted && !value) {
+      return false;
+    }
+
+    return true;
+  }
+
   private validateDate(value: string, isDate: boolean): boolean {
     if (
       (isDate && (new Date(value) as any) === 'Invalid Date') ||
       isNaN(new Date(value) as unknown as number)
     ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private validateDoesntEndWith(value: string, search: string): boolean {
+    if (value.endsWith(search)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private validateDoesntStartWith(value: string, search: string): boolean {
+    if (value.endsWith(search)) {
       return false;
     }
 
@@ -76,6 +100,30 @@ export class Validator {
 
   private validateIpv4(value: string, ipv4: boolean): boolean {
     if (ipv4 && !isIPv4(value)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private validateLength(value: string, length: number): boolean {
+    if (value.length !== length) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private validateMaxLength(value: string, length: number): boolean {
+    if (value.length > length) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private validateMinLength(value: string, length: number): boolean {
+    if (value.length < length) {
       return false;
     }
 
@@ -148,7 +196,10 @@ export class Validator {
 
   public assert(rules: ValidationRules): void {
     const ruleMapper: Record<string, any> = {
+      accepted: this.validateAccepted,
       date: this.validateDate,
+      doesntEndWith: this.validateDoesntEndWith,
+      doesntStartWith: this.validateDoesntStartWith,
       endsWith: this.validateEndsWith,
       email: this.validateEmail,
       float: this.validateFloat,
@@ -156,6 +207,9 @@ export class Validator {
       integer: this.validateInteger,
       ip: this.validateIp,
       ipv4: this.validateIpv4,
+      length: this.validateLength,
+      maxLength: this.validateMaxLength,
+      minLength: this.validateMinLength,
       notIn: this.validateNotIn,
       numeric: this.validateNumeric,
       otherThan: this.validateOtherThan,

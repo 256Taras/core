@@ -1,14 +1,20 @@
 export interface ValidationRules {
   [field: string]: {
-    date?: string | Date,
+    accepted?: boolean;
+    date?: string | Date;
+    doesntEndWith?: string;
+    doesntStartWith?: string;
     endsWith?: string;
     email?: boolean;
     float?: boolean;
-    in?: any[];
+    in?: string[];
     integer?: boolean;
     ip?: boolean;
     ipv4?: boolean;
-    notIn?: any[];
+    length?: number;
+    maxLength?: number;
+    minLength?: number;
+    notIn?: string[];
     numeric?: boolean;
     otherThan?: string;
     regexp?: RegExp;
