@@ -13,6 +13,7 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
+import { Session } from '../session/session.class';
 import cookieMiddleware from '@fastify/cookie';
 import csrfMiddleware from '@fastify/csrf-protection';
 import helmetMiddleware from '@fastify/helmet';
@@ -42,6 +43,7 @@ export class Server {
     private handler: Handler,
     private logger: Logger,
     private router: Router,
+    private session: Session,
     private translator: Translator,
   ) {}
 
@@ -186,6 +188,8 @@ export class Server {
     });
 
     this.server.addHook('onResponse', async (request, response) => {
+      this.session.set('_previousUrl', request.url);
+
       const endTime = process.hrtime(startTime);
 
       const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);

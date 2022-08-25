@@ -1,6 +1,7 @@
 import { Service } from '../injector/decorators/service.decorator';
 import { Compiler } from '../views/compiler.class';
 import { StatusCode } from './enums/status-code.enum';
+import { Session } from '../session/session.class';
 import { FastifyReply } from 'fastify';
 import { readFileSync } from 'node:fs';
 
@@ -8,7 +9,7 @@ import { readFileSync } from 'node:fs';
 export class Response {
   private instance: FastifyReply | null = null;
 
-  constructor(private compiler: Compiler) {}
+  constructor(private compiler: Compiler, private session: Session) {}
 
   public $getInstance(): FastifyReply | null {
     return this.instance;
@@ -71,6 +72,13 @@ export class Response {
   public redirect(url: string, status: StatusCode = StatusCode.Found): this {
     this.instance?.status(status);
     this.instance?.redirect(url);
+
+    return this;
+  }
+
+  public redirectBack(status: StatusCode = StatusCode.Found): this {
+    this.instance?.status(status);
+    this.instance?.redirect(this.session.data._previousUrl);
 
     return this;
   }

@@ -114,7 +114,7 @@ export class Handler {
     this.response.render(view, {
       codeSnippet: content && isAppFile ? codeSnippet : null,
       method: this.request.method().toUpperCase(),
-      route: this.request.path(),
+      route: this.request.url(),
       type: exception.constructor.name,
       caller,
       file,

@@ -91,10 +91,6 @@ export class Request {
     return this.params ? this.params[param] ?? null : null;
   }
 
-  public path(): string | null {
-    return this.instance?.url ?? null;
-  }
-
   public protocol(): string | null {
     return this.instance?.protocol ?? null;
   }
@@ -117,5 +113,9 @@ export class Request {
 
   public token(): string | null {
     return this.session._token ?? null;
+  }
+
+  public url(): string | null {
+    return this.instance?.url ?? null;
   }
 }

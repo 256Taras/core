@@ -3,6 +3,7 @@ import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { ValidationRules } from './interfaces/validation-rules.interface';
+import { StatusCode } from '../http/enums/status-code.enum';
 import { isIP, isIPv4 } from 'net';
 
 @Service()
@@ -14,7 +15,7 @@ export class Validator {
 
   constructor(private request: Request, private response: Response) {}
 
-  private checkDateRule(value: string, isDate: boolean): boolean {
+  private validateDate(value: string, isDate: boolean): boolean {
     if (
       (isDate && (new Date(value) as any) === 'Invalid Date') ||
       isNaN(new Date(value) as unknown as number)
@@ -25,7 +26,7 @@ export class Validator {
     return true;
   }
 
-  private checkEndsWithRule(value: string, search: string): boolean {
+  private validateEndsWith(value: string, search: string): boolean {
     if (!value.endsWith(search)) {
       return false;
     }
@@ -33,7 +34,7 @@ export class Validator {
     return true;
   }
 
-  private checkEmailRule(value: string, isEmail: boolean): boolean {
+  private validateEmail(value: string, isEmail: boolean): boolean {
     if (isEmail && !this.emailRegexp.test(value)) {
       return false;
     }
@@ -41,7 +42,7 @@ export class Validator {
     return true;
   }
 
-  private checkFloatRule(value: number, isFloat: boolean): boolean {
+  private validateFloat(value: number, isFloat: boolean): boolean {
     if ((isFloat && Number.isInteger(value)) || isNaN(value)) {
       return false;
     }
@@ -49,7 +50,7 @@ export class Validator {
     return true;
   }
 
-  private checkInRule(value: string, array: any[]): boolean {
+  private validateIn(value: string, array: any[]): boolean {
     if (!array.includes(value)) {
       return false;
     }
@@ -57,7 +58,7 @@ export class Validator {
     return true;
   }
 
-  private checkIntegerRule(value: number, isInteger: boolean): boolean {
+  private validateInteger(value: number, isInteger: boolean): boolean {
     if ((isInteger && !Number.isInteger(value)) || isNaN(value)) {
       return false;
     }
@@ -65,7 +66,7 @@ export class Validator {
     return true;
   }
 
-  private checkIpRule(value: string, ip: boolean): boolean {
+  private validateIp(value: string, ip: boolean): boolean {
     if (ip && !isIP(value)) {
       return false;
     }
@@ -73,7 +74,7 @@ export class Validator {
     return true;
   }
 
-  private checkIpv4Rule(value: string, ipv4: boolean): boolean {
+  private validateIpv4(value: string, ipv4: boolean): boolean {
     if (ipv4 && !isIPv4(value)) {
       return false;
     }
@@ -81,7 +82,7 @@ export class Validator {
     return true;
   }
 
-  private checkNotInRule(value: string, array: any[]): boolean {
+  private validateNotIn(value: string, array: any[]): boolean {
     if (array.includes(value)) {
       return false;
     }
@@ -89,7 +90,7 @@ export class Validator {
     return true;
   }
 
-  private checkNumericRule(value: number, isNumeric: boolean): boolean {
+  private validateNumeric(value: number, isNumeric: boolean): boolean {
     if (isNumeric && isNaN(value)) {
       return false;
     }
@@ -97,7 +98,7 @@ export class Validator {
     return true;
   }
 
-  private checkOtherThanRule(value: string, search: string): boolean {
+  private validateOtherThan(value: string, search: string): boolean {
     if (value === search) {
       return false;
     }
@@ -105,7 +106,7 @@ export class Validator {
     return true;
   }
 
-  private checkRegexpRule(value: string, regexp: RegExp): boolean {
+  private validateRegexp(value: string, regexp: RegExp): boolean {
     if (!regexp.test(value)) {
       return false;
     }
@@ -113,7 +114,7 @@ export class Validator {
     return true;
   }
 
-  private checkRequiredRule(value: string, isRequired: boolean): boolean {
+  private validateRequired(value: string, isRequired: boolean): boolean {
     if ((isRequired && !value) || value === '') {
       return false;
     }
@@ -121,7 +122,7 @@ export class Validator {
     return true;
   }
 
-  private checkSameAsRule(value: string, secondField: string): boolean {
+  private validateSameAs(value: string, secondField: string): boolean {
     if (value !== this.request.input(secondField)) {
       return false;
     }
@@ -129,7 +130,7 @@ export class Validator {
     return true;
   }
 
-  private checkStartsWithRule(value: string, search: string): boolean {
+  private validateStartsWith(value: string, search: string): boolean {
     if (!value.startsWith(search)) {
       return false;
     }
@@ -137,7 +138,7 @@ export class Validator {
     return true;
   }
 
-  private checkUsernameRule(value: string, isUsername: boolean): boolean {
+  private validateUsername(value: string, isUsername: boolean): boolean {
     if (isUsername && !this.usernameRegexp.test(value)) {
       return false;
     }
@@ -147,22 +148,22 @@ export class Validator {
 
   public assert(rules: ValidationRules): void {
     const ruleMapper: Record<string, any> = {
-      date: this.checkDateRule,
-      endsWith: this.checkEndsWithRule,
-      email: this.checkEmailRule,
-      float: this.checkFloatRule,
-      in: this.checkInRule,
-      integer: this.checkIntegerRule,
-      ip: this.checkIpRule,
-      ipv4: this.checkIpv4Rule,
-      notIn: this.checkNotInRule,
-      numeric: this.checkNumericRule,
-      otherThan: this.checkOtherThanRule,
-      regexp: this.checkRegexpRule,
-      required: this.checkRequiredRule,
-      sameAs: this.checkSameAsRule,
-      startsWith: this.checkStartsWithRule,
-      username: this.checkUsernameRule,
+      date: this.validateDate,
+      endsWith: this.validateEndsWith,
+      email: this.validateEmail,
+      float: this.validateFloat,
+      in: this.validateIn,
+      integer: this.validateInteger,
+      ip: this.validateIp,
+      ipv4: this.validateIpv4,
+      notIn: this.validateNotIn,
+      numeric: this.validateNumeric,
+      otherThan: this.validateOtherThan,
+      regexp: this.validateRegexp,
+      required: this.validateRequired,
+      sameAs: this.validateSameAs,
+      startsWith: this.validateStartsWith,
+      username: this.validateUsername,
     };
 
     for (const [field, ruleSet] of Object.entries(rules)) {
@@ -170,7 +171,9 @@ export class Validator {
 
       for (const [rule, ruleValue] of Object.entries(ruleSet)) {
         if (rule in ruleMapper) {
-          ruleMapper[rule](fieldValue, ruleValue);
+          if (!ruleMapper[rule](fieldValue, ruleValue)) {
+            this.response.redirectBack(StatusCode.BadRequest);
+          }
 
           continue;
         }
