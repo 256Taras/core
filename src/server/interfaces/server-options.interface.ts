@@ -3,6 +3,7 @@ import { Module } from './module.interface';
 
 export interface ServerOptions {
   config?: {
+    envFile?: string;
     language?: string;
     dev?: {
       openBrowser?: boolean;

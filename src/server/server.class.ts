@@ -148,19 +148,19 @@ export class Server {
   }
 
   public setup(options: ServerOptions): this {
+    this.options = options;
+
     process.on('uncaughtException', (exception: any) => {
       this.handler.handleUncaughtException(exception);
     });
 
-    if (!existsSync('.env')) {
-      throw new Exception('.env configuration file is missing');
+    if (!existsSync(options.config?.envFile ?? '.env')) {
+      throw new Exception('Environment configuration file is missing');
     }
 
     dotenv.config({
-      path: '.env',
+      path: options.config?.envFile ?? '.env',
     });
-
-    this.options = options;
 
     options.modules.map((module: Constructor<Module>) => {
       const instance = Injector.resolve<Module>(module);
