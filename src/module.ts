@@ -7,7 +7,7 @@ export * from './database/database-client.class';
 export * from './handler/exception.class';
 export * from './handler/functions/raise.function';
 export * from './http/decorators/controller.decorator';
-export * from './http/enums/method.enum';
+export * from './http/enums/http-method.enum';
 export * from './http/enums/status-code.enum';
 export * from './http/functions/download.function';
 export * from './http/functions/json.function';

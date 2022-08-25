@@ -1,7 +1,7 @@
 import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { DownloadResponse } from '../http/download-response.class';
-import { Method } from '../http/enums/method.enum';
+import { HttpMethod } from '../http/enums/http-method.enum';
 import { JsonResponse } from '../http/json-response.class';
 import { RedirectResponse } from '../http/redirect-response.class';
 import { Request } from '../http/request.class';
@@ -24,27 +24,27 @@ export class Router {
   ) {}
 
   public get(url: string, action: () => any): void {
-    this.routes.push(new Route(url, Method.Get, action));
+    this.routes.push(new Route(url, HttpMethod.Get, action));
   }
 
   public post(url: string, action: () => any): void {
-    this.routes.push(new Route(url, Method.Post, action));
+    this.routes.push(new Route(url, HttpMethod.Post, action));
   }
 
   public put(url: string, action: () => any): void {
-    this.routes.push(new Route(url, Method.Put, action));
+    this.routes.push(new Route(url, HttpMethod.Put, action));
   }
 
   public patch(url: string, action: () => any): void {
-    this.routes.push(new Route(url, Method.Patch, action));
+    this.routes.push(new Route(url, HttpMethod.Patch, action));
   }
 
   public delete(url: string, action: () => any): void {
-    this.routes.push(new Route(url, Method.Delete, action));
+    this.routes.push(new Route(url, HttpMethod.Delete, action));
   }
 
   public options(url: string, action: () => any): void {
-    this.routes.push(new Route(url, Method.Options, action));
+    this.routes.push(new Route(url, HttpMethod.Options, action));
   }
 
   public async respond(
@@ -108,32 +108,32 @@ export class Router {
   public registerRoutes(server: FastifyInstance): void {
     this.routes.map((route: Route) => {
       switch (route.method) {
-        case Method.Delete:
+        case HttpMethod.Delete:
           server.delete(route.url, route.action);
 
           break;
 
-        case Method.Get:
+        case HttpMethod.Get:
           server.get(route.url, route.action);
 
           break;
 
-        case Method.Options:
+        case HttpMethod.Options:
           server.options(route.url, route.action);
 
           break;
 
-        case Method.Patch:
+        case HttpMethod.Patch:
           server.patch(route.url, route.action);
 
           break;
 
-        case Method.Post:
+        case HttpMethod.Post:
           server.post(route.url, route.action);
 
           break;
 
-        case Method.Put:
+        case HttpMethod.Put:
           server.put(route.url, route.action);
 
           break;

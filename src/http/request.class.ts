@@ -1,5 +1,5 @@
 import { Service } from '../injector/decorators/service.decorator';
-import { Method } from './enums/method.enum';
+import { HttpMethod } from './enums/http-method.enum';
 import { MultipartFile } from '@fastify/multipart';
 import { FastifyRequest } from 'fastify';
 
@@ -66,20 +66,20 @@ export class Request {
     return this.instance?.ips ?? null;
   }
 
-  public method(): Method {
+  public method(): HttpMethod {
     const methods = {
-      get: Method.Get,
-      post: Method.Post,
-      put: Method.Put,
-      patch: Method.Patch,
-      delete: Method.Delete,
-      head: Method.Head,
-      options: Method.Options,
+      get: HttpMethod.Get,
+      post: HttpMethod.Post,
+      put: HttpMethod.Put,
+      patch: HttpMethod.Patch,
+      delete: HttpMethod.Delete,
+      head: HttpMethod.Head,
+      options: HttpMethod.Options,
     };
 
     return (
       methods[(this.instance?.method ?? 'get').toLowerCase() as keyof object] ??
-      Method.Get
+      HttpMethod.Get
     );
   }
 

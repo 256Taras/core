@@ -1,5 +1,5 @@
 import { Service } from '../injector/decorators/service.decorator';
-import { Method } from './enums/method.enum';
+import { HttpMethod } from './enums/http-method.enum';
 
 @Service()
 export class HttpClient {
@@ -7,7 +7,7 @@ export class HttpClient {
     url: string,
     data: Record<string, any>,
     headers: Record<string, string>,
-    method: Method,
+    method: HttpMethod,
   ): Promise<any | null> {
     try {
       const formData = new FormData();
@@ -19,7 +19,7 @@ export class HttpClient {
       const response: Response = await fetch(url, {
         method,
         headers,
-        ...(![Method.Get, Method.Head].includes(method) && {
+        ...(![HttpMethod.Get, HttpMethod.Head].includes(method) && {
           body: formData,
         }),
       });
@@ -35,7 +35,7 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, Method.Delete);
+    const response = await this.fetch(url, data, headers, HttpMethod.Delete);
 
     return response as T | null;
   }
@@ -45,7 +45,7 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, Method.Get);
+    const response = await this.fetch(url, data, headers, HttpMethod.Get);
 
     return response as T | null;
   }
@@ -55,7 +55,7 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, Method.Options);
+    const response = await this.fetch(url, data, headers, HttpMethod.Options);
 
     return response as T | null;
   }
@@ -65,7 +65,7 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, Method.Patch);
+    const response = await this.fetch(url, data, headers, HttpMethod.Patch);
 
     return response as T | null;
   }
@@ -75,7 +75,7 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, Method.Post);
+    const response = await this.fetch(url, data, headers, HttpMethod.Post);
 
     return response as T | null;
   }
@@ -85,7 +85,7 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, Method.Put);
+    const response = await this.fetch(url, data, headers, HttpMethod.Put);
 
     return response as T | null;
   }
