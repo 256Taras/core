@@ -6,15 +6,14 @@ import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Logger } from '../logger/logger.class';
 import { Router } from '../routing/router.class';
+import { Session } from '../session/session.class';
 import { Translator } from '../translator/translator.class';
 import { env } from '../utils/functions/env.function';
-import { createServer } from 'node:net';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
-import { Session } from '../session/session.class';
 import cookieMiddleware from '@fastify/cookie';
 import csrfMiddleware from '@fastify/csrf-protection';
 import helmetMiddleware from '@fastify/helmet';
@@ -25,6 +24,7 @@ import chalk from 'chalk';
 import dotenv from 'dotenv';
 import fastify from 'fastify';
 import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
+import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -157,12 +157,14 @@ export class Server {
       this.handler.handleUncaughtException(exception);
     });
 
-    if (!existsSync(options.config?.envFile ?? '.env')) {
+    const envFile = options.config?.envFile ?? '.env';
+
+    if (!existsSync(envFile)) {
       throw new Exception('Environment configuration file is missing');
     }
 
     dotenv.config({
-      path: options.config?.envFile ?? '.env',
+      path: envFile,
     });
 
     options.modules.map((module: Constructor<Module>) => {
@@ -240,13 +242,14 @@ export class Server {
     this.registerHandlers();
 
     const testServer = createServer();
-
     const originalPort = port;
 
     testServer.once('error', () => {
       port += 1;
 
-      this.logger.warn(`Port ${originalPort} is not available. Server will listen at port ${port}`);
+      this.logger.warn(
+        `Port ${originalPort} is not available. Server will listen at port ${port}`,
+      );
 
       testServer.close();
       testServer.listen(port);
@@ -261,7 +264,7 @@ export class Server {
         this.setupDevelopmentEnvironment(port);
       }
 
-      this.logger.log(`HTTP server running on http://localhost:${port}`);
+      this.logger.log(`HTTP server is running on http://localhost:${port}`);
     });
 
     testServer.listen(port);

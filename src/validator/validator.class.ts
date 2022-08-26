@@ -1,9 +1,9 @@
 import { Exception } from '../handler/exception.class';
+import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { ValidationRules } from './interfaces/validation-rules.interface';
-import { StatusCode } from '../http/enums/status-code.enum';
 import { isIP, isIPv4 } from 'net';
 
 @Service()

@@ -25,8 +25,7 @@
     }
   },
   "include": [
-    "./**/*.ts",
-    "./src/.bin/*.ts",
+    "./**/*.ts"
   ],
   "exclude": [
     "dist",
