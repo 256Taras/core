@@ -8,7 +8,7 @@ import { Logger } from '../logger/logger.class';
 import { Router } from '../routing/router.class';
 import { Translator } from '../translator/translator.class';
 import { env } from '../utils/functions/env.function';
-import { isPortAvailable } from '../utils/functions/is-port-available.function';
+import { createServer } from 'node:net';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
@@ -239,22 +239,31 @@ export class Server {
     this.router.registerRoutes(this.server);
     this.registerHandlers();
 
+    const testServer = createServer();
+
     const originalPort = port;
 
-    while (!isPortAvailable(port)) {
+    testServer.once('error', () => {
       port += 1;
-    }
 
-    await this.server.listen({ port, host });
-
-    if (port !== originalPort) {
       this.logger.warn(`Port ${originalPort} is not available. Server will listen at port ${port}`);
-    }
 
-    if (env<boolean>('APP_DEBUG')) {
-      this.setupDevelopmentEnvironment(port);
-    }
+      testServer.close();
+      testServer.listen(port);
+    });
 
-    this.logger.log(`HTTP server running on http://localhost:${port}`);
+    testServer.once('listening', async () => {
+      testServer.close();
+
+      await this.server.listen({ port, host });
+
+      if (env<boolean>('APP_DEBUG')) {
+        this.setupDevelopmentEnvironment(port);
+      }
+
+      this.logger.log(`HTTP server running on http://localhost:${port}`);
+    });
+
+    testServer.listen(port);
   }
 }
