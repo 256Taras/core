@@ -8,6 +8,7 @@ import { Logger } from '../logger/logger.class';
 import { Router } from '../routing/router.class';
 import { Translator } from '../translator/translator.class';
 import { env } from '../utils/functions/env.function';
+import { isPortAvailable } from '../utils/functions/is-port-available.function';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
@@ -238,7 +239,17 @@ export class Server {
     this.router.registerRoutes(this.server);
     this.registerHandlers();
 
+    const originalPort = port;
+
+    while (!isPortAvailable(port)) {
+      port += 1;
+    }
+
     await this.server.listen({ port, host });
+
+    if (port !== originalPort) {
+      this.logger.warn(`Port ${originalPort} is not available. Server will listen at port ${port}`);
+    }
 
     if (env<boolean>('APP_DEBUG')) {
       this.setupDevelopmentEnvironment(port);
