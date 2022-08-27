@@ -23,28 +23,136 @@ export class Router {
     private response: Response,
   ) {}
 
-  public get(url: string, action: () => any): void {
-    this.routes.push(new Route(url, HttpMethod.Get, action));
+  public addRoute(url: string, method: HttpMethod, action: () => any): void {
+    const route = new Route(url, method, action);
+
+    this.routes.push(route);
   }
 
-  public post(url: string, action: () => any): void {
-    this.routes.push(new Route(url, HttpMethod.Post, action));
-  }
+  public registerRoutes(server: FastifyInstance): void {
+    this.routes.map((route: Route) => {
+      switch (route.method) {
+        case HttpMethod.Copy:
+          server.route({
+            method: HttpMethod.Copy,
+            url: route.url,
+            handler: route.action,
+          });
 
-  public put(url: string, action: () => any): void {
-    this.routes.push(new Route(url, HttpMethod.Put, action));
-  }
+          break;
 
-  public patch(url: string, action: () => any): void {
-    this.routes.push(new Route(url, HttpMethod.Patch, action));
-  }
+        case HttpMethod.Delete:
+          server.delete(route.url, route.action);
 
-  public delete(url: string, action: () => any): void {
-    this.routes.push(new Route(url, HttpMethod.Delete, action));
-  }
+          break;
 
-  public options(url: string, action: () => any): void {
-    this.routes.push(new Route(url, HttpMethod.Options, action));
+        case HttpMethod.Get:
+          server.get(route.url, route.action);
+
+          break;
+
+        case HttpMethod.Head:
+          server.route({
+            method: HttpMethod.Head,
+            url: route.url,
+            handler: route.action,
+          });
+
+          break;
+
+        case HttpMethod.Lock:
+          server.route({
+            method: HttpMethod.Lock,
+            url: route.url,
+            handler: route.action,
+          });
+
+          break;
+
+        case HttpMethod.MkCol:
+          server.route({
+            method: HttpMethod.MkCol,
+            url: route.url,
+            handler: route.action,
+          });
+
+          break;
+
+        case HttpMethod.Move:
+          server.route({
+            method: HttpMethod.Move,
+            url: route.url,
+            handler: route.action,
+          });
+
+          break;
+
+        case HttpMethod.Options:
+          server.options(route.url, route.action);
+
+          break;
+
+        case HttpMethod.Patch:
+          server.patch(route.url, route.action);
+
+          break;
+
+        case HttpMethod.Post:
+          server.post(route.url, route.action);
+
+          break;
+
+        case HttpMethod.PropFind:
+          server.route({
+            method: HttpMethod.PropFind,
+            url: route.url,
+            handler: route.action,
+          });
+
+          break;
+
+        case HttpMethod.PropPatch:
+          server.route({
+            method: HttpMethod.PropPatch,
+            url: route.url,
+            handler: route.action,
+          });
+
+          break;
+
+        case HttpMethod.Put:
+          server.put(route.url, route.action);
+
+          break;
+
+        case HttpMethod.Search:
+          server.route({
+            method: HttpMethod.Search,
+            url: route.url,
+            handler: route.action,
+          });
+
+          break;
+
+        case HttpMethod.Trace:
+          server.route({
+            method: HttpMethod.Trace,
+            url: route.url,
+            handler: route.action,
+          });
+
+          break;
+
+        case HttpMethod.Unlock:
+          server.route({
+            method: HttpMethod.Unlock,
+            url: route.url,
+            handler: route.action,
+          });
+
+          break;
+      }
+    });
   }
 
   public async respond(
@@ -103,41 +211,5 @@ export class Router {
     } catch (exception) {
       this.handler.handleException(exception as TypeError | Exception);
     }
-  }
-
-  public registerRoutes(server: FastifyInstance): void {
-    this.routes.map((route: Route) => {
-      switch (route.method) {
-        case HttpMethod.Delete:
-          server.delete(route.url, route.action);
-
-          break;
-
-        case HttpMethod.Get:
-          server.get(route.url, route.action);
-
-          break;
-
-        case HttpMethod.Options:
-          server.options(route.url, route.action);
-
-          break;
-
-        case HttpMethod.Patch:
-          server.patch(route.url, route.action);
-
-          break;
-
-        case HttpMethod.Post:
-          server.post(route.url, route.action);
-
-          break;
-
-        case HttpMethod.Put:
-          server.put(route.url, route.action);
-
-          break;
-      }
-    });
   }
 }
