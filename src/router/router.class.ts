@@ -196,11 +196,7 @@ export class Router {
         case responseData instanceof RedirectResponse: {
           const { data, url } = responseData as RedirectResponse;
 
-          this.response.redirect(url);
-
-          if (data) {
-            this.request.session._redirectData = data;
-          }
+          this.response.redirect(url, data);
 
           break;
         }

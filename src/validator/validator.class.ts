@@ -226,7 +226,7 @@ export class Validator {
       for (const [rule, ruleValue] of Object.entries(ruleSet)) {
         if (rule in ruleMapper) {
           if (!ruleMapper[rule](fieldValue, ruleValue)) {
-            this.response.redirectBack(StatusCode.BadRequest);
+            this.response.redirectBack({}, StatusCode.BadRequest);
           }
 
           continue;
