@@ -10,7 +10,7 @@ import { ViewResponse } from '../http/view-response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Route } from './route.class';
+import { Route } from './interfaces/route.interface';
 import { FastifyInstance } from 'fastify';
 
 @Service()
@@ -24,7 +24,11 @@ export class Router {
   ) {}
 
   public addRoute(url: string, method: HttpMethod, action: () => any): void {
-    const route = new Route(url, method, action);
+    const route = {
+      url,
+      method,
+      action,
+    };
 
     this.routes.push(route);
   }
