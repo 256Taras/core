@@ -1,3 +1,4 @@
+import { Integer } from '../../utils/types/integer.type';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { Module } from './module.interface';
 
@@ -7,8 +8,11 @@ export interface ServerOptions {
     language?: string;
     contentSecurityPolicy?: Record<string, string | string[]> | false;
     cors?: {
-      origin: string | boolean | RegExp | string[] | RegExp[];
+      allowedHeaders?: string | string[];
       methods?: string | string[];
+      origin: string | boolean | RegExp | string[] | RegExp[];
+      credentials: boolean;
+      maxAge: Integer;
     };
     dev?: {
       openBrowser?: boolean;
