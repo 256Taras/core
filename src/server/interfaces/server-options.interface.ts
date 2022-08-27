@@ -5,6 +5,7 @@ export interface ServerOptions {
   config?: {
     envFile?: string;
     language?: string;
+    contentSecurityPolicy?: Record<string, string | string[]>,
     dev?: {
       openBrowser?: boolean;
     };

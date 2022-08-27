@@ -61,12 +61,16 @@ export class Server {
   }
 
   private async registerMiddleware(): Promise<void> {
+    const cspDirectives = this.options.config?.contentSecurityPolicy ?? {
+      'script-src': [`'self'`, `'unsafe-inline'`],
+      'script-src-attr': `'unsafe-inline'`,
+    };
+
     await this.server.register(helmetMiddleware, {
       contentSecurityPolicy: {
         directives: {
           ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives(),
-          'script-src': [`'self'`, `'unsafe-inline'`],
-          'script-src-attr': `'unsafe-inline'`,
+          ...cspDirectives,
         },
       },
     });
