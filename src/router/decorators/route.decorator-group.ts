@@ -5,6 +5,21 @@ import { Router } from '../router.class';
 export class Route {
   private static router = inject(Router);
 
+  public static any(url: string): MethodDecorator {
+    return (target: MethodTarget, propertyKey: string | symbol) => {
+      const callback = async () => {
+        await this.router.respond(target.constructor, propertyKey);
+      };
+
+      this.router.delete(url, callback);
+      this.router.get(url, callback);
+      this.router.options(url, callback);
+      this.router.patch(url, callback);
+      this.router.post(url, callback);
+      this.router.put(url, callback);
+    };
+  }
+
   public static delete(url: string): MethodDecorator {
     return (target: MethodTarget, propertyKey: string | symbol) => {
       this.router.delete(url, async () => {
