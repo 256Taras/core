@@ -1,6 +1,6 @@
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 
-export interface Module {
+export interface ModuleData {
   controllers: Constructor[];
   channels?: Constructor[];
 }

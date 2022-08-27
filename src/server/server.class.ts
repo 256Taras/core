@@ -12,7 +12,6 @@ import { env } from '../utils/functions/env.function';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
-import { Module } from './interfaces/module.interface';
 import { ServerOptions } from './interfaces/server-options.interface';
 import cookieMiddleware from '@fastify/cookie';
 import csrfMiddleware from '@fastify/csrf-protection';
@@ -37,7 +36,7 @@ export class Server {
 
   private defaultPort: Integer = 8000;
 
-  private modules: Module[] = [];
+  private modules: Constructor[] = [];
 
   private options: ServerOptions;
 
@@ -176,8 +175,8 @@ export class Server {
       path: envFile,
     });
 
-    options.modules.map((module: Constructor<Module>) => {
-      const instance = Injector.resolve<Module>(module);
+    options.modules.map((module: Constructor) => {
+      const instance = Injector.resolve(module);
 
       this.modules.push(instance);
     });

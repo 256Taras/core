@@ -1,6 +1,5 @@
 import { Integer } from '../../utils/types/integer.type';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
-import { Module } from './module.interface';
 
 export interface ServerOptions {
   config?: {
@@ -18,5 +17,5 @@ export interface ServerOptions {
       openBrowser?: boolean;
     };
   };
-  modules: Constructor<Module>[];
+  modules: Constructor[];
 }
