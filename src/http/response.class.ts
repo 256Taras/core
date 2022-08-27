@@ -69,7 +69,11 @@ export class Response {
     return this;
   }
 
-  public redirect(url: string, data: Record<string, any> = {}, status: StatusCode = StatusCode.Found): this {
+  public redirect(
+    url: string,
+    data: Record<string, any> = {},
+    status: StatusCode = StatusCode.Found,
+  ): this {
     if (!Object.keys(data).length) {
       this.session.set('_redirectData', data);
     }
@@ -80,7 +84,10 @@ export class Response {
     return this;
   }
 
-  public redirectBack(data: Record<string, any> = {}, status: StatusCode = StatusCode.Found): this {
+  public redirectBack(
+    data: Record<string, any> = {},
+    status: StatusCode = StatusCode.Found,
+  ): this {
     if (!Object.keys(data).length) {
       this.session.set('_redirectData', data);
     }

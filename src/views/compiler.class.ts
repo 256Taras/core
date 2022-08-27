@@ -186,7 +186,9 @@ export class Compiler {
 
   private parseMethodDirectives(): void {
     const matches =
-      this.html.matchAll(/\[(copy|delete|get|head|lock|mkcol|move|options|patch|post|propfind|proppatch|put|search|trace|unlock)\]/g) ?? [];
+      this.html.matchAll(
+        /\[(copy|delete|get|head|lock|mkcol|move|options|patch|post|propfind|proppatch|put|search|trace|unlock)\]/g,
+      ) ?? [];
 
     for (const match of matches) {
       this.html = this.html.replace(

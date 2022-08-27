@@ -1,6 +1,9 @@
-import { inject } from '../../injector/functions/inject.function';
-import { MethodDecorator, MethodTarget } from '../../utils/types/method-decorator.type';
 import { HttpMethod } from '../../http/enums/http-method.enum';
+import { inject } from '../../injector/functions/inject.function';
+import {
+  MethodDecorator,
+  MethodTarget,
+} from '../../utils/types/method-decorator.type';
 import { Router } from '../router.class';
 
 export class Route {

@@ -1,11 +1,11 @@
 #!/usr/bin/env node --experimental-specifier-resolution=node --no-warnings
-import { Reflection as Reflect } from '@abraham/reflection';
 import { error } from '../logger/functions/error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { DbMigrate } from './commands/db-migrate.command';
 import { StartDev } from './commands/start-dev.command';
 import { StartProd } from './commands/start-prod.command';
 import { Command } from './interfaces/command.interface';
+import { Reflection as Reflect } from '@abraham/reflection';
 import { parseArgs } from 'node:util';
 
 process.on('uncaughtException', (exception: Error) => {
