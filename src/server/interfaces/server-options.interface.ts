@@ -5,7 +5,11 @@ export interface ServerOptions {
   config?: {
     envFile?: string;
     language?: string;
-    contentSecurityPolicy?: Record<string, string | string[]>,
+    contentSecurityPolicy?: Record<string, string | string[]> | false;
+    cors?: {
+      origin: string | boolean | RegExp | string[] | RegExp[];
+      methods?: string | string[];
+    };
     dev?: {
       openBrowser?: boolean;
     };

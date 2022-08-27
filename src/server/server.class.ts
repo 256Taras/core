@@ -17,6 +17,7 @@ import { ServerOptions } from './interfaces/server-options.interface';
 import cookieMiddleware from '@fastify/cookie';
 import csrfMiddleware from '@fastify/csrf-protection';
 import helmetMiddleware from '@fastify/helmet';
+import corsMiddleware from '@fastify/cors';
 import multipartMiddleware from '@fastify/multipart';
 import sessionMiddleware from '@fastify/session';
 import staticServerMiddleware from '@fastify/static';
@@ -61,10 +62,12 @@ export class Server {
   }
 
   private async registerMiddleware(): Promise<void> {
-    const cspDirectives = this.options.config?.contentSecurityPolicy ?? {
+    const cspDirectives = this.options.config?.contentSecurityPolicy || {
       'script-src': [`'self'`, `'unsafe-inline'`],
       'script-src-attr': `'unsafe-inline'`,
     };
+
+    const corsOptions = this.options.config?.cors ?? {};
 
     await this.server.register(helmetMiddleware, {
       contentSecurityPolicy: {
@@ -74,6 +77,8 @@ export class Server {
         },
       },
     });
+
+    await this.server.register(corsMiddleware, corsOptions);
 
     await this.server.register(cookieMiddleware, {
       secret: env<string>('APP_KEY'),
