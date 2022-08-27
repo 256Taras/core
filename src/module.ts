@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 export * from './constants';
 export * from './auth/authenticator.class';
 export * from './crypto/encrypter.class';

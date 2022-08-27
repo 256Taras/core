@@ -1,5 +1,6 @@
 import { Exception } from '../handler/exception.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { Reflection as Reflect } from '@abraham/reflection';
 
 export class Injector {
   private static cachedInstances: Map<Constructor, any> = new Map();
@@ -48,7 +49,7 @@ export class Injector {
       throw new Exception('Injected service type cannot be primitive or predefined');
     }
 
-    const deps = Reflect.getMetadata('design:paramtypes', target) ?? [];
+    const deps: Constructor[] = Reflect.getMetadata('design:paramtypes', target) ?? [];
     const resolved = deps.map((param: Constructor) => this.resolve(param));
 
     if (this.has(target)) {

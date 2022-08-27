@@ -1,5 +1,5 @@
 #!/usr/bin/env node --experimental-specifier-resolution=node --no-warnings
-import 'reflect-metadata';
+import { Reflection as Reflect } from '@abraham/reflection';
 import { error } from '../logger/functions/error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { DbMigrate } from './commands/db-migrate.command';
@@ -20,7 +20,7 @@ commands.map((command: Constructor<Command>) => {
   const name = Reflect.getMetadata('signature', command);
 
   if (name === process.argv[2]) {
-    const requiredArguments = Reflect.getMetadata('parameters', command) ?? [];
+    const requiredArguments: any = Reflect.getMetadata('parameters', command) ?? [];
 
     const { values } = parseArgs({
       args: process.argv.slice(2),
