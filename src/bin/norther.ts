@@ -6,6 +6,7 @@ import { DbMigrate } from './commands/db-migrate.command';
 import { StartDev } from './commands/start-dev.command';
 import { StartProd } from './commands/start-prod.command';
 import { Command } from './interfaces/command.interface';
+import { parseArgs } from 'node:util';
 
 process.on('uncaughtException', (exception: Error) => {
   error(exception.message);
@@ -21,22 +22,13 @@ commands.map((command: Constructor<Command>) => {
   if (name === process.argv[2]) {
     const requiredArguments = Reflect.getMetadata('parameters', command) ?? [];
 
-    const parameters: string[] = [];
-
-    requiredArguments.map((argument: string, index: number) => {
-      const resolved = process.argv[index + 3];
-
-      parameters.push(resolved);
-
-      if (!resolved) {
-        error(`Parameter '${argument}' is required`);
-
-        process.exit(1);
-      }
+    const { values } = parseArgs({
+      args: process.argv.slice(2),
+      options: requiredArguments,
     });
 
     const instance: Command = new command();
 
-    instance.handle(...parameters);
+    instance.handle(values);
   }
 });

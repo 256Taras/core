@@ -1,3 +1,7 @@
+interface Arguments {
+  [x: string]: string | boolean | (string | boolean)[] | undefined;
+}
+
 export interface Command {
-  handle(...params: string[]): void;
+  handle(params: Arguments): void;
 }

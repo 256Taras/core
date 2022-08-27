@@ -3,7 +3,11 @@ import { ClassDecorator } from '../../utils/types/class-decorator.type';
 
 interface Data {
   signature: string;
-  parameters?: string[];
+  parameters?: {
+    type: string;
+    short?: string;
+    multiple?: boolean;
+  };
 }
 
 export const Command = (data: Data): ClassDecorator<any> => {
