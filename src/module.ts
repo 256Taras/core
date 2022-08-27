@@ -12,6 +12,7 @@ export * from './http/functions/json.function';
 export * from './http/functions/redirect.function';
 export * from './http/functions/view.function';
 export * from './http/http-client.class';
+export * from './http/download-response.class';
 export * from './http/json-response.class';
 export * from './http/redirect-response.class';
 export * from './http/request.class';
