@@ -5,7 +5,7 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Logger } from '../logger/logger.class';
-import { Router } from '../routing/router.class';
+import { Router } from '../router/router.class';
 import { Session } from '../session/session.class';
 import { Translator } from '../translator/translator.class';
 import { env } from '../utils/functions/env.function';
