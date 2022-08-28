@@ -1,3 +1,5 @@
+import { Integer } from '../../utils/types/integer.type';
+
 export interface ValidationRules {
   [field: string]: {
     accepted?: boolean;
@@ -11,9 +13,9 @@ export interface ValidationRules {
     integer?: boolean;
     ip?: boolean;
     ipv4?: boolean;
-    length?: number;
-    maxLength?: number;
-    minLength?: number;
+    length?: Integer
+    maxLength?: Integer;
+    minLength?: Integer;
     notIn?: string[];
     numeric?: boolean;
     otherThan?: string;
