@@ -34,6 +34,18 @@ export class Route {
     };
   }
 
+  public static methods(methods: HttpMethod[], url: string): MethodDecorator {
+    return (target: MethodTarget, propertyKey: string | symbol) => {
+      const callback = async () => {
+        await this.router.respond(target.constructor, propertyKey);
+      };
+
+      methods.map((method) => {
+        this.router.addRoute(url, method, callback);
+      });
+    }
+  }
+
   public static copy(url: string): MethodDecorator {
     return (target: MethodTarget, propertyKey: string | symbol) => {
       const callback = async () => {
