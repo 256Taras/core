@@ -1,15 +1,15 @@
 export const debounce = (callback: (...args: unknown[]) => any, timeout = 150) => {
   let timer: NodeJS.Timeout;
 
-  return (...args: unknown[]) => {
-    let result: any;
-
+  return async (...args: unknown[]) => {
     clearTimeout(timer);
 
-    timer = setTimeout(() => {
-      result = callback(...args);
-    }, timeout);
+    return new Promise((resolve) => {
+      timer = setTimeout(() => {
+        const result = callback(...args);
 
-    return result;
+        resolve(result);
+      }, timeout);
+    });
   };
 };
