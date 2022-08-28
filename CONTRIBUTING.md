@@ -18,13 +18,13 @@
 - [Creating Pull Requests](#creating-pull-requests)
 - [Development Setup](#development-setup)
   - [Core package](#core-package)
-  - [Project Directory](#project-directory)
+  - [Project Template](#project-template)
 
 ## Creating Pull Requests
 
-Contributing in this repository is based in GitHub's Pull Requests. Before creating a pull request, please read through the following rules:
+Contributing in this repository is based on GitHub's [Pull Requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests). Before creating a pull request, please read through the following rules:
 
-- Always provide a short description to your pull request. You can also open an issue before working on it.
+- Always provide a short description to your pull request. You can also open an [Issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/about-issues) before working on it.
 - Commit messages must follow a specific convention - they must be short and first letter must be uppercased, for example: `git commit -m "Added feature x"`.
 
 ## Development Setup
@@ -42,9 +42,9 @@ $ npm run build
 $ npm link
 ```
 
-### Project Directory
+### Project Template
 
-Next, you have to clone app project repository (in the parent folder oof the `core` repo):
+Next, clone project template repository (in the parent folder of the `core` repository):
 
 ```shell
 $ git clone https://github.com/northerjs/norther.git
@@ -55,8 +55,10 @@ $ npm install
 $ npm link @norther/core
 ```
 
+Next, change the import path in the `src/database/database-client.class.ts` of `@norther/core` package file: `PrismaClient` should be imported from `../../../norther/node_modules/@prisma/client` in developmnet mode. Don't forget to change it back before creating a Pull Request!
+
 Then, to compile TypeScript code, run `npm run build:watch` command.
 
-For testing database client, you have to change the import path in the `src/database/database-client.class.ts` `@norther/core` package file: `PrismaClient` should be imported from `../../../norther/node_modules/@prisma/client` in developmnet mode. Don't forget to change it back before creating a pull request!
-
 After all these steps, run `npm start` in the `norther` directory. Your app will be available on `http://localhost:8000` by default. You can change the port in `.env` file.
+
+*Remember that after every dependency addition / removal you need to run `npm link` again.*
