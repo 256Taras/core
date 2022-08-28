@@ -1,5 +1,5 @@
-import { ClassDecorator } from '../../utils/types/class-decorator.type';
 import { Reflection as Reflect } from '@abraham/reflection';
+import { ClassDecorator } from '../../utils/types/class-decorator.type';
 
 export const Controller = (baseUrl?: string): ClassDecorator<any> => {
   return (target: any) => {

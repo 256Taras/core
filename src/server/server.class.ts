@@ -1,17 +1,3 @@
-import { Handler } from '../handler/handler.class';
-import { Request } from '../http/request.class';
-import { Response } from '../http/response.class';
-import { Service } from '../injector/decorators/service.decorator';
-import { Injector } from '../injector/injector.class';
-import { Logger } from '../logger/logger.class';
-import { Router } from '../router/router.class';
-import { Session } from '../session/session.class';
-import { Translator } from '../translator/translator.class';
-import { env } from '../utils/functions/env.function';
-import { runCommand } from '../utils/functions/run-command.function';
-import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Integer } from '../utils/types/integer.type';
-import { ServerOptions } from './interfaces/server-options.interface';
 import cookieMiddleware from '@fastify/cookie';
 import corsMiddleware from '@fastify/cors';
 import csrfMiddleware from '@fastify/csrf-protection';
@@ -28,6 +14,20 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import semver from 'semver';
+import { Handler } from '../handler/handler.class';
+import { Request } from '../http/request.class';
+import { Response } from '../http/response.class';
+import { Service } from '../injector/decorators/service.decorator';
+import { Injector } from '../injector/injector.class';
+import { Logger } from '../logger/logger.class';
+import { Router } from '../router/router.class';
+import { Session } from '../session/session.class';
+import { Translator } from '../translator/translator.class';
+import { env } from '../utils/functions/env.function';
+import { runCommand } from '../utils/functions/run-command.function';
+import { Constructor } from '../utils/interfaces/constructor.interface';
+import { Integer } from '../utils/types/integer.type';
+import { ServerOptions } from './interfaces/server-options.interface';
 
 @Service()
 export class Server {

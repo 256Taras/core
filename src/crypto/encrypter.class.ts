@@ -1,5 +1,3 @@
-import { Service } from '../injector/decorators/service.decorator';
-import { Integer } from '../utils/types/integer.type';
 import { compare, hash } from 'bcrypt';
 import {
   createCipheriv,
@@ -7,6 +5,8 @@ import {
   randomBytes,
   randomUUID,
 } from 'node:crypto';
+import { Service } from '../injector/decorators/service.decorator';
+import { Integer } from '../utils/types/integer.type';
 
 @Service()
 export class Encrypter {

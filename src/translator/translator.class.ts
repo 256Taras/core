@@ -1,5 +1,5 @@
-import { Service } from '../injector/decorators/service.decorator';
 import { existsSync, readFileSync } from 'node:fs';
+import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class Translator {

@@ -1,5 +1,5 @@
-import { debounce } from '../../src/utils/functions/debounce.function';
 import { describe, expect, it } from 'vitest';
+import { debounce } from '../../src/utils/functions/debounce.function';
 
 describe('debounce function', () => {
   it('returns correctly debounced callback', () => {

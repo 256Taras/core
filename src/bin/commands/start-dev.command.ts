@@ -1,12 +1,12 @@
-import { info } from '../../logger/functions/info.function';
-import { debounce } from '../../utils/functions/debounce.function';
-import { runCommand } from '../../utils/functions/run-command.function';
-import { Command } from '../decorators/command.decorator';
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
 import { existsSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { info } from '../../logger/functions/info.function';
+import { debounce } from '../../utils/functions/debounce.function';
+import { runCommand } from '../../utils/functions/run-command.function';
+import { Command } from '../decorators/command.decorator';
 
 @Command({
   signature: 'start:dev',

@@ -1,7 +1,7 @@
-import { Service } from '../injector/decorators/service.decorator';
-import { HttpMethod } from './enums/http-method.enum';
 import { MultipartFile } from '@fastify/multipart';
 import { FastifyRequest } from 'fastify';
+import { Service } from '../injector/decorators/service.decorator';
+import { HttpMethod } from './enums/http-method.enum';
 
 @Service()
 export class Request {

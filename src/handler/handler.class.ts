@@ -1,3 +1,6 @@
+import { existsSync, promises, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { getHighlighter } from 'shiki';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
@@ -5,9 +8,6 @@ import { Service } from '../injector/decorators/service.decorator';
 import { Logger } from '../logger/logger.class';
 import { env } from '../utils/functions/env.function';
 import { StackFileData } from './interfaces/stack-file-data.interface';
-import { existsSync, promises, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { getHighlighter } from 'shiki';
 
 @Service()
 export class Handler {
@@ -22,10 +22,7 @@ export class Handler {
 
     const line = stack.split('\n')[1];
 
-    const callerData = line.slice(
-      line.indexOf('at ') + 2,
-      line.length,
-    );
+    const callerData = line.slice(line.indexOf('at ') + 2, line.length);
 
     const caller = callerData.split('(')[0];
     const fileMatch = callerData.match(/\((.*?)\)/);
@@ -33,7 +30,9 @@ export class Handler {
     let file = fileMatch ? fileMatch[1] : '<anonymous>';
 
     const filePath = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
-    const fileContent = existsSync(filePath) ? readFileSync(filePath).toString() : null;
+    const fileContent = existsSync(filePath)
+      ? readFileSync(filePath).toString()
+      : null;
     const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 
     if (isAppFile) {

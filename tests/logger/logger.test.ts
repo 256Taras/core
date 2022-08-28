@@ -1,6 +1,6 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { inject } from '../../src/injector/functions/inject.function';
 import { Logger } from '../../src/logger/logger.class';
-import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Logger class', () => {
   let instance;

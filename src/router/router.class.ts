@@ -1,3 +1,4 @@
+import { FastifyInstance } from 'fastify';
 import { Handler } from '../handler/handler.class';
 import { DownloadResponse } from '../http/download-response.class';
 import { HttpMethod } from '../http/enums/http-method.enum';
@@ -10,7 +11,6 @@ import { Service } from '../injector/decorators/service.decorator';
 import { Injector } from '../injector/injector.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Route } from './interfaces/route.interface';
-import { FastifyInstance } from 'fastify';
 
 @Service()
 export class Router {

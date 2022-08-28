@@ -1,6 +1,6 @@
-import { Service } from '../injector/decorators/service.decorator';
 import chalk from 'chalk';
 import stripAnsi from 'strip-ansi';
+import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class Logger {

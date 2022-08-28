@@ -1,5 +1,5 @@
-import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Reflection as Reflect } from '@abraham/reflection';
+import { Constructor } from '../utils/interfaces/constructor.interface';
 
 export class Injector {
   private static cachedInstances: Map<Constructor, any> = new Map();
