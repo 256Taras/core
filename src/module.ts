@@ -1,3 +1,5 @@
+export * as Route from './router/decorators/route.decorator';
+
 export * from './constants';
 export * from './auth/authenticator.class';
 export * from './crypto/encrypter.class';
@@ -24,7 +26,6 @@ export * from './logger/functions/info.function';
 export * from './logger/functions/log.function';
 export * from './logger/functions/warn.function';
 export * from './logger/logger.class';
-export * from './router/decorators/route.decorator-group';
 export * from './router/router.class';
 export * from './server/decorators/module.decorator';
 export * from './server/functions/create-server.function';
