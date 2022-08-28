@@ -1,4 +1,3 @@
-import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { DownloadResponse } from '../http/download-response.class';
 import { HttpMethod } from '../http/enums/http-method.enum';
@@ -208,8 +207,8 @@ export class Router {
         default:
           this.response.send(responseData);
       }
-    } catch (exception) {
-      this.handler.handleException(exception as TypeError | Exception);
+    } catch (error) {
+      this.handler.handleError(error as Error);
     }
   }
 }

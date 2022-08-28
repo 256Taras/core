@@ -1,4 +1,3 @@
-import { Exception } from '../handler/exception.class';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
@@ -232,7 +231,7 @@ export class Validator {
           continue;
         }
 
-        throw new Exception(`Invalid validation rule '${rule}'`);
+        throw new Error(`Invalid validation rule '${rule}'`);
       }
     }
   }

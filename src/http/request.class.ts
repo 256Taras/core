@@ -82,8 +82,9 @@ export class Request {
     };
 
     return (
-      methods[(this.instance?.method ?? 'get').toLowerCase() as keyof object] ??
-      HttpMethod.Get
+      methods[
+        (this.instance?.method ?? HttpMethod.Get).toLowerCase() as keyof object
+      ] ?? HttpMethod.Get
     );
   }
 

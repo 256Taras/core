@@ -1,6 +1,6 @@
 export interface StackFileData {
   caller: string;
-  content: string | null;
   file: string;
+  fileContent: string | null;
   isAppFile: boolean;
 }

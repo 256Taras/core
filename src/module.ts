@@ -2,7 +2,6 @@ export * from './constants';
 export * from './auth/authenticator.class';
 export * from './crypto/encrypter.class';
 export * from './database/database-client.class';
-export * from './handler/exception.class';
 export * from './handler/functions/raise.function';
 export * from './http/decorators/controller.decorator';
 export * from './http/enums/http-method.enum';

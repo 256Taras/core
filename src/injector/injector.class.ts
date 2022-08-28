@@ -1,4 +1,3 @@
-import { Exception } from '../handler/exception.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Reflection as Reflect } from '@abraham/reflection';
 
@@ -23,7 +22,7 @@ export class Injector {
 
   public static get<T = any>(target: Constructor<T>): T {
     if (!this.has(target)) {
-      throw new Exception(
+      throw new Error(
         `Service '${target.constructor.name}' does have not a registered instance`,
       );
     }
@@ -46,7 +45,7 @@ export class Injector {
       ) ||
       ['null', 'undefined'].includes(typeof target)
     ) {
-      throw new Exception('Injected service type cannot be primitive or predefined');
+      throw new Error('Injected service type cannot be primitive or predefined');
     }
 
     const deps: Constructor[] =

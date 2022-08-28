@@ -4,9 +4,7 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Logger } from '../logger/logger.class';
 import { env } from '../utils/functions/env.function';
-import { Exception } from './exception.class';
 import { StackFileData } from './interfaces/stack-file-data.interface';
-import { FastifyError } from 'fastify';
 import { existsSync, promises, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { getHighlighter } from 'shiki';
@@ -19,30 +17,27 @@ export class Handler {
     private response: Response,
   ) {}
 
-  private async getExceptionStack(
-    exception: Error | TypeError | Exception,
-  ): Promise<StackFileData> {
-    const stack = exception.stack ?? 'Error\n    at <anonymous>:1:1';
+  private async getErrorStack(error: Error): Promise<StackFileData> {
+    const stack = error.stack ?? 'Error\n    at <anonymous>:1:1';
 
-    const callerLine = stack.split('\n')[1];
-    const callerInfo = callerLine.slice(
-      callerLine.indexOf('at ') + 2,
-      callerLine.length,
+    const line = stack.split('\n')[1];
+
+    const callerData = line.slice(
+      line.indexOf('at ') + 2,
+      line.length,
     );
-    const caller = callerInfo.split('(')[0];
 
-    const fileMatch = callerInfo.match(/\((.*?)\)/);
+    const caller = callerData.split('(')[0];
+    const fileMatch = callerData.match(/\((.*?)\)/);
 
     let file = fileMatch ? fileMatch[1] : '<anonymous>';
 
-    const path = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
-
-    const content = existsSync(path) ? readFileSync(path).toString() : null;
+    const filePath = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
+    const fileContent = existsSync(filePath) ? readFileSync(filePath).toString() : null;
     const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 
     if (isAppFile) {
-      file = file.replace(/.*?dist./, `src/`);
-      file = file.replace('.js', '.ts');
+      file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
     } else {
       const packageData = await promises.readFile(
         `${fileURLToPath(import.meta.url)}/../../../package.json`,
@@ -53,22 +48,20 @@ export class Handler {
 
     return {
       caller,
-      content,
       file,
+      fileContent,
       isAppFile,
     };
   }
 
-  public async handleException(
-    exception: Error | TypeError | Exception | FastifyError,
-  ): Promise<void> {
+  public async handleError(error: Error): Promise<void> {
     this.response.status(StatusCode.InternalServerError);
 
     const message = (
-      exception.message.charAt(0).toUpperCase() + exception.message.slice(1)
+      error.message.charAt(0).toUpperCase() + error.message.slice(1)
     ).replaceAll(/\n|\r\n/g, ' ');
 
-    this.logger.error(message, 'exception');
+    this.logger.error(message, 'error');
 
     const data = {
       statusCode: StatusCode.InternalServerError,
@@ -91,16 +84,14 @@ export class Handler {
       this.response.render(file, data);
     }
 
-    const { caller, content, file, isAppFile } = await this.getExceptionStack(
-      exception,
-    );
+    const { caller, file, fileContent, isAppFile } = await this.getErrorStack(error);
 
     const highlighter = getHighlighter({
       theme: 'one-dark-pro',
     });
 
-    const codeSnippet = content
-      ? (await highlighter).codeToHtml(content, {
+    const codeSnippet = fileContent
+      ? (await highlighter).codeToHtml(fileContent, {
           lang: 'ts',
         })
       : null;
@@ -109,13 +100,13 @@ export class Handler {
 
     const view = existsSync(customViewTemplate)
       ? 'views/errors/500'
-      : `${fileURLToPath(import.meta.url)}/../../../assets/views/exception`;
+      : `${fileURLToPath(import.meta.url)}/../../../assets/views/error`;
 
     this.response.render(view, {
-      codeSnippet: content && isAppFile ? codeSnippet : null,
+      codeSnippet: fileContent && isAppFile ? codeSnippet : null,
       method: this.request.method().toUpperCase(),
       route: this.request.url(),
-      type: exception.constructor.name,
+      type: error.constructor.name,
       caller,
       file,
       message,
@@ -168,15 +159,14 @@ export class Handler {
     this.response.render(view, data);
   }
 
-  public handleUncaughtException(exception: any): void {
-    if (exception !== Object(exception)) {
+  public handleUncaughtException(error: any): void {
+    if (error !== Object(error)) {
       return;
     }
 
-    const message =
-      exception.message.charAt(0).toUpperCase() + exception.message.slice(1);
+    const message = error.message.charAt(0).toUpperCase() + error.message.slice(1);
 
-    this.logger.error(message, 'uncaught exception');
+    this.logger.error(message, 'uncaught error');
 
     if (!env<boolean>('APP_DEBUG')) {
       process.exit(1);

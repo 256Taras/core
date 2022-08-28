@@ -43,7 +43,7 @@ export class Route {
       methods.map((method) => {
         this.router.addRoute(url, method, callback);
       });
-    }
+    };
   }
 
   public static copy(url: string): MethodDecorator {

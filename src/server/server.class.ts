@@ -1,4 +1,3 @@
-import { Exception } from '../handler/exception.class';
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
@@ -51,8 +50,8 @@ export class Server {
   ) {}
 
   private registerHandlers(): void {
-    this.server.setErrorHandler(async (exception) => {
-      await this.handler.handleException(exception);
+    this.server.setErrorHandler(async (error) => {
+      await this.handler.handleError(error);
     });
 
     this.server.setNotFoundHandler(() => {
@@ -168,7 +167,7 @@ export class Server {
     const envFile = options.config?.envFile ?? '.env';
 
     if (!existsSync(envFile)) {
-      throw new Exception('Environment configuration file is missing');
+      throw new Error('Environment configuration file is missing');
     }
 
     dotenv.config({
