@@ -206,7 +206,7 @@ export class Server {
       const endTime = process.hrtime(startTime);
 
       const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
-      const timeFormatted = chalk.gray(`(${elapsedTime} ms)`);
+      const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(7, ' '));
 
       const { statusCode } = response;
 
@@ -218,12 +218,12 @@ export class Server {
 
           break;
 
-        case statusCode >= 200 && statusCode < 300:
+        case statusCode >= 200 && statusCode < 400:
           formattedStatus = chalk.green(statusCode);
 
           break;
 
-        case statusCode >= 300 && statusCode < 500:
+        case statusCode >= 400 && statusCode < 500:
           formattedStatus = chalk.hex(this.logger.colorYellow)(statusCode);
 
           break;
@@ -238,8 +238,9 @@ export class Server {
       }
 
       this.logger.log(
-        `${request.method} ${request.url} ${formattedStatus} ${timeFormatted}`,
+        `${request.method} ${request.url} ${formattedStatus}`,
         `request`,
+        timeFormatted,
       );
     });
 
@@ -270,8 +271,6 @@ export class Server {
       if (env<boolean>('APP_DEBUG')) {
         this.setupDevelopmentEnvironment(port);
       }
-
-      this.logger.log(`HTTP server is running on http://localhost:${port}`);
     });
 
     testServer.listen(port);

@@ -6,8 +6,6 @@ import { Service } from '../injector/decorators/service.decorator';
 export class Logger {
   private readonly locale = 'en-us';
 
-  private readonly mark = '$';
-
   public readonly colorYellow = '#f8c377';
 
   private getDay(): string {
@@ -59,18 +57,18 @@ export class Logger {
     console.log(output);
   }
 
-  public log(data: string, type = 'info'): void {
+  public log(data: string, type = 'log', additionalData = ''): void {
     const day = this.getDay();
     const time = this.getTime();
 
-    const timestamp = `${chalk.green.bold(this.mark)} ${chalk.gray(
+    const timestamp = `${chalk.bgGreen.black(' ' + type.toUpperCase() + ' ')} ${chalk.gray(
       day,
     )} ${chalk.gray(time)} `;
 
     const mainOutput = this.truncate(data);
 
     const left = `${timestamp} ${chalk.white.bold(mainOutput)}`;
-    const right = chalk.gray(type.toUpperCase());
+    const right = chalk.gray(additionalData);
 
     const dots = this.renderDots(timestamp + mainOutput + type);
 
