@@ -5,7 +5,7 @@ import { Command } from '../decorators/command.decorator';
 @Command({
   signature: 'db:migrate',
 })
-export class DbMigrate {
+export class DbMigrateCommand {
   public handle(): void {
     info('Running database migrations...');
 

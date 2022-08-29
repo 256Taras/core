@@ -5,7 +5,7 @@ import { Command } from '../decorators/command.decorator';
 @Command({
   signature: 'start:prod',
 })
-export class StartProd {
+export class StartProdCommand {
   public handle(): void {
     info('Starting production server...');
 

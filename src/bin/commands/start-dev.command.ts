@@ -11,7 +11,7 @@ import { Command } from '../decorators/command.decorator';
 @Command({
   signature: 'start:dev',
 })
-export class StartDev {
+export class StartDevCommand {
   public handle(): void {
     const entryFile = 'dist/main.js';
 

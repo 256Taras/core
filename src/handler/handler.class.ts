@@ -23,16 +23,17 @@ export class Handler {
     const line = stack.split('\n')[1];
 
     const callerData = line.slice(line.indexOf('at ') + 2, line.length);
-
     const caller = callerData.split('(')[0];
     const fileMatch = callerData.match(/\((.*?)\)/);
 
     let file = fileMatch ? fileMatch[1] : '<anonymous>';
 
     const filePath = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
+
     const fileContent = existsSync(filePath)
       ? readFileSync(filePath).toString()
       : null;
+
     const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 
     if (isAppFile) {
@@ -60,7 +61,7 @@ export class Handler {
       error.message.charAt(0).toUpperCase() + error.message.slice(1)
     ).replaceAll(/\n|\r\n/g, ' ');
 
-    this.logger.error(message, 'error');
+    this.logger.error(message);
 
     const data = {
       statusCode: StatusCode.InternalServerError,
