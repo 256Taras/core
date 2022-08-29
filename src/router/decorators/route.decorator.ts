@@ -11,22 +11,9 @@ export const Any = (url: string): MethodDecorator => {
       await router.respond(target.constructor, propertyKey);
     };
 
-    router.addRoute(url, HttpMethod.Copy, callback);
-    router.addRoute(url, HttpMethod.Delete, callback);
-    router.addRoute(url, HttpMethod.Get, callback);
-    router.addRoute(url, HttpMethod.Head, callback);
-    router.addRoute(url, HttpMethod.Lock, callback);
-    router.addRoute(url, HttpMethod.MkCol, callback);
-    router.addRoute(url, HttpMethod.Move, callback);
-    router.addRoute(url, HttpMethod.Options, callback);
-    router.addRoute(url, HttpMethod.Patch, callback);
-    router.addRoute(url, HttpMethod.Post, callback);
-    router.addRoute(url, HttpMethod.PropFind, callback);
-    router.addRoute(url, HttpMethod.PropPatch, callback);
-    router.addRoute(url, HttpMethod.Put, callback);
-    router.addRoute(url, HttpMethod.Search, callback);
-    router.addRoute(url, HttpMethod.Trace, callback);
-    router.addRoute(url, HttpMethod.Unlock, callback);
+    for (const method of Object.values(HttpMethod)) {
+      router.addRoute(url, method, callback);
+    }
   };
 };
 
@@ -98,7 +85,7 @@ export const Mkcol = (url: string): MethodDecorator => {
       await router.respond(target.constructor, propertyKey);
     };
 
-    router.addRoute(url, HttpMethod.MkCol, callback);
+    router.addRoute(url, HttpMethod.Mkcol, callback);
   };
 };
 

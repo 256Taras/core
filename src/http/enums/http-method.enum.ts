@@ -1,10 +1,10 @@
-export const enum HttpMethod {
+export enum HttpMethod {
   Copy = 'COPY',
   Delete = 'DELETE',
   Get = 'GET',
   Head = 'HEAD',
   Lock = 'LOCK',
-  MkCol = 'MKCOL',
+  Mkcol = 'MKCOL',
   Move = 'MOVE',
   Options = 'OPTIONS',
   Patch = 'PATCH',
