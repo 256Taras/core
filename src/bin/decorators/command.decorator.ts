@@ -1,14 +1,11 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { ClassDecorator } from '../../utils/types/class-decorator.type';
+import { Parameter } from '../interfaces/parameter.interface';
 
 interface Data {
   signature: string;
-  parameters?: {
-    type: string;
-    short?: string;
-    multiple?: boolean;
-  };
+  parameters?: Record<string, Parameter>;
 }
 
 export const Command = (data: Data): ClassDecorator<any> => {

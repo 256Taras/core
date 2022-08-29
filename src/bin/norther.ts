@@ -7,6 +7,7 @@ import { DbMigrateCommand } from './commands/db-migrate.command';
 import { StartDevCommand } from './commands/start-dev.command';
 import { StartProdCommand } from './commands/start-prod.command';
 import { Command } from './interfaces/command.interface';
+import { Parameter } from './interfaces/parameter.interface';
 
 process.on('uncaughtException', (exception: Error) => {
   error(exception.message);
@@ -19,14 +20,20 @@ const commands: Constructor<Command>[] = [DbMigrateCommand, StartDevCommand, Sta
 commands.map((command: Constructor<Command>) => {
   const name = Reflect.getMetadata('signature', command);
 
-  if (name === process.argv[2]) {
-    const requiredArguments: any = Reflect.getMetadata('parameters', command) ?? {};
+  const requiredArguments: Record<string, Parameter> = Reflect.getMetadata('parameters', command) ?? {};
 
-    const { values } = parseArgs({
-      args: process.argv.slice(2),
-      options: requiredArguments,
-    });
+  const { values, positionals } = parseArgs({
+    args: process.argv.slice(2),
+    options: {
+      cmd: {
+        type: 'string',
+      },
+      ...requiredArguments,
+    },
+    allowPositionals: true,
+  });
 
+  if (name === positionals[0]) {
     const instance: Command = new command();
 
     instance.handle(values);
