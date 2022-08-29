@@ -6,14 +6,14 @@ import { Command } from '../decorators/command.decorator';
 })
 export class StartDevCommand {
   public handle(): void {
-    const { result } = concurrently([
-      'tsc --watch',
-      'norther run:server',
-    ], {
+    const { result } = concurrently(['tsc --watch', 'norther run:server'], {
       killOthers: ['failure', 'success'],
       raw: true,
     });
 
-    result.then(() => process.exit(0), () => process.exit(0));
+    result.then(
+      () => process.exit(0),
+      () => process.exit(0),
+    );
   }
 }

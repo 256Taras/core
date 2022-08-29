@@ -1,15 +1,12 @@
 import { HttpMethod } from '../../http/enums/http-method.enum';
 import { inject } from '../../injector/functions/inject.function';
-import {
-  MethodDecorator,
-  MethodTarget,
-} from '../../utils/types/method-decorator.type';
+import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { Router } from '../router.class';
 
 const router = inject(Router);
 
 export const Any = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -34,7 +31,7 @@ export const Any = (url: string): MethodDecorator => {
 };
 
 export const Methods = (methods: HttpMethod[], url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -46,7 +43,7 @@ export const Methods = (methods: HttpMethod[], url: string): MethodDecorator => 
 };
 
 export const Copy = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -56,7 +53,7 @@ export const Copy = (url: string): MethodDecorator => {
 };
 
 export const Delete = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -66,7 +63,7 @@ export const Delete = (url: string): MethodDecorator => {
 };
 
 export const Get = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -76,7 +73,7 @@ export const Get = (url: string): MethodDecorator => {
 };
 
 export const Head = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -86,7 +83,7 @@ export const Head = (url: string): MethodDecorator => {
 };
 
 export const Lock = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -96,7 +93,7 @@ export const Lock = (url: string): MethodDecorator => {
 };
 
 export const Mkcol = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -106,7 +103,7 @@ export const Mkcol = (url: string): MethodDecorator => {
 };
 
 export const Move = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -116,7 +113,7 @@ export const Move = (url: string): MethodDecorator => {
 };
 
 export const Options = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -126,7 +123,7 @@ export const Options = (url: string): MethodDecorator => {
 };
 
 export const Patch = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -136,7 +133,7 @@ export const Patch = (url: string): MethodDecorator => {
 };
 
 export const Post = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -146,7 +143,7 @@ export const Post = (url: string): MethodDecorator => {
 };
 
 export const PropFind = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -156,7 +153,7 @@ export const PropFind = (url: string): MethodDecorator => {
 };
 
 export const PropPatch = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -166,7 +163,7 @@ export const PropPatch = (url: string): MethodDecorator => {
 };
 
 export const Put = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -176,7 +173,7 @@ export const Put = (url: string): MethodDecorator => {
 };
 
 export const Search = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -186,7 +183,7 @@ export const Search = (url: string): MethodDecorator => {
 };
 
 export const Trace = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };
@@ -196,7 +193,7 @@ export const Trace = (url: string): MethodDecorator => {
 };
 
 export const Unlock = (url: string): MethodDecorator => {
-  return (target: MethodTarget, propertyKey: string | symbol) => {
+  return (target, propertyKey) => {
     const callback = async () => {
       await router.respond(target.constructor, propertyKey);
     };

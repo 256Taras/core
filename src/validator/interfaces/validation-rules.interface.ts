@@ -13,7 +13,7 @@ export interface ValidationRules {
     integer?: boolean;
     ip?: boolean;
     ipv4?: boolean;
-    length?: Integer
+    length?: Integer;
     maxLength?: Integer;
     minLength?: Integer;
     notIn?: string[];

@@ -26,7 +26,8 @@ const commands: Constructor<Command>[] = [
 commands.map((command: Constructor<Command>) => {
   const name = Reflect.getMetadata('signature', command);
 
-  const requiredArguments: Record<string, Parameter> = Reflect.getMetadata('parameters', command) ?? {};
+  const requiredArguments: Record<string, Parameter> =
+    Reflect.getMetadata('parameters', command) ?? {};
 
   const { values, positionals } = parseArgs({
     args: process.argv.slice(2),
