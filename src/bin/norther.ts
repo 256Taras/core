@@ -4,6 +4,7 @@ import { parseArgs } from 'node:util';
 import { error } from '../logger/functions/error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { DbMigrateCommand } from './commands/db-migrate.command';
+import { RunServerCommand } from './commands/run-server.command';
 import { StartDevCommand } from './commands/start-dev.command';
 import { StartProdCommand } from './commands/start-prod.command';
 import { Command } from './interfaces/command.interface';
@@ -15,7 +16,12 @@ process.on('uncaughtException', (exception: Error) => {
   process.exit(1);
 });
 
-const commands: Constructor<Command>[] = [DbMigrateCommand, StartDevCommand, StartProdCommand];
+const commands: Constructor<Command>[] = [
+  DbMigrateCommand,
+  RunServerCommand,
+  StartDevCommand,
+  StartProdCommand,
+];
 
 commands.map((command: Constructor<Command>) => {
   const name = Reflect.getMetadata('signature', command);
