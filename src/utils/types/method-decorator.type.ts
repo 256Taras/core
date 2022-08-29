@@ -1,7 +1,7 @@
 import { Constructor } from '../interfaces/constructor.interface';
 
 export interface MethodTarget extends Object {
-  constructor: Constructor;
+  constructor: Function | Constructor;
 }
 
 export type MethodDecorator = <T = any>(
