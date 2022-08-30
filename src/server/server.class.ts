@@ -93,6 +93,9 @@ export class Server {
 
     await this.server.register(sessionMiddleware, {
       secret: env<string>('APP_KEY'),
+      cookie: {
+        maxAge: (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
+      },
     });
 
     await this.server.register(staticServerMiddleware, {
