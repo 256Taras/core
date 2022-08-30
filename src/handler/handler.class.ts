@@ -1,6 +1,5 @@
-import { existsSync, promises, readFileSync } from 'node:fs';
+import { existsSync, promises } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { getHighlighter } from 'shiki';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
@@ -32,10 +31,6 @@ export class Handler {
 
     const isAppFile = !filePath.includes('node_modules') && !filePath.includes('/core');
 
-    const fileContent = existsSync(filePath) && isAppFile
-      ? readFileSync(filePath).toString()
-      : null;
-
     if (!isAppFile) {
       const packageData = await promises.readFile(
         `${fileURLToPath(import.meta.url)}/../../../package.json`,
@@ -45,9 +40,8 @@ export class Handler {
     }
 
     return {
-      file: filePath,
       caller,
-      fileContent,
+      file: filePath,
     };
   }
 
@@ -65,7 +59,7 @@ export class Handler {
       message: 'Internal Server Error',
     };
 
-    if (this.request.ajax() || this.request.headers.accept?.includes('json')) {
+    if (this.request.ajax()) {
       this.response.send(data);
 
       return;
@@ -81,17 +75,7 @@ export class Handler {
       this.response.render(file, data);
     }
 
-    const { caller, file, fileContent } = await this.getErrorStack(error);
-
-    const highlighter = getHighlighter({
-      theme: 'one-dark-pro',
-    });
-
-    const codeSnippet = fileContent
-      ? (await highlighter).codeToHtml(fileContent, {
-          lang: 'ts',
-        })
-      : null;
+    const { caller, file } = await this.getErrorStack(error);
 
     const customViewTemplate = 'views/errors/500.north.html';
 
@@ -100,13 +84,12 @@ export class Handler {
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/error`;
 
     this.response.render(view, {
-      codeSnippet: fileContent ? codeSnippet : null,
-      method: this.request.method().toUpperCase(),
-      route: this.request.url(),
-      type: error.constructor.name,
+      message,
       caller,
       file,
-      message,
+      method: this.request.method(),
+      route: this.request.url(),
+      statusCode: StatusCode.InternalServerError,
     });
   }
 
@@ -118,7 +101,7 @@ export class Handler {
       message: 'Page Not Found',
     };
 
-    if (this.request.ajax() || this.request.headers.accept?.includes('json')) {
+    if (this.request.ajax()) {
       this.response.send(data);
 
       return;
@@ -141,7 +124,7 @@ export class Handler {
       message: 'Invalid Token',
     };
 
-    if (this.request.ajax() || this.request.headers.accept?.includes('json')) {
+    if (this.request.ajax()) {
       this.response.send(data);
 
       return;
