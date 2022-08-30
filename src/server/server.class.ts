@@ -41,6 +41,8 @@ export class Server {
 
   private server = fastify();
 
+  private tempPath = `${tmpdir()}/norther`;
+
   constructor(
     private handler: Handler,
     private logger: Logger,
@@ -126,10 +128,8 @@ export class Server {
       process.exit(1);
     }
 
-    const tempPath = `${tmpdir()}/norther`;
-
-    if (!existsSync(tempPath)) {
-      writeFileSync(tempPath, 'Norther development server is running...');
+    if (!existsSync(this.tempPath)) {
+      writeFileSync(this.tempPath, 'Norther development server is running...');
 
       this.logger.info(
         `Norther server started ${chalk.gray(
@@ -168,6 +168,14 @@ export class Server {
 
     dotenv.config({
       path: envFile,
+    });
+
+    process.on('SIGINT', () => {
+      if (existsSync(this.tempPath)) {
+        unlinkSync(this.tempPath);
+      }
+
+      process.exit();
     });
 
     options.modules.map((module: Constructor) => {
