@@ -1,8 +1,8 @@
 import { FastifyReply } from 'fastify';
 import { existsSync, readFileSync } from 'node:fs';
+import { Compiler } from '../views/compiler.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
-import { Compiler } from '../views/compiler.class';
 import { StatusCode } from './enums/status-code.enum';
 
 @Service()

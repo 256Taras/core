@@ -1,4 +1,5 @@
 import { callerFile } from '../../utils/functions/caller-file.function';
+import { inject } from '../../injector/functions/inject.function';
 import { ViewResponse } from '../view-response.class';
 
 export const view = (file: string, data: Record<string, any> = {}): ViewResponse => {
@@ -8,5 +9,10 @@ export const view = (file: string, data: Record<string, any> = {}): ViewResponse
     file = `${caller}/../${file.slice(2)}`;
   }
 
-  return new ViewResponse(file, data);
+  const instance = inject(ViewResponse);
+
+  instance.setData(data);
+  instance.setFile(file);
+
+  return instance;
 };

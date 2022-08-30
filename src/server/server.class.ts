@@ -247,7 +247,7 @@ export class Server {
 
       this.logger.log(
         `${Injector.get(Request).method()} ${request.url}`,
-        `request ${formattedStatus}`,
+        `request ${chalk.bold(formattedStatus)}`,
         timeFormatted,
       );
     });

@@ -1,5 +1,10 @@
 import { DownloadResponse } from '../download-response.class';
+import { inject } from '../../injector/functions/inject.function';
 
 export const download = (file: string) => {
-  return new DownloadResponse(file);
+  const instance = inject(DownloadResponse);
+
+  instance.setFile(file);
+
+  return instance;
 };

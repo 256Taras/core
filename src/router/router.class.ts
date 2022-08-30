@@ -73,9 +73,10 @@ export class Router {
         }
 
         case responseData instanceof RedirectResponse: {
-          const { data, url } = responseData as RedirectResponse;
+          const { data, statusCode, url } = responseData as RedirectResponse;
 
           this.response.redirect(url, data);
+          this.response.status(statusCode);
 
           break;
         }
