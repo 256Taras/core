@@ -1,8 +1,8 @@
+import { Service } from '../injector/decorators/service.decorator';
+import { Session } from '../session/session.class';
+import { ViewCompiler } from '../views/view-compiler.class';
 import { StatusCode } from './enums/status-code.enum';
 import { Response } from './response.class';
-import { Session } from '../session/session.class';
-import { Compiler } from '../views/compiler.class';
-import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class RedirectResponse extends Response {
@@ -12,8 +12,8 @@ export class RedirectResponse extends Response {
 
   private httpStatus: StatusCode;
 
-  constructor(compiler: Compiler, session: Session) {
-    super(compiler, session);
+  constructor(viewCompiler: ViewCompiler, session: Session) {
+    super(viewCompiler, session);
   }
 
   public get data(): Record<string, any> {

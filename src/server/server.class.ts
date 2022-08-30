@@ -65,41 +65,46 @@ export class Server {
       'script-src-attr': `'unsafe-inline'`,
     };
 
-    const corsOptions = this.options.config?.cors ?? {};
-
-    await this.server.register(helmetMiddleware, {
+    const cspOptions = {
       contentSecurityPolicy: {
         directives: {
           ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives(),
           ...cspDirectives,
         },
       },
-    });
+    };
 
-    await this.server.register(cookieMiddleware, {
+    const corsOptions = this.options.config?.cors ?? {};
+
+    const cookieOptions = {
       secret: env<string>('APP_KEY'),
-    });
-    
-    await this.server.register(corsMiddleware, corsOptions);
-    await this.server.register(csrfMiddleware);
+    };
 
-    await this.server.register(multipartMiddleware, {
+    const multipartOptions = {
       limits: {
         fieldSize: (env<number>('FIELD_MAX_SIZE') ?? 10) * 1024 * 1024,
         fileSize: (env<number>('UPLOAD_MAX_SIZE') ?? 100) * 1024 * 1024,
       },
-    });
+    };
 
-    await this.server.register(sessionMiddleware, {
+    const sessionOptions = {
       secret: env<string>('APP_KEY'),
       cookie: {
         maxAge: (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
       },
-    });
+    };
 
-    await this.server.register(staticServerMiddleware, {
+    const staticServerOptions = {
       root: path.resolve('public'),
-    });
+    };
+
+    await this.server.register(helmetMiddleware, cspOptions);
+    await this.server.register(corsMiddleware, corsOptions);
+    await this.server.register(cookieMiddleware, cookieOptions);
+    await this.server.register(csrfMiddleware);
+    await this.server.register(multipartMiddleware, multipartOptions);
+    await this.server.register(sessionMiddleware, sessionOptions);
+    await this.server.register(staticServerMiddleware, staticServerOptions);
   }
 
   private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
@@ -122,23 +127,6 @@ export class Server {
     }
 
     const tempPath = `${tmpdir()}/norther`;
-
-    const signals: (NodeJS.Signals | 'exit')[] = [
-      'SIGINT',
-      'SIGTERM',
-      'SIGHUP',
-      'exit',
-    ];
-
-    signals.map((signal) => {
-      process.on(signal, () => {
-        if (existsSync(tempPath)) {
-          unlinkSync(tempPath);
-        }
-
-        process.exit();
-      });
-    });
 
     if (!existsSync(tempPath)) {
       writeFileSync(tempPath, 'Norther development server is running...');
@@ -218,32 +206,20 @@ export class Server {
 
       const { statusCode } = response;
 
-      let formattedStatus: string;
+      const statusMapping = {
+        [String(statusCode >= 100 && statusCode < 200)]:
+          chalk.blueBright(statusCode),
 
-      switch (true) {
-        case statusCode >= 100 && statusCode < 200:
-          formattedStatus = chalk.blueBright(statusCode);
+        [String(statusCode >= 200 && statusCode < 400)]: chalk.green(statusCode),
 
-          break;
+        [String(statusCode >= 400 && statusCode < 500)]: chalk.hex(
+          this.logger.colorYellow,
+        )(statusCode),
 
-        case statusCode >= 200 && statusCode < 400:
-          formattedStatus = chalk.green(statusCode);
+        [String(statusCode >= 500 && statusCode < 600)]: chalk.red(statusCode),
+      };
 
-          break;
-
-        case statusCode >= 400 && statusCode < 500:
-          formattedStatus = chalk.hex(this.logger.colorYellow)(statusCode);
-
-          break;
-
-        case statusCode >= 500 && statusCode < 600:
-          formattedStatus = chalk.red(statusCode);
-
-          break;
-
-        default:
-          formattedStatus = statusCode.toString();
-      }
+      const formattedStatus = statusMapping['true'] ?? statusCode.toString();
 
       this.logger.log(
         `${Injector.get(Request).method()} ${request.url}`,

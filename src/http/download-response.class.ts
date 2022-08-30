@@ -1,14 +1,14 @@
-import { Response } from './response.class';
-import { Session } from '../session/session.class';
-import { Compiler } from '../views/compiler.class';
 import { Service } from '../injector/decorators/service.decorator';
+import { Session } from '../session/session.class';
+import { ViewCompiler } from '../views/view-compiler.class';
+import { Response } from './response.class';
 
 @Service()
 export class DownloadResponse extends Response {
   private path: string;
 
-  constructor(compiler: Compiler, session: Session) {
-    super(compiler, session);
+  constructor(viewCompiler: ViewCompiler, session: Session) {
+    super(viewCompiler, session);
   }
 
   public get file(): string {

@@ -1,5 +1,6 @@
 import { Encrypter } from '../crypto/encrypter.class';
-import { DatabaseClient, SchemaUser } from '../database/database-client.class';
+import { DatabaseClient } from '../database/database-client.class';
+import { SchemaUser } from '../database/types/schema-user.type';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
 

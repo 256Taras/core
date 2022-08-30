@@ -1,15 +1,15 @@
 import { FastifyReply } from 'fastify';
 import { existsSync, readFileSync } from 'node:fs';
-import { Compiler } from '../views/compiler.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
+import { ViewCompiler } from '../views/view-compiler.class';
 import { StatusCode } from './enums/status-code.enum';
 
 @Service()
 export class Response {
   private instance: FastifyReply | null = null;
 
-  constructor(private compiler: Compiler, private session: Session) {}
+  constructor(private viewCompiler: ViewCompiler, private session: Session) {}
 
   public $getInstance(): FastifyReply | null {
     return this.instance;
@@ -107,7 +107,7 @@ export class Response {
 
     const fileContent = readFileSync(file);
 
-    const html = this.compiler.compile(fileContent.toString(), {
+    const html = this.viewCompiler.compile(fileContent.toString(), {
       variables: data,
     });
 

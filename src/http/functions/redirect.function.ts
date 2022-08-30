@@ -1,8 +1,12 @@
-import { RedirectResponse } from '../redirect-response.class';
 import { inject } from '../../injector/functions/inject.function';
 import { StatusCode } from '../enums/status-code.enum';
+import { RedirectResponse } from '../redirect-response.class';
 
-export const redirect = (url: string, data: Record<string, any> = {}, status: StatusCode = StatusCode.Found) => {
+export const redirect = (
+  url: string,
+  data: Record<string, any> = {},
+  status: StatusCode = StatusCode.Found,
+) => {
   const instance = inject(RedirectResponse);
 
   instance.setData(data);

@@ -18,38 +18,38 @@ export class Handler {
 
   private async getErrorStack(error: Error): Promise<StackFileData> {
     const stack = error.stack ?? 'Error\n    at <anonymous>:1:1';
-
     const line = stack.split('\n')[1];
 
     const callerData = line.slice(line.indexOf('at ') + 2, line.length);
     const caller = callerData.split('(')[0];
     const fileMatch = callerData.match(/\((.*?)\)/);
 
-    const file = fileMatch ? fileURLToPath(fileMatch[1]) : '<anonymous>';
+    let file = fileMatch ? fileURLToPath(fileMatch[1]) : '<anonymous>';
 
-    let filePath = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
+    file = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
 
-    const isAppFile =
-      !filePath.includes('node_modules') && !filePath.includes('/core');
+    const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 
     if (isAppFile) {
-      filePath = filePath.replace(/.*?dist./, `src/`).replace('.js', '.ts');
+      file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
     } else {
       const packageData = await promises.readFile(
         `${fileURLToPath(import.meta.url)}/../../../package.json`,
       );
 
-      filePath = `${JSON.parse(packageData.toString()).name} package file`;
+      file = `${JSON.parse(packageData.toString()).name} package file`;
     }
 
     return {
       caller,
-      file: filePath,
+      file,
     };
   }
 
   public async handleError(error: Error): Promise<void> {
-    this.response.status(StatusCode.InternalServerError);
+    const statusCode = StatusCode.InternalServerError;
+
+    this.response.status(statusCode);
 
     const message = (
       error.message.charAt(0).toUpperCase() + error.message.slice(1)
@@ -58,7 +58,7 @@ export class Handler {
     this.logger.error(message);
 
     const data = {
-      statusCode: StatusCode.InternalServerError,
+      statusCode,
       message: 'Internal Server Error',
     };
 
@@ -69,10 +69,10 @@ export class Handler {
     }
 
     if (!env<boolean>('APP_DEBUG')) {
-      const customTemplatePath = 'views/errors/500.north.html';
+      const customTemplatePath = `views/errors/${statusCode}.north.html`;
 
       const file = existsSync(customTemplatePath)
-        ? 'views/errors/500'
+        ? `views/errors/${statusCode}`
         : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
       this.response.render(file, data);
@@ -80,27 +80,29 @@ export class Handler {
 
     const { caller, file } = await this.getErrorStack(error);
 
-    const customViewTemplate = 'views/errors/500.north.html';
+    const customViewTemplate = `views/errors/${statusCode}.north.html`;
 
     const view = existsSync(customViewTemplate)
-      ? 'views/errors/500'
+      ? `views/errors/${statusCode}`
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/error`;
 
     this.response.render(view, {
       message,
       caller,
       file,
+      statusCode,
       method: this.request.method(),
       route: this.request.url(),
-      statusCode: StatusCode.InternalServerError,
     });
   }
 
   public handleNotFound(): void {
-    this.response.status(StatusCode.NotFound);
+    const statusCode = StatusCode.NotFound;
+
+    this.response.status(statusCode);
 
     const data = {
-      statusCode: StatusCode.NotFound,
+      statusCode,
       message: 'Page Not Found',
     };
 
@@ -110,20 +112,22 @@ export class Handler {
       return;
     }
 
-    const customViewTemplate = 'views/errors/404.north.html';
+    const customViewTemplate = `views/errors/${statusCode}.north.html`;
 
     const view = existsSync(customViewTemplate)
-      ? 'views/errors/404'
+      ? `views/errors/${statusCode}`
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
     this.response.render(view, data);
   }
 
   public handleInvalidToken(): void {
-    this.response.status(StatusCode.TokenExpired);
+    const statusCode = StatusCode.TokenExpired;
+
+    this.response.status(statusCode);
 
     const data = {
-      statusCode: StatusCode.TokenExpired,
+      statusCode,
       message: 'Invalid Token',
     };
 
@@ -133,10 +137,10 @@ export class Handler {
       return;
     }
 
-    const customViewTemplate = 'views/errors/419.north.html';
+    const customViewTemplate = `views/errors/${statusCode}.north.html`;
 
     const view = existsSync(customViewTemplate)
-      ? 'views/errors/419'
+      ? `views/errors/${statusCode}`
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
 
     this.response.render(view, data);

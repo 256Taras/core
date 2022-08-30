@@ -4,7 +4,7 @@ import { Service } from '../injector/decorators/service.decorator';
 import { trans } from '../translator/functions/trans.function';
 
 @Service()
-export class Compiler {
+export class ViewCompiler {
   private data: Record<string, any> = {};
 
   private html: string;
