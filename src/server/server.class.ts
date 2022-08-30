@@ -76,12 +76,11 @@ export class Server {
       },
     });
 
-    await this.server.register(corsMiddleware, corsOptions);
-
     await this.server.register(cookieMiddleware, {
       secret: env<string>('APP_KEY'),
     });
-
+    
+    await this.server.register(corsMiddleware, corsOptions);
     await this.server.register(csrfMiddleware);
 
     await this.server.register(multipartMiddleware, {
@@ -247,8 +246,8 @@ export class Server {
       }
 
       this.logger.log(
-        `${request.method} ${request.url} ${formattedStatus}`,
-        `request`,
+        `${Injector.get(Request).method()} ${request.url}`,
+        `request ${formattedStatus}`,
         timeFormatted,
       );
     });
