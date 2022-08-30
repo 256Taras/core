@@ -64,11 +64,20 @@ export class RunServerCommand {
       enter: 13,
       esc: 27,
       q: 113,
-      any: NaN,
     };
+
+    let ctrlC = false;
 
     process.stdin.on('data', (data) => {
       const key = data.toString().trim().toLowerCase().charCodeAt(0);
+
+      if (key === 3) {
+        if (ctrlC) {
+          process.exit(0);
+        }
+
+        ctrlC = true;
+      }
 
       if ([...Object.values(exitKeys)].includes(key)) {
         const tempPath = `${tmpdir()}/norther`;

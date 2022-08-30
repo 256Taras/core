@@ -18,7 +18,11 @@ export class StartDevCommand {
 
         process.exit(0);
       },
-      () => process.exit(0),
+      () => {
+        info('Server terminated');
+
+        process.exit(0);
+      },
     );
   }
 }
