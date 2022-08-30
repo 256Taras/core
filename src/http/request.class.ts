@@ -58,8 +58,8 @@ export class Request {
     return this.instance?.hostname ?? null;
   }
 
-  public input(field: string): any {
-    return this.body[field] ?? null;
+  public input<T = string>(field: string): T | null {
+    return (this.body[field] as T) ?? null;
   }
 
   public ip(): string | null {
@@ -71,29 +71,17 @@ export class Request {
   }
 
   public method(): HttpMethod {
-    const methods = {
-      get: HttpMethod.Get,
-      post: HttpMethod.Post,
-      put: HttpMethod.Put,
-      patch: HttpMethod.Patch,
-      delete: HttpMethod.Delete,
-      head: HttpMethod.Head,
-      options: HttpMethod.Options,
-    };
+    const method = this.input('_method') ? this.input('_method') : (this.instance?.method ?? HttpMethod.Get);
 
-    return (
-      methods[
-        (this.instance?.method ?? HttpMethod.Get).toLowerCase() as keyof object
-      ] ?? HttpMethod.Get
-    );
+    return Object.values(HttpMethod).filter((value) => value === method)[0] ?? HttpMethod.Get;
   }
 
   public get params(): Record<string, any> {
     return (this.instance?.params as Record<string, any>) ?? {};
   }
 
-  public param(param: string): any {
-    return this.params ? this.params[param] ?? null : null;
+  public param(param: string): string | null {
+    return this.params[param] ?? null;
   }
 
   public protocol(): string | null {
