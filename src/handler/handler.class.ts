@@ -29,7 +29,8 @@ export class Handler {
 
     let filePath = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
 
-    const isAppFile = !filePath.includes('node_modules') && !filePath.includes('/core');
+    const isAppFile =
+      !filePath.includes('node_modules') && !filePath.includes('/core');
 
     if (isAppFile) {
       filePath = filePath.replace(/.*?dist./, `src/`).replace('.js', '.ts');

@@ -46,13 +46,17 @@ export class Logger {
   }
 
   public error(data: string, type = 'error'): void {
-    const output = `\n${chalk.bgRed.black(' ' + type.toUpperCase() + ' ')} ${chalk.bold.red(data)}\n`;
+    const output = `\n${chalk.bgRed.black(
+      ' ' + type.toUpperCase() + ' ',
+    )} ${chalk.bold.red(data)}\n`;
 
     console.error(output);
   }
 
   public info(data: string, type = 'info'): void {
-    const output = `\n${chalk.bgGreen.black(' ' + type.toUpperCase() + ' ')} ${chalk.bold.green(data)}\n`;
+    const output = `\n${chalk.bgGreen.black(
+      ' ' + type.toUpperCase() + ' ',
+    )} ${chalk.bold.green(data)}\n`;
 
     console.log(output);
   }
@@ -61,9 +65,9 @@ export class Logger {
     const day = this.getDay();
     const time = this.getTime();
 
-    const timestamp = `${chalk.gray('[' + chalk.white(type.charAt(0).toUpperCase() + type.slice(1)) + ']')} ${chalk.gray(
-      day,
-    )} ${chalk.gray(time)} `;
+    const timestamp = `${chalk.gray(
+      '[' + chalk.white(type.charAt(0).toUpperCase() + type.slice(1)) + ']',
+    )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
     const mainOutput = this.truncate(data);
 
@@ -76,7 +80,11 @@ export class Logger {
   }
 
   public warn(data: string, type = 'warning'): void {
-    const output = `\n${chalk.bgHex(this.colorYellow).black(' ' + type.toUpperCase() + ' ')} ${chalk.bold.hex(this.colorYellow)(data)}\n`;
+    const output = `\n${chalk
+      .bgHex(this.colorYellow)
+      .black(' ' + type.toUpperCase() + ' ')} ${chalk.bold.hex(this.colorYellow)(
+      data,
+    )}\n`;
 
     console.warn(output);
   }

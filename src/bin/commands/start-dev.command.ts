@@ -1,6 +1,6 @@
 import concurrently from 'concurrently';
-import { Command } from '../decorators/command.decorator';
 import { info } from '../../logger/functions/info.function';
+import { Command } from '../decorators/command.decorator';
 
 @Command({
   signature: 'start:dev',

@@ -71,9 +71,14 @@ export class Request {
   }
 
   public method(): HttpMethod {
-    const method = this.input('_method') ? this.input('_method') : (this.instance?.method ?? HttpMethod.Get);
+    const method = this.input('_method')
+      ? this.input('_method')
+      : this.instance?.method ?? HttpMethod.Get;
 
-    return Object.values(HttpMethod).filter((value) => value === method)[0] ?? HttpMethod.Get;
+    return (
+      Object.values(HttpMethod).filter((value) => value === method)[0] ??
+      HttpMethod.Get
+    );
   }
 
   public get params(): Record<string, any> {
