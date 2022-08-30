@@ -83,7 +83,13 @@ export class Server {
     });
 
     await this.server.register(csrfMiddleware);
-    await this.server.register(multipartMiddleware);
+
+    await this.server.register(multipartMiddleware, {
+      limits: {
+        fieldSize: (env<number>('FIELD_MAX_SIZE') ?? 10) * 1024 * 1024,
+        fileSize: (env<number>('UPLOAD_MAX_SIZE') ?? 100) * 1024 * 1024,
+      },
+    });
 
     await this.server.register(sessionMiddleware, {
       secret: env<string>('APP_KEY'),
