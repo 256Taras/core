@@ -1,5 +1,5 @@
 import { FastifyReply } from 'fastify';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
 import { Compiler } from '../views/compiler.class';
@@ -99,7 +99,13 @@ export class Response {
   }
 
   public render(file: string, data: Record<string, any>): this {
-    const fileContent = readFileSync(`${file}.north.html`);
+    file = `${file}.north.html`;
+
+    if (!existsSync(file)) {
+      throw new Error(`View ${file} does not exist`);
+    }
+
+    const fileContent = readFileSync(file);
 
     const html = this.compiler.compile(fileContent.toString(), {
       variables: data,

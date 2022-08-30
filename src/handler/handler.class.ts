@@ -26,31 +26,28 @@ export class Handler {
     const caller = callerData.split('(')[0];
     const fileMatch = callerData.match(/\((.*?)\)/);
 
-    let file = fileMatch ? fileMatch[1] : '<anonymous>';
+    const file = fileMatch ? fileURLToPath(fileMatch[1]) : '<anonymous>';
 
-    const filePath = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
+    let filePath = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
 
-    const fileContent = existsSync(filePath)
+    const isAppFile = !filePath.includes('node_modules') && !filePath.includes('/core');
+
+    const fileContent = existsSync(filePath) && isAppFile
       ? readFileSync(filePath).toString()
       : null;
 
-    const isAppFile = !file.includes('node_modules') && !file.includes('/core');
-
-    if (isAppFile) {
-      file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
-    } else {
+    if (!isAppFile) {
       const packageData = await promises.readFile(
         `${fileURLToPath(import.meta.url)}/../../../package.json`,
       );
 
-      file = `${JSON.parse(packageData.toString()).name} package file`;
+      filePath = `${JSON.parse(packageData.toString()).name} package file`;
     }
 
     return {
+      file: filePath,
       caller,
-      file,
       fileContent,
-      isAppFile,
     };
   }
 
@@ -84,7 +81,7 @@ export class Handler {
       this.response.render(file, data);
     }
 
-    const { caller, file, fileContent, isAppFile } = await this.getErrorStack(error);
+    const { caller, file, fileContent } = await this.getErrorStack(error);
 
     const highlighter = getHighlighter({
       theme: 'one-dark-pro',
@@ -103,7 +100,7 @@ export class Handler {
       : `${fileURLToPath(import.meta.url)}/../../../assets/views/error`;
 
     this.response.render(view, {
-      codeSnippet: fileContent && isAppFile ? codeSnippet : null,
+      codeSnippet: fileContent ? codeSnippet : null,
       method: this.request.method().toUpperCase(),
       route: this.request.url(),
       type: error.constructor.name,
