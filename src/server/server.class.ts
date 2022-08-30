@@ -206,7 +206,7 @@ export class Server {
       const endTime = process.hrtime(startTime);
 
       const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
-      const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(7, ' '));
+      const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(8, ' '));
 
       const { statusCode } = response;
 

@@ -61,7 +61,7 @@ export class Logger {
     const day = this.getDay();
     const time = this.getTime();
 
-    const timestamp = `${chalk.bgGreen.black(' ' + type.toUpperCase() + ' ')} ${chalk.gray(
+    const timestamp = `${chalk.gray('[' + chalk.white(type.charAt(0).toUpperCase() + type.slice(1)) + ']')} ${chalk.gray(
       day,
     )} ${chalk.gray(time)} `;
 
