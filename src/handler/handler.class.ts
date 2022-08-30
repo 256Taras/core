@@ -32,7 +32,7 @@ export class Handler {
     const isAppFile = !filePath.includes('node_modules') && !filePath.includes('/core');
 
     if (isAppFile) {
-      file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
+      filePath = filePath.replace(/.*?dist./, `src/`).replace('.js', '.ts');
     } else {
       const packageData = await promises.readFile(
         `${fileURLToPath(import.meta.url)}/../../../package.json`,
