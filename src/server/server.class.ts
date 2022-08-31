@@ -6,14 +6,14 @@ import multipartMiddleware from '@fastify/multipart';
 import sessionMiddleware from '@fastify/session';
 import staticServerMiddleware from '@fastify/static';
 import chalk from 'chalk';
-import dotenv from 'dotenv';
+import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
 import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import semver from 'semver';
+import { satisfies as satisfiesVersion } from 'semver';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
@@ -120,7 +120,7 @@ export class Server {
 
     const requiredNodeVersion = JSON.parse(packageData.toString()).engines.node;
 
-    if (!semver.satisfies(process.version, requiredNodeVersion)) {
+    if (!satisfiesVersion(process.version, requiredNodeVersion)) {
       this.logger.warn(
         `Norther requires Node.js version ${requiredNodeVersion.slice(
           2,
@@ -164,7 +164,7 @@ export class Server {
       throw new Error('Environment configuration file is missing');
     }
 
-    dotenv.config({
+    configDotenv({
       path: envFile,
     });
 
