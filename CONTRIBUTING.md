@@ -42,6 +42,8 @@ $ npm run build
 $ npm link
 ```
 
+Then, change the import path in the `src/database` directory: `PrismaClient` and `User` should be imported from `../../../norther/node_modules/@prisma/client` in development mode. Don't forget to change it back before creating a [Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)!
+
 ### Project Template
 
 Next, clone project template repository (in the parent folder of the `core` repository):
@@ -55,9 +57,9 @@ $ npm install
 $ npm link @norther/core
 ```
 
-Next, change the import path in the `src/database/database-client.class.ts` of `@norther/core` package file: `PrismaClient` should be imported from `../../../norther/node_modules/@prisma/client` in developmnet mode. Don't forget to change it back before creating a Pull Request!
+Then, set the `APP_DEV` variable in `.env` file to `true`.
 
-Then, to compile TypeScript code, run `npm run build:watch` command.
+To compile TypeScript code, run `npm run build:watch` command.
 
 After all these steps, run `npm start` in the `norther` directory. Your app will be available on `http://localhost:8000` by default. You can change the port in `.env` file.
 
