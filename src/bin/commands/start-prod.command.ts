@@ -15,6 +15,6 @@ export class StartProdCommand {
       warn('You are running production server in debug mode');
     }
 
-    runCommand('node --experimental-specifier-resolution=node dist/main.js', true);
+    runCommand('node --experimental-specifier-resolution=node --no-warnings dist/main', true);
   }
 }
