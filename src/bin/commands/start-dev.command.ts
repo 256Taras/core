@@ -7,7 +7,7 @@ import { Command } from '../decorators/command.decorator';
 })
 export class StartDevCommand {
   public handle(): void {
-    const { result } = concurrently(['tsc --watch', 'norther run:server'], {
+    const { result } = concurrently(['tsc --watch', 'norther server:dev'], {
       killOthers: ['failure', 'success'],
       raw: true,
     });
