@@ -5,7 +5,7 @@ import { parseArgs } from 'node:util';
 import { error } from '../logger/functions/error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { DbMigrateCommand } from './commands/db-migrate.command';
-import { RunServerCommand } from './commands/run-server.command';
+import { ServerDevCommand } from './commands/server-dev.command';
 import { StartDevCommand } from './commands/start-dev.command';
 import { StartProdCommand } from './commands/start-prod.command';
 import { Command } from './interfaces/command.interface';
@@ -23,7 +23,7 @@ configDotenv({
 
 const commands: Constructor<Command>[] = [
   DbMigrateCommand,
-  RunServerCommand,
+  ServerDevCommand,
   StartDevCommand,
   StartProdCommand,
 ];

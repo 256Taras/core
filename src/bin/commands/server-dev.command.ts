@@ -1,17 +1,24 @@
+import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
-import { existsSync, unlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { env } from '../../utils/functions/env.function';
 import { info } from '../../logger/functions/info.function';
 import { debounce } from '../../utils/functions/debounce.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
+import { setupStdin } from '../functions/setup-stdin.function';
 
 @Command({
-  signature: 'run:server',
+  signature: 'server:dev',
 })
-export class RunServerCommand {
+export class ServerDevCommand {
   public handle(): void {
+    info(
+      `Development server started ${chalk.gray(
+        `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
+      )}`,
+    );
+
     const entryFile = 'dist/main.js';
 
     const watcherOptions = {
@@ -20,9 +27,6 @@ export class RunServerCommand {
     };
 
     const sourceWatcher = watch('dist', watcherOptions);
-
-    const internalWatcher = watch('node_modules/@norther/core/dist', watcherOptions);
-
     const viewWatcher = watch('src/**/*.html', watcherOptions);
     const envWatcher = watch('.env', watcherOptions);
 
@@ -46,7 +50,11 @@ export class RunServerCommand {
       runCommand('copyfiles -u 1 src/**/*.html dist/');
     });
 
-    internalWatcher.on('change', restartProcess);
+    if (env<boolean>('APP_DEV')) {
+      const frameworkWatcher = watch('node_modules/@norther/core/dist', watcherOptions);
+
+      frameworkWatcher.on('change', restartProcess);
+    }
 
     viewWatcher.on('all', () => {
       runCommand('copyfiles -u 1 src/**/*.html dist/');
@@ -54,42 +62,6 @@ export class RunServerCommand {
 
     envWatcher.on('all', restartProcess);
 
-    if (process.stdin.setRawMode) {
-      process.stdin.setRawMode(true);
-    }
-
-    process.stdin.resume();
-
-    const exitKeys = {
-      enter: 13,
-      esc: 27,
-      q: 113,
-    };
-
-    let ctrlC = false;
-
-    process.stdin.on('data', (data) => {
-      const key = data.toString().trim().toLowerCase().charCodeAt(0);
-
-      if (key === 3) {
-        if (ctrlC) {
-          process.exit(0);
-        }
-
-        ctrlC = true;
-      }
-
-      if ([...Object.values(exitKeys)].includes(key)) {
-        const tempPath = `${tmpdir()}/norther`;
-
-        if (existsSync(tempPath)) {
-          unlinkSync(tempPath);
-        }
-
-        childProcess.kill();
-
-        process.exit();
-      }
-    });
+    setupStdin(() => childProcess.kill());
   }
 }
