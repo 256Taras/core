@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
-import { env } from '../../utils/functions/env.function';
 import { info } from '../../logger/functions/info.function';
 import { debounce } from '../../utils/functions/debounce.function';
+import { env } from '../../utils/functions/env.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 import { setupStdin } from '../functions/setup-stdin.function';
@@ -51,7 +51,10 @@ export class ServerDevCommand {
     });
 
     if (env<boolean>('APP_DEV')) {
-      const frameworkWatcher = watch('node_modules/@norther/core/dist', watcherOptions);
+      const frameworkWatcher = watch(
+        'node_modules/@norther/core/dist',
+        watcherOptions,
+      );
 
       frameworkWatcher.on('change', restartProcess);
     }

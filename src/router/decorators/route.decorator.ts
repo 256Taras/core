@@ -1,7 +1,7 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { HttpMethod } from '../../http/enums/http-method.enum';
-import { inject } from '../../injector/functions/inject.function';
 import { Response } from '../../http/response.class';
+import { inject } from '../../injector/functions/inject.function';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { Router } from '../router.class';
@@ -20,12 +20,19 @@ const resolveUrl = (url: string, controller: Constructor) => {
 
 const resolveRouteAction = (target: any, propertyKey: string | symbol) => {
   return async () => {
-    const redirectUrl: string | undefined = Reflect.getMetadata('redirectUrl', target);
+    const redirectUrl: string | undefined = Reflect.getMetadata(
+      'redirectUrl',
+      target,
+    );
 
     if (redirectUrl) {
       const response = inject(Response);
 
-      response.redirect(redirectUrl, {}, Reflect.getMetadata('redirectStatus', target));
+      response.redirect(
+        redirectUrl,
+        {},
+        Reflect.getMetadata('redirectStatus', target),
+      );
 
       return;
     }

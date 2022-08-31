@@ -1,6 +1,6 @@
-import { createTransport, createTestAccount, Transporter } from 'nodemailer';
-import { env } from '../utils/functions/env.function';
+import { Transporter, createTestAccount, createTransport } from 'nodemailer';
 import { Service } from '../injector/decorators/service.decorator';
+import { env } from '../utils/functions/env.function';
 import { MailData } from './interfaces/mail-data.interface';
 
 @Service()

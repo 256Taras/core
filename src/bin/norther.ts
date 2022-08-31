@@ -1,6 +1,6 @@
 #!/usr/bin/env node --experimental-specifier-resolution=node --no-warnings
-import { config as configDotenv } from 'dotenv';
 import { Reflection as Reflect } from '@abraham/reflection';
+import { config as configDotenv } from 'dotenv';
 import { parseArgs } from 'node:util';
 import { error } from '../logger/functions/error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
