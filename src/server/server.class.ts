@@ -19,6 +19,7 @@ import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
+import { inject } from '../injector/functions/inject.function';
 import { Injector } from '../injector/injector.class';
 import { Logger } from '../logger/logger.class';
 import { Mailer } from '../mailer/mailer.class';
@@ -183,7 +184,7 @@ export class Server {
 
     Injector.bind([Mailer, Request, Response]);
 
-    Injector.get(Mailer).setup();
+    inject(Mailer).setup();
 
     this.translator.setLanguage(options.config?.language);
 
@@ -197,8 +198,8 @@ export class Server {
     let startTime: [number, number];
 
     this.server.addHook('onRequest', async (request, response) => {
-      Injector.get(Request).$setInstance(request);
-      Injector.get(Response).$setInstance(response);
+      inject(Request).$setInstance(request);
+      inject(Response).$setInstance(response);
 
       startTime = process.hrtime();
     });
@@ -211,25 +212,21 @@ export class Server {
       const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
       const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(8, ' '));
 
-      const { statusCode } = response;
+      const status = response.statusCode;
 
       const statusMapping = {
-        [String(statusCode >= 100 && statusCode < 200)]:
-          chalk.blueBright(statusCode),
-
-        [String(statusCode >= 200 && statusCode < 400)]: chalk.green(statusCode),
-
-        [String(statusCode >= 400 && statusCode < 500)]: chalk.hex(
-          this.logger.colorYellow,
-        )(statusCode),
-
-        [String(statusCode >= 500 && statusCode < 600)]: chalk.red(statusCode),
+        [String(status >= 100 && status < 200)]: chalk.blueBright(status),
+        [String(status >= 200 && status < 400)]: chalk.green(status),
+        [String(status >= 400 && status < 500)]: chalk.hex(this.logger.colorYellow)(
+          status,
+        ),
+        [String(status >= 500 && status < 600)]: chalk.red(status),
       };
 
-      const formattedStatus = statusMapping['true'] ?? statusCode.toString();
+      const formattedStatus = statusMapping['true'] ?? status.toString();
 
       this.logger.log(
-        `${Injector.get(Request).method()} ${request.url}`,
+        `${inject(Request).method()} ${request.url}`,
         `request ${chalk.bold(formattedStatus)}`,
         timeFormatted,
       );

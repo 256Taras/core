@@ -20,21 +20,15 @@ export class Injector {
     this.cachedInstances.set(targets, instance);
   }
 
-  public static get<T = any>(target: Constructor<T>): T {
-    if (!this.has(target)) {
-      throw new Error(
-        `Service '${target.constructor.name}' does have not a registered instance`,
-      );
-    }
-
-    return this.cachedInstances.get(target);
-  }
-
   public static has(target: Constructor): boolean {
     return this.cachedInstances.has(target);
   }
 
   public static resolve<T>(target: Constructor<T>): T | never {
+    if (this.has(target)) {
+      return this.cachedInstances.get(target);
+    }
+
     if (
       [String, Number, Boolean, Symbol, RegExp].includes(
         target as unknown as
@@ -50,11 +44,8 @@ export class Injector {
 
     const deps: Constructor[] =
       Reflect.getMetadata('design:paramtypes', target) ?? [];
-    const resolved = deps.map((param: Constructor) => this.resolve(param));
 
-    if (this.has(target)) {
-      return this.get(target);
-    }
+    const resolved = deps.map((param: Constructor) => this.resolve(param));
 
     const instance = new target(...resolved);
 
