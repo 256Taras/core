@@ -1,4 +1,5 @@
 #!/usr/bin/env node --experimental-specifier-resolution=node --no-warnings
+import { config as configDotenv } from 'dotenv';
 import { Reflection as Reflect } from '@abraham/reflection';
 import { parseArgs } from 'node:util';
 import { error } from '../logger/functions/error.function';
@@ -14,6 +15,10 @@ process.on('uncaughtException', (exception: Error) => {
   error(exception.message);
 
   process.exit(1);
+});
+
+configDotenv({
+  path: '.env',
 });
 
 const commands: Constructor<Command>[] = [
