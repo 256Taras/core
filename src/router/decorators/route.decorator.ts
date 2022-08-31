@@ -1,13 +1,14 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { HttpMethod } from '../../http/enums/http-method.enum';
 import { inject } from '../../injector/functions/inject.function';
+import { Response } from '../../http/response.class';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { Router } from '../router.class';
 
 const router = inject(Router);
 
-const resolveUrl = (url: string, controller: Constructor): string => {
+const resolveUrl = (url: string, controller: Constructor) => {
   let baseUrl: string | undefined = Reflect.getMetadata('baseUrl', controller);
 
   if (baseUrl && baseUrl.length > 1 && baseUrl.charAt(0) !== '/') {
@@ -17,11 +18,25 @@ const resolveUrl = (url: string, controller: Constructor): string => {
   return baseUrl ? `${baseUrl}/${url}` : url;
 };
 
+const resolveRouteAction = (target: any, propertyKey: string | symbol) => {
+  return async () => {
+    const redirectUrl: string | undefined = Reflect.getMetadata('redirectUrl', target);
+
+    if (redirectUrl) {
+      const response = inject(Response);
+
+      response.redirect(redirectUrl, {}, Reflect.getMetadata('redirectStatus', target));
+
+      return;
+    }
+
+    await router.respond(target.constructor as Constructor, propertyKey);
+  };
+};
+
 export const Any = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     for (const method of Object.values(HttpMethod)) {
       router.addRoute(
@@ -35,9 +50,7 @@ export const Any = (url: string): MethodDecorator => {
 
 export const Methods = (methods: HttpMethod[], url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     methods.map((method) => {
       router.addRoute(
@@ -51,9 +64,7 @@ export const Methods = (methods: HttpMethod[], url: string): MethodDecorator => 
 
 export const Copy = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -65,9 +76,7 @@ export const Copy = (url: string): MethodDecorator => {
 
 export const Delete = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -79,9 +88,7 @@ export const Delete = (url: string): MethodDecorator => {
 
 export const Get = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -93,9 +100,7 @@ export const Get = (url: string): MethodDecorator => {
 
 export const Head = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -107,9 +112,7 @@ export const Head = (url: string): MethodDecorator => {
 
 export const Lock = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -121,9 +124,7 @@ export const Lock = (url: string): MethodDecorator => {
 
 export const Mkcol = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -135,9 +136,7 @@ export const Mkcol = (url: string): MethodDecorator => {
 
 export const Move = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -149,9 +148,7 @@ export const Move = (url: string): MethodDecorator => {
 
 export const Options = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -163,9 +160,7 @@ export const Options = (url: string): MethodDecorator => {
 
 export const Patch = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -177,9 +172,7 @@ export const Patch = (url: string): MethodDecorator => {
 
 export const Post = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -191,9 +184,7 @@ export const Post = (url: string): MethodDecorator => {
 
 export const PropFind = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -205,9 +196,7 @@ export const PropFind = (url: string): MethodDecorator => {
 
 export const PropPatch = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -219,9 +208,7 @@ export const PropPatch = (url: string): MethodDecorator => {
 
 export const Put = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -233,9 +220,7 @@ export const Put = (url: string): MethodDecorator => {
 
 export const Search = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -247,9 +232,7 @@ export const Search = (url: string): MethodDecorator => {
 
 export const Trace = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
@@ -261,9 +244,7 @@ export const Trace = (url: string): MethodDecorator => {
 
 export const Unlock = (url: string): MethodDecorator => {
   return (target, propertyKey) => {
-    const callback = async () => {
-      await router.respond(target.constructor as Constructor, propertyKey);
-    };
+    const callback = resolveRouteAction(target, propertyKey);
 
     router.addRoute(
       resolveUrl(url, target.constructor as Constructor),
