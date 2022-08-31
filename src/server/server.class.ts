@@ -28,6 +28,8 @@ import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { ServerOptions } from './interfaces/server-options.interface';
+import { Encrypter } from '../crypto/encrypter.class';
+import { Mailer } from '../mailer/mailer.class';
 
 @Service()
 export class Server {
@@ -44,6 +46,7 @@ export class Server {
   private tempPath = `${tmpdir()}/norther`;
 
   constructor(
+    private encrypter: Encrypter,
     private handler: Handler,
     private logger: Logger,
     private router: Router,
@@ -79,7 +82,7 @@ export class Server {
     const corsOptions = this.options.config?.cors ?? {};
 
     const cookieOptions = {
-      secret: env<string>('APP_KEY'),
+      secret: env('APP_KEY') ?? this.encrypter.uuid(),
     };
 
     const multipartOptions = {
@@ -90,7 +93,7 @@ export class Server {
     };
 
     const sessionOptions = {
-      secret: env<string>('APP_KEY'),
+      secret: env('APP_KEY') ?? this.encrypter.uuid(),
       cookie: {
         maxAge: (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
       },
@@ -178,7 +181,9 @@ export class Server {
       this.modules.push(instance);
     });
 
-    Injector.bind([Request, Response]);
+    Injector.bind([Mailer, Request, Response]);
+
+    Injector.get(Mailer).setup();
 
     this.translator.setLanguage(options.config?.language);
 
@@ -187,7 +192,7 @@ export class Server {
 
   public async start(
     port = env<Integer>('APP_PORT') ?? this.defaultPort,
-    host = env<string>('APP_HOST') ?? this.defaultHost,
+    host = env('APP_HOST') ?? this.defaultHost,
   ): Promise<void> {
     let startTime: [number, number];
 

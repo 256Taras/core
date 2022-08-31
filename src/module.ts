@@ -27,6 +27,7 @@ export * from './logger/functions/info.function';
 export * from './logger/functions/log.function';
 export * from './logger/functions/warn.function';
 export * from './logger/logger.class';
+export * from './mailer/mailer.class';
 export * from './router/router.class';
 export * from './server/decorators/module.decorator';
 export * from './server/functions/create-server.function';
