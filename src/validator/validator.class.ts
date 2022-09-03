@@ -193,7 +193,7 @@ export class Validator {
     return true;
   }
 
-  public assert(rules: ValidationRules): void {
+  public assert(rules: ValidationRules, checkOnly = false): boolean {
     const ruleMapper: Record<string, any> = {
       accepted: this.validateAccepted,
       date: this.validateDate,
@@ -223,16 +223,22 @@ export class Validator {
       const fieldValue = this.request.input(field);
 
       for (const [rule, ruleValue] of Object.entries(ruleSet)) {
-        if (rule in ruleMapper) {
-          if (!ruleMapper[rule](fieldValue, ruleValue)) {
-            this.response.redirectBack({}, StatusCode.BadRequest);
-          }
-
-          continue;
+        if (!(rule in ruleMapper)) {
+          throw new Error(`Invalid validation rule '${rule}'`);
         }
 
-        throw new Error(`Invalid validation rule '${rule}'`);
+        if (!ruleMapper[rule](fieldValue, ruleValue)) {
+          if (!checkOnly) {
+            this.response.redirectBack({}, StatusCode.BadRequest);
+
+            continue;
+          }
+
+          return false;
+        }
       }
     }
+
+    return true;
   }
 }
