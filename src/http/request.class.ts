@@ -30,7 +30,7 @@ export class Request {
     return this.instance?.cookies ?? {};
   }
 
-  public cookie(cookie: string): any {
+  public cookie(cookie: string): string | null{
     return this.cookies[cookie] ?? null;
   }
 

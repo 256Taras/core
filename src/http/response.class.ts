@@ -43,9 +43,9 @@ export class Response {
     return this;
   }
 
-  public header(headers: string | Record<string, string>, value?: any): any | this {
+  public header(headers: string | Record<string, string>, value?: string): string | string[] | number | null | this {
     if (value === undefined) {
-      return this.instance?.getHeader(headers as string);
+      return this.instance?.getHeader(headers as string) ?? null;
     }
 
     if (typeof headers !== 'string') {
@@ -122,7 +122,7 @@ export class Response {
     return this;
   }
 
-  public send(data: any): this {
+  public send<T = any>(data: T): this {
     this.header('content-type', 'text/html; charset=utf8');
     this.instance?.send(data);
 

@@ -44,7 +44,7 @@ export class ViewCompiler {
       ];
 
       const fn = new Function(...functionHeader);
-      const returnedValue: any = fn(...Object.values(scopeVariables));
+      const returnedValue: unknown = fn(...Object.values(scopeVariables));
 
       this.html = this.html.replace(match[0], String(returnedValue));
     }
@@ -69,7 +69,7 @@ export class ViewCompiler {
       const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
       const fn = new Function(...functionHeader);
 
-      const iterable: any[] = fn(...Object.values(scopeVariables));
+      const iterable: unknown[] = fn(...Object.values(scopeVariables));
       const variableName = match[1];
 
       let result = '';
@@ -98,7 +98,7 @@ export class ViewCompiler {
           ];
 
           const renderFn = new Function(...renderFunctionHeader);
-          const renderResult: any = renderFn(...Object.values(renderScopeVariables));
+          const renderResult: unknown = renderFn(...Object.values(renderScopeVariables));
 
           content = content.replace(renderMatch[0], String(renderResult));
         }
