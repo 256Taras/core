@@ -38,7 +38,7 @@ export class Encrypter {
 
     const encryptedData = Buffer.concat([cipher.update(rawData), cipher.final()]);
 
-    return encryptedData.toString();
+    return encryptedData.toString('hex');
   }
 
   public async hash(data: string, saltRounds: Integer = 12): Promise<string> {
