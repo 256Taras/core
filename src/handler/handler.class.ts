@@ -146,7 +146,7 @@ export class Handler {
     this.response.render(view, data);
   }
 
-  public handleUncaughtException(error: any): void {
+  public handleUncaughtError(error: Error): void {
     if (error !== Object(error)) {
       return;
     }
