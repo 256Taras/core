@@ -172,6 +172,17 @@ export class ViewCompiler {
     }
   }
 
+  private parseJsonDirectives(): void {
+    const matches = this.html.matchAll(/\[json (.*?)\]/g) ?? [];
+
+    for (const match of matches) {
+      this.html = this.html.replace(
+        match[0],
+        JSON.stringify(match[1]),
+      );
+    }
+  }
+
   private parseTokenDirectives(): void {
     const matches = this.html.matchAll(/\[token\]/g) ?? [];
     const token = this.request.token();
@@ -232,6 +243,7 @@ export class ViewCompiler {
     this.parseDataRenders();
     this.parseIfElseDirectives();
     this.parseIfDirectives();
+    this.parseJsonDirectives();
     this.parseTokenDirectives();
     this.parseMethodDirectives();
 
