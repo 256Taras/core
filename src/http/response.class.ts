@@ -43,7 +43,10 @@ export class Response {
     return this;
   }
 
-  public header(headers: string | Record<string, string>, value?: string): string | string[] | number | null | this {
+  public header(
+    headers: string | Record<string, string>,
+    value?: string,
+  ): string | string[] | number | null | this {
     if (value === undefined) {
       return this.instance?.getHeader(headers as string) ?? null;
     }

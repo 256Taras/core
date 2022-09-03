@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { inject } from '../../src/injector/functions/inject.function';
 import { Encrypter } from '../../src/crypto/encrypter.class';
+import { inject } from '../../src/injector/functions/inject.function';
 
 describe('Encrypter class', () => {
   const encrypter = inject(Encrypter);

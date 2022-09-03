@@ -98,7 +98,9 @@ export class ViewCompiler {
           ];
 
           const renderFn = new Function(...renderFunctionHeader);
-          const renderResult: unknown = renderFn(...Object.values(renderScopeVariables));
+          const renderResult: unknown = renderFn(
+            ...Object.values(renderScopeVariables),
+          );
 
           content = content.replace(renderMatch[0], String(renderResult));
         }
@@ -176,10 +178,7 @@ export class ViewCompiler {
     const matches = this.html.matchAll(/\[json (.*?)\]/g) ?? [];
 
     for (const match of matches) {
-      this.html = this.html.replace(
-        match[0],
-        JSON.stringify(match[1]),
-      );
+      this.html = this.html.replace(match[0], JSON.stringify(match[1]));
     }
   }
 
