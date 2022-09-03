@@ -75,7 +75,7 @@ export class ViewCompiler {
       let result = '';
       let counter = 0;
 
-      [...iterable].map((item: any) => {
+      [...iterable].map((item) => {
         let content = match[4];
 
         const renderScopeVariables = {

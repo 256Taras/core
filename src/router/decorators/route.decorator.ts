@@ -18,7 +18,7 @@ const resolveUrl = (url: string, controller: Constructor) => {
   return baseUrl ? `${baseUrl}/${url}` : url;
 };
 
-const resolveRouteAction = (target: any, propertyKey: string | symbol) => {
+const resolveRouteAction = (target: Constructor, propertyKey: string | symbol) => {
   return async () => {
     const redirectUrl: string | undefined = Reflect.getMetadata(
       'redirectUrl',
