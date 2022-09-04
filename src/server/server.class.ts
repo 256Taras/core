@@ -20,7 +20,6 @@ import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
-import { Injector } from '../injector/injector.class';
 import { Logger } from '../logger/logger.class';
 import { Mailer } from '../mailer/mailer.class';
 import { Router } from '../router/router.class';
@@ -50,10 +49,17 @@ export class Server {
     private encrypter: Encrypter,
     private handler: Handler,
     private logger: Logger,
+    private mailer: Mailer,
+    private request: Request,
+    private response: Response,
     private router: Router,
     private session: Session,
     private translator: Translator,
-  ) {}
+  ) {
+    (async () => {
+      await this.mailer.setup();
+    })();
+  }
 
   private registerHandlers(): void {
     this.server.setErrorHandler(async (error) => {
@@ -177,14 +183,10 @@ export class Server {
     });
 
     options.modules.map((module: Constructor) => {
-      const instance = Injector.resolve(module);
+      const instance = inject(module);
 
       this.modules.push(instance);
     });
-
-    Injector.bind([Mailer, Request, Response]);
-
-    inject(Mailer).setup();
 
     this.translator.setLanguage(options.config?.language);
 
@@ -198,8 +200,8 @@ export class Server {
     let startTime: [number, number];
 
     this.server.addHook('onRequest', async (request, response) => {
-      inject(Request).$setInstance(request);
-      inject(Response).$setInstance(response);
+      this.request.$setInstance(request);
+      this.response.$setInstance(response);
 
       startTime = process.hrtime();
     });
@@ -226,7 +228,7 @@ export class Server {
       const formattedStatus = statusMapping['true'] ?? status.toString();
 
       this.logger.log(
-        `${inject(Request).method()} ${request.url}`,
+        `${this.request.method()} ${request.url}`,
         `request ${chalk.bold(formattedStatus)}`,
         timeFormatted,
       );
