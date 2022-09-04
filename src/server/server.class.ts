@@ -192,7 +192,7 @@ export class Server {
       this.modules.push(instance);
     });
 
-    this.translator.setLanguage(options.config?.language);
+    this.translator.setLocale(options.config?.locale);
 
     return this;
   }

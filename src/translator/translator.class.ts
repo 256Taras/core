@@ -3,10 +3,10 @@ import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class Translator {
-  private language = 'en';
+  private locale = 'en';
 
   public get(text: string): string {
-    const path = `lang/${this.language}.json`;
+    const path = `lang/${this.locale}.json`;
 
     const translations = existsSync(path)
       ? JSON.parse(readFileSync(path, 'utf-8').toString())
@@ -15,7 +15,7 @@ export class Translator {
     return translations[text] ?? text;
   }
 
-  public setLanguage(lang?: string): void {
-    this.language = lang ?? 'en';
+  public setLocale(lang?: string): void {
+    this.locale = lang ?? 'en';
   }
 }
