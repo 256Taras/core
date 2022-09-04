@@ -68,7 +68,7 @@ export class Handler {
       return;
     }
 
-    if (!env<boolean>('APP_DEBUG')) {
+    if (!env<boolean>('NORTHER_DEV')) {
       const customTemplatePath = `views/errors/${statusCode}.north.html`;
 
       const file = existsSync(customTemplatePath)
@@ -155,7 +155,7 @@ export class Handler {
 
     this.logger.error(message, 'uncaught error');
 
-    if (!env<boolean>('APP_DEBUG')) {
+    if (!env<boolean>('NORTHER_DEV')) {
       process.exit(1);
     }
 

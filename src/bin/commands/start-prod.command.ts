@@ -21,7 +21,7 @@ export class StartProdCommand {
       )}`,
     );
 
-    if (env<boolean>('APP_DEBUG')) {
+    if (env<boolean>('NORTHER_DEV')) {
       warn('You are running production server in debug mode');
     }
 

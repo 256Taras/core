@@ -83,7 +83,7 @@ export class Server {
     const corsOptions = this.options.config?.cors ?? {};
 
     const cookieOptions = {
-      secret: env('APP_KEY') ?? this.encrypter.uuid(),
+      secret: env('NORTHER_KEY') ?? this.encrypter.uuid(),
     };
 
     const multipartOptions = {
@@ -94,7 +94,7 @@ export class Server {
     };
 
     const sessionOptions = {
-      secret: env('APP_KEY') ?? this.encrypter.uuid(),
+      secret: env('NORTHER_KEY') ?? this.encrypter.uuid(),
       cookie: {
         maxAge: (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
       },
@@ -192,8 +192,8 @@ export class Server {
   }
 
   public async start(
-    port = env<Integer>('APP_PORT') ?? this.defaultPort,
-    host = env('APP_HOST') ?? this.defaultHost,
+    port = env<Integer>('NORTHER_PORT') ?? this.defaultPort,
+    host = env('NORTHER_HOST') ?? this.defaultHost,
   ): Promise<void> {
     let startTime: [number, number];
 
@@ -256,7 +256,7 @@ export class Server {
 
       await this.server.listen({ port, host });
 
-      if (env<boolean>('APP_DEBUG')) {
+      if (env<boolean>('NORTHER_DEV')) {
         this.setupDevelopmentEnvironment(port);
       }
     });

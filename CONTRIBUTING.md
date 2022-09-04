@@ -57,7 +57,7 @@ $ npm install
 $ npm link @norther/core
 ```
 
-Then, set the `APP_DEV` variable in `.env` file to `true`.
+Then, set the `NORTHER_DEVMODE` variable in `.env` file to `true`.
 
 To compile TypeScript code, run `npm run build:watch` command.
 
