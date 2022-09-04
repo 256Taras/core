@@ -25,7 +25,7 @@ export class ViewCompiler {
 
       const scopeVariables = {
         ...constants,
-        ...this.data.variables,
+        ...this.data,
         ...this.functions,
         $request: this.request,
       };
@@ -61,7 +61,7 @@ export class ViewCompiler {
 
       const scopeVariables = {
         ...constants,
-        ...this.data.variables,
+        ...this.data,
         ...this.functions,
         $request: this.request,
       };
@@ -123,7 +123,7 @@ export class ViewCompiler {
 
       const scopeVariables = {
         ...constants,
-        ...this.data.variables,
+        ...this.data,
         ...this.functions,
         $request: this.request,
       };
@@ -154,7 +154,7 @@ export class ViewCompiler {
 
       const scopeVariables = {
         ...constants,
-        ...this.data.variables,
+        ...this.data,
         ...this.functions,
         $request: this.request,
       };

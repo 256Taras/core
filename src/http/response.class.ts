@@ -110,9 +110,7 @@ export class Response {
 
     const fileContent = readFileSync(file);
 
-    const html = this.viewCompiler.compile(fileContent.toString(), {
-      variables: data,
-    });
+    const html = this.viewCompiler.compile(fileContent.toString(), data);
 
     this.send(html);
 
