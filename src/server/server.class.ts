@@ -150,7 +150,7 @@ export class Server {
       if (this.options.config?.dev?.openBrowser ?? true) {
         runCommand(
           `${
-            browserAliases[process.platform as keyof object]
+            browserAliases[process.platform as keyof object] ?? 'xdg-open'
           } http://localhost:${port}`,
         );
       }
@@ -181,6 +181,10 @@ export class Server {
 
       process.exit();
     });
+
+    if (!(options.config?.logger ?? true)) {
+      this.logger.$disable();
+    }
 
     options.modules.map((module: Constructor) => {
       const instance = inject(module);

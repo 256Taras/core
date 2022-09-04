@@ -4,6 +4,8 @@ import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class Logger {
+  private enabled = true;
+
   private readonly locale = 'en-us';
 
   public readonly colorYellow = '#f8c377';
@@ -45,12 +47,18 @@ export class Logger {
     return truncated;
   }
 
+  public $disable(): void {
+    this.enabled = false;
+  }
+
   public error(data: string, type = 'error'): void {
     const output = `\n${chalk.bgRed.black(
       ' ' + type.toUpperCase() + ' ',
     )} ${chalk.bold.red(data)}\n`;
 
-    console.error(output);
+    if (this.enabled) {
+      console.error(output);
+    }
   }
 
   public info(data: string, type = 'info'): void {
@@ -58,7 +66,9 @@ export class Logger {
       ' ' + type.toUpperCase() + ' ',
     )} ${chalk.bold.green(data)}\n`;
 
-    console.log(output);
+    if (this.enabled) {
+      console.log(output);
+    }
   }
 
   public log(data: string, type = 'log', additionalData = ''): void {
@@ -76,7 +86,9 @@ export class Logger {
 
     const dots = this.renderDots(timestamp + mainOutput + type);
 
-    console.log(left, dots, right);
+    if (this.enabled) {
+      console.log(left, dots, right);
+    }
   }
 
   public warn(data: string, type = 'warning'): void {
@@ -86,6 +98,8 @@ export class Logger {
       data,
     )}\n`;
 
-    console.warn(output);
+    if (this.enabled) {
+      console.warn(output);
+    }
   }
 }

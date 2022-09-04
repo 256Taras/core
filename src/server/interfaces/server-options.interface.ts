@@ -5,6 +5,7 @@ export interface ServerOptions {
   config?: {
     envFile?: string;
     language?: string;
+    logger?: boolean;
     contentSecurityPolicy?: Record<string, string | string[]> | false;
     cors?: {
       allowedHeaders?: string | string[];
