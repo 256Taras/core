@@ -1,7 +1,5 @@
-import { Constructor } from '../interfaces/constructor.interface';
-
 export type MethodDecorator = <T = any>(
-  target: Constructor,
+  target: any,
   propertyKey: string | symbol,
   descriptor?: TypedPropertyDescriptor<T>,
 ) => void | TypedPropertyDescriptor<T>;
