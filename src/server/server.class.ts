@@ -13,7 +13,7 @@ import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { satisfies as satisfiesVersion } from 'semver';
+import semver from 'semver';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
@@ -126,7 +126,7 @@ export class Server {
 
     const requiredNodeVersion = JSON.parse(packageData.toString()).engines.node;
 
-    if (!satisfiesVersion(process.version, requiredNodeVersion)) {
+    if (!semver.satisfies(process.version, requiredNodeVersion)) {
       this.logger.warn(
         `Norther requires Node.js version ${requiredNodeVersion.slice(
           2,
