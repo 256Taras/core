@@ -17,21 +17,32 @@ export class ViewCompiler {
 
   constructor(private request: Request) {}
 
+  private getRenderFunction(body: string, variables: Record<string, any> = {}) {
+    const globalVariables = {
+      ...constants,
+      ...this.data,
+      ...this.functions,
+      $request: this.request,
+    };
+
+    const header = [
+      ...Object.keys(globalVariables),
+      ...Object.keys(variables),
+      body,
+    ];
+
+    return (...args: unknown[]) => {
+      return new Function(...header)(...Object.values(globalVariables), ...args);
+    };
+  }
+
   private parseDataRenders(): void {
     const matches = this.html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
 
     for (const match of matches) {
-      const value: string = match[2];
+      const value: string = JSON.stringify(match[2]);
 
-      const scopeVariables = {
-        ...constants,
-        ...this.data,
-        ...this.functions,
-        $request: this.request,
-      };
-
-      const functionHeader = [
-        ...Object.keys(scopeVariables),
+      const fn = this.getRenderFunction(
         `return ${
           match[1] === '@' ? true : false
         } ? String(${value}) : String(${value}).replace(/[&<>'"]/g, (char) => ({
@@ -41,10 +52,9 @@ export class ViewCompiler {
           "'": '&#39;',
           '"': '&quot;',
         }[char]));`,
-      ];
+      );
 
-      const fn = new Function(...functionHeader);
-      const returnedValue: unknown = fn(...Object.values(scopeVariables));
+      const returnedValue: unknown = fn();
 
       this.html = this.html.replace(match[0], String(returnedValue));
     }
@@ -59,17 +69,9 @@ export class ViewCompiler {
     for (const match of matches) {
       const value = match[2];
 
-      const scopeVariables = {
-        ...constants,
-        ...this.data,
-        ...this.functions,
-        $request: this.request,
-      };
+      const fn = this.getRenderFunction(`return ${value};`);
 
-      const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
-      const fn = new Function(...functionHeader);
-
-      const iterable: unknown[] = fn(...Object.values(scopeVariables));
+      const iterable: unknown[] = fn();
       const variableName = match[1];
 
       let result = '';
@@ -79,7 +81,6 @@ export class ViewCompiler {
         let content = match[4];
 
         const renderScopeVariables = {
-          ...scopeVariables,
           [variableName]: item,
           $first: counter === 0,
           $last: counter === Object.keys(iterable).length - 1,
@@ -92,12 +93,8 @@ export class ViewCompiler {
         for (const renderMatch of renderMatches) {
           const renderValue = renderMatch[2];
 
-          const renderFunctionHeader = [
-            ...Object.keys(renderScopeVariables),
-            `return ${renderValue};`,
-          ];
+          const renderFn = this.getRenderFunction(`return ${renderValue};`, renderScopeVariables);
 
-          const renderFn = new Function(...renderFunctionHeader);
           const renderResult: unknown = renderFn(
             ...Object.values(renderScopeVariables),
           );
@@ -121,17 +118,9 @@ export class ViewCompiler {
     for (const match of matches) {
       const value = match[1];
 
-      const scopeVariables = {
-        ...constants,
-        ...this.data,
-        ...this.functions,
-        $request: this.request,
-      };
+      const fn = this.getRenderFunction(`return ${value};`);
 
-      const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
-      const fn = new Function(...functionHeader);
-
-      const condition: boolean = fn(...Object.values(scopeVariables));
+      const condition: boolean = fn();
 
       if (condition) {
         this.html = this.html.replace(match[0], match[3]);
@@ -152,17 +141,9 @@ export class ViewCompiler {
     for (const match of matches) {
       const value = match[1];
 
-      const scopeVariables = {
-        ...constants,
-        ...this.data,
-        ...this.functions,
-        $request: this.request,
-      };
+      const fn = this.getRenderFunction(`return ${value};`);
 
-      const functionHeader = [...Object.keys(scopeVariables), `return ${value};`];
-      const fn = new Function(...functionHeader);
-
-      const condition: boolean = fn(...Object.values(scopeVariables));
+      const condition: boolean = fn();
 
       if (condition) {
         this.html = this.html.replace(match[0], match[3]);
