@@ -91,7 +91,8 @@ export class Router {
           break;
         }
 
-        case Array.isArray(content) || (isObject && content.constructor === Object): {
+        case Array.isArray(content) ||
+          (isObject && content.constructor === Object): {
           this.response.json(content);
 
           break;

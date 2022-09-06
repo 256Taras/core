@@ -40,7 +40,7 @@ export class ViewCompiler {
     const matches = this.html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
 
     for (const match of matches) {
-      const value: string = JSON.stringify(match[2]);
+      const value = JSON.stringify(match[2]);
 
       const fn = this.getRenderFunction(
         `return ${
@@ -93,7 +93,10 @@ export class ViewCompiler {
         for (const renderMatch of renderMatches) {
           const renderValue = renderMatch[2];
 
-          const renderFn = this.getRenderFunction(`return ${renderValue};`, renderScopeVariables);
+          const renderFn = this.getRenderFunction(
+            `return ${renderValue};`,
+            renderScopeVariables,
+          );
 
           const renderResult: unknown = renderFn(
             ...Object.values(renderScopeVariables),
