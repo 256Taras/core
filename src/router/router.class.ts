@@ -49,31 +49,33 @@ export class Router {
     try {
       const requestParams = Object.values(this.request.params);
 
-      let responseData = Injector.resolve<any>(controller)[method](...requestParams);
+      let content = Injector.resolve<any>(controller)[method](...requestParams);
 
-      if (responseData instanceof Promise) {
-        responseData = await responseData;
+      if (content instanceof Promise) {
+        content = await content;
       }
 
+      const isObject = typeof content === 'object' && content !== null;
+
       switch (true) {
-        case responseData instanceof DownloadResponse: {
-          const { file } = responseData as DownloadResponse;
+        case content instanceof DownloadResponse: {
+          const { file } = content as DownloadResponse;
 
           this.response.download(file);
 
           break;
         }
 
-        case responseData instanceof JsonResponse: {
-          const { data } = responseData as JsonResponse;
+        case content instanceof JsonResponse: {
+          const { data } = content as JsonResponse;
 
           this.response.json(data);
 
           break;
         }
 
-        case responseData instanceof RedirectResponse: {
-          const { data, statusCode, url } = responseData as RedirectResponse;
+        case content instanceof RedirectResponse: {
+          const { data, statusCode, url } = content as RedirectResponse;
 
           this.response.redirect(url, data);
           this.response.status(statusCode);
@@ -81,16 +83,22 @@ export class Router {
           break;
         }
 
-        case responseData instanceof ViewResponse: {
-          const { data, file } = responseData as ViewResponse;
+        case content instanceof ViewResponse: {
+          const { data, file } = content as ViewResponse;
 
           this.response.render(file, data);
 
           break;
         }
 
+        case Array.isArray(content) || (isObject && content.constructor === Object): {
+          this.response.json(content);
+
+          break;
+        }
+
         default:
-          this.response.send(responseData);
+          this.response.send(content);
       }
     } catch (error) {
       this.handler.handleError(error as Error);
