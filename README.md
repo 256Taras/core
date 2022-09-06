@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo.png" width="72">
+  <img src=".github/logo-full.png" width="220">
 
   <h1>Norther Framework</h1>
 
