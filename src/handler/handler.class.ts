@@ -73,7 +73,7 @@ export class Handler {
 
       const file = existsSync(customTemplatePath)
         ? `views/errors/${statusCode}`
-        : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+        : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
       this.response.render(file, data);
     }
@@ -84,7 +84,7 @@ export class Handler {
 
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../assets/views/error`;
+      : `${fileURLToPath(import.meta.url)}/../../../views/error`;
 
     this.response.render(view, {
       message,
@@ -116,7 +116,7 @@ export class Handler {
 
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
     this.response.render(view, data);
   }
@@ -141,7 +141,7 @@ export class Handler {
 
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
     this.response.render(view, data);
   }
