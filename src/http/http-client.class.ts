@@ -3,12 +3,12 @@ import { HttpMethod } from './enums/http-method.enum';
 
 @Service()
 export class HttpClient {
-  private async fetch(
+  private async fetch<T>(
     url: string,
     data: Record<string, any>,
     headers: Record<string, string>,
     method: HttpMethod,
-  ): Promise<any | null> {
+  ): Promise<T | null> {
     try {
       const formData = new FormData();
 
@@ -35,9 +35,9 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, HttpMethod.Delete);
+    const response = await this.fetch<T>(url, data, headers, HttpMethod.Delete);
 
-    return response as T | null;
+    return response;
   }
 
   public async get<T = any>(
@@ -45,9 +45,9 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, HttpMethod.Get);
+    const response = await this.fetch<T>(url, data, headers, HttpMethod.Get);
 
-    return response as T | null;
+    return response;
   }
 
   public async options<T = any>(
@@ -55,9 +55,9 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, HttpMethod.Options);
+    const response = await this.fetch<T>(url, data, headers, HttpMethod.Options);
 
-    return response as T | null;
+    return response;
   }
 
   public async patch<T = any>(
@@ -65,9 +65,9 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, HttpMethod.Patch);
+    const response = await this.fetch<T>(url, data, headers, HttpMethod.Patch);
 
-    return response as T | null;
+    return response;
   }
 
   public async post<T = any>(
@@ -75,9 +75,9 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, HttpMethod.Post);
+    const response = await this.fetch<T>(url, data, headers, HttpMethod.Post);
 
-    return response as T | null;
+    return response;
   }
 
   public async put<T = any>(
@@ -85,8 +85,8 @@ export class HttpClient {
     data: Record<string, any> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
-    const response = await this.fetch(url, data, headers, HttpMethod.Put);
+    const response = await this.fetch<T>(url, data, headers, HttpMethod.Put);
 
-    return response as T | null;
+    return response;
   }
 }
