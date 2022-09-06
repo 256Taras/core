@@ -97,6 +97,12 @@ export class Router {
           break;
         }
 
+        case [null, undefined].includes(content): {
+          this.response.send(String(content));
+
+          break;
+        }
+
         default:
           this.response.send(content);
       }
