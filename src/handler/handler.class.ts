@@ -1,4 +1,5 @@
-import { existsSync, promises } from 'node:fs';
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
@@ -33,7 +34,7 @@ export class Handler {
     if (isAppFile) {
       file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
     } else {
-      const packageData = await promises.readFile(
+      const packageData = await readFile(
         `${fileURLToPath(import.meta.url)}/../../../package.json`,
       );
 
