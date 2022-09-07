@@ -204,9 +204,10 @@ export class ViewCompiler {
 
     for (const match of matches) {
       this.html = this.html.replace(match[0], `$_raw${count}`);
-      count += 1;
 
       this.rawContent.push(match[2]);
+
+      count += 1;
     }
   }
 
