@@ -1,5 +1,5 @@
-import { info } from '../../src/logger/functions/info.function';
-import { runCommand } from '../../src/utils/functions/run-command.function';
+import { info } from '../../logger/functions/info.function';
+import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 
 @Command({
