@@ -1,6 +1,7 @@
 import * as constants from '../constants';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
+import { inject } from '../injector/functions/inject.function';
 import { trans } from '../translator/functions/trans.function';
 
 @Service()
@@ -10,6 +11,7 @@ export class ViewCompiler {
   private html: string;
 
   private functions = {
+    inject,
     trans,
   };
 
