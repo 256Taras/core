@@ -68,7 +68,6 @@ export class ViewCompiler {
 
     for (const match of matches) {
       const value = match[2];
-
       const fn = this.getRenderFunction(`return ${value};`);
 
       const iterable: unknown[] = fn();
@@ -120,7 +119,6 @@ export class ViewCompiler {
 
     for (const match of matches) {
       const value = match[1];
-
       const fn = this.getRenderFunction(`return ${value};`);
 
       const condition: boolean = fn();
@@ -143,7 +141,6 @@ export class ViewCompiler {
 
     for (const match of matches) {
       const value = match[1];
-
       const fn = this.getRenderFunction(`return ${value};`);
 
       const condition: boolean = fn();
@@ -162,7 +159,12 @@ export class ViewCompiler {
     const matches = this.html.matchAll(/\[json (.*?)\]/g) ?? [];
 
     for (const match of matches) {
-      this.html = this.html.replace(match[0], JSON.stringify(match[1]));
+      const value = match[1];
+      const fn = this.getRenderFunction(`return ${value};`);
+
+      const json: string = JSON.stringify(fn());
+
+      this.html = this.html.replace(match[0], json);
     }
   }
 
