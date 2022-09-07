@@ -2,8 +2,8 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { config as configDotenv } from 'dotenv';
 import { parseArgs } from 'node:util';
-import { error } from '../logger/functions/error.function';
-import { Constructor } from '../utils/interfaces/constructor.interface';
+import { error } from '../src/logger/functions/error.function';
+import { Constructor } from '../src/utils/interfaces/constructor.interface';
 import { DbMigrateCommand } from './commands/db-migrate.command';
 import { ServerDevCommand } from './commands/server-dev.command';
 import { StartDevCommand } from './commands/start-dev.command';

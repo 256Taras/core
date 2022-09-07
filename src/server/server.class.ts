@@ -8,7 +8,8 @@ import staticServerMiddleware from '@fastify/static';
 import chalk from 'chalk';
 import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
-import { existsSync, promises, unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
+import { unlink, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -120,7 +121,7 @@ export class Server {
   }
 
   private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
-    const packageData = await promises.readFile(
+    const packageData = await readFile(
       `${fileURLToPath(import.meta.url)}/../../../package.json`,
     );
 
@@ -139,7 +140,7 @@ export class Server {
     }
 
     if (!existsSync(this.tempPath)) {
-      writeFileSync(this.tempPath, 'Norther development server is running...');
+      await writeFile(this.tempPath, 'Norther development server is running...');
 
       const browserAliases = {
         darwin: 'open',
@@ -174,9 +175,9 @@ export class Server {
       path: envFile,
     });
 
-    process.on('SIGINT', () => {
+    process.on('SIGINT', async () => {
       if (existsSync(this.tempPath)) {
-        unlinkSync(this.tempPath);
+        await unlink(this.tempPath);
       }
 
       process.exit();

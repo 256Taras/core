@@ -1,4 +1,5 @@
-import { existsSync, promises } from 'node:fs';
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
@@ -33,7 +34,7 @@ export class Handler {
     if (isAppFile) {
       file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
     } else {
-      const packageData = await promises.readFile(
+      const packageData = await readFile(
         `${fileURLToPath(import.meta.url)}/../../../package.json`,
       );
 
@@ -73,7 +74,7 @@ export class Handler {
 
       const file = existsSync(customTemplatePath)
         ? `views/errors/${statusCode}`
-        : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+        : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
       this.response.render(file, data);
     }
@@ -84,7 +85,7 @@ export class Handler {
 
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../assets/views/error`;
+      : `${fileURLToPath(import.meta.url)}/../../../views/error`;
 
     this.response.render(view, {
       message,
@@ -116,7 +117,7 @@ export class Handler {
 
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
     this.response.render(view, data);
   }
@@ -141,7 +142,7 @@ export class Handler {
 
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../assets/views/http`;
+      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
     this.response.render(view, data);
   }
