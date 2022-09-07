@@ -21,29 +21,31 @@
   </h4>
 </div>
 
-> **Note:** This repository contains the core code of the framework.
+> This repository contains the core code of the framework.
+> 
+> If you want to browse Norther project template, visit [github.com/northerjs/norther](https://github.com/northerjs/norther).
 
 <!-- omit in toc -->
-## 📓 Table of Contents
+## 📒 Table of Contents
 
 - [💎 About](#-about)
 - [⚙️ Requirements](#️-requirements)
 - [🧪 Creating Project](#-creating-project)
-- [💎 Security](#-security)
+- [🛡️ Security](#️-security)
 - [❔ Information](#-information)
-- [⚠️ License](#️-license)
+- [📝 License](#-license)
 
 ## 💎 About
 
-Norther is a modern, declarative backend development framework for Node.js. It makes it easy to create secure and fast web applications with awesome developer experience.
+Norther is a modern, declarative backend development framework for Node.js. It makes it easy to create fast and secure web applications with awesome developer experience.
 
 ## ⚙️ Requirements
 
 Your environment has to meet few requirements:
 
-| Node.js      | NPM           |
-| -------------|-------------  |
-| 18.3.0+      | 7+            |
+| Node.js      | NPM         |
+| -------------|-------------|
+| 18.3.0+      | 7+          |
 
 ## 🧪 Creating Project
 
@@ -53,7 +55,7 @@ To create new Norther project you can use the NPM command:
 $ npm init @norther
 ```
 
-## 💎 Security
+## 🛡️ Security
 
 If you discovered any bug or security issue please open new issue / pull request in the [repository](https://github.com/northerjs/core) or email me: dom.rajkowski@gmail.com.
 
@@ -61,8 +63,8 @@ If you discovered any bug or security issue please open new issue / pull request
 
 GitHub repository: [github.com/northerjs/core](https://github.com/northerjs/core)
 
-Author: [dominiq007](https://github.com/dominiq007)
+Author: Dominik Rajkowski · [dominiq007](https://github.com/dominiq007)
 
-## ⚠️ License
+## 📝 License
 
 Norther is an open-source framework licensed under the [MIT License](LICENSE).
