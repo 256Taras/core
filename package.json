@@ -3,7 +3,7 @@
   "version": "1.0.0-alpha.1",
   "description": "The modern Node.js framework",
   "type": "module",
-  "main": "./dist/module",
+  "main": "./dist/src/module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/northerjs/core.git"
@@ -20,7 +20,7 @@
     "access": "public"
   },
   "exports": {
-    ".": "./dist/module"
+    ".": "./dist/src/module"
   },
   "bin": {
     "norther": "dist/bin/norther.js"
