@@ -20,7 +20,7 @@
     "access": "public"
   },
   "exports": {
-    ".": "./dist/src/module"
+    ".": "./dist/module"
   },
   "bin": {
     "norther": "dist/bin/norther.js"
