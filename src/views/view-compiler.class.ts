@@ -40,12 +40,12 @@ export class ViewCompiler {
     const matches = this.html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
 
     for (const match of matches) {
-      const value = JSON.stringify(match[2]);
+      const value = match[2];
 
       const fn = this.getRenderFunction(
         `return ${
           match[1] === '@' ? true : false
-        } ? String(${value}) : String(${value}).replace(/[&<>'"]/g, (char) => ({
+        } ? JSON.stringify(${value}) : JSON.stringify(${value}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
