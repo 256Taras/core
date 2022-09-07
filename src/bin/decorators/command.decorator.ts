@@ -1,6 +1,6 @@
 import { Reflection as Reflect } from '@abraham/reflection';
-import { Constructor } from '../../src/utils/interfaces/constructor.interface';
-import { ClassDecorator } from '../../src/utils/types/class-decorator.type';
+import { Constructor } from '../../utils/interfaces/constructor.interface';
+import { ClassDecorator } from '../../utils/types/class-decorator.type';
 import { Parameter } from '../interfaces/parameter.interface';
 
 interface Data {

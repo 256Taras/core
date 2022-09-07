@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 import { platform } from 'node:os';
-import { info } from '../../src/logger/functions/info.function';
-import { warn } from '../../src/logger/functions/warn.function';
-import { env } from '../../src/utils/functions/env.function';
-import { runCommand } from '../../src/utils/functions/run-command.function';
+import { info } from '../../logger/functions/info.function';
+import { warn } from '../../logger/functions/warn.function';
+import { env } from '../../utils/functions/env.function';
+import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 
 @Command({

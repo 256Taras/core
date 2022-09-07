@@ -1,5 +1,5 @@
 import concurrently from 'concurrently';
-import { info } from '../../src/logger/functions/info.function';
+import { info } from '../../logger/functions/info.function';
 import { Command } from '../decorators/command.decorator';
 
 @Command({
