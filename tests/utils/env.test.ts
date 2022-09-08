@@ -3,7 +3,7 @@ import { env } from '../../src/utils/functions/env.function';
 
 describe('env function', () => {
   it('returns valid .env entries', () => {
-    const isDebug = env<boolean>('NORTHER_DEV');
+    const isDebug = env<boolean>('DEVELOPMENT');
 
     expect(isDebug).toBe(null);
   });

@@ -69,7 +69,7 @@ export class Handler {
       return;
     }
 
-    if (!env<boolean>('NORTHER_DEV')) {
+    if (!env<boolean>('DEVELOPMENT')) {
       const customTemplatePath = `views/errors/${statusCode}.north.html`;
 
       const file = existsSync(customTemplatePath)
@@ -156,7 +156,7 @@ export class Handler {
 
     this.logger.error(message, 'fatal error');
 
-    if (!env<boolean>('NORTHER_DEV')) {
+    if (!env<boolean>('DEVELOPMENT')) {
       process.exit(1);
     }
 

@@ -50,7 +50,7 @@ export class ServerDevCommand {
       runCommand('copyfiles -u 1 src/**/*.html dist/');
     });
 
-    if (env<boolean>('NORTHER_DEVMODE')) {
+    if (env<boolean>('DEVMODE')) {
       const frameworkWatcher = watch(
         'node_modules/@norther/core/dist',
         watcherOptions,

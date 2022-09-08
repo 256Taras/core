@@ -90,18 +90,18 @@ export class Server {
     const corsOptions = this.options.config?.cors ?? {};
 
     const cookieOptions = {
-      secret: env('NORTHER_KEY') ?? this.encrypter.uuid(),
+      secret: env('ENCRYPT_KEY') ?? this.encrypter.uuid(),
     };
 
     const multipartOptions = {
       limits: {
-        fieldSize: (env<number>('FIELD_MAX_SIZE') ?? 10) * 1024 * 1024,
-        fileSize: (env<number>('UPLOAD_MAX_SIZE') ?? 100) * 1024 * 1024,
+        fieldSize: (env<number>('FIELD_LIMIT') ?? 10) * 1024 * 1024,
+        fileSize: (env<number>('UPLOAD_LIMIT') ?? 100) * 1024 * 1024,
       },
     };
 
     const sessionOptions = {
-      secret: env('NORTHER_KEY') ?? this.encrypter.uuid(),
+      secret: env('ENCRYPT_KEY') ?? this.encrypter.uuid(),
       cookie: {
         maxAge: (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
       },
@@ -199,8 +199,8 @@ export class Server {
   }
 
   public async start(
-    port = env<Integer>('NORTHER_PORT') ?? this.defaultPort,
-    host = env('NORTHER_HOST') ?? this.defaultHost,
+    port = env<Integer>('PORT') ?? this.defaultPort,
+    host = env('HOST') ?? this.defaultHost,
   ): Promise<void> {
     let startTime: [number, number];
 
@@ -263,7 +263,7 @@ export class Server {
 
       await this.server.listen({ port, host });
 
-      if (env<boolean>('NORTHER_DEV')) {
+      if (env<boolean>('DEVELOPMENT')) {
         this.setupDevelopmentEnvironment(port);
       }
     });
