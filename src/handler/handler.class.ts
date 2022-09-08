@@ -147,14 +147,14 @@ export class Handler {
     this.response.render(view, data);
   }
 
-  public handleUncaughtError(error: Error): void {
+  public handleFatalError(error: Error): void {
     if (error !== Object(error)) {
       return;
     }
 
     const message = error.message.charAt(0).toUpperCase() + error.message.slice(1);
 
-    this.logger.error(message, 'uncaught error');
+    this.logger.error(message, 'fatal error');
 
     if (!env<boolean>('NORTHER_DEV')) {
       process.exit(1);

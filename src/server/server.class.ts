@@ -162,7 +162,7 @@ export class Server {
     this.options = options;
 
     process.on('uncaughtException', (error) => {
-      this.handler.handleUncaughtError(error);
+      this.handler.handleFatalError(error);
     });
 
     const envFile = options.config?.envFile ?? '.env';
