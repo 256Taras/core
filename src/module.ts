@@ -42,3 +42,5 @@ export * from './utils/interfaces/constructor.interface';
 export * from './utils/types/integer.type';
 export * from './validator/interfaces/validation-rules.interface';
 export * from './validator/validator.class';
+export * from './websocket/interfaces/authorizer.nterface';
+export * from './websocket/socket-emitter.class';

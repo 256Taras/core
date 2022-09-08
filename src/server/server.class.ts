@@ -158,6 +158,10 @@ export class Server {
     }
   }
 
+  public $nativeHttpServer() {
+    return this.server.server;
+  }
+
   public setup(options: ServerOptions): this {
     this.options = options;
 
