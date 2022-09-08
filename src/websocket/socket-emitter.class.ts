@@ -1,10 +1,10 @@
-import { Server as SocketServer, Socket } from 'socket.io';
-import { Server } from '../server/server.class';
+import { Socket, Server as SocketServer } from 'socket.io';
 import { Service } from '../injector/decorators/service.decorator';
-import { Logger } from '../logger/logger.class';
-import { Authorizer } from './interfaces/authorizer.nterface';
 import { inject } from '../injector/functions/inject.function';
+import { Logger } from '../logger/logger.class';
+import { Server } from '../server/server.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { Authorizer } from './interfaces/authorizer.nterface';
 
 @Service()
 export class SocketEmitter {
@@ -29,7 +29,7 @@ export class SocketEmitter {
 
         return;
       }
-    })
+    });
   }
 
   public registerChannels(channels: Authorizer[]): void {
@@ -37,6 +37,6 @@ export class SocketEmitter {
       const instance = inject(channel as unknown as Constructor);
 
       this.channels.push(instance);
-    })
+    });
   }
 }
