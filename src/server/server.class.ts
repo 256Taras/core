@@ -142,7 +142,7 @@ export class Server {
     if (!existsSync(this.tempPath)) {
       await writeFile(this.tempPath, 'Norther development server is running...');
 
-      const browserAliases = {
+      const browserAliases: Record<string, string> = {
         darwin: 'open',
         linux: 'sensible-browser',
         win32: 'explorer',
@@ -151,7 +151,7 @@ export class Server {
       if (this.options.config?.dev?.openBrowser ?? true) {
         runCommand(
           `${
-            browserAliases[process.platform as keyof object] ?? 'xdg-open'
+            browserAliases[process.platform] ?? 'xdg-open'
           } http://localhost:${port}`,
         );
       }
