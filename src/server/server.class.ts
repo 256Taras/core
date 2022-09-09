@@ -221,7 +221,7 @@ export class Server {
       const endTime = process.hrtime(startTime);
 
       const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
-      const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(8, ' '));
+      const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(9, ' '));
 
       const status = response.statusCode;
 
@@ -237,8 +237,8 @@ export class Server {
       const formattedStatus = statusMapping['true'] ?? status.toString();
 
       this.logger.log(
-        `${this.request.method()} ${request.url}`,
-        `request ${chalk.bold(formattedStatus)}`,
+        `${chalk.bold(formattedStatus)} ${this.request.method()} ${request.url}`,
+        'request',
         timeFormatted,
       );
     });
