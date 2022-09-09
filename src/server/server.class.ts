@@ -38,11 +38,11 @@ export class Server {
 
   private defaultPort: Integer = 8000;
 
+  private instance = fastify();
+
   private modules: Constructor[] = [];
 
   private options: ServerOptions;
-
-  private server = fastify();
 
   private tempPath = `${tmpdir()}/norther`;
 
@@ -63,11 +63,11 @@ export class Server {
   }
 
   private registerHandlers(): void {
-    this.server.setErrorHandler(async (error) => {
+    this.instance.setErrorHandler(async (error) => {
       await this.handler.handleError(error);
     });
 
-    this.server.setNotFoundHandler(() => {
+    this.instance.setNotFoundHandler(() => {
       this.handler.handleNotFound();
     });
   }
@@ -111,13 +111,13 @@ export class Server {
       root: path.resolve('public'),
     };
 
-    await this.server.register(helmetMiddleware, cspOptions);
-    await this.server.register(corsMiddleware, corsOptions);
-    await this.server.register(cookieMiddleware, cookieOptions);
-    await this.server.register(csrfMiddleware);
-    await this.server.register(multipartMiddleware, multipartOptions);
-    await this.server.register(sessionMiddleware, sessionOptions);
-    await this.server.register(staticServerMiddleware, staticServerOptions);
+    await this.instance.register(helmetMiddleware, cspOptions);
+    await this.instance.register(corsMiddleware, corsOptions);
+    await this.instance.register(cookieMiddleware, cookieOptions);
+    await this.instance.register(csrfMiddleware);
+    await this.instance.register(multipartMiddleware, multipartOptions);
+    await this.instance.register(sessionMiddleware, sessionOptions);
+    await this.instance.register(staticServerMiddleware, staticServerOptions);
   }
 
   private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
@@ -159,7 +159,7 @@ export class Server {
   }
 
   public $nativeHttpServer() {
-    return this.server.server;
+    return this.instance.server;
   }
 
   public setup(options: ServerOptions): this {
@@ -208,14 +208,14 @@ export class Server {
   ): Promise<void> {
     let startTime: [number, number];
 
-    this.server.addHook('onRequest', async (request, response) => {
+    this.instance.addHook('onRequest', async (request, response) => {
       this.request.$setInstance(request);
       this.response.$setInstance(response);
 
       startTime = process.hrtime();
     });
 
-    this.server.addHook('onResponse', async (request, response) => {
+    this.instance.addHook('onResponse', async (request, response) => {
       this.session.set('_previousUrl', request.url);
 
       const endTime = process.hrtime(startTime);
@@ -245,7 +245,7 @@ export class Server {
 
     await this.registerMiddleware();
 
-    this.router.registerRoutes(this.server);
+    this.router.registerRoutes(this.instance);
     this.registerHandlers();
 
     const testServer = createServer();
@@ -265,7 +265,7 @@ export class Server {
     testServer.once('listening', async () => {
       testServer.close();
 
-      await this.server.listen({ port, host });
+      await this.instance.listen({ port, host });
 
       if (env<boolean>('DEVELOPMENT')) {
         this.setupDevelopmentEnvironment(port);
