@@ -47,7 +47,7 @@ export class ViewCompiler {
       const fn = this.getRenderFunction(
         `return ${
           match[1] === '@' ? true : false
-        } ? JSON.stringify(${value}) : JSON.stringify(${value}).replace(/[&<>'"]/g, (char) => ({
+        } ? String(${value}) : String(${value}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
