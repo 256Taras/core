@@ -3,10 +3,10 @@ import { Integer } from '../../utils/types/integer.type';
 
 export interface ServerOptions {
   config?: {
+    contentSecurityPolicy?: Record<string, string | string[]> | boolean;
     envFile?: string;
     locale?: string;
     logger?: boolean;
-    contentSecurityPolicy?: Record<string, string | string[]> | false;
     cors?: {
       allowedHeaders?: string | string[];
       methods?: string | string[];

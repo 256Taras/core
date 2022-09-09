@@ -82,7 +82,7 @@ export class Server {
       contentSecurityPolicy: {
         directives: {
           ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives(),
-          ...cspDirectives,
+          ...(typeof cspDirectives === 'boolean' ? {} : cspDirectives),
         },
       },
     };
