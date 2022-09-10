@@ -1,12 +1,12 @@
 <div align="center">
-  <img src=".github/logo-full.png" width="220">
+  <img src="../.github/logo-full.png" width="220">
 
   <h1>Norther Contributing Guide</h1>
 
   <p align="center">A short instruction guide for contributing to NortherJS framework repositories.</p>
 
   <h4>
-    <a href="README.md">Documentation</a>
+    <a href="../README.md">Documentation</a>
     <span> · </span>
     <a href="CONTRIBUTING.md">Contributing</a>
   </h4>
