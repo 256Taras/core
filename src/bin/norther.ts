@@ -11,8 +11,8 @@ import { StartProdCommand } from './commands/start-prod.command';
 import { Command } from './interfaces/command.interface';
 import { Parameter } from './interfaces/parameter.interface';
 
-process.on('uncaughtException', (exception: Error) => {
-  error(exception.message);
+process.on('uncaughtException', (e: Error) => {
+  error(e.message);
 
   process.exit(1);
 });
