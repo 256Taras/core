@@ -57,7 +57,7 @@
     "@fastify/csrf-protection": "^5.1.0",
     "@fastify/helmet": "^10.0.0",
     "@fastify/multipart": "^7.1.2",
-    "@fastify/session": "^9.0.0",
+    "@fastify/session": "^10.0.0",
     "@fastify/static": "^6.5.0",
     "bcrypt": "^5.0.1",
     "chalk": "^5.0.1",
