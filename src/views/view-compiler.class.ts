@@ -1,8 +1,10 @@
+import { readFile } from 'node:fs/promises';
 import * as constants from '../constants';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { trans } from '../translator/functions/trans.function';
+import { env } from '../utils/functions/env.function';
 
 @Service()
 export class ViewCompiler {
@@ -211,6 +213,52 @@ export class ViewCompiler {
     }
   }
 
+  private parseViteDirectives(): void {
+    const matches = this.html.matchAll(/\[vite(React|Vue)\]/gm) ?? [];
+
+    for (const match of matches) {
+      const framework = match[1].toLowerCase();
+
+      if (env<boolean>('DEVELOPMENT')) {
+        this.html = this.html.replace(
+          match[0],
+          `<script type="module" src="http://localhost:5173/${framework}/main.js"></script>`,
+        );
+
+        continue;
+      }
+
+      (async () => {
+        const manifest = JSON.parse(
+          (await readFile('public/manifest.json')).toString(),
+        );
+
+        let output = `
+          <link rel="stylesheet" href="/${manifest[`${framework}/main.js`].css}">
+          <script type="module" src="/${
+            manifest[`${framework}/main.js`].file
+          }"></script>
+        `;
+
+        if (framework === 'react') {
+          output += `
+            <script type="module">
+              import RefreshRuntime from 'http://localhost:5173/@react-refresh';
+
+              RefreshRuntime.injectIntoGlobalHook(window);
+
+              window.$RefreshReg$ = () => {};
+              window.$RefreshSig$ = () => (type) => type;
+              window.__vite_plugin_react_preamble_installed__ = true;
+            </script>
+          `;
+        }
+
+        this.html = this.html.replace(match[0], output);
+      })();
+    }
+  }
+
   private restoreRawContent(): void {
     const matches = this.html.matchAll(/\$_raw([0-9]+)/g) ?? [];
 
@@ -234,6 +282,7 @@ export class ViewCompiler {
     this.parseJsonDirectives();
     this.parseTokenDirectives();
     this.parseMethodDirectives();
+    this.parseViteDirectives();
 
     this.restoreRawContent();
 
