@@ -235,13 +235,14 @@ export class ViewCompiler {
 
         let output = `
           <link rel="stylesheet" href="/${manifest[`${framework}/main.js`].css}">
+
           <script type="module" src="/${
             manifest[`${framework}/main.js`].file
           }"></script>
         `;
 
         if (framework === 'react') {
-          output += `
+          output = `
             <script type="module">
               import RefreshRuntime from 'http://localhost:5173/@react-refresh';
 
@@ -251,6 +252,8 @@ export class ViewCompiler {
               window.$RefreshSig$ = () => (type) => type;
               window.__vite_plugin_react_preamble_installed__ = true;
             </script>
+
+            ${output}
           `;
         }
 
