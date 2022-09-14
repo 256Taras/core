@@ -218,30 +218,12 @@ export class ViewCompiler {
 
     for (const match of matches) {
       const framework = match[1].toLowerCase();
+      const isReact = framework === 'react';
 
       if (env<boolean>('DEVELOPMENT')) {
-        this.html = this.html.replace(
-          match[0],
-          `<script type="module" src="http://localhost:5173/${framework}/main.js"></script>`,
-        );
+        let output = `<script type="module" src="http://localhost:5173/${framework}/main.js${isReact ? 'x' : ''}"></script>`;
 
-        continue;
-      }
-
-      (async () => {
-        const manifest = JSON.parse(
-          (await readFile('public/manifest.json')).toString(),
-        );
-
-        let output = `
-          <link rel="stylesheet" href="/${manifest[`${framework}/main.js`].css}">
-
-          <script type="module" src="/${
-            manifest[`${framework}/main.js`].file
-          }"></script>
-        `;
-
-        if (framework === 'react') {
+        if (isReact) {
           output = `
             <script type="module">
               import RefreshRuntime from 'http://localhost:5173/@react-refresh';
@@ -256,6 +238,24 @@ export class ViewCompiler {
             ${output}
           `;
         }
+
+        this.html = this.html.replace(match[0], output);
+
+        continue;
+      }
+
+      (async () => {
+        const manifest = JSON.parse(
+          (await readFile('public/manifest.json')).toString(),
+        );
+
+        const output = `
+          <link rel="stylesheet" href="/${manifest[`${framework}/main.js`].css}">
+
+          <script type="module" src="/${
+            manifest[`${framework}/main.js`].file
+          }"></script>
+        `;
 
         this.html = this.html.replace(match[0], output);
       })();
