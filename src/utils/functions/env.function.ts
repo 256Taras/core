@@ -1,10 +1,10 @@
-export const env = <T = any>(key: string, defaultValue: unknown = null): T => {
+export const env = <T = any>(key: string, defaultValue: string | boolean | number | null = null): T => {
   if (!(key in process.env)) {
     return null as unknown as T;
   }
 
   try {
-    const casted = JSON.parse(process.env[key]?.toString() ?? JSON.parse(defaultValue));
+    const casted = JSON.parse(process.env[key]?.toString() ?? String(defaultValue));
 
     return casted;
   } catch {
