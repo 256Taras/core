@@ -200,12 +200,16 @@ export class Server {
       path: envFile,
     });
 
-    process.on('SIGINT', async () => {
-      if (existsSync(this.tempPath)) {
-        await unlink(this.tempPath);
-      }
+    const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
 
-      process.exit();
+    signals.map((signal) => {
+      process.on(signal, async () => {
+        if (existsSync(this.tempPath)) {
+          await unlink(this.tempPath);
+        }
+  
+        process.exit();
+      });
     });
 
     if (!(options.config?.logger ?? true)) {
