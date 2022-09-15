@@ -47,6 +47,10 @@ export class Encrypter {
     return hashedData;
   }
 
+  public randomBytes(length: Integer): string {
+    return randomBytes(length).toString('hex');
+  }
+
   public uuid(): string {
     return randomUUID();
   }

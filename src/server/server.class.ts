@@ -92,7 +92,7 @@ export class Server {
     const corsOptions = this.options.config?.cors ?? {};
 
     const cookieOptions = {
-      secret: env('ENCRYPT_KEY') ?? this.encrypter.uuid(),
+      secret: env('ENCRYPT_KEY') ?? this.encrypter.randomBytes(16),
     };
 
     const multipartOptions = {
@@ -103,7 +103,7 @@ export class Server {
     };
 
     const sessionOptions = {
-      secret: env('ENCRYPT_KEY') ?? this.encrypter.uuid(),
+      secret: env('ENCRYPT_KEY') ?? this.encrypter.randomBytes(16),
       cookie: {
         maxAge: (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
       },
