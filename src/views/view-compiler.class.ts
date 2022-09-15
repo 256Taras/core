@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import * as constants from '../constants';
 import { Request } from '../http/request.class';
@@ -245,8 +246,14 @@ export class ViewCompiler {
       }
 
       (async () => {
+        const manifestPath = 'public/manifest.json';
+
+        if (!existsSync(manifestPath)) {
+          throw new Error('Vite manifest file not found');
+        }
+
         const manifest = JSON.parse(
-          (await readFile('public/manifest.json')).toString(),
+          (await readFile(manifestPath)).toString(),
         );
 
         const data = manifest[`${framework}/main.js${isReact ? 'x' : ''}`];
