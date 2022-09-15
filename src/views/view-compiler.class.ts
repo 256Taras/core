@@ -4,9 +4,9 @@ import * as constants from '../constants';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
-import { env } from '../utils/functions/env.function';
 import { session } from '../session/functions/session.function';
 import { trans } from '../translator/functions/trans.function';
+import { env } from '../utils/functions/env.function';
 
 @Service()
 export class ViewCompiler {
@@ -224,7 +224,9 @@ export class ViewCompiler {
       const isReact = framework === 'react';
 
       if (env<boolean>('DEVELOPMENT')) {
-        let output = `<script type="module" src="http://localhost:5173/${framework}/main.js${isReact ? 'x' : ''}"></script>`;
+        let output = `<script type="module" src="http://localhost:5173/${framework}/main.js${
+          isReact ? 'x' : ''
+        }"></script>`;
 
         if (isReact) {
           output = `
@@ -254,9 +256,7 @@ export class ViewCompiler {
           throw new Error('Vite manifest file not found');
         }
 
-        const manifest = JSON.parse(
-          (await readFile(manifestPath)).toString(),
-        );
+        const manifest = JSON.parse((await readFile(manifestPath)).toString());
 
         const data = manifest[`${framework}/main.js${isReact ? 'x' : ''}`];
 
