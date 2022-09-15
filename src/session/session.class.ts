@@ -13,6 +13,10 @@ export class Session {
     this.request.session.destroy?.();
   }
 
+  public get(key: string): any {
+    return this.request.session[key] ?? null;
+  }
+
   public id(): string {
     return this.request.session.id;
   }
