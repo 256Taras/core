@@ -15,7 +15,7 @@ export class KeyGenerateCommand {
     await writeFile(
       envFile,
       envContent.replace(
-        'ENCRYPT_KEY=',
+        /ENCRYPT_KEY=.*$/m,
         `ENCRYPT_KEY=${randomBytes(16).toString('hex')}`,
       ),
     );
