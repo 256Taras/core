@@ -4,8 +4,9 @@ import * as constants from '../constants';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
-import { trans } from '../translator/functions/trans.function';
 import { env } from '../utils/functions/env.function';
+import { session } from '../session/functions/session.function';
+import { trans } from '../translator/functions/trans.function';
 
 @Service()
 export class ViewCompiler {
@@ -15,6 +16,7 @@ export class ViewCompiler {
 
   private functions = {
     inject,
+    session,
     trans,
   };
 
