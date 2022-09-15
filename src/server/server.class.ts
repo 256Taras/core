@@ -73,33 +73,32 @@ export class Server {
   }
 
   private async registerMiddleware(): Promise<void> {
-    const cspDirectives = this.options.config?.contentSecurityPolicy || {
-      'connect-src': [
-        `'self'`,
-        `http://localhost:*`,
-        'ws://localhost:*',
-      ],
-      'default-src': [
-        `'self'`,
-        `'unsafe-inline'`,
-        'http://localhost:*',
-        'ws://localhost:*',
-      ],
-      'script-src': [
-        `'self'`,
-        `'unsafe-inline'`,
-        `http://localhost:*`,
-        'ws://localhost:*',
-      ],
-      'script-src-attr': `'unsafe-inline'`,
-    };
+    const cspData = this.options.config?.contentSecurityPolicy;
 
     const cspOptions = {
-      contentSecurityPolicy: {
+      contentSecurityPolicy: typeof cspData === 'boolean' ? cspData : {
         directives: {
           ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives(),
-          ...(typeof cspDirectives === 'boolean' ? {} : cspDirectives),
+          connectSrc: [
+            `'self'`,
+            `http://localhost:*`,
+            'ws://localhost:*',
+          ],
+          defaultSrc: [
+            `'self'`,
+            `'unsafe-inline'`,
+            'http://localhost:*',
+            'ws://localhost:*',
+          ],
+          scriptSrc: [
+            `'self'`,
+            `'unsafe-inline'`,
+            `http://localhost:*`,
+            'ws://localhost:*',
+          ],
+          scriptSrcAttr: `'unsafe-inline'`,
         },
+        ...this.options.config?.contentSecurityPolicy,
       },
     };
 
