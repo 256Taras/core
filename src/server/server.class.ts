@@ -14,7 +14,6 @@ import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import semver from 'semver';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
@@ -73,33 +72,35 @@ export class Server {
   }
 
   private async registerMiddleware(): Promise<void> {
-    const cspData = this.options.config?.contentSecurityPolicy;
+    const cspOptions = this.options.config?.contentSecurityPolicy;
 
-    const cspOptions = {
-      contentSecurityPolicy: typeof cspData === 'boolean' ? cspData : {
-        directives: {
-          ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives(),
-          connectSrc: [
-            `'self'`,
-            `http://localhost:*`,
-            'ws://localhost:*',
-          ],
-          defaultSrc: [
-            `'self'`,
-            `'unsafe-inline'`,
-            'http://localhost:*',
-            'ws://localhost:*',
-          ],
-          scriptSrc: [
-            `'self'`,
-            `'unsafe-inline'`,
-            `http://localhost:*`,
-            'ws://localhost:*',
-          ],
-          scriptSrcAttr: `'unsafe-inline'`,
-        },
-        ...this.options.config?.contentSecurityPolicy,
-      },
+    const helmetOptions = {
+      contentSecurityPolicy:
+        typeof cspOptions === 'boolean'
+          ? cspOptions
+          : {
+              directives: {
+                ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives(),
+                connectSrc: [`'self'`, `http://localhost:*`, 'ws://localhost:*'],
+                defaultSrc: [
+                  `'self'`,
+                  `'unsafe-inline'`,
+                  'http://localhost:*',
+                  'ws://localhost:*',
+                ],
+                scriptSrc: [
+                  `'self'`,
+                  `'unsafe-inline'`,
+                  `http://localhost:*`,
+                  'ws://localhost:*',
+                ],
+                scriptSrcAttr: `'unsafe-inline'`,
+              },
+              ...((this.options.config?.contentSecurityPolicy ?? {}) as Record<
+                string,
+                unknown
+              >),
+            },
     };
 
     const corsOptions = this.options.config?.cors ?? {};
@@ -126,7 +127,7 @@ export class Server {
       root: path.resolve('public'),
     };
 
-    await this.instance.register(helmetMiddleware, cspOptions);
+    await this.instance.register(helmetMiddleware, helmetOptions);
     await this.instance.register(corsMiddleware, corsOptions);
     await this.instance.register(cookieMiddleware, cookieOptions);
     await this.instance.register(csrfMiddleware);
@@ -142,7 +143,12 @@ export class Server {
 
     const requiredNodeVersion = JSON.parse(packageData.toString()).engines.node;
 
-    if (!semver.satisfies(process.version, requiredNodeVersion)) {
+    const satisfiesVersion = process.version.localeCompare(requiredNodeVersion, undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    });
+
+    if (satisfiesVersion === -1) {
       this.logger.warn(
         `Norther requires Node.js version ${requiredNodeVersion.slice(
           2,
@@ -239,13 +245,12 @@ export class Server {
       const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(9, ' '));
 
       const status = response.statusCode;
+      const yellow = this.logger.colorYellow;
 
       const statusMapping = {
         [String(status >= 100 && status < 200)]: chalk.blueBright(status),
         [String(status >= 200 && status < 400)]: chalk.green(status),
-        [String(status >= 400 && status < 500)]: chalk.hex(this.logger.colorYellow)(
-          status,
-        ),
+        [String(status >= 400 && status < 500)]: chalk.hex(yellow)(status),
         [String(status >= 500 && status < 600)]: chalk.red(status),
       };
 
