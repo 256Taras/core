@@ -214,7 +214,7 @@ export class ViewCompiler {
   }
 
   private parseViteDirectives(): void {
-    const matches = this.html.matchAll(/\[vite(React|Vue)\]/gm) ?? [];
+    const matches = this.html.matchAll(/\[vite(React|Vue|Svelte)\]/gm) ?? [];
 
     for (const match of matches) {
       const framework = match[1].toLowerCase();
@@ -249,12 +249,12 @@ export class ViewCompiler {
           (await readFile('public/manifest.json')).toString(),
         );
 
-        const output = `
-          <link rel="stylesheet" href="/${manifest[`${framework}/main.js`].css}">
+        const data = manifest[`${framework}/main.js${isReact ? 'x' : ''}`];
 
-          <script type="module" src="/${
-            manifest[`${framework}/main.js`].file
-          }"></script>
+        const output = `
+          ${data.css ? `<link rel="stylesheet" href="/${data.css}">` : ''}
+
+          <script type="module" src="/${data.file}"></script>
         `;
 
         this.html = this.html.replace(match[0], output);
