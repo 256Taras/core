@@ -5,6 +5,7 @@ import { parseArgs } from 'node:util';
 import { error } from '../logger/functions/error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { DbMigrateCommand } from './commands/db-migrate.command';
+import { KeyGenerateCommand } from './commands/key-generate.command';
 import { ServerDevCommand } from './commands/server-dev.command';
 import { StartDevCommand } from './commands/start-dev.command';
 import { StartProdCommand } from './commands/start-prod.command';
@@ -23,6 +24,7 @@ configDotenv({
 
 const commands: Constructor<Command>[] = [
   DbMigrateCommand,
+  KeyGenerateCommand,
   ServerDevCommand,
   StartDevCommand,
   StartProdCommand,
