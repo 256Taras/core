@@ -70,6 +70,10 @@ export class Request {
     return this.instance?.ips ?? null;
   }
 
+  public locale(): string | string[] {
+    return this.header('accept-language')?.slice(0, 2) ?? 'en';
+  }
+
   public method(): HttpMethod {
     const method = this.input('_method')
       ? this.input('_method')
