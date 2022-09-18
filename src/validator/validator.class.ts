@@ -24,7 +24,7 @@ export class Validator {
 
   private validateDate(value: string, isDate: boolean): boolean {
     if (
-      (isDate && (new Date(value) as any) === 'Invalid Date') ||
+      (isDate && (new Date(value) as unknown) === 'Invalid Date') ||
       isNaN(new Date(value) as unknown as number)
     ) {
       return false;
@@ -113,8 +113,24 @@ export class Validator {
     return true;
   }
 
+  private validateMax(value: number, length: number): boolean {
+    if (isNaN(value) || Number(value) > length) {
+      return false;
+    }
+
+    return true;
+  }
+
   private validateMaxLength(value: string, length: number): boolean {
     if (value.length > length) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private validateMin(value: number, length: number): boolean {
+    if (isNaN(value) || Number(value) < length) {
       return false;
     }
 
@@ -207,7 +223,9 @@ export class Validator {
       ip: this.validateIp,
       ipv4: this.validateIpv4,
       length: this.validateLength,
+      max: this.validateMax,
       maxLength: this.validateMaxLength,
+      min: this.validateMin,
       minLength: this.validateMinLength,
       notIn: this.validateNotIn,
       numeric: this.validateNumeric,

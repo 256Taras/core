@@ -14,7 +14,9 @@ export interface ValidationRules {
     ip?: boolean;
     ipv4?: boolean;
     length?: Integer;
+    max?: Integer;
     maxLength?: Integer;
+    min?: Integer;
     minLength?: Integer;
     notIn?: string[];
     numeric?: boolean;
