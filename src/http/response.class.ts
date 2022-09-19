@@ -11,7 +11,11 @@ import { Request } from './request.class';
 export class Response {
   private instance: FastifyReply | null = null;
 
-  constructor(private request: Request, private session: Session, private viewCompiler: ViewCompiler) {}
+  constructor(
+    private request: Request,
+    private session: Session,
+    private viewCompiler: ViewCompiler,
+  ) {}
 
   public $getInstance(): FastifyReply | null {
     return this.instance;
@@ -26,7 +30,12 @@ export class Response {
   public abort(status: StatusCode): this {
     this.instance?.status(status);
 
-    const message = Object.keys(StatusCode).find((key: string) => (StatusCode as unknown as Record<string, StatusCode>)[key] === status)?.replace(/([a-z])([A-Z])/g, '$1 $2');
+    const message = Object.keys(StatusCode)
+      .find(
+        (key: string) =>
+          (StatusCode as unknown as Record<string, StatusCode>)[key] === status,
+      )
+      ?.replace(/([a-z])([A-Z])/g, '$1 $2');
 
     const data = {
       statusCode: status,

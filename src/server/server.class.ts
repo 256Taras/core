@@ -143,10 +143,14 @@ export class Server {
 
     const requiredNodeVersion = JSON.parse(packageData.toString()).engines.node;
 
-    const satisfiesVersion = process.version.localeCompare(requiredNodeVersion, undefined, {
-      numeric: true,
-      sensitivity: 'base',
-    });
+    const satisfiesVersion = process.version.localeCompare(
+      requiredNodeVersion,
+      undefined,
+      {
+        numeric: true,
+        sensitivity: 'base',
+      },
+    );
 
     if (satisfiesVersion === -1) {
       this.logger.warn(
@@ -207,7 +211,7 @@ export class Server {
         if (existsSync(this.tempPath)) {
           await unlink(this.tempPath);
         }
-  
+
         process.exit();
       });
     });
