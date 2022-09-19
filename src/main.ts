@@ -41,6 +41,7 @@ export * from './utils/functions/debounce.function';
 export * from './utils/functions/env.function';
 export * from './utils/interfaces/constructor.interface';
 export * from './utils/types/integer.type';
+export * from './validator/interfaces/validation-assertions.interface';
 export * from './validator/interfaces/validation-rules.interface';
 export * from './validator/validator.class';
 export * from './websocket/interfaces/authorizer.nterface';
