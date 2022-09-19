@@ -1,15 +1,17 @@
 import { FastifyReply } from 'fastify';
 import { existsSync, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
 import { ViewCompiler } from '../views/view-compiler.class';
 import { StatusCode } from './enums/status-code.enum';
+import { Request } from './request.class';
 
 @Service()
 export class Response {
   private instance: FastifyReply | null = null;
 
-  constructor(private viewCompiler: ViewCompiler, private session: Session) {}
+  constructor(private request: Request, private session: Session, private viewCompiler: ViewCompiler) {}
 
   public $getInstance(): FastifyReply | null {
     return this.instance;
@@ -17,6 +19,27 @@ export class Response {
 
   public $setInstance(instance: FastifyReply): this {
     this.instance = instance;
+
+    return this;
+  }
+
+  public abort(status: StatusCode): this {
+    this.instance?.status(status);
+
+    const message = Object.keys(StatusCode).find((key: string) => (StatusCode as unknown as Record<string, StatusCode>)[key] === status)?.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+    const data = {
+      statusCode: status,
+      message,
+    };
+
+    if (this.request.ajax()) {
+      this.json(data);
+
+      return this;
+    }
+
+    this.render(`${fileURLToPath(import.meta.url)}/../../../views/http`, data);
 
     return this;
   }
@@ -101,7 +124,7 @@ export class Response {
     return this;
   }
 
-  public render(file: string, data: Record<string, any>): this {
+  public render(file: string, data: Record<string, any> = {}): this {
     file = `${file}.north.html`;
 
     if (!existsSync(file)) {
