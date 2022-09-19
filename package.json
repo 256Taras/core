@@ -23,7 +23,7 @@
     ".": "./dist/main"
   },
   "bin": {
-    "norther": "dist/bin/norther.js"
+    "norther": "bin/norther.js"
   },
   "scripts": {
     "build": "tsc",

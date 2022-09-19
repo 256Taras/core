@@ -1,4 +1,3 @@
-#!/usr/bin/env node --experimental-specifier-resolution=node --no-warnings
 import { Reflection as Reflect } from '@abraham/reflection';
 import { config as configDotenv } from 'dotenv';
 import { parseArgs } from 'node:util';
