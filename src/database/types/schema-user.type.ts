@@ -1,3 +1,3 @@
-import { User } from '../../../../northle/node_modules/@prisma/client';
+import { User } from '../../../../project-template/node_modules/@prisma/client';
 
 export type SchemaUser = User;

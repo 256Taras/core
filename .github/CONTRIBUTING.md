@@ -42,7 +42,7 @@ $ npm run build
 $ npm link
 ```
 
-Then, change the import path in the `src/database` directory: `PrismaClient` and `User` should be imported from `../../../northle/node_modules/@prisma/client` in development mode. Don't forget to change it back before creating a [Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)!
+Then, change the import path in the `src/database` directory: `PrismaClient` and `User` should be imported from `../../../project-template/node_modules/@prisma/client` in development mode. Don't forget to change it back before creating a [Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)!
 
 ### Project Template
 
@@ -51,7 +51,7 @@ Next, clone project template repository (in the parent folder of the `core` repo
 ```shell
 $ git clone https://github.com/northle/project-template.git
 
-$ cd northle
+$ cd project-template
 $ cp .env.example .env
 $ npm install
 $ npm link @northle/core
