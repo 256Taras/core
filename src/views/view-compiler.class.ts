@@ -39,7 +39,10 @@ export class ViewCompiler {
     ];
 
     return <T>(...args: unknown[]): T => {
-      return new Function(...header)(...Object.values(globalVariables), ...args) as T;
+      return new Function(...header)(
+        ...Object.values(globalVariables),
+        ...args,
+      ) as T;
     };
   }
 
@@ -104,9 +107,7 @@ export class ViewCompiler {
             renderScopeVariables,
           );
 
-          const renderResult = renderFn(
-            ...Object.values(renderScopeVariables),
-          );
+          const renderResult = renderFn(...Object.values(renderScopeVariables));
 
           content = content.replace(renderMatch[0], String(renderResult));
         }
@@ -188,7 +189,7 @@ export class ViewCompiler {
   }
 
   private parseMethodDirectives(): void {
-    const matches = this.html.matchAll(/\[method\((.*?)\)\]/g,) ?? [];
+    const matches = this.html.matchAll(/\[method\((.*?)\)\]/g) ?? [];
 
     for (const match of matches) {
       const value = match[1];
@@ -236,22 +237,22 @@ export class ViewCompiler {
 
         if (env<boolean>('DEVELOPMENT')) {
           output = `<script type="module" src="http://localhost:5173/app/${fileEntry}"></script>`;
-  
+
           if (['jsx', 'tsx'].includes(fileExtension)) {
             usesReactRefresh = true;
           }
         } else {
           (async () => {
             const manifestPath = 'public/manifest.json';
-    
+
             if (!existsSync(manifestPath)) {
               throw new Error('Vite manifest file not found');
             }
-    
+
             const manifest = await readJson(manifestPath);
-    
+
             const data = manifest[`app/${fileEntry}`];
-    
+
             output = `
               ${data.css ? `<link rel="stylesheet" href="/${data.css}">` : ''}
     

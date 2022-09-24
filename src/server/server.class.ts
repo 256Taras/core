@@ -26,11 +26,11 @@ import { Router } from '../router/router.class';
 import { Session } from '../session/session.class';
 import { Translator } from '../translator/translator.class';
 import { env } from '../utils/functions/env.function';
+import { readJson } from '../utils/functions/read-json.function';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { ServerOptions } from './interfaces/server-options.interface';
-import { readJson } from '../utils/functions/read-json.function';
 
 @Service()
 export class Server {
@@ -138,7 +138,9 @@ export class Server {
   }
 
   private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
-    const requiredNodeVersion = (await readJson(`${fileURLToPath(import.meta.url)}/../../../package.json`)).engines.node;
+    const requiredNodeVersion = (
+      await readJson(`${fileURLToPath(import.meta.url)}/../../../package.json`)
+    ).engines.node;
 
     const satisfiesVersion = process.version.localeCompare(
       requiredNodeVersion,

@@ -9,4 +9,4 @@ export const readJson = async (path: string): Promise<Record<string, any>> => {
   const content = await readFile(path);
 
   return JSON.parse(content.toString());
-}
+};
