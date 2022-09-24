@@ -22,7 +22,7 @@ export const setupStdin = (callback?: () => void) => {
     }
 
     if ([...Object.values(exitKeys)].includes(key)) {
-      const tempPath = `${tmpdir()}/norther`;
+      const tempPath = `${tmpdir()}/northle`;
 
       if (existsSync(tempPath)) {
         unlinkSync(tempPath);

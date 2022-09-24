@@ -52,7 +52,7 @@ export class ServerDevCommand {
 
     if (env<boolean>('DEVELOPER_MODE')) {
       const frameworkWatcher = watch(
-        'node_modules/@norther/core/dist',
+        'node_modules/@northle/core/dist',
         watcherOptions,
       );
 

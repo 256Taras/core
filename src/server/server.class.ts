@@ -44,7 +44,7 @@ export class Server {
 
   private options: ServerOptions;
 
-  private tempPath = `${tmpdir()}/norther`;
+  private tempPath = `${tmpdir()}/northle`;
 
   constructor(
     private encrypter: Encrypter,
@@ -153,7 +153,7 @@ export class Server {
 
     if (satisfiesVersion === -1) {
       this.logger.warn(
-        `Norther requires Node.js version ${requiredNodeVersion.slice(
+        `Northle requires Node.js version ${requiredNodeVersion.slice(
           2,
         )} or greater`,
       );
@@ -164,7 +164,7 @@ export class Server {
     }
 
     if (!existsSync(this.tempPath)) {
-      await writeFile(this.tempPath, 'Norther development server is running...');
+      await writeFile(this.tempPath, 'Northle development server is running...');
 
       const browserAliases: Record<string, string> = {
         darwin: 'open',
