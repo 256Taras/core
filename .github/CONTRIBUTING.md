@@ -34,7 +34,7 @@ Contributing in this repository is based on GitHub's [Pull Requests](https://doc
 First, clone the `@northle/core` package repository and install its dependencies:
 
 ```shell
-$ git clone https://github.com/northlejs/core.git
+$ git clone https://github.com/northle/core.git
 
 $ cd core
 $ npm install
@@ -49,7 +49,7 @@ Then, change the import path in the `src/database` directory: `PrismaClient` and
 Next, clone project template repository (in the parent folder of the `core` repository):
 
 ```shell
-$ git clone https://github.com/northlejs/northle.git
+$ git clone https://github.com/northle/project-template.git
 
 $ cd northle
 $ cp .env.example .env
