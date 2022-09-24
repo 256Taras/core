@@ -39,6 +39,8 @@ export * from './translator/functions/trans.function';
 export * from './translator/translator.class';
 export * from './utils/functions/debounce.function';
 export * from './utils/functions/env.function';
+export * from './utils/functions/read-json.function';
+export * from './utils/functions/run-command.function';
 export * from './utils/interfaces/constructor.interface';
 export * from './utils/types/integer.type';
 export * from './validator/interfaces/validation-assertions.interface';

@@ -9,7 +9,7 @@ import chalk from 'chalk';
 import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
-import { readFile, unlink, writeFile } from 'node:fs/promises';
+import { unlink, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -30,6 +30,7 @@ import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { ServerOptions } from './interfaces/server-options.interface';
+import { readJson } from '../utils/functions/read-json.function';
 
 @Service()
 export class Server {
@@ -137,11 +138,7 @@ export class Server {
   }
 
   private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
-    const packageData = await readFile(
-      `${fileURLToPath(import.meta.url)}/../../../package.json`,
-    );
-
-    const requiredNodeVersion = JSON.parse(packageData.toString()).engines.node;
+    const requiredNodeVersion = (await readJson(`${fileURLToPath(import.meta.url)}/../../../package.json`)).engines.node;
 
     const satisfiesVersion = process.version.localeCompare(
       requiredNodeVersion,

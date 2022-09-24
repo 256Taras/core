@@ -1,5 +1,4 @@
 import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
 import * as constants from '../constants';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
@@ -7,6 +6,7 @@ import { inject } from '../injector/functions/inject.function';
 import { session } from '../session/functions/session.function';
 import { trans } from '../translator/functions/trans.function';
 import { env } from '../utils/functions/env.function';
+import { readJson } from '../utils/functions/read-json.function';
 
 @Service()
 export class ViewCompiler {
@@ -248,7 +248,7 @@ export class ViewCompiler {
               throw new Error('Vite manifest file not found');
             }
     
-            const manifest = JSON.parse((await readFile(manifestPath)).toString());
+            const manifest = await readJson(manifestPath);
     
             const data = manifest[`app/${fileEntry}`];
     
