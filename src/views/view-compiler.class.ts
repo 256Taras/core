@@ -38,8 +38,8 @@ export class ViewCompiler {
       body,
     ];
 
-    return (...args: unknown[]) => {
-      return new Function(...header)(...Object.values(globalVariables), ...args);
+    return <T>(...args: unknown[]): T => {
+      return new Function(...header)(...Object.values(globalVariables), ...args) as T;
     };
   }
 
@@ -49,7 +49,7 @@ export class ViewCompiler {
     for (const match of matches) {
       const value = match[2];
 
-      const fn = this.getRenderFunction(
+      const renderFunction = this.getRenderFunction(
         `return ${
           match[1] === '@' ? true : false
         } ? String(${value}) : String(${value}).replace(/[&<>'"]/g, (char) => ({
@@ -61,7 +61,7 @@ export class ViewCompiler {
         }[char]));`,
       );
 
-      const returnedValue: unknown = fn();
+      const returnedValue = renderFunction();
 
       this.html = this.html.replace(match[0], String(returnedValue));
     }
@@ -75,9 +75,9 @@ export class ViewCompiler {
 
     for (const match of matches) {
       const value = match[2];
-      const fn = this.getRenderFunction(`return ${value};`);
+      const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const iterable: unknown[] = fn();
+      const iterable: unknown[] = renderFunction();
       const variableName = match[1];
 
       let result = '';
@@ -104,7 +104,7 @@ export class ViewCompiler {
             renderScopeVariables,
           );
 
-          const renderResult: unknown = renderFn(
+          const renderResult = renderFn(
             ...Object.values(renderScopeVariables),
           );
 
@@ -126,9 +126,9 @@ export class ViewCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const fn = this.getRenderFunction(`return ${value};`);
+      const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const condition: boolean = fn();
+      const condition: boolean = renderFunction();
 
       if (condition) {
         this.html = this.html.replace(match[0], match[3]);
@@ -148,9 +148,9 @@ export class ViewCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const fn = this.getRenderFunction(`return ${value};`);
+      const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const condition: boolean = fn();
+      const condition: boolean = renderFunction();
 
       if (condition) {
         this.html = this.html.replace(match[0], match[3]);
@@ -163,13 +163,13 @@ export class ViewCompiler {
   }
 
   private parseJsonDirectives(): void {
-    const matches = this.html.matchAll(/\[json (.*?)\]/g) ?? [];
+    const matches = this.html.matchAll(/\[json\((.*?)\)\]/g) ?? [];
 
     for (const match of matches) {
       const value = match[1];
-      const fn = this.getRenderFunction(`return ${value};`);
+      const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const json: string = JSON.stringify(fn());
+      const json = JSON.stringify(renderFunction());
 
       this.html = this.html.replace(match[0], json);
     }
@@ -188,15 +188,15 @@ export class ViewCompiler {
   }
 
   private parseMethodDirectives(): void {
-    const matches =
-      this.html.matchAll(
-        /\[(copy|delete|get|head|lock|mkcol|move|options|patch|post|propfind|proppatch|put|search|trace|unlock)\]/g,
-      ) ?? [];
+    const matches = this.html.matchAll(/\[method\((.*?)\)\]/g,) ?? [];
 
     for (const match of matches) {
+      const value = match[1];
+      const renderFunction = this.getRenderFunction(`return ${value};`);
+
       this.html = this.html.replace(
         match[0],
-        `<input type="hidden" name="_method" value="${match[1].toUpperCase()}">`,
+        `<input type="hidden" name="_method" value="${renderFunction<string>().toUpperCase()}">`,
       );
     }
   }
@@ -217,57 +217,67 @@ export class ViewCompiler {
   }
 
   private parseViteDirectives(): void {
-    const matches = this.html.matchAll(/\[vite(React|Vue|Svelte)\]/gm) ?? [];
+    const matches = this.html.matchAll(/\[vite\((.*?)\)\]/gm) ?? [];
 
     for (const match of matches) {
-      const framework = match[1].toLowerCase();
-      const isReact = framework === 'react';
+      const value = match[1];
+      const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      if (env<boolean>('DEVELOPMENT')) {
-        let output = `<script type="module" src="http://localhost:5173/${framework}/main.js${
-          isReact ? 'x' : ''
-        }"></script>`;
+      let fileEntries = renderFunction<string | string[]>();
+      let output = '';
+      let usesReactRefresh = false;
 
-        if (isReact) {
-          output = `
-            <script type="module">
-              import RefreshRuntime from 'http://localhost:5173/@react-refresh';
-
-              RefreshRuntime.injectIntoGlobalHook(window);
-
-              window.$RefreshReg$ = () => {};
-              window.$RefreshSig$ = () => (type) => type;
-              window.__vite_plugin_react_preamble_installed__ = true;
-            </script>
-
-            ${output}
-          `;
-        }
-
-        this.html = this.html.replace(match[0], output);
-
-        continue;
+      if (!Array.isArray(fileEntries)) {
+        fileEntries = [fileEntries];
       }
 
-      (async () => {
-        const manifestPath = 'public/manifest.json';
+      fileEntries.map((fileEntry) => {
+        const fileExtension = fileEntry.split('.').pop() ?? 'js';
 
-        if (!existsSync(manifestPath)) {
-          throw new Error('Vite manifest file not found');
+        if (env<boolean>('DEVELOPMENT')) {
+          output = `<script type="module" src="http://localhost:5173/app/${fileEntry}"></script>`;
+  
+          if (['jsx', 'tsx'].includes(fileExtension)) {
+            usesReactRefresh = true;
+          }
+        } else {
+          (async () => {
+            const manifestPath = 'public/manifest.json';
+    
+            if (!existsSync(manifestPath)) {
+              throw new Error('Vite manifest file not found');
+            }
+    
+            const manifest = JSON.parse((await readFile(manifestPath)).toString());
+    
+            const data = manifest[`app/${fileEntry}`];
+    
+            output = `
+              ${data.css ? `<link rel="stylesheet" href="/${data.css}">` : ''}
+    
+              <script type="module" src="/${data.file}"></script>
+            `;
+          })();
         }
+      });
 
-        const manifest = JSON.parse((await readFile(manifestPath)).toString());
+      if (usesReactRefresh) {
+        output = `
+          <script type="module">
+            import RefreshRuntime from 'http://localhost:5173/@react-refresh';
 
-        const data = manifest[`${framework}/main.js${isReact ? 'x' : ''}`];
+            RefreshRuntime.injectIntoGlobalHook(window);
 
-        const output = `
-          ${data.css ? `<link rel="stylesheet" href="/${data.css}">` : ''}
+            window.$RefreshReg$ = () => {};
+            window.$RefreshSig$ = () => (type) => type;
+            window.__vite_plugin_react_preamble_installed__ = true;
+          </script>
 
-          <script type="module" src="/${data.file}"></script>
+          ${output}
         `;
+      }
 
-        this.html = this.html.replace(match[0], output);
-      })();
+      this.html = this.html.replace(match[0], output);
     }
   }
 
