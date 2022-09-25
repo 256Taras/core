@@ -1,2 +1,2 @@
 #!/usr/bin/env node --experimental-specifier-resolution=node --no-warnings
-import './dist/cli/main';
+import '../dist/cli/main';
