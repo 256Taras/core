@@ -160,6 +160,6 @@ export class Handler {
       process.exit(1);
     }
 
-    this.logger.warn('In production mode process will exit');
+    this.logger.warn('In production mode process will exit on fatal errors');
   }
 }
