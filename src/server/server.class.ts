@@ -82,20 +82,20 @@ export class Server {
           : {
               directives: {
                 ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives(),
-                connectSrc: [`'self'`, `http://localhost:*`, 'ws://localhost:*'],
-                defaultSrc: [
+                'connect-src': [`'self'`, `http://localhost:*`, 'ws://localhost:*'],
+                'default-src': [
                   `'self'`,
                   `'unsafe-inline'`,
                   'http://localhost:*',
                   'ws://localhost:*',
                 ],
-                scriptSrc: [
+                'script-src': [
                   `'self'`,
                   `'unsafe-inline'`,
                   `http://localhost:*`,
                   'ws://localhost:*',
                 ],
-                scriptSrcAttr: `'unsafe-inline'`,
+                'script-src-attr': `'unsafe-inline'`,
               },
               ...((this.options.config?.contentSecurityPolicy ?? {}) as Record<
                 string,
