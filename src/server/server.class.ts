@@ -302,7 +302,7 @@ export class Server {
 
       testServer.listen(port);
     } catch (error) {
-      await this.handler.handleError(error);
+      await this.handler.handleError(error as Error);
     }
   }
 }
