@@ -70,7 +70,7 @@ export class Handler {
     }
 
     if (!env<boolean>('DEVELOPMENT')) {
-      const customTemplatePath = `views/errors/${statusCode}.north.html`;
+      const customTemplatePath = `views/errors/${statusCode}.html`;
 
       const file = existsSync(customTemplatePath)
         ? `views/errors/${statusCode}`
@@ -81,7 +81,7 @@ export class Handler {
 
     const { caller, file } = await this.getErrorStack(error);
 
-    const customViewTemplate = `views/errors/${statusCode}.north.html`;
+    const customViewTemplate = `views/errors/${statusCode}.html`;
 
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`
@@ -113,7 +113,7 @@ export class Handler {
       return;
     }
 
-    const customViewTemplate = `views/errors/${statusCode}.north.html`;
+    const customViewTemplate = `views/errors/${statusCode}.html`;
 
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`
@@ -138,7 +138,7 @@ export class Handler {
       return;
     }
 
-    const customViewTemplate = `views/errors/${statusCode}.north.html`;
+    const customViewTemplate = `views/errors/${statusCode}.html`;
 
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`

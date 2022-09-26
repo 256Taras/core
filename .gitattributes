@@ -1,6 +1,6 @@
 * text=auto
 
-*.north.html diff=html
+*.html diff=html
 *.css diff=css
 *.html diff=html
 *.md diff=markdown

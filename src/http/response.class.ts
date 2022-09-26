@@ -134,7 +134,7 @@ export class Response {
   }
 
   public render(file: string, data: Record<string, any> = {}): this {
-    file = `${file}.north.html`;
+    file = `${file}.html`;
 
     if (!existsSync(file)) {
       throw new Error(`View ${file} does not exist`);
