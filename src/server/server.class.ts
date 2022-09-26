@@ -234,71 +234,75 @@ export class Server {
     port = env<Integer>('PORT') ?? this.defaultPort,
     host = env('HOST') ?? this.defaultHost,
   ): Promise<void> {
-    let startTime: [number, number];
+    try {
+      let startTime: [number, number];
 
-    this.instance.addHook('onRequest', async (request, response) => {
-      this.request.$setInstance(request);
-      this.response.$setInstance(response);
+      this.instance.addHook('onRequest', async (request, response) => {
+        this.request.$setInstance(request);
+        this.response.$setInstance(response);
 
-      startTime = process.hrtime();
-    });
+        startTime = process.hrtime();
+      });
 
-    this.instance.addHook('onResponse', async (request, response) => {
-      this.session.set('_previousUrl', request.url);
+      this.instance.addHook('onResponse', async (request, response) => {
+        this.session.set('_previousUrl', request.url);
 
-      const endTime = process.hrtime(startTime);
+        const endTime = process.hrtime(startTime);
 
-      const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
-      const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(9, ' '));
+        const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
+        const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(9, ' '));
 
-      const status = response.statusCode;
-      const yellow = this.logger.colorYellow;
+        const status = response.statusCode;
+        const yellow = this.logger.colorYellow;
 
-      const statusMapping = {
-        [String(status >= 100 && status < 200)]: chalk.blueBright(status),
-        [String(status >= 200 && status < 400)]: chalk.green(status),
-        [String(status >= 400 && status < 500)]: chalk.hex(yellow)(status),
-        [String(status >= 500 && status < 600)]: chalk.red(status),
-      };
+        const statusMapping = {
+          [String(status >= 100 && status < 200)]: chalk.blueBright(status),
+          [String(status >= 200 && status < 400)]: chalk.green(status),
+          [String(status >= 400 && status < 500)]: chalk.hex(yellow)(status),
+          [String(status >= 500 && status < 600)]: chalk.red(status),
+        };
 
-      const formattedStatus = statusMapping['true'] ?? status.toString();
+        const formattedStatus = statusMapping['true'] ?? status.toString();
 
-      this.logger.log(
-        `${chalk.bold(formattedStatus)} ${this.request.method()} ${request.url}`,
-        'request',
-        timeFormatted,
-      );
-    });
+        this.logger.log(
+          `${chalk.bold(formattedStatus)} ${this.request.method()} ${request.url}`,
+          'request',
+          timeFormatted,
+        );
+      });
 
-    await this.registerMiddleware();
+      await this.registerMiddleware();
 
-    this.router.registerRoutes(this.instance);
-    this.registerHandlers();
+      this.router.registerRoutes(this.instance);
+      this.registerHandlers();
 
-    const testServer = createServer();
-    const originalPort = port;
+      const testServer = createServer();
+      const originalPort = port;
 
-    testServer.once('error', () => {
-      port += 1;
+      testServer.once('error', () => {
+        port += 1;
 
-      this.logger.warn(
-        `Port ${originalPort} is not available. Server will listen at port ${port}`,
-      );
+        this.logger.warn(
+          `Port ${originalPort} is not available. Server will listen at port ${port}`,
+        );
 
-      testServer.close();
+        testServer.close();
+        testServer.listen(port);
+      });
+
+      testServer.once('listening', async () => {
+        testServer.close();
+
+        await this.instance.listen({ port, host });
+
+        if (env<boolean>('DEVELOPMENT')) {
+          this.setupDevelopmentEnvironment(port);
+        }
+      });
+
       testServer.listen(port);
-    });
-
-    testServer.once('listening', async () => {
-      testServer.close();
-
-      await this.instance.listen({ port, host });
-
-      if (env<boolean>('DEVELOPMENT')) {
-        this.setupDevelopmentEnvironment(port);
-      }
-    });
-
-    testServer.listen(port);
+    } catch (error) {
+      await this.handler.handleError(error);
+    }
   }
 }
