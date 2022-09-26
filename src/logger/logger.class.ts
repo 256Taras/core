@@ -8,6 +8,8 @@ export class Logger {
 
   private readonly locale = 'en-us';
 
+  public readonly colorRed = '#f87777';
+
   public readonly colorYellow = '#f8c377';
 
   private getDay(): string {
@@ -52,9 +54,9 @@ export class Logger {
   }
 
   public error(data: string, type = 'error'): void {
-    const output = `\n${chalk.bgRed.black(
+    const output = `\n${chalk.bgHex(this.colorRed).black(
       ' ' + type.toUpperCase() + ' ',
-    )} ${chalk.bold.red(data)}\n`;
+    )} ${chalk.bold.hex(this.colorRed)(data)}\n`;
 
     if (this.enabled) {
       console.error(output);

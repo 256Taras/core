@@ -253,13 +253,14 @@ export class Server {
         const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(9, ' '));
 
         const status = response.statusCode;
+        const red = this.logger.colorRed;
         const yellow = this.logger.colorYellow;
 
         const statusMapping = {
           [String(status >= 100 && status < 200)]: chalk.blueBright(status),
           [String(status >= 200 && status < 400)]: chalk.green(status),
           [String(status >= 400 && status < 500)]: chalk.hex(yellow)(status),
-          [String(status >= 500 && status < 600)]: chalk.red(status),
+          [String(status >= 500 && status < 600)]: chalk.hex(red)(status),
         };
 
         const formattedStatus = statusMapping['true'] ?? status.toString();
