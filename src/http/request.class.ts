@@ -113,10 +113,6 @@ export class Request {
     return this.instance?.session ?? {};
   }
 
-  public token(): string | null {
-    return this.session._token ?? null;
-  }
-
   public url(): string | null {
     return this.instance?.url ?? null;
   }

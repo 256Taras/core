@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import * as constants from '../constants';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
+import { csrfToken } from '../utils/functions/csrf-token.function';
 import { inject } from '../injector/functions/inject.function';
 import { session } from '../session/functions/session.function';
 import { trans } from '../translator/functions/trans.function';
@@ -176,9 +177,9 @@ export class ViewCompiler {
     }
   }
 
-  private parseTokenDirectives(): void {
+  private async parseTokenDirectives(): Promise<void> {
     const matches = this.html.matchAll(/\[token\]/g) ?? [];
-    const token = this.request.token();
+    const token = await csrfToken();
 
     for (const match of matches) {
       this.html = this.html.replace(
@@ -292,7 +293,7 @@ export class ViewCompiler {
     }
   }
 
-  public compile(html: string, data: Record<string, any> = {}): string {
+  public async compile(html: string, data: Record<string, any> = {}): Promise<string> {
     this.data = data;
     this.html = html;
     this.rawContent = [];
@@ -303,7 +304,7 @@ export class ViewCompiler {
     this.parseIfElseDirectives();
     this.parseIfDirectives();
     this.parseJsonDirectives();
-    this.parseTokenDirectives();
+    await this.parseTokenDirectives();
     this.parseMethodDirectives();
     this.parseViteDirectives();
 

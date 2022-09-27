@@ -37,6 +37,7 @@ export * from './session/functions/session.function';
 export * from './session/session.class';
 export * from './translator/functions/trans.function';
 export * from './translator/translator.class';
+export * from './utils/functions/csrf-token.function';
 export * from './utils/functions/debounce.function';
 export * from './utils/functions/env.function';
 export * from './utils/functions/read-json.function';

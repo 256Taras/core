@@ -27,7 +27,7 @@ export class Response {
     return this;
   }
 
-  public abort(status: StatusCode): this {
+  public async abort(status: StatusCode): Promise<this> {
     this.instance?.status(status);
 
     const message = Object.keys(StatusCode)
@@ -48,7 +48,7 @@ export class Response {
       return this;
     }
 
-    this.render(`${fileURLToPath(import.meta.url)}/../../../views/http`, data);
+    await this.render(`${fileURLToPath(import.meta.url)}/../../../views/http`, data);
 
     return this;
   }
@@ -61,6 +61,12 @@ export class Response {
     this.instance?.cookie(cookie, value, options);
 
     return this;
+  }
+
+  public async csrfToken(): Promise<string | null> {
+    const token = await this.instance?.generateCsrf() ?? null;
+
+    return token;
   }
 
   public deleteCookie(cookie: string): this {
@@ -133,7 +139,7 @@ export class Response {
     return this;
   }
 
-  public render(file: string, data: Record<string, any> = {}): this {
+  public async render(file: string, data: Record<string, any> = {}): Promise<this> {
     file = `${file}.html`;
 
     if (!existsSync(file)) {
@@ -142,7 +148,7 @@ export class Response {
 
     const fileContent = readFileSync(file);
 
-    const html = this.viewCompiler.compile(fileContent.toString(), data);
+    const html = await this.viewCompiler.compile(fileContent.toString(), data);
 
     this.send(html);
 
