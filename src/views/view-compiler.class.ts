@@ -165,13 +165,16 @@ export class ViewCompiler {
   }
 
   private parseJsonDirectives(): void {
-    const matches = this.html.matchAll(/\[json\((.*?)\)\]/g) ?? [];
+    const matches = this.html.matchAll(/\[json *?\((.*?),? *?(true|false)?\)\]/g) ?? [];
 
     for (const match of matches) {
       const value = match[1];
-      const renderFunction = this.getRenderFunction(`return ${value};`);
+      const prettyPrint = match[2] ?? 'false';
 
-      const json = JSON.stringify(renderFunction());
+      const renderFunction = this.getRenderFunction(`return ${value};`);
+      const printRenderFunction = this.getRenderFunction(`return ${prettyPrint};`);
+
+      const json = JSON.stringify(renderFunction<object>(), undefined, printRenderFunction<boolean>() ? 2 : 0);
 
       this.html = this.html.replace(match[0], json);
     }
@@ -190,7 +193,7 @@ export class ViewCompiler {
   }
 
   private parseMethodDirectives(): void {
-    const matches = this.html.matchAll(/\[method\((.*?)\)\]/g) ?? [];
+    const matches = this.html.matchAll(/\[method *?\((.*?)\)\]/g) ?? [];
 
     for (const match of matches) {
       const value = match[1];
@@ -219,7 +222,7 @@ export class ViewCompiler {
   }
 
   private parseViteDirectives(): void {
-    const matches = this.html.matchAll(/\[vite\((.*?)\)\]/gm) ?? [];
+    const matches = this.html.matchAll(/\[vite *?\((.*?)\)\]/gm) ?? [];
 
     for (const match of matches) {
       const value = match[1];
@@ -304,7 +307,9 @@ export class ViewCompiler {
     this.parseIfElseDirectives();
     this.parseIfDirectives();
     this.parseJsonDirectives();
+
     await this.parseTokenDirectives();
+
     this.parseMethodDirectives();
     this.parseViteDirectives();
 

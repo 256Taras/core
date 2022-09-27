@@ -81,6 +81,8 @@ export class Handler {
 
     const { caller, file } = await this.getErrorStack(error);
 
+    this.logger.error(file, 'file');
+
     const customViewTemplate = `views/errors/${statusCode}.html`;
 
     const view = existsSync(customViewTemplate)
