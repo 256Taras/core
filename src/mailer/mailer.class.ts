@@ -1,4 +1,4 @@
-import { Transporter, createTestAccount, createTransport } from 'nodemailer';
+import { Transporter, createTransport } from 'nodemailer';
 import { Service } from '../injector/decorators/service.decorator';
 import { env } from '../utils/functions/env.function';
 import { MailData } from './interfaces/mail-data.interface';
@@ -27,7 +27,7 @@ export class Mailer {
     const { to, subject, text, html } = data;
 
     const info = await this.transporter.sendMail({
-      from: env('MAIL_USER') ?? '',
+      from: env('MAIL_ADDRESS') ?? '',
       to,
       subject,
       text,
