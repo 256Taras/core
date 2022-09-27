@@ -1,12 +1,14 @@
 export * as Route from './router/decorators/route.decorator';
 
 export * from './constants';
+
 export * from './auth/authenticator.class';
 export * from './crypto/encrypter.class';
 export * from './database/database-client.class';
 export * from './handler/functions/raise.function';
 export * from './http/decorators/controller.decorator';
 export * from './http/decorators/redirect.decorator';
+export * from './http/download-response.class';
 export * from './http/enums/http-method.enum';
 export * from './http/enums/status-code.enum';
 export * from './http/functions/download.function';
@@ -14,7 +16,6 @@ export * from './http/functions/json.function';
 export * from './http/functions/redirect.function';
 export * from './http/functions/view.function';
 export * from './http/http-client.class';
-export * from './http/download-response.class';
 export * from './http/json-response.class';
 export * from './http/redirect-response.class';
 export * from './http/request.class';

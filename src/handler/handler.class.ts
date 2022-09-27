@@ -1,5 +1,4 @@
 import { existsSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
@@ -7,6 +6,7 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Logger } from '../logger/logger.class';
 import { env } from '../utils/functions/env.function';
+import { readJson } from '../utils/functions/read-json.function';
 import { StackFileData } from './interfaces/stack-file-data.interface';
 
 @Service()
@@ -36,11 +36,10 @@ export class Handler {
     } else {
       this.logger.error(file, 'file');
 
-      const packageData = await readFile(
-        `${fileURLToPath(import.meta.url)}/../../../package.json`,
-      );
-
-      file = `${JSON.parse(packageData.toString()).name} package file`;
+      file = `${
+        (await readJson(`${fileURLToPath(import.meta.url)}/../../../package.json`))
+          .name
+      } package file`;
     }
 
     file = file.replaceAll('\\', '/');
@@ -108,7 +107,7 @@ export class Handler {
 
     const data = {
       statusCode,
-      message: 'Page Not Found',
+      message: 'Not Found',
     };
 
     if (this.request.ajax()) {
