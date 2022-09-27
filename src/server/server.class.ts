@@ -186,46 +186,51 @@ export class Server {
     return this.instance.server;
   }
 
-  public setup(options: ServerOptions): this {
-    this.options = options;
+  public async setup(options: ServerOptions): Promise<this> {
+    try {
+      this.options = options;
 
-    process.on('uncaughtException', (error) => {
-      this.handler.handleFatalError(error);
-    });
-
-    const envFile = options.config?.envFile ?? '.env';
-
-    if (!existsSync(envFile)) {
-      throw new Error('Environment configuration file is missing');
-    }
-
-    configDotenv({
-      path: envFile,
-    });
-
-    const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
-
-    signals.map((signal) => {
-      process.on(signal, async () => {
-        if (existsSync(this.tempPath)) {
-          await unlink(this.tempPath);
-        }
-
-        process.exit();
+      process.on('uncaughtException', (error) => {
+        this.handler.handleFatalError(error);
       });
-    });
 
-    if (!(options.config?.logger ?? true)) {
-      this.logger.$disable();
+      const envFile = options.config?.envFile ?? '.env';
+
+      if (!existsSync(envFile)) {
+        throw new Error('Environment configuration file is missing');
+      }
+
+      configDotenv({
+        path: envFile,
+      });
+
+      const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
+
+      signals.map((signal) => {
+        process.on(signal, async () => {
+          if (existsSync(this.tempPath)) {
+            await unlink(this.tempPath);
+          }
+
+          process.exit();
+        });
+      });
+
+      if (!(options.config?.logger ?? true)) {
+        this.logger.$disable();
+      }
+
+      options.modules.map((module: Constructor) => {
+        const instance = inject(module);
+
+        this.modules.push(instance);
+      });
+
+      this.translator.setLocale(options.config?.locale);
+
+    } catch (error) {
+      await this.handler.handleError(error as Error);
     }
-
-    options.modules.map((module: Constructor) => {
-      const instance = inject(module);
-
-      this.modules.push(instance);
-    });
-
-    this.translator.setLocale(options.config?.locale);
 
     return this;
   }
