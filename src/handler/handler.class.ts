@@ -34,12 +34,16 @@ export class Handler {
     if (isAppFile) {
       file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
     } else {
+      this.logger.error(file, 'file');
+
       const packageData = await readFile(
         `${fileURLToPath(import.meta.url)}/../../../package.json`,
       );
 
       file = `${JSON.parse(packageData.toString()).name} package file`;
     }
+
+    file = file.replaceAll('\\', '/');
 
     return {
       caller,
@@ -80,8 +84,6 @@ export class Handler {
     }
 
     const { caller, file } = await this.getErrorStack(error);
-
-    this.logger.error(file, 'file');
 
     const customViewTemplate = `views/errors/${statusCode}.html`;
 

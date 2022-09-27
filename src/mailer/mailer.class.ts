@@ -22,16 +22,20 @@ export class Mailer {
   }
 
   public async setup(): Promise<void> {
-    const { user, pass } = await createTestAccount();
+    try {
+      const { user, pass } = await createTestAccount();
 
-    this.transporter = createTransport({
-      host: env('MAIL_HOST') ?? 'smtp.gmail.com',
-      port: env('MAIL_PORT') ?? 587,
-      secure: env('MAIL_PORT') === 465 ? true : false,
-      auth: {
-        user: env('MAIL_USER') ?? user,
-        pass: env('MAIL_PASSWORD') ?? pass,
-      },
-    });
+      this.transporter = createTransport({
+        host: env('MAIL_HOST') ?? 'smtp.gmail.com',
+        port: env('MAIL_PORT') ?? 587,
+        secure: env('MAIL_PORT') === 465 ? true : false,
+        auth: {
+          user: env('MAIL_USER') ?? user,
+          pass: env('MAIL_PASSWORD') ?? pass,
+        },
+      });
+    } catch (error) {
+      throw new Error('Failed to setup mail service');
+    }
   }
 }

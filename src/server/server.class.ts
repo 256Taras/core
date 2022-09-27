@@ -58,7 +58,11 @@ export class Server {
     private translator: Translator,
   ) {
     (async () => {
-      await this.mailer.setup();
+      try {
+        await this.mailer.setup();
+      } catch (error) {
+        await this.handler.handleError(error as Error);
+      }
     })();
   }
 
