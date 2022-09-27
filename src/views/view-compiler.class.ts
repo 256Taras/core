@@ -183,7 +183,7 @@ export class ViewCompiler {
     for (const match of matches) {
       this.html = this.html.replace(
         match[0],
-        `<input type="hidden" name="_token" value="${token}">`,
+        `<input type="hidden" name="_csrf" value="${token}">`,
       );
     }
   }
