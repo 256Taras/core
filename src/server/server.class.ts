@@ -21,7 +21,6 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.class';
-import { Mailer } from '../mailer/mailer.class';
 import { Router } from '../router/router.class';
 import { Session } from '../session/session.class';
 import { Translator } from '../translator/translator.class';
@@ -50,21 +49,12 @@ export class Server {
     private encrypter: Encrypter,
     private handler: Handler,
     private logger: Logger,
-    private mailer: Mailer,
     private request: Request,
     private response: Response,
     private router: Router,
     private session: Session,
     private translator: Translator,
-  ) {
-    (async () => {
-      try {
-        await this.mailer.setup();
-      } catch (error) {
-        await this.handler.handleError(error as Error);
-      }
-    })();
-  }
+  ) {}
 
   private registerHandlers(): void {
     this.instance.setErrorHandler(async (error) => {

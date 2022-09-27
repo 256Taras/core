@@ -7,6 +7,22 @@ import { MailData } from './interfaces/mail-data.interface';
 export class Mailer {
   private transporter: Transporter;
 
+  constructor() {
+    try {
+      this.transporter = createTransport({
+        host: env('MAIL_HOST') ?? 'smtp.gmail.com',
+        port: env('MAIL_PORT') ?? 587,
+        secure: env('MAIL_PORT') === 465 ? true : false,
+        auth: {
+          user: env('MAIL_ADDRESS'),
+          pass: env('MAIL_PASSWORD'),
+        },
+      });
+    } catch (error) {
+      throw new Error('Failed to setup mail service');
+    }
+  }
+
   public async send(data: MailData): Promise<string> {
     const { to, subject, text, html } = data;
 
@@ -19,23 +35,5 @@ export class Mailer {
     });
 
     return info.messageId;
-  }
-
-  public async setup(): Promise<void> {
-    try {
-      const { user, pass } = await createTestAccount();
-
-      this.transporter = createTransport({
-        host: env('MAIL_HOST') ?? 'smtp.gmail.com',
-        port: env('MAIL_PORT') ?? 587,
-        secure: env('MAIL_PORT') === 465 ? true : false,
-        auth: {
-          user: env('MAIL_USER') ?? user,
-          pass: env('MAIL_PASSWORD') ?? pass,
-        },
-      });
-    } catch (error) {
-      throw new Error('Failed to setup mail service');
-    }
   }
 }
