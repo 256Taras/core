@@ -54,9 +54,11 @@ export class Logger {
   }
 
   public error(data: string, type = 'error'): void {
-    const output = `\n${chalk.bgHex(this.colorRed).black(
-      ' ' + type.toUpperCase() + ' ',
-    )} ${chalk.bold.hex(this.colorRed)(data)}\n`;
+    const output = `\n${chalk
+      .bgHex(this.colorRed)
+      .black(' ' + type.toUpperCase() + ' ')} ${chalk.bold.hex(this.colorRed)(
+      data,
+    )}\n`;
 
     if (this.enabled) {
       console.error(output);

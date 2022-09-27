@@ -64,7 +64,7 @@ export class Response {
   }
 
   public async csrfToken(): Promise<string | null> {
-    const token = await this.instance?.generateCsrf() ?? null;
+    const token = (await this.instance?.generateCsrf()) ?? null;
 
     return token;
   }

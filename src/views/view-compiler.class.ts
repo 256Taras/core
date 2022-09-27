@@ -2,10 +2,10 @@ import { existsSync } from 'node:fs';
 import * as constants from '../constants';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
-import { csrfToken } from '../utils/functions/csrf-token.function';
 import { inject } from '../injector/functions/inject.function';
 import { session } from '../session/functions/session.function';
 import { trans } from '../translator/functions/trans.function';
+import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { readJson } from '../utils/functions/read-json.function';
 
@@ -165,7 +165,8 @@ export class ViewCompiler {
   }
 
   private parseJsonDirectives(): void {
-    const matches = this.html.matchAll(/\[json *?\((.*?),? *?(true|false)?\)\]/g) ?? [];
+    const matches =
+      this.html.matchAll(/\[json *?\((.*?),? *?(true|false)?\)\]/g) ?? [];
 
     for (const match of matches) {
       const value = match[1];
@@ -174,7 +175,11 @@ export class ViewCompiler {
       const renderFunction = this.getRenderFunction(`return ${value};`);
       const printRenderFunction = this.getRenderFunction(`return ${prettyPrint};`);
 
-      const json = JSON.stringify(renderFunction<object>(), undefined, printRenderFunction<boolean>() ? 2 : 0);
+      const json = JSON.stringify(
+        renderFunction<object>(),
+        undefined,
+        printRenderFunction<boolean>() ? 2 : 0,
+      );
 
       this.html = this.html.replace(match[0], json);
     }
@@ -296,7 +301,10 @@ export class ViewCompiler {
     }
   }
 
-  public async compile(html: string, data: Record<string, any> = {}): Promise<string> {
+  public async compile(
+    html: string,
+    data: Record<string, any> = {},
+  ): Promise<string> {
     this.data = data;
     this.html = html;
     this.rawContent = [];
