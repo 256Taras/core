@@ -16,6 +16,7 @@ export class ViewCompiler {
   private html: string;
 
   private functions = {
+    csrfToken,
     inject,
     session,
     trans,
