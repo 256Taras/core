@@ -27,22 +27,20 @@ export class Handler {
 
     let file = fileMatch ? fileURLToPath(fileMatch[1]) : '<anonymous>';
 
-    file = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1);
+    file = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1).replaceAll('\\', '/');
 
     const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 
     if (isAppFile) {
       file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
-    } else {
-      this.logger.error(file, 'file');
 
+      this.logger.error(file, 'in file');
+    } else {
       file = `${
         (await readJson(`${fileURLToPath(import.meta.url)}/../../../package.json`))
           .name
       } package file`;
     }
-
-    file = file.replaceAll('\\', '/');
 
     return {
       caller,
@@ -72,32 +70,34 @@ export class Handler {
       return;
     }
 
-    if (!env<boolean>('DEVELOPMENT')) {
-      const customTemplatePath = `views/errors/${statusCode}.html`;
+    if (env<boolean>('DEVELOPMENT')) {
+      const { caller, file } = await this.getErrorStack(error);
 
-      const file = existsSync(customTemplatePath)
+      const customViewTemplate = `views/errors/${statusCode}.html`;
+
+      const view = existsSync(customViewTemplate)
         ? `views/errors/${statusCode}`
-        : `${fileURLToPath(import.meta.url)}/../../../views/http`;
+        : `${fileURLToPath(import.meta.url)}/../../../views/error`;
 
-      this.response.render(file, data);
+      await this.response.render(view, {
+        message,
+        caller,
+        file,
+        statusCode,
+        method: this.request.method(),
+        route: this.request.url(),
+      });
+
+      return;
     }
 
-    const { caller, file } = await this.getErrorStack(error);
+    const customTemplatePath = `views/errors/${statusCode}.html`;
 
-    const customViewTemplate = `views/errors/${statusCode}.html`;
-
-    const view = existsSync(customViewTemplate)
+    const file = existsSync(customTemplatePath)
       ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../views/error`;
+      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
-    this.response.render(view, {
-      message,
-      caller,
-      file,
-      statusCode,
-      method: this.request.method(),
-      route: this.request.url(),
-    });
+    await this.response.render(file, data);
   }
 
   public handleNotFound(): void {
