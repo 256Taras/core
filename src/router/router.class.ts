@@ -108,7 +108,7 @@ export class Router {
           this.response.send(content);
       }
     } catch (error) {
-      this.handler.handleError(error as Error);
+      await this.handler.handleError(error as Error);
     }
   }
 }
