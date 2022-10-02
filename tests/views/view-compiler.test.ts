@@ -5,7 +5,7 @@ import { ViewCompiler } from '../../src/views/view-compiler.class';
 describe('ViewCompiler class', () => {
   const compiler = inject(ViewCompiler);
 
-  it('correctly compiles template', () => {
+  it('correctly compiles template', async () => {
     const template = '[if condition]{message}[/if]';
 
     const data = {
@@ -13,6 +13,8 @@ describe('ViewCompiler class', () => {
       condition: true,
     };
 
-    expect(compiler.compile(template, data)).toBe(data.message);
+    const compiled = await compiler.compile(template, data);
+
+    expect(compiled).toBe(data.message);
   });
 });

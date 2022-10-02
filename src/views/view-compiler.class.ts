@@ -14,6 +14,8 @@ import { readJson } from '../utils/functions/read-json.function';
 export class ViewCompiler {
   private data: Record<string, any> = {};
 
+  private file: string | null;
+
   private html: string;
 
   private functions = {
@@ -53,7 +55,7 @@ export class ViewCompiler {
     const matches = this.html.matchAll(/\{\{(@?)(.*?)\}\}/g) ?? [];
 
     for (const match of matches) {
-      const value = match[2];
+      const value = match[2].trim();
 
       const renderFunction = this.getRenderFunction(
         `return ${
@@ -87,17 +89,17 @@ export class ViewCompiler {
       const variableName = match[1];
 
       let result = '';
-      let counter = 0;
 
-      [...iterable].map((item) => {
+      [...iterable].map((item, index) => {
         let content = match[4];
 
         const renderScopeVariables = {
           [variableName]: item,
-          $first: counter === 0,
-          $last: counter === Object.keys(iterable).length - 1,
-          $even: counter % 2 === 0,
-          $odd: counter % 2 === 1,
+          $first: index === 0,
+          $index: index,
+          $last: index === Object.keys(iterable).length - 1,
+          $even: index % 2 === 0,
+          $odd: index % 2 === 1,
         };
 
         const renderMatches = content.matchAll(/\{(@?)(.*?)\}/g);
@@ -116,8 +118,6 @@ export class ViewCompiler {
         }
 
         result += content;
-
-        counter += 1;
       });
 
       this.html = this.html.replace(match[0], result);
@@ -171,18 +171,19 @@ export class ViewCompiler {
 
     for (const match of matches) {
       const value = match[1];
-
       const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const file = `dist/app/views/${renderFunction<string>()}.html`;
+      const partial = renderFunction<string>();
+
+      const file = `${this.file ? this.file + '/..' : 'dist/app/views'}/${partial}.html`;
 
       if (!existsSync(file)) {
-        throw new Error(`Template partial '${file}' does not exist`);
+        throw new Error(`Template partial '${partial}' does not exist`);
       }
 
       const fileContent = await readFile(file, 'utf-8');
 
-      const compiledPartial = await this.compile(fileContent, this.data);
+      const compiledPartial = await this.compile(fileContent, this.data, null, true);
 
       this.html = this.html.replace(
         match[0],
@@ -331,9 +332,12 @@ export class ViewCompiler {
   public async compile(
     html: string,
     data: Record<string, any> = {},
+    file: string | null = null,
+    isPartial = false,
   ): Promise<string> {
     this.data = data;
     this.html = html;
+    this.file = file;
     this.rawContent = [];
 
     this.parseRawDirectives();

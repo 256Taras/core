@@ -148,7 +148,7 @@ export class Response {
 
     const fileContent = readFileSync(file);
 
-    const html = await this.viewCompiler.compile(fileContent.toString(), data);
+    const html = await this.viewCompiler.compile(fileContent.toString(), data, file);
 
     this.send(html);
 
