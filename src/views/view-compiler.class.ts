@@ -1,4 +1,5 @@
 import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import * as constants from '../constants';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
@@ -48,7 +49,7 @@ export class ViewCompiler {
     };
   }
 
-  private parseDataRenders(): void {
+  private parseDataDisplays(): void {
     const matches = this.html.matchAll(/\{\{(@?)(.*?)\}\}/g) ?? [];
 
     for (const match of matches) {
@@ -162,6 +163,31 @@ export class ViewCompiler {
       }
 
       this.html = this.html.replace(match[0], match[6]);
+    }
+  }
+
+  private async parseIncludeDirectives(): Promise<void> {
+    const matches = this.html.matchAll(/\[include *?\((.*?)\)\]/g) ?? [];
+
+    for (const match of matches) {
+      const value = match[1];
+
+      const renderFunction = this.getRenderFunction(`return ${value};`);
+
+      const file = `dist/app/views/${renderFunction<string>()}.html`;
+
+      if (!existsSync(file)) {
+        throw new Error(`Template partial '${file}' does not exist`);
+      }
+
+      const fileContent = await readFile(file, 'utf-8');
+
+      const compiledPartial = await this.compile(fileContent, this.data);
+
+      this.html = this.html.replace(
+        match[0],
+        compiledPartial,
+      );
     }
   }
 
@@ -312,11 +338,12 @@ export class ViewCompiler {
 
     this.parseRawDirectives();
     this.parseEachDirectives();
-    this.parseDataRenders();
+    this.parseDataDisplays();
     this.parseIfElseDirectives();
     this.parseIfDirectives();
     this.parseJsonDirectives();
 
+    await this.parseIncludeDirectives();
     await this.parseTokenDirectives();
 
     this.parseMethodDirectives();
