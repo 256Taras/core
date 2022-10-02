@@ -10,7 +10,6 @@ import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
 import { unlink, writeFile } from 'node:fs/promises';
-import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -275,31 +274,11 @@ export class Server {
       this.router.registerRoutes(this.instance);
       this.registerHandlers();
 
-      const testServer = createServer();
-      const originalPort = port;
+      await this.instance.listen({ port, host });
 
-      testServer.once('error', () => {
-        port += 1;
-
-        this.logger.warn(
-          `Port ${originalPort} is not available. Server will listen at port ${port}`,
-        );
-
-        testServer.close();
-        testServer.listen(port);
-      });
-
-      testServer.once('listening', async () => {
-        testServer.close();
-
-        await this.instance.listen({ port, host });
-
-        if (env<boolean>('DEVELOPMENT')) {
-          this.setupDevelopmentEnvironment(port);
-        }
-      });
-
-      testServer.listen(port);
+      if (env<boolean>('DEVELOPMENT')) {
+        this.setupDevelopmentEnvironment(port);
+      }
     } catch (error) {
       await this.handler.handleError(error as Error);
     }

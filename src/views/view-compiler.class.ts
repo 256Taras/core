@@ -49,7 +49,7 @@ export class ViewCompiler {
   }
 
   private parseDataRenders(): void {
-    const matches = this.html.matchAll(/\{(@?)(.*?)\}/g) ?? [];
+    const matches = this.html.matchAll(/\{\{(@?)(.*?)\}\}/g) ?? [];
 
     for (const match of matches) {
       const value = match[2];

@@ -6,7 +6,6 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Logger } from '../logger/logger.class';
 import { env } from '../utils/functions/env.function';
-import { readJson } from '../utils/functions/read-json.function';
 import { StackFileData } from './interfaces/stack-file-data.interface';
 
 @Service()
@@ -19,27 +18,31 @@ export class Handler {
 
   private async getErrorStack(error: Error): Promise<StackFileData> {
     const stack = error.stack ?? 'Error\n    at <anonymous>:1:1';
+
     const line = stack.split('\n')[1];
 
     const callerData = line.slice(line.indexOf('at ') + 2, line.length);
     const caller = callerData.split('(')[0];
     const fileMatch = callerData.match(/\((.*?)\)/);
 
-    let file = fileMatch ? fileURLToPath(fileMatch[1]) : '<anonymous>';
+    let file = '';
 
-    file = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1).replaceAll('\\', '/');
+    try {
+      file = fileMatch ? fileURLToPath(fileMatch[1]) : '<anonymous>';
 
-    const isAppFile = !file.includes('node_modules') && !file.includes('/core');
+      file = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1).replaceAll('\\', '/');
 
-    if (isAppFile) {
-      file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
+      const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 
-      this.logger.error(file, 'in file');
-    } else {
-      file = `${
-        (await readJson(`${fileURLToPath(import.meta.url)}/../../../package.json`))
-          .name
-      } package file`;
+      if (isAppFile) {
+        file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
+
+        this.logger.error(file, 'in file');
+      } else {
+        file = '@northle/core package file';
+      }
+    } catch (err) {
+      file = 'unknown';
     }
 
     return {
