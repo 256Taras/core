@@ -54,33 +54,41 @@ export class Logger {
   }
 
   public error(data: string, type = 'error'): void {
+    if (!this.enabled) {
+      return;
+    }
+
     const output = `\n${chalk
       .bgHex(this.colorRed)
-      .black(' ' + type.toUpperCase() + ' ')} ${chalk.bold.hex(this.colorRed)(
+      .black(` ${type.toUpperCase()} `)} ${chalk.bold.hex(this.colorRed)(
       data,
     )}\n`;
 
-    if (this.enabled) {
-      console.error(output);
-    }
+    console.error(output);
   }
 
   public info(data: string, type = 'info'): void {
+    if (!this.enabled) {
+      return;
+    }
+
     const output = `\n${chalk.bgGreen.black(
       ' ' + type.toUpperCase() + ' ',
     )} ${chalk.bold.green(data)}\n`;
 
-    if (this.enabled) {
-      console.log(output);
-    }
+    console.log(output);
   }
 
   public log(data: string, type = 'log', additionalData = ''): void {
+    if (!this.enabled) {
+      return;
+    }
+
     const day = this.getDay();
     const time = this.getTime();
 
     const timestamp = `${chalk.gray(
-      '[' + chalk.white(type.charAt(0).toUpperCase() + type.slice(1)) + ']',
+      `[${chalk.white(type.charAt(0).toUpperCase() + type.slice(1))}]${' '.repeat(7 - type.length)}`,
     )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
     const mainOutput = this.truncate(data);
@@ -90,20 +98,20 @@ export class Logger {
 
     const dots = this.renderDots(timestamp + mainOutput + type);
 
-    if (this.enabled) {
-      console.log(left, dots, right);
-    }
+    console.log(left, dots, right);
   }
 
   public warn(data: string, type = 'warning'): void {
+    if (!this.enabled) {
+      return;
+    }
+
     const output = `\n${chalk
       .bgHex(this.colorYellow)
       .black(' ' + type.toUpperCase() + ' ')} ${chalk.bold.hex(this.colorYellow)(
       data,
     )}\n`;
 
-    if (this.enabled) {
-      console.warn(output);
-    }
+    console.warn(output);
   }
 }
