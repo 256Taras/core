@@ -30,7 +30,10 @@ export class Handler {
     try {
       file = fileMatch ? fileURLToPath(fileMatch[1]) : '<anonymous>';
 
-      file = file.replace(file.replace(/([^:]*:){2}/, ''), '').slice(0, -1).replaceAll('\\', '/');
+      file = file
+        .replace(file.replace(/([^:]*:){2}/, ''), '')
+        .slice(0, -1)
+        .replaceAll('\\', '/');
 
       const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 

@@ -175,7 +175,9 @@ export class ViewCompiler {
 
       const partial = renderFunction<string>();
 
-      const file = `${this.file ? this.file + '/..' : 'dist/app/views'}/${partial}.html`;
+      const file = `${
+        this.file ? this.file + '/..' : 'dist/app/views'
+      }/${partial}.html`;
 
       if (!existsSync(file)) {
         throw new Error(`Template partial '${partial}' does not exist`);
@@ -185,10 +187,7 @@ export class ViewCompiler {
 
       const compiledPartial = await this.compile(fileContent, this.data, null, true);
 
-      this.html = this.html.replace(
-        match[0],
-        compiledPartial,
-      );
+      this.html = this.html.replace(match[0], compiledPartial);
     }
   }
 

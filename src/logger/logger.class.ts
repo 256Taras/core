@@ -60,9 +60,7 @@ export class Logger {
 
     const output = `\n${chalk
       .bgHex(this.colorRed)
-      .black(` ${type.toUpperCase()} `)} ${chalk.bold.hex(this.colorRed)(
-      data,
-    )}\n`;
+      .black(` ${type.toUpperCase()} `)} ${chalk.bold.hex(this.colorRed)(data)}\n`;
 
     console.error(output);
   }
@@ -88,7 +86,9 @@ export class Logger {
     const time = this.getTime();
 
     const timestamp = `${chalk.gray(
-      `[${chalk.white(type.charAt(0).toUpperCase() + type.slice(1))}]${' '.repeat(7 - type.length)}`,
+      `[${chalk.white(type.charAt(0).toUpperCase() + type.slice(1))}]${' '.repeat(
+        7 - type.length,
+      )}`,
     )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
     const mainOutput = this.truncate(data);
