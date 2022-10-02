@@ -37,7 +37,7 @@ export class ServerDevCommand {
     let childProcess = fork(entryFile, processOptions);
 
     const restartProcess = debounce(() => {
-      info('Restarting the server...');
+      info('Starting / restarting development server...');
 
       childProcess.kill();
 
