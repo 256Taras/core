@@ -102,7 +102,7 @@ export class ViewCompiler {
           $odd: index % 2 === 1,
         };
 
-        const renderMatches = content.matchAll(/\{(@?)(.*?)\}/g);
+        const renderMatches = content.matchAll(/\{\{(@?)(.*?)\}\}/g);
 
         for (const renderMatch of renderMatches) {
           const renderValue = renderMatch[2];
