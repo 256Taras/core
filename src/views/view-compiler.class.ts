@@ -85,7 +85,7 @@ export class ViewCompiler {
       const value = match[2];
       const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const iterable: unknown[] = renderFunction();
+      const iterable = renderFunction<unknown[]>();
       const variableName = match[1];
 
       let result = '';
@@ -132,7 +132,7 @@ export class ViewCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const condition: boolean = renderFunction();
+      const condition = renderFunction<boolean>();
 
       if (condition) {
         this.html = this.html.replace(match[0], match[3]);
@@ -154,7 +154,7 @@ export class ViewCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const condition: boolean = renderFunction();
+      const condition = renderFunction<boolean>();
 
       if (condition) {
         this.html = this.html.replace(match[0], match[3]);
