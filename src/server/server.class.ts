@@ -21,7 +21,7 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.class';
-import { Authorizer } from '../main';
+import { Authorizer } from '../websocket/interfaces/authorizer.nterface';
 import { Router } from '../router/router.class';
 import { Session } from '../session/session.class';
 import { Translator } from '../translator/translator.class';
