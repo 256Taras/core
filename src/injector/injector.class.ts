@@ -24,8 +24,8 @@ export class Injector {
     return this.cachedInstances.has(target);
   }
 
-  public static resolve<T>(target: Constructor<T>): T | never {
-    if (this.has(target)) {
+  public static resolve<T>(target: Constructor<T>, newInstance = false): T | never {
+    if (!newInstance && this.has(target)) {
       return this.cachedInstances.get(target);
     }
 

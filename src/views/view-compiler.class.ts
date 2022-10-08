@@ -14,7 +14,7 @@ import { readJson } from '../utils/functions/read-json.function';
 export class ViewCompiler {
   private data: Record<string, any> = {};
 
-  private file: string | null;
+  private file?: string;
 
   private html: string;
 
@@ -99,11 +99,11 @@ export class ViewCompiler {
 
           const renderScopeVariables = {
             [variableName]: item,
+            $even: index % 2 === 0,
             $first: index === 0,
             $index: iterator,
             $key: index,
             $last: index === Object.keys(iterable).length - 1,
-            $even: index % 2 === 0,
             $odd: index % 2 === 1,
           };
 
@@ -183,16 +183,17 @@ export class ViewCompiler {
       const partial = renderFunction<string>();
 
       const file = `${
-        this.file ? this.file + '/..' : 'dist/app/views'
+        this.file ? `${this.file}/..` : 'dist/app/views'
       }/${partial}.html`;
 
       if (!existsSync(file)) {
         throw new Error(`Template partial '${partial}' does not exist`);
       }
 
-      const fileContent = await readFile(file, 'utf-8');
+      const compiler = inject(ViewCompiler, true);
 
-      const compiledPartial = await this.compile(fileContent, this.data, null, true);
+      const fileContent = await readFile(file, 'utf-8');
+      const compiledPartial = await compiler.compile(fileContent, this.data);
 
       this.html = this.html.replace(match[0], compiledPartial);
     }
@@ -338,8 +339,7 @@ export class ViewCompiler {
   public async compile(
     html: string,
     data: Record<string, any> = {},
-    file: string | null = null,
-    isPartial = false,
+    file?: string,
   ): Promise<string> {
     this.data = data;
     this.html = html;
