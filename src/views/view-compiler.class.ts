@@ -89,35 +89,42 @@ export class ViewCompiler {
       const variableName = match[1];
 
       let result = '';
+      let iterator = 0;
 
-      [...iterable].map((item, index) => {
-        let content = match[4];
+      Object.entries(iterable).map(([key, item]) => {
+        if (Object.hasOwn(iterable, key)) {
+          const index = JSON.parse(`"${key}"`);
 
-        const renderScopeVariables = {
-          [variableName]: item,
-          $first: index === 0,
-          $index: index,
-          $last: index === Object.keys(iterable).length - 1,
-          $even: index % 2 === 0,
-          $odd: index % 2 === 1,
-        };
+          let content = match[4];
 
-        const renderMatches = content.matchAll(/\{\{(@?)(.*?)\}\}/g);
+          const renderScopeVariables = {
+            [variableName]: item,
+            $first: index === 0,
+            $index: iterator,
+            $key: index,
+            $last: index === Object.keys(iterable).length - 1,
+            $even: index % 2 === 0,
+            $odd: index % 2 === 1,
+          };
 
-        for (const renderMatch of renderMatches) {
-          const renderValue = renderMatch[2];
+          const renderMatches = content.matchAll(/\{\{(@?)(.*?)\}\}/g);
 
-          const renderFn = this.getRenderFunction(
-            `return ${renderValue};`,
-            renderScopeVariables,
-          );
+          for (const renderMatch of renderMatches) {
+            const renderValue = renderMatch[2];
 
-          const renderResult = renderFn(...Object.values(renderScopeVariables));
+            const renderFn = this.getRenderFunction(
+              `return ${renderValue};`,
+              renderScopeVariables,
+            );
 
-          content = content.replace(renderMatch[0], String(renderResult));
+            const renderResult = renderFn(...Object.values(renderScopeVariables));
+
+            content = content.replace(renderMatch[0], String(renderResult));
+          }
+
+          result += content;
+          iterator += 1;
         }
-
-        result += content;
       });
 
       this.html = this.html.replace(match[0], result);
