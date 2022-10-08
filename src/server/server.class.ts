@@ -1,3 +1,4 @@
+import { Reflection as Reflect } from '@abraham/reflection';
 import cookieMiddleware from '@fastify/cookie';
 import corsMiddleware from '@fastify/cors';
 import csrfMiddleware from '@fastify/csrf-protection';
@@ -20,6 +21,7 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.class';
+import { Authorizer } from '../main';
 import { Router } from '../router/router.class';
 import { Session } from '../session/session.class';
 import { Translator } from '../translator/translator.class';
@@ -28,6 +30,7 @@ import { readJson } from '../utils/functions/read-json.function';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
+import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
 
 @Service()
@@ -52,6 +55,7 @@ export class Server {
     private response: Response,
     private router: Router,
     private session: Session,
+    private socketEmitter: SocketEmitter,
     private translator: Translator,
   ) {}
 
@@ -190,7 +194,7 @@ export class Server {
       const envFile = options.config?.envFile ?? '.env';
 
       if (!existsSync(envFile)) {
-        throw new Error('Environment configuration file is missing');
+        throw new Error('Environment configuration file not found');
       }
 
       configDotenv({
@@ -216,7 +220,11 @@ export class Server {
       options.modules.map((module: Constructor) => {
         const instance = inject(module);
 
+        const socketChannels: (Constructor & Authorizer)[] =
+          Reflect.getMetadata('socketChannels', module) ?? [];
+
         this.modules.push(instance);
+        this.socketEmitter.registerChannels(socketChannels);
       });
 
       this.translator.setLocale(options.config?.locale);

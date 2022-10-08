@@ -6,7 +6,7 @@ import { ModuleData } from '../interfaces/module-data.interface';
 export const Module = (data?: ModuleData): ClassDecorator<any> => {
   return (target: Constructor) => {
     Reflect.defineMetadata('controllers', data?.controllers ?? [], target);
-    Reflect.defineMetadata('channels', data?.channels ?? [], target);
+    Reflect.defineMetadata('socketChannels', data?.socketChannels ?? [], target);
 
     return target;
   };

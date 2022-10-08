@@ -3,12 +3,13 @@ import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.class';
 import { Server } from '../server/server.class';
+import { Channel } from './types/channel.type';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Authorizer } from './interfaces/authorizer.nterface';
 
 @Service()
 export class SocketEmitter {
-  private channels: (Authorizer & { namePattern: RegExp })[] = [];
+  private channels: Channel[] = [];
 
   private socketServer: SocketServer;
 
@@ -32,7 +33,7 @@ export class SocketEmitter {
     });
   }
 
-  public registerChannels(channels: Authorizer[]): void {
+  public registerChannels(channels: (Constructor & Authorizer)[]): void {
     channels.forEach((channel) => {
       const instance = inject(channel as unknown as Constructor);
 
