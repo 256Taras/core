@@ -41,6 +41,7 @@ export * from './translator/translator.class';
 export * from './utils/functions/csrf-token.function';
 export * from './utils/functions/debounce.function';
 export * from './utils/functions/env.function';
+export * from './utils/functions/range.function';
 export * from './utils/functions/read-json.function';
 export * from './utils/functions/run-command.function';
 export * from './utils/interfaces/constructor.interface';

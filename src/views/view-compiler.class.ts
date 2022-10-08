@@ -8,6 +8,7 @@ import { session } from '../session/functions/session.function';
 import { trans } from '../translator/functions/trans.function';
 import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
+import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
 
 @Service()
@@ -21,6 +22,7 @@ export class ViewCompiler {
   private functions = {
     csrfToken,
     inject,
+    range,
     session,
     trans,
   };
