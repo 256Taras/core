@@ -78,7 +78,7 @@ export class ViewCompiler {
   private parseEachDirectives(): void {
     const matches =
       this.html.matchAll(
-        /\[each (.*?) in (.*)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm,
+        /\[each *?\((.*?) in (.*)\)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm,
       ) ?? [];
 
     for (const match of matches) {
