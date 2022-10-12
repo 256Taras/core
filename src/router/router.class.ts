@@ -3,6 +3,7 @@ import { Handler } from '../handler/handler.class';
 import { DownloadResponse } from '../http/download-response.class';
 import { HttpMethod } from '../http/enums/http-method.enum';
 import { JsonResponse } from '../http/json-response.class';
+import { RedirectBackResponse } from '../http/redirect-back-response.class';
 import { RedirectResponse } from '../http/redirect-response.class';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
@@ -74,11 +75,18 @@ export class Router {
           break;
         }
 
+        case content instanceof RedirectBackResponse: {
+          const { data, statusCode } = content as RedirectBackResponse;
+
+          this.response.redirectBack(data, statusCode);
+
+          break;
+        }
+
         case content instanceof RedirectResponse: {
           const { data, statusCode, url } = content as RedirectResponse;
 
-          this.response.redirect(url, data);
-          this.response.status(statusCode);
+          this.response.redirect(url, data, statusCode);
 
           break;
         }
