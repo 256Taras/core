@@ -13,7 +13,7 @@ export class Authenticator {
   ) {}
 
   public check(): boolean {
-    return this.session.data._auth;
+    return this.session.data._auth ?? false;
   }
 
   public async login(email: string, password: string): Promise<boolean> {
