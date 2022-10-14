@@ -13,6 +13,14 @@ export class Session {
     this.request.session.destroy?.();
   }
 
+  public flash<T>(key: string, value?: unknown): T | void {
+    if (value === undefined) {
+      return this.request.session[`_flash:${key}`] ?? null;
+    }
+
+    this.request.session[`_flash:${key}`] = value;
+  }
+
   public get(key: string): any {
     return this.request.session[key] ?? null;
   }

@@ -36,6 +36,7 @@ export * from './server/decorators/module.decorator';
 export * from './server/functions/create-server.function';
 export * from './server/interfaces/server-options.interface';
 export * from './server/server.class';
+export * from './session/functions/flash.function';
 export * from './session/functions/session.function';
 export * from './session/session.class';
 export * from './translator/functions/trans.function';
