@@ -89,11 +89,15 @@ export class ViewCompiler {
       const value = match[3];
       const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const iterable = renderFunction<unknown[]>();
       const variableName = match[1];
 
+      let iterable = renderFunction<unknown[]>();
       let result = '';
       let iterator = 0;
+
+      if (typeof iterable === 'number') {
+        iterable = range(iterable);
+      }
 
       Object.entries(iterable).map(([key, item]) => {
         if (Object.hasOwn(iterable, key)) {
