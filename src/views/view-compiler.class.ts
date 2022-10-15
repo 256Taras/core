@@ -79,7 +79,7 @@ export class ViewCompiler {
     }
   }
 
-  private parseEachDirectives(): void {
+  private async parseEachDirectives(): Promise<void> {
     const matches =
       this.html.matchAll(
         /\[each *?\((.*?) (in|of) (.*)\)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm,
@@ -99,13 +99,13 @@ export class ViewCompiler {
         iterable = range(iterable);
       }
 
-      Object.entries(iterable).map(([key, item]) => {
+      await Promise.all(Object.entries(iterable).map(async ([key, item]) => {
         if (Object.hasOwn(iterable, key)) {
           const index = JSON.parse(`"${key}"`);
 
           let content = match[5];
 
-          const renderScopeVariables = {
+          const scopeVariables = {
             [variableName]: item,
             $even: index % 2 === 0,
             $first: index === 0,
@@ -115,25 +115,17 @@ export class ViewCompiler {
             $odd: index % 2 === 1,
           };
 
-          const renderMatches = content.matchAll(/\{\{(@?)(.*?)\}\}/g);
+          const compiler = inject(ViewCompiler, true);
 
-          for (const renderMatch of renderMatches) {
-            const renderValue = renderMatch[2];
-
-            const renderFn = this.getRenderFunction(
-              `return ${renderValue};`,
-              renderScopeVariables,
-            );
-
-            const renderResult = renderFn(...Object.values(renderScopeVariables));
-
-            content = content.replace(renderMatch[0], String(renderResult));
-          }
+          content = await compiler.compile(content, {
+            ...this.data,
+            ...scopeVariables,
+          });
 
           result += content;
           iterator += 1;
         }
-      });
+      }));
 
       this.html = this.html.replace(match[0], result);
     }
@@ -368,7 +360,9 @@ export class ViewCompiler {
     this.rawContent = [];
 
     this.parseRawDirectives();
-    this.parseEachDirectives();
+
+    await this.parseEachDirectives();
+
     this.parseDataDisplays();
     this.parseIfElseDirectives();
     this.parseIfDirectives();
