@@ -9,16 +9,26 @@ export class Session {
     return this.request.session;
   }
 
+  public delete(key: string): void {
+    delete this.request.session[key];
+  }
+
   public destroy(): void {
     this.request.session.destroy?.();
   }
 
   public flash<T>(key: string, value?: unknown): T | void {
+    const flashKey = `_flash:${key}`;
+
     if (value === undefined) {
-      return this.request.session[`_flash:${key}`] ?? null;
+      const data = this.request.session[flashKey] ?? null;
+
+      this.delete(flashKey);
+
+      return data;
     }
 
-    this.request.session[`_flash:${key}`] = value;
+    this.request.session[flashKey] = value;
   }
 
   public get(key: string): any {
