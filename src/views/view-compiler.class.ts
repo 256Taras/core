@@ -135,6 +135,19 @@ export class ViewCompiler {
     }
   }
 
+  private parseErrorDirectives(): void {
+    const matches = this.html.matchAll(/\[error *?\((.*?)\)\]/g) ?? [];
+
+    for (const match of matches) {
+      const value = match[1];
+      const renderFunction = this.getRenderFunction(`return ${value};`);
+
+      const error = session(`_flash:errors`)?.[renderFunction<string>()] ?? null;
+
+      this.html = this.html.replace(match[0], error);
+    }
+  }
+
   private parseIfDirectives(): void {
     const matches =
       this.html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
@@ -356,6 +369,7 @@ export class ViewCompiler {
     this.parseIfElseDirectives();
     this.parseIfDirectives();
     this.parseJsonDirectives();
+    this.parseErrorDirectives();
 
     await this.parseIncludeDirectives();
     await this.parseTokenDirectives();
