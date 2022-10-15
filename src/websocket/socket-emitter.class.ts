@@ -2,7 +2,7 @@ import { Socket, Server as SocketServer } from 'socket.io';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.class';
-import { Server } from '../server/server.class';
+import { RawServerDefault } from 'fastify';
 import { Channel } from './types/channel.type';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Authorizer } from './interfaces/authorizer.nterface';
@@ -13,13 +13,7 @@ export class SocketEmitter {
 
   private socketServer: SocketServer;
 
-  constructor(private logger: Logger, private server: Server) {
-    this.socketServer = new SocketServer(this.server.$nativeHttpServer());
-
-    this.socketServer.on('connection', (socket: Socket) => {
-      this.logger.log(`Established connection: ${socket.id}`, 'socket');
-    });
-  }
+  constructor(private logger: Logger) {}
 
   public emit(event: string, channelName: string, ...data: unknown[]): void {
     this.channels.forEach((channel) => {
@@ -38,6 +32,14 @@ export class SocketEmitter {
       const instance = inject(channel as unknown as Constructor);
 
       this.channels.push(instance);
+    });
+  }
+
+  public setup(server: RawServerDefault): void {
+    this.socketServer = new SocketServer(server);
+
+    this.socketServer.on('connection', (socket: Socket) => {
+      this.logger.log(`Established connection: ${socket.id}`, 'socket');
     });
   }
 }

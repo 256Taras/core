@@ -179,10 +179,6 @@ export class Server {
     }
   }
 
-  public $nativeHttpServer() {
-    return this.instance.server;
-  }
-
   public async setup(options: ServerOptions): Promise<this> {
     try {
       this.options = options;
@@ -216,6 +212,8 @@ export class Server {
       if (!(options.config?.logger ?? true)) {
         this.logger.$disable();
       }
+
+      this.socketEmitter.setup(this.instance.server);
 
       options.modules.map((module: Constructor) => {
         const instance = inject(module);
