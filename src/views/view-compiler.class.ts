@@ -82,11 +82,11 @@ export class ViewCompiler {
   private parseEachDirectives(): void {
     const matches =
       this.html.matchAll(
-        /\[each *?\((.*?) in (.*)\)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm,
+        /\[each *?\((.*?) (in|of) (.*)\)\](\n|\r\n)?((.*?|\s*?)*?)\[\/each\]/gm,
       ) ?? [];
 
     for (const match of matches) {
-      const value = match[2];
+      const value = match[3];
       const renderFunction = this.getRenderFunction(`return ${value};`);
 
       const iterable = renderFunction<unknown[]>();
@@ -99,7 +99,7 @@ export class ViewCompiler {
         if (Object.hasOwn(iterable, key)) {
           const index = JSON.parse(`"${key}"`);
 
-          let content = match[4];
+          let content = match[5];
 
           const renderScopeVariables = {
             [variableName]: item,
