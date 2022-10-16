@@ -99,33 +99,35 @@ export class ViewCompiler {
         iterable = range(iterable);
       }
 
-      await Promise.all(Object.entries(iterable).map(async ([key, item]) => {
-        if (Object.hasOwn(iterable, key)) {
-          const index = JSON.parse(`"${key}"`);
+      await Promise.all(
+        Object.entries(iterable).map(async ([key, item]) => {
+          if (Object.hasOwn(iterable, key)) {
+            const index = JSON.parse(`"${key}"`);
 
-          let content = match[5];
+            let content = match[5];
 
-          const scopeVariables = {
-            [variableName]: item,
-            $even: index % 2 === 0,
-            $first: index === 0,
-            $index: iterator,
-            $key: index,
-            $last: index === Object.keys(iterable).length - 1,
-            $odd: index % 2 === 1,
-          };
+            const scopeVariables = {
+              [variableName]: item,
+              $even: index % 2 === 0,
+              $first: index === 0,
+              $index: iterator,
+              $key: index,
+              $last: index === Object.keys(iterable).length - 1,
+              $odd: index % 2 === 1,
+            };
 
-          const compiler = inject(ViewCompiler, true);
+            const compiler = inject(ViewCompiler, true);
 
-          content = await compiler.compile(content, {
-            ...this.data,
-            ...scopeVariables,
-          });
+            content = await compiler.compile(content, {
+              ...this.data,
+              ...scopeVariables,
+            });
 
-          result += content;
-          iterator += 1;
-        }
-      }));
+            result += content;
+            iterator += 1;
+          }
+        }),
+      );
 
       this.html = this.html.replace(match[0], result);
     }
@@ -138,7 +140,10 @@ export class ViewCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const error = session<Record<string, string>>(`_flash:errors`)?.[renderFunction<string>()] ?? null;
+      const error =
+        session<Record<string, string>>(`_flash:errors`)?.[
+          renderFunction<string>()
+        ] ?? null;
 
       this.html = this.html.replace(match[0], error);
     }

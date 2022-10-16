@@ -1,4 +1,7 @@
-export const debounce = (callback: (...args: unknown[]) => unknown, timeout = 150) => {
+export const debounce = (
+  callback: (...args: unknown[]) => unknown,
+  timeout = 150,
+) => {
   let timer: NodeJS.Timeout;
 
   return async (...args: unknown[]) => {

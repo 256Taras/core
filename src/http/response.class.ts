@@ -139,7 +139,10 @@ export class Response {
     return this;
   }
 
-  public async render(file: string, data: Record<string, unknown> = {}): Promise<this> {
+  public async render(
+    file: string,
+    data: Record<string, unknown> = {},
+  ): Promise<this> {
     file = `${file}.html`;
 
     if (!existsSync(file)) {

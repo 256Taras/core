@@ -1,11 +1,11 @@
+import { RawServerDefault } from 'fastify';
 import { Socket, Server as SocketServer } from 'socket.io';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.class';
-import { RawServerDefault } from 'fastify';
-import { Channel } from './types/channel.type';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Authorizer } from './interfaces/authorizer.nterface';
+import { Channel } from './types/channel.type';
 
 @Service()
 export class SocketEmitter {

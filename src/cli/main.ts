@@ -31,36 +31,38 @@ const commands: Constructor<Command>[] = [
   StartProdCommand,
 ];
 
-await Promise.all(commands.map(async (command: Constructor<Command>) => {
-  const name = Reflect.getMetadata('signature', command);
+await Promise.all(
+  commands.map(async (command: Constructor<Command>) => {
+    const name = Reflect.getMetadata('signature', command);
 
-  const requiredArguments: Record<string, Parameter> =
-    Reflect.getMetadata('parameters', command) ?? {};
+    const requiredArguments: Record<string, Parameter> =
+      Reflect.getMetadata('parameters', command) ?? {};
 
-  const { values, positionals } = parseArgs({
-    args: process.argv.slice(2),
-    options: {
-      cmd: {
-        type: 'string',
+    const { values, positionals } = parseArgs({
+      args: process.argv.slice(2),
+      options: {
+        cmd: {
+          type: 'string',
+        },
+        ...requiredArguments,
       },
-      ...requiredArguments,
-    },
-    allowPositionals: true,
-  });
+      allowPositionals: true,
+    });
 
-  if (name === positionals[0]) {
-    const instance: Command = new command();
+    if (name === positionals[0]) {
+      const instance: Command = new command();
 
-    try {
-      await instance.handle(values);
-    } catch (err) {
-      error((err as Error).message);
+      try {
+        await instance.handle(values);
+      } catch (err) {
+        error((err as Error).message);
 
-      process.exit(1);
+        process.exit(1);
+      }
+
+      process.exit(0);
     }
-
-    process.exit(0);
-  }
-}));
+  }),
+);
 
 error(`Unknown command '${process.argv[2]}'`);

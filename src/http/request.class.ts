@@ -102,7 +102,7 @@ export class Request {
   }
 
   public redirectData(): Record<string, unknown> | null {
-    return this.session._redirectData as Record<string, unknown> ?? null;
+    return (this.session._redirectData as Record<string, unknown>) ?? null;
   }
 
   public secure(): boolean {

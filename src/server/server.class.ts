@@ -21,7 +21,6 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.class';
-import { Authorizer } from '../websocket/interfaces/authorizer.nterface';
 import { Router } from '../router/router.class';
 import { Session } from '../session/session.class';
 import { Translator } from '../translator/translator.class';
@@ -30,6 +29,7 @@ import { readJson } from '../utils/functions/read-json.function';
 import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
+import { Authorizer } from '../websocket/interfaces/authorizer.nterface';
 import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
 
