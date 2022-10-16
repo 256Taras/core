@@ -6,17 +6,17 @@ import { Response } from './response.class';
 
 @Service()
 export class JsonResponse extends Response {
-  private variables: Record<string, any>;
+  private variables: Record<string, unknown>;
 
   constructor(request: Request, session: Session, viewCompiler: ViewCompiler) {
     super(request, session, viewCompiler);
   }
 
-  public get data(): Record<string, any> {
+  public get data(): Record<string, unknown> {
     return this.variables;
   }
 
-  public setData(data: Record<string, any> = {}): void {
+  public setData(data: Record<string, unknown> = {}): void {
     this.variables = data;
   }
 }

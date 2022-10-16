@@ -22,11 +22,11 @@ export class Request {
     );
   }
 
-  public get body(): Record<string, any> {
-    return (this.instance?.body as Record<string, any>) ?? {};
+  public get body(): Record<string, unknown> {
+    return (this.instance?.body as Record<string, unknown>) ?? {};
   }
 
-  public get cookies(): Record<string, any> {
+  public get cookies(): Record<string, string | undefined> {
     return this.instance?.cookies ?? {};
   }
 
@@ -46,7 +46,7 @@ export class Request {
     return this.input(field) ? true : false;
   }
 
-  public get headers(): Record<string, any> {
+  public get headers(): Record<string, unknown> {
     return this.instance?.headers ?? {};
   }
 
@@ -85,8 +85,8 @@ export class Request {
     );
   }
 
-  public get params(): Record<string, any> {
-    return (this.instance?.params as Record<string, any>) ?? {};
+  public get params(): Record<string, string> {
+    return (this.instance?.params as Record<string, string>) ?? {};
   }
 
   public param(param: string): string | null {
@@ -97,12 +97,12 @@ export class Request {
     return this.instance?.protocol ?? null;
   }
 
-  public get query(): Record<string, any> {
-    return (this.instance?.query as Record<string, any>) ?? {};
+  public get query(): Record<string, string> {
+    return (this.instance?.query as Record<string, string>) ?? {};
   }
 
-  public redirectData(): Record<string, any> | null {
-    return this.session._redirectData ?? null;
+  public redirectData(): Record<string, unknown> | null {
+    return this.session._redirectData as Record<string, unknown> ?? null;
   }
 
   public secure(): boolean {

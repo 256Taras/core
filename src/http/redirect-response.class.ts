@@ -9,7 +9,7 @@ import { Response } from './response.class';
 export class RedirectResponse extends Response {
   private path: string;
 
-  private variables: Record<string, any>;
+  private variables: Record<string, unknown>;
 
   private httpStatus: StatusCode;
 
@@ -17,7 +17,7 @@ export class RedirectResponse extends Response {
     super(request, session, viewCompiler);
   }
 
-  public get data(): Record<string, any> {
+  public get data(): Record<string, unknown> {
     return this.variables;
   }
 
@@ -29,7 +29,7 @@ export class RedirectResponse extends Response {
     return this.path;
   }
 
-  public setData(data: Record<string, any> = {}): void {
+  public setData(data: Record<string, unknown> = {}): void {
     this.variables = data;
   }
 

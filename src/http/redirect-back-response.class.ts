@@ -7,7 +7,7 @@ import { Response } from './response.class';
 
 @Service()
 export class RedirectBackResponse extends Response {
-  private variables: Record<string, any>;
+  private variables: Record<string, unknown>;
 
   private httpStatus: StatusCode;
 
@@ -15,7 +15,7 @@ export class RedirectBackResponse extends Response {
     super(request, session, viewCompiler);
   }
 
-  public get data(): Record<string, any> {
+  public get data(): Record<string, unknown> {
     return this.variables;
   }
 
@@ -23,7 +23,7 @@ export class RedirectBackResponse extends Response {
     return this.httpStatus;
   }
 
-  public setData(data: Record<string, any> = {}): void {
+  public setData(data: Record<string, unknown> = {}): void {
     this.variables = data;
   }
 

@@ -4,7 +4,7 @@ import { RedirectResponse } from '../redirect-response.class';
 
 export const redirect = (
   url: string,
-  data: Record<string, any> = {},
+  data: Record<string, unknown> = {},
   status: StatusCode = StatusCode.Found,
 ) => {
   const instance = inject(RedirectResponse);

@@ -56,7 +56,7 @@ export class Response {
   public cookie(
     cookie: string,
     value: string,
-    options: Record<string, any> = {},
+    options: Record<string, unknown> = {},
   ): this {
     this.instance?.cookie(cookie, value, options);
 
@@ -104,7 +104,7 @@ export class Response {
     return this;
   }
 
-  public json(data?: Record<string, any>): this {
+  public json(data?: Record<string, unknown>): this {
     this.instance?.send(data);
 
     return this;
@@ -112,7 +112,7 @@ export class Response {
 
   public redirect(
     url: string,
-    data: Record<string, any> = {},
+    data: Record<string, unknown> = {},
     status: StatusCode = StatusCode.Found,
   ): this {
     if (!Object.keys(data).length) {
@@ -126,7 +126,7 @@ export class Response {
   }
 
   public redirectBack(
-    data: Record<string, any> = {},
+    data: Record<string, unknown> = {},
     status: StatusCode = StatusCode.Found,
   ): this {
     if (!Object.keys(data).length) {
@@ -139,7 +139,7 @@ export class Response {
     return this;
   }
 
-  public async render(file: string, data: Record<string, any> = {}): Promise<this> {
+  public async render(file: string, data: Record<string, unknown> = {}): Promise<this> {
     file = `${file}.html`;
 
     if (!existsSync(file)) {
@@ -161,7 +161,7 @@ export class Response {
     return this;
   }
 
-  public send<T = any>(data: T): this {
+  public send<T = unknown>(data: T): this {
     this.header('content-type', 'text/html; charset=utf8');
     this.instance?.send(data);
 

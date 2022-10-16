@@ -8,7 +8,7 @@ interface Data {
   parameters?: Record<string, Parameter>;
 }
 
-export const Command = (data: Data): ClassDecorator<any> => {
+export const Command = (data: Data): ClassDecorator => {
   return (target: Constructor) => {
     const { signature, parameters } = data;
 

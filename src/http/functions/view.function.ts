@@ -2,7 +2,7 @@ import { inject } from '../../injector/functions/inject.function';
 import { callerFile } from '../../utils/functions/caller-file.function';
 import { ViewResponse } from '../view-response.class';
 
-export const view = (file: string, data: Record<string, any> = {}): ViewResponse => {
+export const view = (file: string, data: Record<string, unknown> = {}): ViewResponse => {
   const caller = callerFile();
 
   if (file.startsWith('./')) {

@@ -5,7 +5,7 @@ import { HttpMethod } from './enums/http-method.enum';
 export class HttpClient {
   private async fetch<T>(
     url: string,
-    data: Record<string, any>,
+    data: Record<string, string | Blob>,
     headers: Record<string, string>,
     method: HttpMethod,
   ): Promise<T | null> {
@@ -30,9 +30,9 @@ export class HttpClient {
     }
   }
 
-  public async delete<T = any>(
+  public async delete<T>(
     url: string,
-    data: Record<string, any> = {},
+    data: Record<string, string | Blob> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
     const response = await this.fetch<T>(url, data, headers, HttpMethod.Delete);
@@ -40,9 +40,9 @@ export class HttpClient {
     return response;
   }
 
-  public async get<T = any>(
+  public async get<T>(
     url: string,
-    data: Record<string, any> = {},
+    data: Record<string, string | Blob> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
     const response = await this.fetch<T>(url, data, headers, HttpMethod.Get);
@@ -50,9 +50,9 @@ export class HttpClient {
     return response;
   }
 
-  public async options<T = any>(
+  public async options<T>(
     url: string,
-    data: Record<string, any> = {},
+    data: Record<string, string | Blob> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
     const response = await this.fetch<T>(url, data, headers, HttpMethod.Options);
@@ -60,9 +60,9 @@ export class HttpClient {
     return response;
   }
 
-  public async patch<T = any>(
+  public async patch<T>(
     url: string,
-    data: Record<string, any> = {},
+    data: Record<string, string | Blob> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
     const response = await this.fetch<T>(url, data, headers, HttpMethod.Patch);
@@ -70,9 +70,9 @@ export class HttpClient {
     return response;
   }
 
-  public async post<T = any>(
+  public async post<T>(
     url: string,
-    data: Record<string, any> = {},
+    data: Record<string, string | Blob> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
     const response = await this.fetch<T>(url, data, headers, HttpMethod.Post);
@@ -80,9 +80,9 @@ export class HttpClient {
     return response;
   }
 
-  public async put<T = any>(
+  public async put<T>(
     url: string,
-    data: Record<string, any> = {},
+    data: Record<string, string | Blob> = {},
     headers: Record<string, string> = {},
   ): Promise<T | null> {
     const response = await this.fetch<T>(url, data, headers, HttpMethod.Put);

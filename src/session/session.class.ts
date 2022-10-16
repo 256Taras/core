@@ -31,7 +31,7 @@ export class Session {
     this.request.session[flashKey] = value;
   }
 
-  public get(key: string): any {
+  public get(key: string): unknown | null {
     return this.request.session[key] ?? null;
   }
 
@@ -47,7 +47,7 @@ export class Session {
     this.request.session.reload?.();
   }
 
-  public set(name: string, value: any): void {
+  public set(name: string, value: unknown): void {
     this.request.session[name] = value;
   }
 }

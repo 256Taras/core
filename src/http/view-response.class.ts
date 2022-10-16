@@ -8,13 +8,13 @@ import { Response } from './response.class';
 export class ViewResponse extends Response {
   private path: string;
 
-  private variables: Record<string, any>;
+  private variables: Record<string, unknown>;
 
   constructor(request: Request, session: Session, viewCompiler: ViewCompiler) {
     super(request, session, viewCompiler);
   }
 
-  public get data(): Record<string, any> {
+  public get data(): Record<string, unknown> {
     return this.variables;
   }
 
@@ -22,7 +22,7 @@ export class ViewResponse extends Response {
     return this.path;
   }
 
-  public setData(data: Record<string, any> = {}): void {
+  public setData(data: Record<string, unknown> = {}): void {
     this.variables = data;
   }
 

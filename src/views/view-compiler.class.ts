@@ -138,7 +138,7 @@ export class ViewCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const error = session(`_flash:errors`)?.[renderFunction<string>()] ?? null;
+      const error = session<Record<string, string>>(`_flash:errors`)?.[renderFunction<string>()] ?? null;
 
       this.html = this.html.replace(match[0], error);
     }

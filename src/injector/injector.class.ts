@@ -2,7 +2,7 @@ import { Reflection as Reflect } from '@abraham/reflection';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 
 export class Injector {
-  private static cachedInstances: Map<Constructor, any> = new Map();
+  private static cachedInstances: Map<Constructor, unknown> = new Map();
 
   public static bind(targets: Constructor | Constructor[]): void {
     if (Array.isArray(targets)) {
@@ -26,7 +26,7 @@ export class Injector {
 
   public static resolve<T>(target: Constructor<T>, newInstance = false): T | never {
     if (!newInstance && this.has(target)) {
-      return this.cachedInstances.get(target);
+      return this.cachedInstances.get(target) as T;
     }
 
     if (

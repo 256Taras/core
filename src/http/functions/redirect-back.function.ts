@@ -3,7 +3,7 @@ import { StatusCode } from '../enums/status-code.enum';
 import { RedirectBackResponse } from '../redirect-back-response.class';
 
 export const redirectBack = (
-  data: Record<string, any> = {},
+  data: Record<string, unknown> = {},
   status: StatusCode = StatusCode.Found,
 ) => {
   const instance = inject(RedirectBackResponse);
