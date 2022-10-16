@@ -6,7 +6,7 @@ import { Command } from '../decorators/command.decorator';
   signature: 'db:migrate',
 })
 export class DbMigrateCommand {
-  public handle(): void {
+  public async handle(): Promise<void> {
     info('Running database migrations...');
 
     runCommand('npx prisma migrate dev', true);

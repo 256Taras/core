@@ -5,6 +5,7 @@ import { error } from '../logger/functions/error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { DbMigrateCommand } from './commands/db-migrate.command';
 import { KeyGenerateCommand } from './commands/key-generate.command';
+import { PreparePublishCommand } from './commands/prepare-publish.command';
 import { ServerDevCommand } from './commands/server-dev.command';
 import { StartDevCommand } from './commands/start-dev.command';
 import { StartProdCommand } from './commands/start-prod.command';
@@ -24,12 +25,13 @@ configDotenv({
 const commands: Constructor<Command>[] = [
   DbMigrateCommand,
   KeyGenerateCommand,
+  PreparePublishCommand,
   ServerDevCommand,
   StartDevCommand,
   StartProdCommand,
 ];
 
-commands.map((command: Constructor<Command>) => {
+await Promise.all(commands.map(async (command: Constructor<Command>) => {
   const name = Reflect.getMetadata('signature', command);
 
   const requiredArguments: Record<string, Parameter> =
@@ -49,6 +51,16 @@ commands.map((command: Constructor<Command>) => {
   if (name === positionals[0]) {
     const instance: Command = new command();
 
-    instance.handle(values);
+    try {
+      await instance.handle(values);
+    } catch (err) {
+      error((err as Error).message);
+
+      process.exit(1);
+    }
+
+    process.exit(0);
   }
-});
+}));
+
+error(`Unknown command '${process.argv[2]}'`);

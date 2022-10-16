@@ -10,7 +10,7 @@ import { Command } from '../decorators/command.decorator';
   signature: 'start:prod',
 })
 export class StartProdCommand {
-  public handle(): void {
+  public async handle(): Promise<void> {
     info('Starting production server...');
 
     info(

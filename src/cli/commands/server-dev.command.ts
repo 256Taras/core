@@ -12,7 +12,7 @@ import { setupStdin } from '../functions/setup-stdin.function';
   signature: 'server:dev',
 })
 export class ServerDevCommand {
-  public handle(): void {
+  public async handle(): Promise<void> {
     info(
       `Development server started ${chalk.gray(
         `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,

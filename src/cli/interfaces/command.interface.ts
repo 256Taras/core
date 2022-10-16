@@ -3,5 +3,5 @@ interface Arguments {
 }
 
 export interface Command {
-  handle(params: Arguments): void;
+  handle(params: Arguments): Promise<void>;
 }

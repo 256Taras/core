@@ -6,7 +6,7 @@ import { Command } from '../decorators/command.decorator';
   signature: 'start:dev',
 })
 export class StartDevCommand {
-  public handle(): void {
+  public async handle(): Promise<void> {
     const { result } = concurrently(['tsc --watch', 'northle server:dev'], {
       killOthers: ['failure', 'success'],
       raw: true,
