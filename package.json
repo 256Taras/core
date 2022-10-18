@@ -64,7 +64,7 @@
     "chokidar": "^3.5.3",
     "concurrently": "^7.4.0",
     "dotenv": "^16.0.3",
-    "fastify": "^4.8.1",
+    "fastify": "^4.9.2",
     "nodemailer": "^6.8.0",
     "socket.io": "^4.5.2",
     "strip-ansi": "^7.0.1",
