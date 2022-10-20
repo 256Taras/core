@@ -31,6 +31,8 @@ const commands: Constructor<Command>[] = [
   StartProdCommand,
 ];
 
+let isCommandValid = false;
+
 await Promise.all(
   commands.map(async (command: Constructor<Command>) => {
     const name = Reflect.getMetadata('signature', command);
@@ -60,9 +62,13 @@ await Promise.all(
         process.exit(1);
       }
 
-      process.exit(0);
+      isCommandValid = true;
+
+      return;
     }
   }),
 );
 
-error(`Unknown command '${process.argv[2]}'`);
+if (!isCommandValid) {
+  error(`Unknown command '${process.argv[2]}'`);
+}
