@@ -10,7 +10,7 @@ export class PreparePublishCommand {
   public async handle(): Promise<void> {
     info('Preparing package for publishing...');
 
-    runCommand('tsc', true);
+    runCommand('tsc', { showOutput: true });
 
     const cwd = process.cwd();
 

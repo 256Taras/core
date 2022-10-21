@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { runCommand } from '../../src/utils/functions/run-command.function';
 
 describe('runCommand function', () => {
-  it('runs system commands', () => {
+  it('executes system commands', () => {
     const success = runCommand('npm -v');
     const failure = runCommand('non-existing-command');
 

@@ -9,7 +9,7 @@ export class DbMigrateCommand {
   public async handle(): Promise<void> {
     info('Running database migrations...');
 
-    runCommand('npx prisma migrate dev', true);
-    runCommand('npx prisma generate', true);
+    runCommand('npx prisma migrate dev', { showOutput: true });
+    runCommand('npx prisma generate', { showOutput: true });
   }
 }
