@@ -6,29 +6,34 @@ import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Logger } from '../logger/logger.class';
 import { env } from '../utils/functions/env.function';
-import { StackFileData } from './interfaces/stack-file-data.interface';
 
 @Service()
 export class Handler {
+  private error: Error | null = null;
+
+  private caller: string | null = null;
+
+  private file: string | null = null;
+
   constructor(
     private logger: Logger,
     private request: Request,
     private response: Response,
   ) {}
 
-  private async getErrorStack(error: Error): Promise<StackFileData> {
-    const stack = error.stack ?? 'Error\n    at <anonymous>:1:1';
+  private async readErrorStack(): Promise<void> {
+    const stack = this.error?.stack ?? 'Error\n    at <anonymous>:1:1';
 
     const line = stack.split('\n')[1];
 
-    const callerData = line.slice(line.indexOf('at ') + 2, line.length);
-    const caller = callerData.split('(')[0];
-    const fileMatch = callerData.match(/\((.*?)\)/);
+    const at = line.slice(line.indexOf('at ') + 2, line.length);
+    const caller = at.split('(')[0];
+    const fileMatch = at.match(/\((.*?)\)/);
 
     let file = '';
 
     try {
-      file = fileMatch ? fileURLToPath(fileMatch[1]) : '<anonymous>';
+      file = fileMatch ? fileURLToPath(fileMatch[1]) : 'unknown';
 
       file = file
         .replace(file.replace(/([^:]*:){2}/, ''), '')
@@ -48,16 +53,18 @@ export class Handler {
       file = 'unknown';
     }
 
-    return {
-      caller,
-      file,
-    };
+    this.caller = caller;
+    this.file = file;
   }
 
   public async handleError(error: Error): Promise<void> {
+    this.error = error;
+
     const statusCode = StatusCode.InternalServerError;
 
     this.response.status(statusCode);
+
+    await this.readErrorStack();
 
     const undefinedVariableRegex = /(.*?) is not defined/;
 
@@ -82,13 +89,13 @@ export class Handler {
     }
 
     if (env<boolean>('DEVELOPMENT')) {
-      const { caller, file } = await this.getErrorStack(error);
-
       const customViewTemplate = `views/errors/${statusCode}.html`;
 
       const view = existsSync(customViewTemplate)
         ? `views/errors/${statusCode}`
         : `${fileURLToPath(import.meta.url)}/../../../views/error`;
+
+      const { caller, file } = this;
 
       await this.response.render(view, {
         message,
