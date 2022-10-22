@@ -238,9 +238,9 @@ export class ViewCompiler {
     }
   }
 
-  private async parseTokenDirectives(): Promise<void> {
+  private parseTokenDirectives(): void {
     const matches = this.html.matchAll(/\[token\]/g) ?? [];
-    const token = await csrfToken();
+    const token = csrfToken();
 
     for (const match of matches) {
       this.html = this.html.replace(
@@ -373,9 +373,9 @@ export class ViewCompiler {
     this.parseIfDirectives();
     this.parseJsonDirectives();
     this.parseErrorDirectives();
+    this.parseTokenDirectives();
 
     await this.parseIncludeDirectives();
-    await this.parseTokenDirectives();
 
     this.parseMethodDirectives();
     this.parseViteDirectives();
