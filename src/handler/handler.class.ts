@@ -116,29 +116,20 @@ export class Handler {
     await this.response.render(file, data);
   }
 
-  public handleNotFound(): void {
-    const statusCode = StatusCode.NotFound;
-
-    this.response.status(statusCode);
-
-    const data = {
-      statusCode,
-      message: 'Not Found',
-    };
-
-    if (this.request.ajax()) {
-      this.response.send(data);
-
+  public handleFatalError(error: Error): void {
+    if (error !== Object(error)) {
       return;
     }
 
-    const customViewTemplate = `views/errors/${statusCode}.html`;
+    const message = error.message.charAt(0).toUpperCase() + error.message.slice(1);
 
-    const view = existsSync(customViewTemplate)
-      ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
+    this.logger.error(message, 'fatal error');
 
-    this.response.render(view, data);
+    if (!env<boolean>('DEVELOPMENT')) {
+      process.exit(1);
+    }
+
+    this.logger.warn('In production mode process will exit on fatal errors');
   }
 
   public handleInvalidToken(): void {
@@ -166,19 +157,28 @@ export class Handler {
     this.response.render(view, data);
   }
 
-  public handleFatalError(error: Error): void {
-    if (error !== Object(error)) {
+  public handleNotFound(): void {
+    const statusCode = StatusCode.NotFound;
+
+    this.response.status(statusCode);
+
+    const data = {
+      statusCode,
+      message: 'Not Found',
+    };
+
+    if (this.request.ajax()) {
+      this.response.send(data);
+
       return;
     }
 
-    const message = error.message.charAt(0).toUpperCase() + error.message.slice(1);
+    const customViewTemplate = `views/errors/${statusCode}.html`;
 
-    this.logger.error(message, 'fatal error');
+    const view = existsSync(customViewTemplate)
+      ? `views/errors/${statusCode}`
+      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
-    if (!env<boolean>('DEVELOPMENT')) {
-      process.exit(1);
-    }
-
-    this.logger.warn('In production mode process will exit on fatal errors');
+    this.response.render(view, data);
   }
 }
