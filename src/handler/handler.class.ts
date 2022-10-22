@@ -44,8 +44,6 @@ export class Handler {
 
       if (isAppFile) {
         file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
-
-        this.logger.error(file, 'in file');
       } else {
         file = '@northle/core package file';
       }
@@ -75,7 +73,7 @@ export class Handler {
           ' ',
         );
 
-    this.logger.error(message);
+    this.logger.error(`${message}${this.file ? ` [${this.file}]` : ''}`);
 
     const data = {
       statusCode,
