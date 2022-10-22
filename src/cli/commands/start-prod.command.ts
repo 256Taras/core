@@ -27,7 +27,7 @@ export class StartProdCommand {
 
     runCommand(
       'node --experimental-specifier-resolution=node --no-warnings dist/main',
-      true,
+      { showOutput: true },
     );
   }
 }
