@@ -1,13 +1,13 @@
-import { describe, expect, it } from 'vitest';
-import fastify from 'fastify';
+import cookieMiddleware from '@fastify/cookie';
 import csrfMiddleware from '@fastify/csrf-protection';
 import sessionMiddleware from '@fastify/session';
-import cookieMiddleware from '@fastify/cookie';
-import { csrfToken } from '../../src/utils/functions/csrf-token.function';
-import { inject } from '../../src/injector/functions/inject.function';
+import fastify from 'fastify';
+import { describe, expect, it } from 'vitest';
+import { Encrypter } from '../../src/crypto/encrypter.class';
 import { Request } from '../../src/http/request.class';
 import { Response } from '../../src/http/response.class';
-import { Encrypter } from '../../src/crypto/encrypter.class';
+import { inject } from '../../src/injector/functions/inject.function';
+import { csrfToken } from '../../src/utils/functions/csrf-token.function';
 
 describe('csrfToken function', async () => {
   const encrypter = inject(Encrypter);
@@ -31,7 +31,7 @@ describe('csrfToken function', async () => {
 
   await app.inject({
     method: 'GET',
-    url: '/'
+    url: '/',
   });
 
   it('returns CSRF token', async () => {

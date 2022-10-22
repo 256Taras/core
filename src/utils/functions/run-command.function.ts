@@ -7,7 +7,7 @@ interface Options {
 export const runCommand = (command: string, options?: Options) => {
   try {
     execSync(command, {
-      stdio: (options?.showOutput ?? false) ? 'inherit' : 'pipe',
+      stdio: options?.showOutput ?? false ? 'inherit' : 'pipe',
     });
 
     return true;
