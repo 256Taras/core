@@ -1,5 +1,6 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { ResolveOptions } from './interfaces/resolve-options.interface';
 
 export class Injector {
   private static cachedInstances: Map<Constructor, unknown> = new Map();
@@ -24,8 +25,8 @@ export class Injector {
     return this.cachedInstances.has(target);
   }
 
-  public static resolve<T>(target: Constructor<T>, newInstance = false): T | never {
-    if (!newInstance && this.has(target)) {
+  public static resolve<T>(target: Constructor<T>, options?: ResolveOptions): T | never {
+    if (!(options?.freshInstance ?? false) && this.has(target)) {
       return this.cachedInstances.get(target) as T;
     }
 

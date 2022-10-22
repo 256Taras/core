@@ -116,7 +116,7 @@ export class ViewCompiler {
               $odd: index % 2 === 1,
             };
 
-            const compiler = inject(ViewCompiler, true);
+            const compiler = inject(ViewCompiler, { freshInstance: true });
 
             content = await compiler.compile(content, {
               ...this.data,
@@ -208,7 +208,7 @@ export class ViewCompiler {
         throw new Error(`Template partial '${partial}' does not exist`);
       }
 
-      const compiler = inject(ViewCompiler, true);
+      const compiler = inject(ViewCompiler, { freshInstance: true });
 
       const fileContent = await readFile(file, 'utf-8');
       const compiledPartial = await compiler.compile(fileContent, this.data);
