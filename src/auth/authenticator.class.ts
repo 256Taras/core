@@ -13,7 +13,7 @@ export class Authenticator {
   ) {}
 
   public check(): boolean {
-    return this.session.data._auth ?? false;
+    return this.session.get('_auth') ?? false;
   }
 
   public async login(email: string, password: string): Promise<boolean> {
@@ -33,7 +33,9 @@ export class Authenticator {
       },
     });
 
-    if (user && (await this.encrypter.compareHash(password, user.password))) {
+    const passwordValid = await this.encrypter.compareHash(password, user?.password ?? '');
+
+    if (user && passwordValid) {
       this.session.set('_auth', true);
       this.session.set('_authUser', user);
 
