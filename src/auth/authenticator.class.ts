@@ -49,7 +49,7 @@ export class Authenticator {
     this.session.destroy();
   }
 
-  public user(): SchemaUser {
-    return this.session.data._authUser;
+  public user(): SchemaUser | null {
+    return this.session.get('_authUser');
   }
 }
