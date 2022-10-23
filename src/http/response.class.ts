@@ -134,7 +134,7 @@ export class Response {
     }
 
     this.instance?.status(status);
-    this.instance?.redirect(this.session.data._previousUrl);
+    this.instance?.redirect(this.session.get('_previousLocation') ?? '/');
 
     return this;
   }

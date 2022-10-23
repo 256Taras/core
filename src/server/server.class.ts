@@ -248,7 +248,7 @@ export class Server {
       });
 
       this.instance.addHook('onResponse', async (request, response) => {
-        this.session.set('_previousUrl', request.url);
+        this.session.set('_previousLocation', request.url);
 
         const endTime = process.hrtime(startTime);
 
