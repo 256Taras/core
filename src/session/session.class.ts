@@ -13,6 +13,16 @@ export class Session {
     return this.request.session;
   }
 
+  public decrement(key: string, by = 1): number {
+    if (typeof this.request.session[key] !== 'number') {
+      throw new Error(`Session value '${key}' is not a number`);
+    }
+
+    this.request.session[key] -= by;
+
+    return this.request.session[key];
+  }
+
   public delete(key: string): void {
     delete this.request.session[key];
   }
@@ -41,6 +51,16 @@ export class Session {
 
   public id(): string {
     return this.request.session.id;
+  }
+
+  public increment(key: string, by = 1): number {
+    if (typeof this.request.session[key] !== 'number') {
+      throw new Error(`Session value '${key}' is not a number`);
+    }
+
+    this.request.session[key] += by;
+
+    return this.request.session[key];
   }
 
   public regenerate(): void {
