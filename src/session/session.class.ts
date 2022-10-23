@@ -5,6 +5,10 @@ import { Service } from '../injector/decorators/service.decorator';
 export class Session {
   constructor(private request: Request) {}
 
+  public $setRequest(request: Request): void {
+    this.request = request;
+  }
+
   public get data(): Record<string, any> {
     return this.request.session;
   }

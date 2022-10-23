@@ -244,6 +244,8 @@ export class Server {
         this.request.$setInstance(request);
         this.response.$setInstance(response);
 
+        inject(Session).$setRequest(this.request);
+
         startTime = process.hrtime();
       });
 
