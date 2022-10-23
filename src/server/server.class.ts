@@ -183,8 +183,8 @@ export class Server {
     try {
       this.options = options;
 
-      process.on('uncaughtException', (error) => {
-        this.handler.handleFatalError(error);
+      process.on('uncaughtException', async (error) => {
+        await this.handler.handleFatalError(error);
       });
 
       const envFile = options.config?.envFile ?? '.env';
@@ -235,7 +235,7 @@ export class Server {
 
   public async start(
     port = env<Integer>('PORT') ?? this.defaultPort,
-    host = env('HOST') ?? this.defaultHost,
+    host = env<string>('HOST') ?? this.defaultHost,
   ): Promise<void> {
     try {
       let startTime: [number, number];

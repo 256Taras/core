@@ -45,7 +45,7 @@ export class Handler {
       if (isAppFile) {
         file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
       } else {
-        file = '@northle/core package file';
+        file = '@northle/core package';
       }
     } catch (err) {
       file = 'unknown';
@@ -116,14 +116,18 @@ export class Handler {
     await this.response.render(file, data);
   }
 
-  public handleFatalError(error: Error): void {
+  public async handleFatalError(error: Error): Promise<void> {
     if (error !== Object(error)) {
       return;
     }
 
+    this.error = error;
+
+    await this.readErrorStack();
+
     const message = error.message.charAt(0).toUpperCase() + error.message.slice(1);
 
-    this.logger.error(message, 'fatal error');
+    this.logger.error(`${message}${this.file ? ` [${this.file}]` : ''}`, 'fatal error');
 
     if (!env<boolean>('DEVELOPMENT')) {
       process.exit(1);
