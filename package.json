@@ -23,14 +23,14 @@
     ".": "./dist/main"
   },
   "bin": {
-    "northle": "bin/northle.js"
+    "app": "bin/app.js"
   },
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
     "format": "prettier \"**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint .",
-    "prepare:publish": "northle prepare:publish",
+    "prepare:publish": "app prepare:publish",
     "test": "vitest",
     "test:cov": "vitest run --coverage"
   },
