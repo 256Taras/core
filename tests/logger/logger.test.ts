@@ -1,22 +1,20 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { inject } from '../../src/injector/functions/inject.function';
 import { Logger } from '../../src/logger/logger.class';
 
 describe('Logger class', () => {
-  let instance;
+  const logger = inject(Logger);
 
-  beforeEach(() => {
-    instance = inject(Logger);
-  });
+  logger.$disable();
 
   it('exposes public property', () => {
-    expect(instance.colorYellow).toBe('#f8c377');
+    expect(logger.colorYellow).toBe('#f8c377');
   });
 
   it('exposes log methods', () => {
-    expect(instance.error('test')).toBe(undefined);
-    expect(instance.info('test')).toBe(undefined);
-    expect(instance.log('test')).toBe(undefined);
-    expect(instance.warn('test')).toBe(undefined);
+    expect(logger.error('test')).toBe(undefined);
+    expect(logger.info('test')).toBe(undefined);
+    expect(logger.log('test')).toBe(undefined);
+    expect(logger.warn('test')).toBe(undefined);
   });
 });
