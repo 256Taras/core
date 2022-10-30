@@ -8,9 +8,16 @@ import { Request } from '../../src/http/request.class';
 import { Response } from '../../src/http/response.class';
 import { inject } from '../../src/injector/functions/inject.function';
 import { Validator } from '../../src/validator/validator.class';
+import { Session } from '../../src/session/session.class';
 
 describe('Validator class', async () => {
   const encrypter = inject(Encrypter);
+  const request = inject(Request);
+  const response = inject(Response);
+
+  inject(Session).$setRequest(request);
+  inject(Validator).$setRequest(request);
+  inject(Validator).$setResponse(response);
 
   const app = fastify();
 

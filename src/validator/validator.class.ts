@@ -305,6 +305,14 @@ export class Validator {
     return true;
   }
 
+  public $setRequest(request: Request): void {
+    this.request = request;
+  }
+
+  public $setResponse(response: Response): void {
+    this.response = response;
+  }
+
   public assert(rules: ValidationAssertions, checkOnly = false): boolean {
     const ruleMapper: Record<string, any> = {
       accepted: this.validateAccepted,
