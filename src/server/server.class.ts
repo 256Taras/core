@@ -10,7 +10,7 @@ import chalk from 'chalk';
 import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
-import { unlink, writeFile } from 'node:fs/promises';
+import { unlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -26,7 +26,6 @@ import { Session } from '../session/session.class';
 import { Translator } from '../translator/translator.class';
 import { env } from '../utils/functions/env.function';
 import { readJson } from '../utils/functions/read-json.function';
-import { runCommand } from '../utils/functions/run-command.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from '../websocket/interfaces/authorizer.nterface';
@@ -134,7 +133,7 @@ export class Server {
     await this.instance.register(staticServerMiddleware, staticServerOptions);
   }
 
-  private async setupDevelopmentEnvironment(port: Integer): Promise<void> {
+  private async setupDevelopmentEnvironment(): Promise<void> {
     const requiredNodeVersion = (
       await readJson(`${fileURLToPath(import.meta.url)}/../../../package.json`)
     ).engines.node;
@@ -156,24 +155,6 @@ export class Server {
       );
 
       process.exit(1);
-    }
-
-    if (!existsSync(this.tempPath)) {
-      await writeFile(this.tempPath, 'Northle development server is running...');
-
-      const browserAliases: Record<string, string> = {
-        darwin: 'open',
-        linux: 'sensible-browser',
-        win32: 'explorer',
-      };
-
-      if (this.options.config?.dev?.openBrowser ?? true) {
-        runCommand(
-          `${
-            browserAliases[process.platform] ?? 'xdg-open'
-          } http://localhost:${port}`,
-        );
-      }
     }
   }
 
@@ -283,7 +264,7 @@ export class Server {
       await this.instance.listen({ port, host });
 
       if (env<boolean>('DEVELOPMENT')) {
-        this.setupDevelopmentEnvironment(port);
+        this.setupDevelopmentEnvironment();
       }
     } catch (error) {
       await this.handler.handleError(error as Error);

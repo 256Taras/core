@@ -4,10 +4,17 @@ import { Command } from '../decorators/command.decorator';
 
 @Command({
   signature: 'start:dev',
+  parameters: {
+    open: {
+      type: 'boolean',
+      short: 'o',
+      default: false,
+    },
+  },
 })
 export class StartDevCommand {
-  public async handle(): Promise<void> {
-    const { result } = concurrently(['tsc --watch', 'app server:dev'], {
+  public async handle(open: boolean): Promise<void> {
+    const { result } = concurrently(['tsc --watch', `app server:dev${open ? ' --open' : ''}`], {
       killOthers: ['failure', 'success'],
       raw: true,
     });

@@ -14,9 +14,6 @@ export interface ServerOptions {
       credentials: boolean;
       maxAge: Integer;
     };
-    dev?: {
-      openBrowser?: boolean;
-    };
   };
   modules: Constructor[];
 }
