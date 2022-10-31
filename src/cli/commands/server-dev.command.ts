@@ -1,9 +1,6 @@
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 import { logInfo } from '../../logger/functions/log-info.function';
 import { debounce } from '../../utils/functions/debounce.function';
 import { env } from '../../utils/functions/env.function';
@@ -22,8 +19,6 @@ import { setupStdin } from '../functions/setup-stdin.function';
   },
 })
 export class ServerDevCommand {
-  private tempPath = `${tmpdir()}/northle`;
-
   public async handle(open: boolean): Promise<void> {
     logInfo(
       `Development server started ${chalk.gray(
@@ -31,22 +26,18 @@ export class ServerDevCommand {
       )}`,
     );
 
-    if (!existsSync(this.tempPath)) {
-      await writeFile(this.tempPath, 'Northle development server is running...');
+    const browserAliases: Record<string, string> = {
+      darwin: 'open',
+      linux: 'sensible-browser',
+      win32: 'explorer',
+    };
 
-      const browserAliases: Record<string, string> = {
-        darwin: 'open',
-        linux: 'sensible-browser',
-        win32: 'explorer',
-      };
-
-      if (open) {
-        runCommand(
-          `${browserAliases[process.platform] ?? 'xdg-open'} http://localhost:${
-            env<number>('PORT') ?? 8000
-          }`,
-        );
-      }
+    if (open) {
+      runCommand(
+        `${browserAliases[process.platform] ?? 'xdg-open'} http://localhost:${
+          env<number>('PORT') ?? 8000
+        }`,
+      );
     }
 
     const entryFile = 'dist/main.js';

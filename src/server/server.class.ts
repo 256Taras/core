@@ -10,7 +10,6 @@ import chalk from 'chalk';
 import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
-import { unlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -172,18 +171,6 @@ export class Server {
 
       configDotenv({
         path: envFile,
-      });
-
-      const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
-
-      signals.map((signal) => {
-        process.on(signal, async () => {
-          if (existsSync(this.tempPath)) {
-            await unlink(this.tempPath);
-          }
-
-          process.exit();
-        });
       });
 
       if (!(options.config?.logger ?? true)) {
