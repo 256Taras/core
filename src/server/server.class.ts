@@ -10,7 +10,6 @@ import chalk from 'chalk';
 import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Encrypter } from '../crypto/encrypter.class';
@@ -42,8 +41,6 @@ export class Server {
   private modules: Constructor[] = [];
 
   private options: ServerOptions;
-
-  private tempPath = `${tmpdir()}/northle`;
 
   constructor(
     private encrypter: Encrypter,
