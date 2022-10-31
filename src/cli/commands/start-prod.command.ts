@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { platform } from 'node:os';
-import { info } from '../../logger/functions/info.function';
-import { warn } from '../../logger/functions/warn.function';
+import { logInfo } from '../../logger/functions/log-info.function';
+import { logWarning } from '../../logger/functions/log-warning.function';
 import { env } from '../../utils/functions/env.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
@@ -11,9 +11,9 @@ import { Command } from '../decorators/command.decorator';
 })
 export class StartProdCommand {
   public async handle(): Promise<void> {
-    info('Starting production server...');
+    logInfo('Starting production server...');
 
-    info(
+    logInfo(
       `Production server started ${chalk.gray(
         `[press ${chalk.white(
           (platform() === 'darwin' ? 'command' : 'ctrl') + '+c',
@@ -22,7 +22,7 @@ export class StartProdCommand {
     );
 
     if (env<boolean>('DEVELOPMENT')) {
-      warn('You are running production server in debug mode');
+      logWarning('You are running production server in debug mode');
     }
 
     runCommand(

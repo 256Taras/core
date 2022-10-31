@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
-import { info } from '../../logger/functions/info.function';
+import { logInfo } from '../../logger/functions/log-info.function';
 import { Command } from '../decorators/command.decorator';
 
 @Command({
@@ -20,6 +20,6 @@ export class KeyGenerateCommand {
       ),
     );
 
-    info('Generated new encryption key');
+    logInfo('Generated new encryption key');
   }
 }

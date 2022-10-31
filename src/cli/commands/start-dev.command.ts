@@ -1,5 +1,5 @@
 import concurrently from 'concurrently';
-import { info } from '../../logger/functions/info.function';
+import { logInfo } from '../../logger/functions/log-info.function';
 import { Command } from '../decorators/command.decorator';
 
 @Command({
@@ -21,12 +21,12 @@ export class StartDevCommand {
 
     result.then(
       () => {
-        info('Server terminated');
+        logInfo('Server terminated');
 
         process.exit(0);
       },
       () => {
-        info('Server terminated');
+        logInfo('Server terminated');
 
         process.exit(0);
       },

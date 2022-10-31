@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
-import { info } from '../../logger/functions/info.function';
+import { logInfo } from '../../logger/functions/log-info.function';
 import { debounce } from '../../utils/functions/debounce.function';
 import { env } from '../../utils/functions/env.function';
 import { runCommand } from '../../utils/functions/run-command.function';
@@ -25,7 +25,7 @@ export class ServerDevCommand {
   private tempPath = `${tmpdir()}/northle`;
 
   public async handle(open: boolean): Promise<void> {
-    info(
+    logInfo(
       `Development server started ${chalk.gray(
         `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
       )}`,
@@ -67,7 +67,7 @@ export class ServerDevCommand {
     let childProcess = fork(entryFile, processOptions);
 
     const restartProcess = debounce(() => {
-      info('Reloading development server...');
+      logInfo('Reloading development server...');
 
       childProcess.kill();
 

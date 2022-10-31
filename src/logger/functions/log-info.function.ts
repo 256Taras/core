@@ -1,8 +1,8 @@
 import { inject } from '../../injector/functions/inject.function';
 import { Logger } from '../logger.class';
 
-export const warn = (data: string, type = 'warning') => {
+export const logInfo = (data: string, type = 'info') => {
   const logger = inject(Logger);
 
-  logger.warn(data, type);
+  logger.info(data, type);
 };

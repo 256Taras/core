@@ -1,7 +1,7 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { config as configDotenv } from 'dotenv';
 import { parseArgs } from 'node:util';
-import { error } from '../logger/functions/error.function';
+import { logError } from '../logger/functions/log-error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { DbMigrateCommand } from './commands/db-migrate.command';
 import { KeyGenerateCommand } from './commands/key-generate.command';
@@ -12,8 +12,8 @@ import { StartProdCommand } from './commands/start-prod.command';
 import { Command } from './interfaces/command.interface';
 import { Parameter } from './interfaces/parameter.interface';
 
-process.on('uncaughtException', (err: Error) => {
-  error(err.message);
+process.on('uncaughtException', (error: Error) => {
+  logError(error.message);
 
   process.exit(1);
 });
@@ -53,8 +53,8 @@ await Promise.all(
 
       try {
         await instance.handle(...Object.values(values));
-      } catch (err) {
-        error((err as Error).message);
+      } catch (error) {
+        logError((error as Error).message);
 
         process.exit(1);
       }
@@ -67,5 +67,5 @@ await Promise.all(
 );
 
 if (!isCommandValid) {
-  error(`Unknown command '${process.argv[2]}'`);
+  logError(`Unknown command '${process.argv[2]}'`);
 }

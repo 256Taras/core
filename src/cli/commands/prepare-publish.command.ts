@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import { info } from '../../logger/functions/info.function';
+import { logInfo } from '../../logger/functions/log-info.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 
@@ -8,7 +8,7 @@ import { Command } from '../decorators/command.decorator';
 })
 export class PreparePublishCommand {
   public async handle(): Promise<void> {
-    info('Preparing package for publishing...');
+    logInfo('Preparing package for publishing...');
 
     runCommand('tsc', { showOutput: true });
 
@@ -32,6 +32,6 @@ export class PreparePublishCommand {
       }),
     );
 
-    info('Package is ready for publishing');
+    logInfo('Package is ready for publishing');
   }
 }

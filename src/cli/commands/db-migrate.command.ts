@@ -1,4 +1,4 @@
-import { info } from '../../logger/functions/info.function';
+import { logInfo } from '../../logger/functions/log-info.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 
@@ -7,7 +7,7 @@ import { Command } from '../decorators/command.decorator';
 })
 export class DbMigrateCommand {
   public async handle(): Promise<void> {
-    info('Running database migrations...');
+    logInfo('Running database migrations...');
 
     runCommand('npx prisma migrate dev', { showOutput: true });
     runCommand('npx prisma generate', { showOutput: true });
