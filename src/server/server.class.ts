@@ -139,8 +139,8 @@ export class Server {
       await readJson(`${fileURLToPath(import.meta.url)}/../../../package.json`)
     ).engines.node;
 
-    const satisfiesVersion = process.version.localeCompare(
-      requiredNodeVersion,
+    const satisfiesVersion = process.version.slice(1).localeCompare(
+      requiredNodeVersion.slice(2),
       undefined,
       {
         numeric: true,
@@ -150,12 +150,10 @@ export class Server {
 
     if (satisfiesVersion === -1) {
       this.logger.warn(
-        `Northle requires Node.js version ${requiredNodeVersion.slice(
+        `Northle requires NodeJS v${requiredNodeVersion.slice(
           2,
-        )} or greater`,
+        )} or greater [update on https://nodejs.org]`,
       );
-
-      this.logger.warn('Update Node.js on https://nodejs.org');
 
       process.exit(1);
     }
