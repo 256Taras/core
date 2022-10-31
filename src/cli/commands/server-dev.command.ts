@@ -1,15 +1,15 @@
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { logInfo } from '../../logger/functions/log-info.function';
 import { debounce } from '../../utils/functions/debounce.function';
 import { env } from '../../utils/functions/env.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 import { setupStdin } from '../functions/setup-stdin.function';
-import { existsSync } from 'node:fs';
-import { writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
 
 @Command({
   signature: 'server:dev',
@@ -42,9 +42,9 @@ export class ServerDevCommand {
 
       if (open) {
         runCommand(
-          `${
-            browserAliases[process.platform] ?? 'xdg-open'
-          } http://localhost:${env<number>('PORT') ?? 8000}`,
+          `${browserAliases[process.platform] ?? 'xdg-open'} http://localhost:${
+            env<number>('PORT') ?? 8000
+          }`,
         );
       }
     }

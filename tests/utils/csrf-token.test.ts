@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { Encrypter } from '../../src/crypto/encrypter.class';
 import { Request } from '../../src/http/request.class';
 import { Response } from '../../src/http/response.class';
-import { Session } from '../../src/session/session.class';
 import { inject } from '../../src/injector/functions/inject.function';
+import { Session } from '../../src/session/session.class';
 import { csrfToken } from '../../src/utils/functions/csrf-token.function';
 
 describe('csrfToken function', async () => {

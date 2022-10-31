@@ -25,7 +25,10 @@ export class Injector {
     return this.cachedInstances.has(target);
   }
 
-  public static resolve<T>(target: Constructor<T>, options?: ResolveOptions): T | never {
+  public static resolve<T>(
+    target: Constructor<T>,
+    options?: ResolveOptions,
+  ): T | never {
     if (!(options?.freshInstance ?? false) && this.has(target)) {
       return this.cachedInstances.get(target) as T;
     }

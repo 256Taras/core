@@ -138,14 +138,12 @@ export class Server {
       await readJson(`${fileURLToPath(import.meta.url)}/../../../package.json`)
     ).engines.node;
 
-    const satisfiesVersion = process.version.slice(1).localeCompare(
-      requiredNodeVersion.slice(2),
-      undefined,
-      {
+    const satisfiesVersion = process.version
+      .slice(1)
+      .localeCompare(requiredNodeVersion.slice(2), undefined, {
         numeric: true,
         sensitivity: 'base',
-      },
-    );
+      });
 
     if (satisfiesVersion === -1) {
       this.logger.warn(

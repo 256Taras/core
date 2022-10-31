@@ -14,7 +14,7 @@ export class Handler {
   private caller: string | null = null;
 
   private errorHandler: ((error: Error) => unknown) | null = null;
-  
+
   private file: string | null = null;
 
   private notFoundHandler: (() => unknown) | null = null;
@@ -137,7 +137,10 @@ export class Handler {
 
     const message = error.message.charAt(0).toUpperCase() + error.message.slice(1);
 
-    this.logger.error(`${message}${this.file ? ` [${this.file}]` : ''}`, 'fatal error');
+    this.logger.error(
+      `${message}${this.file ? ` [${this.file}]` : ''}`,
+      'fatal error',
+    );
 
     if (!env<boolean>('DEVELOPMENT')) {
       process.exit(1);

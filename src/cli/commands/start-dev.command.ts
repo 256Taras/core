@@ -14,10 +14,13 @@ import { Command } from '../decorators/command.decorator';
 })
 export class StartDevCommand {
   public async handle(open: boolean): Promise<void> {
-    const { result } = concurrently(['tsc --watch', `app server:dev${open ? ' --open' : ''}`], {
-      killOthers: ['failure', 'success'],
-      raw: true,
-    });
+    const { result } = concurrently(
+      ['tsc --watch', `app server:dev${open ? ' --open' : ''}`],
+      {
+        killOthers: ['failure', 'success'],
+        raw: true,
+      },
+    );
 
     result.then(
       () => {

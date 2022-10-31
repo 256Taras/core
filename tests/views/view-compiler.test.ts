@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { inject } from '../../src/injector/functions/inject.function';
-import { ViewCompiler } from '../../src/views/view-compiler.class';
 import { Request } from '../../src/http/request.class';
+import { inject } from '../../src/injector/functions/inject.function';
 import { Session } from '../../src/session/session.class';
+import { ViewCompiler } from '../../src/views/view-compiler.class';
 
 describe('ViewCompiler class', () => {
   const request = inject(Request);

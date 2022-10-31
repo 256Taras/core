@@ -7,8 +7,8 @@ import { Encrypter } from '../../src/crypto/encrypter.class';
 import { Request } from '../../src/http/request.class';
 import { Response } from '../../src/http/response.class';
 import { inject } from '../../src/injector/functions/inject.function';
-import { Validator } from '../../src/validator/validator.class';
 import { Session } from '../../src/session/session.class';
+import { Validator } from '../../src/validator/validator.class';
 
 describe('Validator class', async () => {
   const encrypter = inject(Encrypter);

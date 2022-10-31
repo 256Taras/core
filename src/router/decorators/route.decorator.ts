@@ -1,11 +1,11 @@
 import { Reflection as Reflect } from '@abraham/reflection';
+import { Handler } from '../../handler/handler.class';
 import { HttpMethod } from '../../http/enums/http-method.enum';
 import { Response } from '../../http/response.class';
 import { inject } from '../../injector/functions/inject.function';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { Router } from '../router.class';
-import { Handler } from '../../handler/handler.class';
 
 const router = inject(Router);
 

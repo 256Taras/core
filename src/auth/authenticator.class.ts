@@ -33,7 +33,10 @@ export class Authenticator {
       },
     });
 
-    const passwordValid = await this.encrypter.compareHash(password, user?.password ?? '');
+    const passwordValid = await this.encrypter.compareHash(
+      password,
+      user?.password ?? '',
+    );
 
     if (user && passwordValid) {
       this.session.set('_auth', true);
