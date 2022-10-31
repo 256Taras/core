@@ -13,7 +13,11 @@ export class Handler {
 
   private caller: string | null = null;
 
+  private errorHandler: ((error: Error) => unknown) | null = null;
+  
   private file: string | null = null;
+
+  private notFoundHandler: (() => unknown) | null = null;
 
   constructor(
     private logger: Logger,
@@ -61,6 +65,12 @@ export class Handler {
     const statusCode = StatusCode.InternalServerError;
 
     this.response.status(statusCode);
+
+    if (this.errorHandler) {
+      this.errorHandler(error);
+
+      return;
+    }
 
     await this.readErrorStack();
 
@@ -166,6 +176,12 @@ export class Handler {
 
     this.response.status(statusCode);
 
+    if (this.notFoundHandler) {
+      this.notFoundHandler();
+
+      return;
+    }
+
     const data = {
       statusCode,
       message: 'Not Found',
@@ -184,5 +200,13 @@ export class Handler {
       : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
     this.response.render(view, data);
+  }
+
+  public setErrorHandler(callback: () => unknown): void {
+    this.errorHandler = callback;
+  }
+
+  public setNotFoundHandler(callback: () => unknown): void {
+    this.notFoundHandler = callback;
   }
 }

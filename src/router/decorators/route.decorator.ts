@@ -5,6 +5,7 @@ import { inject } from '../../injector/functions/inject.function';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { Router } from '../router.class';
+import { Handler } from '../../handler/handler.class';
 
 const router = inject(Router);
 
@@ -19,7 +20,7 @@ const resolveUrl = (url: string, controller: Constructor) => {
 };
 
 const resolveRouteAction = (target: Constructor, propertyKey: string | symbol) => {
-  return async () => {
+  return async (...args: unknown[]) => {
     const redirectUrl: string | undefined = Reflect.getMetadata(
       'redirectUrl',
       target,
@@ -37,7 +38,21 @@ const resolveRouteAction = (target: Constructor, propertyKey: string | symbol) =
       return;
     }
 
-    await router.respond(target.constructor as Constructor, propertyKey);
+    await router.respond(target.constructor as Constructor, propertyKey, ...args);
+  };
+};
+
+export const Error = (statusCode: 404 | 500): MethodDecorator => {
+  const handler = inject(Handler);
+
+  return (target, propertyKey) => {
+    const callback = resolveRouteAction(target, propertyKey);
+
+    if (statusCode === 500) {
+      handler.setErrorHandler(callback);
+    } else {
+      handler.setNotFoundHandler(callback);
+    }
   };
 };
 

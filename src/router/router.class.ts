@@ -46,11 +46,12 @@ export class Router {
   public async respond(
     controller: Constructor,
     method: string | symbol,
+    ...args: unknown[]
   ): Promise<void> {
     try {
       const requestParams = Object.values(this.request.params);
 
-      let content = Injector.resolve<any>(controller)[method](...requestParams);
+      let content = Injector.resolve<any>(controller)[method](...requestParams, ...args);
 
       if (content instanceof Promise) {
         content = await content;
