@@ -5,6 +5,7 @@ import { env } from '../utils/functions/env.function';
 import { MailData } from './interfaces/mail-data.interface';
 import { ViewCompiler } from '../views/view-compiler.class';
 import { callerFile } from '../utils/functions/caller-file.function';
+import { resolveViewFile } from '../utils/functions/resolve-view-file.function';
 
 @Service()
 export class Mailer {
@@ -35,9 +36,7 @@ export class Mailer {
     if (view) {
       const caller = callerFile();
 
-      if (view.startsWith('./')) {
-        view = `${caller}/../${view.slice(2)}`;
-      }
+      view = resolveViewFile(caller, view);
 
       const fileContent = await readFile(view, 'utf-8');
 

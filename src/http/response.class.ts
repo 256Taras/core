@@ -143,10 +143,12 @@ export class Response {
     file: string,
     data: Record<string, unknown> = {},
   ): Promise<this> {
-    file = `${file}.html`;
+    if (!file.endsWith('.html')) {
+      file = `${file}.html`;
+    }
 
     if (!existsSync(file)) {
-      throw new Error(`View ${file} does not exist`);
+      throw new Error(`View '${file}' does not exist`);
     }
 
     const fileContent = readFileSync(file);

@@ -1,5 +1,6 @@
 import { inject } from '../../injector/functions/inject.function';
 import { callerFile } from '../../utils/functions/caller-file.function';
+import { resolveViewFile } from '../../utils/functions/resolve-view-file.function';
 import { ViewResponse } from '../view-response.class';
 
 export const view = (
@@ -8,9 +9,7 @@ export const view = (
 ): ViewResponse => {
   const caller = callerFile();
 
-  if (file.startsWith('./')) {
-    file = `${caller}/../${file.slice(2)}`;
-  }
+  file = resolveViewFile(caller, file);
 
   const instance = inject(ViewResponse);
 
