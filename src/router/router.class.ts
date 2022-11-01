@@ -9,7 +9,7 @@ import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { ViewResponse } from '../http/view-response.class';
 import { Service } from '../injector/decorators/service.decorator';
-import { Injector } from '../injector/injector.class';
+import { inject } from '../injector/functions/inject.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Route } from './interfaces/route.interface';
 
@@ -51,7 +51,7 @@ export class Router {
     try {
       const requestParams = Object.values(this.request.params);
 
-      let content = Injector.resolve<any>(controller)[method](
+      let content = inject(controller)[method](
         ...requestParams,
         ...args,
       );

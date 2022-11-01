@@ -1,4 +1,5 @@
 export * from './decorators/controller.decorator';
+export * from './decorators/middleware.decorator';
 export * from './decorators/redirect.decorator';
 export * from './download-response.class';
 export * from './enums/http-method.enum';
@@ -8,6 +9,7 @@ export * from './functions/json.function';
 export * from './functions/redirect.function';
 export * from './functions/redirect-back.function';
 export * from './functions/view.function';
+export * from './interfaces/middleware-handler.interface';
 export * from './http-client.class';
 export * from './json-response.class';
 export * from './redirect-back-response.class';

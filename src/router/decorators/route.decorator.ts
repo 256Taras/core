@@ -6,6 +6,7 @@ import { inject } from '../../injector/functions/inject.function';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { Router } from '../router.class';
+import { MiddlewareHandler } from '../../http/interfaces/middleware-handler.interface';
 
 const router = inject(Router);
 
@@ -25,6 +26,17 @@ const resolveRouteAction = (target: Constructor, propertyKey: string | symbol) =
       'redirectUrl',
       target,
     );
+
+    const middleware: Constructor<MiddlewareHandler> | undefined = Reflect.getMetadata(
+      'middleware',
+      target,
+    );
+
+    if (middleware) {
+      const instance = inject(middleware);
+
+      instance.handle();
+    }
 
     if (redirectUrl) {
       const response = inject(Response);
