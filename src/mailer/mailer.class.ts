@@ -27,11 +27,11 @@ export class Mailer {
     }
   }
 
-  public async send(data: MailData): Promise<string> {
-    const { to, subject, text, viewData } = data;
+  public async send(options: MailData): Promise<string> {
+    const { to, subject, text, data } = options;
 
     let html = '';
-    let { view } = data;
+    let { view } = options;
 
     if (view) {
       const caller = callerFile();
@@ -40,7 +40,7 @@ export class Mailer {
 
       const fileContent = await readFile(view, 'utf-8');
 
-      html = await this.viewCompiler.compile(fileContent, viewData);
+      html = await this.viewCompiler.compile(fileContent, data);
     }
 
     const info = await this.transporter.sendMail({

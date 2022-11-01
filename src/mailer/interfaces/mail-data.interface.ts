@@ -3,5 +3,5 @@ export interface MailData {
   subject: string;
   text?: string;
   view?: string;
-  viewData?: Record<string, unknown>;
+  data?: Record<string, unknown>;
 }
