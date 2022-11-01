@@ -21,7 +21,7 @@ import { setupStdin } from '../functions/setup-stdin.function';
 export class ServerDevCommand {
   public async handle(open: boolean): Promise<void> {
     logInfo(
-      `Development server started ${chalk.gray(
+      `Starting development server... ${chalk.gray(
         `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
       )}`,
     );
@@ -33,11 +33,13 @@ export class ServerDevCommand {
     };
 
     if (open) {
-      runCommand(
-        `${browserAliases[process.platform] ?? 'xdg-open'} http://localhost:${
-          env<number>('PORT') ?? 8000
-        }`,
-      );
+      setTimeout(() => {
+        runCommand(
+          `${browserAliases[process.platform] ?? 'xdg-open'} http://localhost:${
+            env<number>('PORT') ?? 8000
+          }`,
+        );
+      }, 2000);
     }
 
     const entryFile = 'dist/main.js';
