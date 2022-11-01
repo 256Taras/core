@@ -34,7 +34,7 @@ export class Injector {
     }
 
     if (
-      [String, Number, Boolean, Symbol, RegExp].includes(
+      [String, Number, Boolean, Symbol].includes(
         target as unknown as
           | StringConstructor
           | NumberConstructor
@@ -43,7 +43,7 @@ export class Injector {
       ) ||
       ['null', 'undefined'].includes(typeof target)
     ) {
-      throw new Error('Injected service type cannot be primitive or predefined');
+      throw new Error('Cannot inject primitive type');
     }
 
     const deps: Constructor[] =
