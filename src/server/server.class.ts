@@ -160,7 +160,7 @@ export class Server {
         await this.handler.handleFatalError(error);
       });
 
-      const envFile = options.config?.envFile ?? '.env';
+      const envFile = options.config?.env ?? '.env';
 
       if (!existsSync(envFile)) {
         throw new Error('Environment configuration file not found');
