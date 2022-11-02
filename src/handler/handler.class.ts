@@ -47,7 +47,10 @@ export class Handler {
       const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 
       if (isAppFile) {
-        file = file.replace(/.*?dist./, `src/`).replace('.js', '.ts');
+        const originalSourceFile = file.replace('.js', '.ts');
+
+        file = file.replace(/.*?dist./, `src/`);
+        file = existsSync(originalSourceFile) ? originalSourceFile : file;
       } else {
         file = '@northle/core package';
       }
