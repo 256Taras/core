@@ -6,10 +6,10 @@ export interface ServerOptions {
     contentSecurityPolicy?: Record<string, string | string[]> | boolean;
     cors?: {
       allowedHeaders?: string | string[];
-      methods?: string | string[];
-      origin: boolean | string | string[] | RegExp | RegExp[];
       credentials: boolean;
       maxAge: Integer;
+      methods?: string | string[];
+      origin: boolean | string | string[] | RegExp | RegExp[];
     };
     env?: string;
     locale?: string;
