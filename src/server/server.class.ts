@@ -2,6 +2,7 @@ import { Reflection as Reflect } from '@abraham/reflection';
 import cookieMiddleware from '@fastify/cookie';
 import corsMiddleware from '@fastify/cors';
 import csrfMiddleware from '@fastify/csrf-protection';
+import formMiddleware from '@fastify/formbody';
 import helmetMiddleware from '@fastify/helmet';
 import multipartMiddleware from '@fastify/multipart';
 import sessionMiddleware from '@fastify/session';
@@ -123,6 +124,7 @@ export class Server {
     await this.instance.register(helmetMiddleware, helmetOptions);
     await this.instance.register(corsMiddleware, corsOptions);
     await this.instance.register(cookieMiddleware, cookieOptions);
+    await this.instance.register(formMiddleware);
     await this.instance.register(csrfMiddleware);
     await this.instance.register(multipartMiddleware, multipartOptions);
     await this.instance.register(sessionMiddleware, sessionOptions);
