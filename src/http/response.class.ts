@@ -63,8 +63,8 @@ export class Response {
     return this;
   }
 
-  public async csrfToken(): Promise<string | null> {
-    const token = (await this.instance?.generateCsrf()) ?? null;
+  public csrfToken(): string | null {
+    const token = this.session.get<string>('_csrfToken');
 
     return token;
   }
