@@ -159,7 +159,7 @@ export class Handler {
 
     const data = {
       statusCode,
-      message: 'Invalid Token',
+      message: 'Token Expired',
     };
 
     if (this.request.ajax()) {

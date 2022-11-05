@@ -47,7 +47,7 @@ export class Encrypter {
     return hashedData;
   }
 
-  public randomBytes(length: Integer): string {
+  public randomBytes(length: Integer = 16): string {
     return randomBytes(length).toString('hex');
   }
 

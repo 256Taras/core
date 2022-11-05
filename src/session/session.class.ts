@@ -49,6 +49,10 @@ export class Session {
     return this.request.session[key] ?? null;
   }
 
+  public has(key: string): boolean {
+    return (key in this.request.session);
+  }
+
   public id(): string {
     return this.request.session.id;
   }

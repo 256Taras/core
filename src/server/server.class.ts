@@ -1,7 +1,6 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import cookieMiddleware from '@fastify/cookie';
 import corsMiddleware from '@fastify/cors';
-import csrfMiddleware from '@fastify/csrf-protection';
 import formMiddleware from '@fastify/formbody';
 import helmetMiddleware from '@fastify/helmet';
 import multipartMiddleware from '@fastify/multipart';
@@ -30,6 +29,7 @@ import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from '../websocket/interfaces/authorizer.nterface';
 import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
+import { HttpMethod } from '../http/enums/http-method.enum';
 
 @Service()
 export class Server {
@@ -54,6 +54,23 @@ export class Server {
     private socketEmitter: SocketEmitter,
     private translator: Translator,
   ) {}
+
+  private handleCsrfToken(): void {
+    if (!this.session.has('_csrfToken')) {
+      const token = this.encrypter.randomBytes(16);
+
+      this.session.set('_csrfToken', token);
+      this.response.cookie('csrfToken', token);
+    }
+
+    if (![HttpMethod.Get, HttpMethod.Head].includes(this.request.method())) {
+      const token = this.request.input('_token') ?? this.request.header('X-CSRF-TOKEN') ?? this.request.input('_csrf') ?? this.request.input('_csrfToken');
+
+      if (token !== this.session.get('_csrfToken')) {
+        this.handler.handleInvalidToken();
+      }
+    }
+  }
 
   private registerHandlers(): void {
     this.instance.setErrorHandler(async (error) => {
@@ -125,7 +142,6 @@ export class Server {
     await this.instance.register(corsMiddleware, corsOptions);
     await this.instance.register(cookieMiddleware, cookieOptions);
     await this.instance.register(formMiddleware);
-    await this.instance.register(csrfMiddleware);
     await this.instance.register(multipartMiddleware, multipartOptions);
     await this.instance.register(sessionMiddleware, sessionOptions);
     await this.instance.register(staticServerMiddleware, staticServerOptions);
@@ -208,6 +224,8 @@ export class Server {
         this.response.$setInstance(response);
 
         inject(Session).$setRequest(this.request);
+
+        this.handleCsrfToken();
 
         startTime = process.hrtime();
       });
