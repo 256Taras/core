@@ -1,12 +1,12 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { Handler } from '../../handler/handler.class';
 import { HttpMethod } from '../../http/enums/http-method.enum';
+import { MiddlewareHandler } from '../../http/interfaces/middleware-handler.interface';
 import { Response } from '../../http/response.class';
 import { inject } from '../../injector/functions/inject.function';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { Router } from '../router.class';
-import { MiddlewareHandler } from '../../http/interfaces/middleware-handler.interface';
 
 const router = inject(Router);
 
@@ -27,10 +27,8 @@ const resolveRouteAction = (target: Constructor, propertyKey: string | symbol) =
       target,
     );
 
-    const middleware: Constructor<MiddlewareHandler> | undefined = Reflect.getMetadata(
-      'middleware',
-      target,
-    );
+    const middleware: Constructor<MiddlewareHandler> | undefined =
+      Reflect.getMetadata('middleware', target);
 
     if (middleware) {
       const instance = inject(middleware);

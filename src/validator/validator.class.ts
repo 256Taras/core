@@ -19,7 +19,10 @@ export class Validator {
     isAccepted: boolean,
     fieldName: string,
   ): boolean | string {
-    if (isAccepted && !value || ![true, 'true', 'on', 'yes', '1', 1].includes(value)) {
+    if (
+      (isAccepted && !value) ||
+      ![true, 'true', 'on', 'yes', '1', 1].includes(value)
+    ) {
       return `Field ${fieldName} must be accepted`;
     }
 

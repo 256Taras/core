@@ -20,4 +20,4 @@ export const resolveViewFile = (caller: string, file: string) => {
   }
 
   return file;
-}
+};

@@ -50,7 +50,7 @@ export class Session {
   }
 
   public has(key: string): boolean {
-    return (key in this.request.session);
+    return key in this.request.session;
   }
 
   public id(): string {

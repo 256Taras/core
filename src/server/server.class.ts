@@ -14,6 +14,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
+import { HttpMethod } from '../http/enums/http-method.enum';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
@@ -29,7 +30,6 @@ import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from '../websocket/interfaces/authorizer.nterface';
 import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
-import { HttpMethod } from '../http/enums/http-method.enum';
 
 @Service()
 export class Server {
@@ -64,9 +64,14 @@ export class Server {
     }
 
     if (![HttpMethod.Get, HttpMethod.Head].includes(this.request.method())) {
-      const token = this.request.input('_token') ?? this.request.header('X-CSRF-TOKEN') ?? this.request.input('_csrf') ?? this.request.input('_csrfToken');
+      const token =
+        this.request.input('_token') ??
+        this.request.input('_csrf') ??
+        this.request.input('_csrfToken') ??
+        this.request.header('X-CSRF-TOKEN') ??
+        this.request.header('X-XSRF-TOKEN');
 
-      if (token !== this.session.get('_csrfToken')) {
+      if (!token || token !== this.session.get('_csrfToken')) {
         this.handler.handleInvalidToken();
       }
     }
@@ -128,10 +133,12 @@ export class Server {
     };
 
     const sessionOptions = {
-      secret: env('ENCRYPT_KEY') ?? this.encrypter.randomBytes(16),
       cookie: {
-        maxAge: (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
+        secure: false,
       },
+      cookieName: 'sessionId',
+      expires: (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
+      secret: env('ENCRYPT_KEY') ?? this.encrypter.randomBytes(16),
     };
 
     const staticServerOptions = {

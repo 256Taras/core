@@ -51,10 +51,7 @@ export class Router {
     try {
       const requestParams = Object.values(this.request.params);
 
-      let content = inject(controller)[method](
-        ...requestParams,
-        ...args,
-      );
+      let content = inject(controller)[method](...requestParams, ...args);
 
       if (content instanceof Promise) {
         content = await content;

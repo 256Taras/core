@@ -1,11 +1,11 @@
-import { Transporter, createTransport } from 'nodemailer';
 import { readFile } from 'node:fs/promises';
+import { Transporter, createTransport } from 'nodemailer';
 import { Service } from '../injector/decorators/service.decorator';
-import { env } from '../utils/functions/env.function';
-import { MailData } from './interfaces/mail-data.interface';
-import { ViewCompiler } from '../views/view-compiler.class';
 import { callerFile } from '../utils/functions/caller-file.function';
+import { env } from '../utils/functions/env.function';
 import { resolveViewFile } from '../utils/functions/resolve-view-file.function';
+import { ViewCompiler } from '../views/view-compiler.class';
+import { MailData } from './interfaces/mail-data.interface';
 
 @Service()
 export class Mailer {
