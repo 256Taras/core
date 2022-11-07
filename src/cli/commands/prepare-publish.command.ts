@@ -28,7 +28,7 @@ export class PreparePublishCommand {
       files.map(async (file) => {
         const fileContent = await readFile(file, 'utf8');
 
-        await writeFile(file, fileContent.replace(...replaces));
+        await writeFile(file, fileContent.replace(...replaces), 'utf8');
       }),
     );
 

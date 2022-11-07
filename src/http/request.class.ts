@@ -11,8 +11,10 @@ export class Request {
     return this.instance;
   }
 
-  public $setInstance(instance: FastifyRequest): void {
+  public $setInstance(instance: FastifyRequest): this {
     this.instance = instance;
+
+    return this;
   }
 
   public ajax(): boolean {
@@ -102,15 +104,12 @@ export class Request {
   }
 
   public redirectData(): Record<string, unknown> | null {
-    return (this.session._redirectData as Record<string, unknown>) ?? null;
+    // TODO: Implement redirect data
+    return null;
   }
 
   public secure(): boolean {
     return this.protocol() === 'https';
-  }
-
-  public get session(): Record<string, any> {
-    return this.instance?.session ?? {};
   }
 
   public url(): string | null {

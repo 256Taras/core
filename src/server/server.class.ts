@@ -4,7 +4,6 @@ import corsMiddleware from '@fastify/cors';
 import formMiddleware from '@fastify/formbody';
 import helmetMiddleware from '@fastify/helmet';
 import multipartMiddleware from '@fastify/multipart';
-import sessionMiddleware from '@fastify/session';
 import staticServerMiddleware from '@fastify/static';
 import chalk from 'chalk';
 import { config as configDotenv } from 'dotenv';
@@ -132,15 +131,6 @@ export class Server {
       },
     };
 
-    const sessionOptions = {
-      cookie: {
-        secure: false,
-      },
-      cookieName: 'sessionId',
-      expires: (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
-      secret: env('ENCRYPT_KEY') ?? this.encrypter.randomBytes(16),
-    };
-
     const staticServerOptions = {
       root: path.resolve('public'),
     };
@@ -150,7 +140,6 @@ export class Server {
     await this.instance.register(cookieMiddleware, cookieOptions);
     await this.instance.register(formMiddleware);
     await this.instance.register(multipartMiddleware, multipartOptions);
-    await this.instance.register(sessionMiddleware, sessionOptions);
     await this.instance.register(staticServerMiddleware, staticServerOptions);
   }
 
@@ -230,7 +219,9 @@ export class Server {
         this.request.$setInstance(request);
         this.response.$setInstance(response);
 
-        inject(Session).$setRequest(this.request);
+        this.session.$setRequest(request).$setResponse(response);
+
+        await this.session.$setup();
 
         this.handleCsrfToken();
 
@@ -238,7 +229,15 @@ export class Server {
       });
 
       this.instance.addHook('onResponse', async (request, response) => {
-        this.session.set('_previousLocation', request.url);
+        await this.session.$writeSession();
+
+        const { url } = request;
+        const urlLastSegment = url.slice(url.lastIndexOf('/') + 1);
+
+        if (!urlLastSegment.includes('.') && request.method === HttpMethod.Get) {
+          this.session.set('_previousLocation', url);
+        }
+        console.log(this.session.data)
 
         const endTime = process.hrtime(startTime);
 
