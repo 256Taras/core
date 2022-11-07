@@ -1,12 +1,12 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { existsSync } from 'node:fs';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
-import { Service } from '../injector/decorators/service.decorator';
-import { readJson } from '../utils/functions/read-json.function';
-import { Encrypter } from '../crypto/encrypter.class';
-import { env } from '../utils/functions/env.function';
-import { inject } from '../injector/functions/inject.function';
 import { dirname } from 'node:path';
+import { Encrypter } from '../crypto/encrypter.class';
+import { Service } from '../injector/decorators/service.decorator';
+import { inject } from '../injector/functions/inject.function';
+import { env } from '../utils/functions/env.function';
+import { readJson } from '../utils/functions/read-json.function';
 
 @Service()
 export class Session {
@@ -51,7 +51,9 @@ export class Session {
     const path = `node_modules/.northle/sessions/${generatedId}.json`;
 
     this.response?.cookie('sessionId', generatedId, {
-      expires: new Date(Date.now() + (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24),
+      expires: new Date(
+        Date.now() + (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
+      ),
     });
 
     try {
@@ -75,9 +77,13 @@ export class Session {
     const path = `node_modules/.northle/sessions/${this.key}.json`;
 
     try {
-      await writeFile(path, JSON.stringify({
-        ...this.data,
-      }), 'utf-8');
+      await writeFile(
+        path,
+        JSON.stringify({
+          ...this.data,
+        }),
+        'utf-8',
+      );
     } catch (error) {
       throw new Error('Unable to write session');
     }

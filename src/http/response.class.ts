@@ -5,8 +5,8 @@ import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
 import { ViewCompiler } from '../views/view-compiler.class';
 import { StatusCode } from './enums/status-code.enum';
-import { Request } from './request.class';
 import { CookieOptions } from './interfaces/cookie-options.interface';
+import { Request } from './request.class';
 
 @Service()
 export class Response {
@@ -54,11 +54,7 @@ export class Response {
     return this;
   }
 
-  public cookie(
-    cookie: string,
-    value: string,
-    options: CookieOptions = {},
-  ): this {
+  public cookie(cookie: string, value: string, options: CookieOptions = {}): this {
     this.instance?.cookie(cookie, value, options);
 
     return this;
