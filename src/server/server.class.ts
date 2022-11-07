@@ -233,7 +233,7 @@ export class Server {
       this.instance.addHook('onResponse', async (request, response) => {
         await this.session.$writeSession();
 
-        if (this.request.isFileRequest()) {
+        if (!this.request.isFileRequest()) {
           this.session.set('_previousLocation', request.url);
         }
 

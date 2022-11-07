@@ -75,7 +75,7 @@ export class Request {
   public isFileRequest(): boolean {
     const urlLastSegment = this.url()?.slice(this.url()?.lastIndexOf('/') ?? 0 + 1);
 
-    return !urlLastSegment?.includes('.') && this.method() === HttpMethod.Get;
+    return (urlLastSegment?.includes('.') ?? false) && this.method() === HttpMethod.Get;
   }
 
   public locale(): string | string[] {
