@@ -1,10 +1,12 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { existsSync } from 'node:fs';
-import { unlink, writeFile } from 'node:fs/promises';
+import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import { Service } from '../injector/decorators/service.decorator';
 import { readJson } from '../utils/functions/read-json.function';
 import { Encrypter } from '../crypto/encrypter.class';
 import { env } from '../utils/functions/env.function';
+import { inject } from '../injector/functions/inject.function';
+import { dirname } from 'node:path';
 
 @Service()
 export class Session {
@@ -16,7 +18,9 @@ export class Session {
 
   private response: FastifyReply | null = null;
 
-  constructor(private encrypter: Encrypter) {}
+  constructor(private encrypter: Encrypter) {
+    this.encrypter = inject(Encrypter);
+  }
 
   public $setRequest(request: FastifyRequest): this {
     this.request = request;
@@ -52,6 +56,12 @@ export class Session {
 
     try {
       if (generatedId) {
+        if (!existsSync(dirname(path))) {
+          await mkdir(dirname(path), {
+            recursive: true,
+          });
+        }
+
         await writeFile(path, JSON.stringify({}), 'utf-8');
       }
     } catch (error) {

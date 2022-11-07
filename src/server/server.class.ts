@@ -221,9 +221,11 @@ export class Server {
 
         this.session.$setRequest(request).$setResponse(response);
 
-        await this.session.$setup();
+        if (!this.request.isFileRequest()) {
+          await this.session.$setup();
 
-        this.handleCsrfToken();
+          this.handleCsrfToken();
+        }
 
         startTime = process.hrtime();
       });
@@ -231,13 +233,9 @@ export class Server {
       this.instance.addHook('onResponse', async (request, response) => {
         await this.session.$writeSession();
 
-        const { url } = request;
-        const urlLastSegment = url.slice(url.lastIndexOf('/') + 1);
-
-        if (!urlLastSegment.includes('.') && request.method === HttpMethod.Get) {
-          this.session.set('_previousLocation', url);
+        if (this.request.isFileRequest()) {
+          this.session.set('_previousLocation', request.url);
         }
-        console.log(this.session.data)
 
         const endTime = process.hrtime(startTime);
 

@@ -72,6 +72,12 @@ export class Request {
     return this.instance?.ips ?? null;
   }
 
+  public isFileRequest(): boolean {
+    const urlLastSegment = this.url()?.slice(this.url()?.lastIndexOf('/') ?? 0 + 1);
+
+    return !urlLastSegment?.includes('.') && this.method() === HttpMethod.Get;
+  }
+
   public locale(): string | string[] {
     return this.header('accept-language')?.slice(0, 2) ?? 'en';
   }
