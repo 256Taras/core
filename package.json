@@ -57,8 +57,6 @@
     "@fastify/formbody": "^7.3.0",
     "@fastify/helmet": "^10.0.2",
     "@fastify/multipart": "^7.3.0",
-    "@fastify/secure-session": "^5.2.0",
-    "@fastify/session": "^10.0.2",
     "@fastify/static": "^6.5.0",
     "bcrypt": "^5.1.0",
     "chalk": "^5.1.2",
