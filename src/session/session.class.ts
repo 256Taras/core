@@ -10,6 +10,8 @@ import { readJson } from '../utils/functions/read-json.function';
 
 @Service()
 export class Session {
+  private readonly directoryPath = env<string>('SESSION_PATH') ?? 'node_modules/.northle/sessions';
+
   private variables: Record<string, any> = {};
 
   private key: string | null = null;
@@ -37,7 +39,7 @@ export class Session {
   public async $setup(): Promise<this> {
     this.key = this.request?.cookies?.sessionId ?? null;
 
-    const sessionFilePath = `node_modules/.northle/sessions/${this.key}.json`;
+    const sessionFilePath = `${this.directoryPath}/${this.key}.json`;
 
     if (this.key && existsSync(sessionFilePath)) {
       const savedSessionData = await readJson(sessionFilePath);
@@ -48,7 +50,7 @@ export class Session {
     }
 
     const generatedId = this.encrypter.uuid();
-    const path = `node_modules/.northle/sessions/${generatedId}.json`;
+    const path = `${this.directoryPath}/${generatedId}.json`;
 
     this.response?.cookie('sessionId', generatedId, {
       expires: new Date(
@@ -74,7 +76,7 @@ export class Session {
   }
 
   public async $writeSession(): Promise<void> {
-    const path = `node_modules/.northle/sessions/${this.key}.json`;
+    const path = `${this.directoryPath}/${this.key}.json`;
 
     try {
       await writeFile(
@@ -110,7 +112,7 @@ export class Session {
   public async destroy(): Promise<void> {
     this.variables = {};
 
-    await unlink(`node_modules/.northle/sessions/${this.key}.json`);
+    await unlink(`${this.directoryPath}/${this.key}.json`);
   }
 
   public flash<T>(key: string, value?: unknown): T | void {
