@@ -42,7 +42,6 @@ export class Session {
     const sessionFilePath = `${this.directoryPath}/${this.key}.json`;
 
     if (this.key && existsSync(sessionFilePath)) {
-      console.log(true)
       const savedSessionData = await readJson(sessionFilePath);
 
       this.variables = savedSessionData;

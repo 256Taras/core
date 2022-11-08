@@ -215,9 +215,13 @@ export class Server {
     try {
       let startTime: [number, number];
 
+      await this.registerMiddleware();
+
       this.instance.addHook('onRequest', async (request, response) => {
-        this.session.$setRequest(request);
-        this.session.$setResponse(response);
+        if (!this.request.isFileRequest()) {
+          this.session.$setRequest(request);
+          this.session.$setResponse(response);
+        }
 
         this.request.$setInstance(request);
         this.response.$setInstance(response);
@@ -262,8 +266,6 @@ export class Server {
           timeFormatted,
         );
       });
-
-      await this.registerMiddleware();
 
       this.router.registerRoutes(this.instance);
       this.registerHandlers();
