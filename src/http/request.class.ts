@@ -2,10 +2,13 @@ import { MultipartFile } from '@fastify/multipart';
 import { FastifyRequest } from 'fastify';
 import { Service } from '../injector/decorators/service.decorator';
 import { HttpMethod } from './enums/http-method.enum';
+import { Session } from '../session/session.class';
 
 @Service()
 export class Request {
   private instance: FastifyRequest | null = null;
+
+  constructor(private session: Session) {}
 
   public $getInstance(): FastifyRequest | null {
     return this.instance;
@@ -110,8 +113,7 @@ export class Request {
   }
 
   public redirectData(): Record<string, unknown> | null {
-    // TODO: Implement redirect data
-    return null;
+    return this.session.get<Record<string, unknown>>('_redirectData') ?? null;
   }
 
   public secure(): boolean {

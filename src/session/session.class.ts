@@ -10,6 +10,8 @@ import { readJson } from '../utils/functions/read-json.function';
 
 @Service()
 export class Session {
+  private readonly directoryPath = env<string>('SESSION_PATH') ?? 'node_modules/.northle/sessions';
+
   private variables: Record<string, any> = {};
 
   private key: string | null = null;
@@ -37,44 +39,43 @@ export class Session {
   public async $setup(): Promise<this> {
     this.key = this.request?.cookies?.sessionId ?? null;
 
-    const sessionFilePath = `node_modules/.northle/sessions/${this.key}.json`;
+    const sessionFilePath = `${this.directoryPath}/${this.key}.json`;
 
     if (this.key && existsSync(sessionFilePath)) {
+      console.log(true)
       const savedSessionData = await readJson(sessionFilePath);
 
       this.variables = savedSessionData;
+    } else {
+      const generatedId = this.encrypter.uuid();
+      const path = `${this.directoryPath}/${generatedId}.json`;
 
-      return this;
-    }
+      this.response?.cookie('sessionId', generatedId, {
+        expires: new Date(
+          Date.now() + (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
+        ),
+      });
 
-    const generatedId = this.encrypter.uuid();
-    const path = `node_modules/.northle/sessions/${generatedId}.json`;
+      try {
+        if (generatedId) {
+          if (!existsSync(dirname(path))) {
+            await mkdir(dirname(path), {
+              recursive: true,
+            });
+          }
 
-    this.response?.cookie('sessionId', generatedId, {
-      expires: new Date(
-        Date.now() + (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
-      ),
-    });
-
-    try {
-      if (generatedId) {
-        if (!existsSync(dirname(path))) {
-          await mkdir(dirname(path), {
-            recursive: true,
-          });
+          await writeFile(path, JSON.stringify({}), 'utf-8');
         }
-
-        await writeFile(path, JSON.stringify({}), 'utf-8');
+      } catch (error) {
+        throw new Error('Unable to initialize session');
       }
-    } catch (error) {
-      throw new Error('Unable to initialize session');
     }
 
     return this;
   }
 
   public async $writeSession(): Promise<void> {
-    const path = `node_modules/.northle/sessions/${this.key}.json`;
+    const path = `${this.directoryPath}/${this.key}.json`;
 
     try {
       await writeFile(
@@ -110,7 +111,7 @@ export class Session {
   public async destroy(): Promise<void> {
     this.variables = {};
 
-    await unlink(`node_modules/.northle/sessions/${this.key}.json`);
+    await unlink(`${this.directoryPath}/${this.key}.json`);
   }
 
   public flash<T>(key: string, value?: unknown): T | void {
