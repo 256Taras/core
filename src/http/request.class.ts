@@ -39,12 +39,12 @@ export class Request {
     return this.cookies[cookie] ?? null;
   }
 
-  public get files(): AsyncIterableIterator<MultipartFile> | undefined {
-    return this.instance?.files();
-  }
-
   public file(file: string): MultipartFile | null {
     return this.files?.[file as keyof object] ?? null;
+  }
+
+  public get files(): AsyncIterableIterator<MultipartFile> | undefined {
+    return this.instance?.files();
   }
 
   public has(field: string): boolean {
@@ -96,19 +96,23 @@ export class Request {
     );
   }
 
-  public get params(): Record<string, string> {
-    return (this.instance?.params as Record<string, string>) ?? {};
-  }
-
   public param(param: string): string | null {
     return this.params[param] ?? null;
+  }
+
+  public get params(): Record<string, string> {
+    return (this.instance?.params as Record<string, string>) ?? {};
   }
 
   public protocol(): string | null {
     return this.instance?.protocol ?? null;
   }
 
-  public get query(): Record<string, string> {
+  public query(key: string): string {
+    return (this.instance?.query as Record<string, string>)[key];
+  }
+
+  public get queryString(): Record<string, string> {
     return (this.instance?.query as Record<string, string>) ?? {};
   }
 
