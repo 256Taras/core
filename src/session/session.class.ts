@@ -42,34 +42,33 @@ export class Session {
     const sessionFilePath = `${this.directoryPath}/${this.key}.json`;
 
     if (this.key && existsSync(sessionFilePath)) {
+      console.log(true)
       const savedSessionData = await readJson(sessionFilePath);
 
       this.variables = savedSessionData;
+    } else {
+      const generatedId = this.encrypter.uuid();
+      const path = `${this.directoryPath}/${generatedId}.json`;
 
-      return this;
-    }
+      this.response?.cookie('sessionId', generatedId, {
+        expires: new Date(
+          Date.now() + (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
+        ),
+      });
 
-    const generatedId = this.encrypter.uuid();
-    const path = `${this.directoryPath}/${generatedId}.json`;
+      try {
+        if (generatedId) {
+          if (!existsSync(dirname(path))) {
+            await mkdir(dirname(path), {
+              recursive: true,
+            });
+          }
 
-    this.response?.cookie('sessionId', generatedId, {
-      expires: new Date(
-        Date.now() + (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
-      ),
-    });
-
-    try {
-      if (generatedId) {
-        if (!existsSync(dirname(path))) {
-          await mkdir(dirname(path), {
-            recursive: true,
-          });
+          await writeFile(path, JSON.stringify({}), 'utf-8');
         }
-
-        await writeFile(path, JSON.stringify({}), 'utf-8');
+      } catch (error) {
+        throw new Error('Unable to initialize session');
       }
-    } catch (error) {
-      throw new Error('Unable to initialize session');
     }
 
     return this;

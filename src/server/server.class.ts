@@ -1,10 +1,10 @@
 import { Reflection as Reflect } from '@abraham/reflection';
-import cookieMiddleware from '@fastify/cookie';
-import corsMiddleware from '@fastify/cors';
+import cookieMiddleware, { FastifyCookieOptions } from '@fastify/cookie';
+import corsMiddleware, { FastifyCorsOptions } from '@fastify/cors';
 import formMiddleware from '@fastify/formbody';
-import helmetMiddleware from '@fastify/helmet';
-import multipartMiddleware from '@fastify/multipart';
-import staticServerMiddleware from '@fastify/static';
+import helmetMiddleware, { FastifyHelmetOptions } from '@fastify/helmet';
+import multipartMiddleware, { FastifyMultipartOptions } from '@fastify/multipart';
+import staticServerMiddleware, { FastifyStaticOptions } from '@fastify/static';
 import chalk from 'chalk';
 import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
@@ -89,7 +89,7 @@ export class Server {
   private async registerMiddleware(): Promise<void> {
     const cspOptions = this.options.config?.contentSecurityPolicy;
 
-    const helmetOptions = {
+    const helmetOptions: FastifyHelmetOptions = {
       contentSecurityPolicy:
         typeof cspOptions === 'boolean'
           ? cspOptions
@@ -118,20 +118,20 @@ export class Server {
             },
     };
 
-    const corsOptions = this.options.config?.cors ?? {};
+    const corsOptions: FastifyCorsOptions = this.options.config?.cors ?? {};
 
-    const cookieOptions = {
+    const cookieOptions: FastifyCookieOptions = {
       secret: env('ENCRYPT_KEY') ?? this.encrypter.randomBytes(16),
     };
 
-    const multipartOptions = {
+    const multipartOptions: FastifyMultipartOptions = {
       limits: {
         fieldSize: (env<number>('FIELD_LIMIT') ?? 10) * 1024 * 1024,
         fileSize: (env<number>('UPLOAD_LIMIT') ?? 100) * 1024 * 1024,
       },
     };
 
-    const staticServerOptions = {
+    const staticServerOptions: FastifyStaticOptions = {
       root: path.resolve('public'),
     };
 
@@ -216,10 +216,11 @@ export class Server {
       let startTime: [number, number];
 
       this.instance.addHook('onRequest', async (request, response) => {
+        this.session.$setRequest(request);
+        this.session.$setResponse(response);
+
         this.request.$setInstance(request);
         this.response.$setInstance(response);
-
-        this.session.$setRequest(request).$setResponse(response);
 
         if (!this.request.isFileRequest()) {
           await this.session.$setup();
