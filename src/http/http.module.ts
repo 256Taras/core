@@ -6,6 +6,7 @@ export * from './enums/http-method.enum';
 export * from './enums/status-code.enum';
 export * from './functions/download.function';
 export * from './functions/json.function';
+export * from './functions/nonce.function';
 export * from './functions/redirect.function';
 export * from './functions/redirect-back.function';
 export * from './functions/view.function';

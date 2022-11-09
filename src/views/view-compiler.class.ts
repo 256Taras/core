@@ -11,6 +11,7 @@ import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
+import { nonce } from '../http/functions/nonce.function';
 
 @Service()
 export class ViewCompiler {
@@ -24,6 +25,7 @@ export class ViewCompiler {
     csrfToken,
     flash,
     inject,
+    nonce,
     range,
     session,
     trans,

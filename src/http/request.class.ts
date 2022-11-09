@@ -3,12 +3,13 @@ import { FastifyRequest } from 'fastify';
 import { Service } from '../injector/decorators/service.decorator';
 import { HttpMethod } from './enums/http-method.enum';
 import { Session } from '../session/session.class';
+import { Encrypter } from '../crypto/encrypter.class';
 
 @Service()
 export class Request {
   private instance: FastifyRequest | null = null;
 
-  constructor(private session: Session) {}
+  constructor(private encrypter: Encrypter, private session: Session) {}
 
   public $getInstance(): FastifyRequest | null {
     return this.instance;
@@ -94,6 +95,10 @@ export class Request {
       Object.values(HttpMethod).filter((value) => value === method)[0] ??
       HttpMethod.Get
     );
+  }
+
+  public nonce(): string {
+    return this.encrypter.uuid();
   }
 
   public param(param: string): string | null {
