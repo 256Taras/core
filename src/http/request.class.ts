@@ -52,12 +52,12 @@ export class Request {
     return this.input(field) ? true : false;
   }
 
-  public get headers(): Record<string, unknown> {
-    return this.instance?.headers ?? {};
-  }
-
   public header(header: string): string | string[] | null {
     return this.instance?.headers[header] ?? null;
+  }
+
+  public get headers(): Record<string, unknown> {
+    return this.instance?.headers ?? {};
   }
 
   public host(): string | null {

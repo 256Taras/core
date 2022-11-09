@@ -173,6 +173,10 @@ export class Server {
         await this.handler.handleFatalError(error);
       });
 
+      process.on('unhandledRejection', async (error: Error) => {
+        await this.handler.handleFatalError(error);
+      });
+
       const envFile = options.config?.env ?? '.env';
 
       if (!existsSync(envFile)) {
