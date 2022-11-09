@@ -66,7 +66,6 @@ export class Server {
       const token =
         this.request.input('_token') ??
         this.request.input('_csrf') ??
-        this.request.input('_csrfToken') ??
         this.request.header('X-CSRF-TOKEN') ??
         this.request.header('X-XSRF-TOKEN');
 
