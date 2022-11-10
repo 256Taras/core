@@ -64,8 +64,8 @@ export class Server {
 
     if (![HttpMethod.Get, HttpMethod.Head].includes(this.request.method())) {
       const token =
-        this.request.input('_token') ??
         this.request.input('_csrf') ??
+        this.request.input('_token') ??
         this.request.header('X-CSRF-TOKEN') ??
         this.request.header('X-XSRF-TOKEN');
 
@@ -231,14 +231,16 @@ export class Server {
 
         if (!this.request.isFileRequest()) {
           await this.session.$setup();
-
-          this.handleCsrfToken();
         }
 
         startTime = process.hrtime();
       });
 
       this.instance.addHook('onResponse', async (request, response) => {
+        if (!this.request.isFileRequest()) {
+          this.handleCsrfToken();
+        }
+
         await this.session.$writeSession();
 
         if (!this.request.isFileRequest()) {

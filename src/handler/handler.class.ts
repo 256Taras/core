@@ -30,8 +30,8 @@ export class Handler {
 
     const line = stack.split('\n')[1];
 
-    const at = line.slice(line.indexOf('at ') + 2, line.length);
-    const caller = at.split('(')[0];
+    const at = line?.slice(line.indexOf('at ') + 2, line.length) ?? 'unknown';
+    const caller = at.split('(')[0] ?? 'unknown';
     const fileMatch = at.match(/\((.*?)\)/);
 
     let file = '';
@@ -41,8 +41,8 @@ export class Handler {
 
       file = file
         .replace(file.replace(/([^:]*:){2}/, ''), '')
-        .slice(0, -1)
-        .replaceAll('\\', '/');
+        ?.slice(0, -1)
+        ?.replaceAll('\\', '/') ?? file;
 
       const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 

@@ -4,6 +4,7 @@ import { Service } from '../injector/decorators/service.decorator';
 import { HttpMethod } from './enums/http-method.enum';
 import { Session } from '../session/session.class';
 import { Encrypter } from '../crypto/encrypter.class';
+import { copyFile, rm } from 'node:fs/promises';
 
 @Service()
 export class Request {
@@ -44,8 +45,20 @@ export class Request {
     return this.files?.[file as keyof object] ?? null;
   }
 
-  public get files(): AsyncIterableIterator<MultipartFile> | undefined {
-    return this.instance?.files();
+  public async files(): Promise<any> {
+    const files = await this.instance!.saveRequestFiles();
+
+    for await (const file of files) {
+      try {
+        await copyFile(file.filepath, `./uploads/${file.filename}`);
+
+        await rm(file.filepath);
+      } catch (error) {
+        throw new Error('File upload failed');
+      }
+    }
+
+    return files;
   }
 
   public has(field: string): boolean {
