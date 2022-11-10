@@ -4,7 +4,7 @@ import { Service } from '../injector/decorators/service.decorator';
 import { HttpMethod } from './enums/http-method.enum';
 import { Session } from '../session/session.class';
 import { Encrypter } from '../crypto/encrypter.class';
-import { copyFile, rm } from 'node:fs/promises';
+import { File } from './file.class';
 
 @Service()
 export class Request {
@@ -48,14 +48,12 @@ export class Request {
   public async files(): Promise<any> {
     const files = await this.instance!.saveRequestFiles();
 
+    const instances = [];
+    
     for await (const file of files) {
-      try {
-        await copyFile(file.filepath, `./uploads/${file.filename}`);
+      const instance = new File(file.filename, file.filepath);
 
-        await rm(file.filepath);
-      } catch (error) {
-        throw new Error('File upload failed');
-      }
+      instances.push(instance);
     }
 
     return files;
