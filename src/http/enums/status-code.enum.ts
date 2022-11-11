@@ -39,7 +39,7 @@ export enum StatusCode {
   RangeNotSatisfiable = 416,
   ExpectationFailed = 417,
   ImTeapot = 418,
-  TokenExpired = 419,
+  InvalidToken = 419,
   MisdirectedRequest = 421,
   UnprocessableEntity = 422,
   Locked = 423,

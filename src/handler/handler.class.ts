@@ -153,13 +153,13 @@ export class Handler {
   }
 
   public handleInvalidToken(): void {
-    const statusCode = StatusCode.TokenExpired;
+    const statusCode = StatusCode.InvalidToken;
 
     this.response.status(statusCode);
 
     const data = {
       statusCode,
-      message: 'Token Expired',
+      message: 'Invalid Token',
     };
 
     if (this.request.ajax()) {
