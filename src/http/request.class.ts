@@ -45,10 +45,10 @@ export class Request {
     return this.files?.[file as keyof object] ?? null;
   }
 
-  public async files(): Promise<any> {
+  public async files(): Promise<File[]> {
     const files = await this.instance!.saveRequestFiles();
 
-    const instances = [];
+    const instances: File[] = [];
     
     for await (const file of files) {
       const instance = new File(file.filename, file.filepath);
@@ -56,7 +56,7 @@ export class Request {
       instances.push(instance);
     }
 
-    return files;
+    return instances;
   }
 
   public has(field: string): boolean {
