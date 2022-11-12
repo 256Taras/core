@@ -68,7 +68,7 @@ export class Server {
         this.request.input('_token') ??
         this.request.header('X-CSRF-TOKEN') ??
         this.request.header('X-XSRF-TOKEN');
-
+console.log(this.request.input('_csrf'), this.request.body)
       if (!token || token !== this.session.get('_csrfToken')) {
         this.handler.handleInvalidToken();
       }

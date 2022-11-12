@@ -41,22 +41,28 @@ export class Request {
     return this.cookies[cookie] ?? null;
   }
 
-  public file(file: string): MultipartFile | null {
-    return this.files?.[file as keyof object] ?? null;
+  public async file(name: string): Promise<File | null> {
+    const files = await this.files();
+
+    const file = files.filter((file) => file.name === name)[0];
+
+    return file ?? null;
   }
 
-  public async files(): Promise<File[]> {
-    const files = await this.instance!.saveRequestFiles();
+  public files(): Promise<File[]> {
+    return new Promise((resolve) => {
+      this.instance!.saveRequestFiles().then((files) => {
+        const instances: File[] = [];
+      
+        for (const file of files) {
+          const instance = new File(file.filename, file.filepath);
 
-    const instances: File[] = [];
-    
-    for await (const file of files) {
-      const instance = new File(file.filename, file.filepath);
+          instances.push(instance);
+        }
 
-      instances.push(instance);
-    }
-
-    return instances;
+        resolve(instances);
+      });
+    });
   }
 
   public has(field: string): boolean {
