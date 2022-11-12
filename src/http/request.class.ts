@@ -1,8 +1,8 @@
 import { FastifyRequest } from 'fastify';
-import { Service } from '../injector/decorators/service.decorator';
-import { HttpMethod } from './enums/http-method.enum';
-import { Session } from '../session/session.class';
 import { Encrypter } from '../crypto/encrypter.class';
+import { Service } from '../injector/decorators/service.decorator';
+import { Session } from '../session/session.class';
+import { HttpMethod } from './enums/http-method.enum';
 import { File } from './file.class';
 
 interface FormFileField {
@@ -55,7 +55,11 @@ export class Request {
     const result: Record<string, File[]> = {};
 
     for (const [field, value] of Object.entries(fields)) {
-      if (Array.isArray(value) && (value as unknown[])?.[0] && 'filename' in (value[0] as FormFileField)) {
+      if (
+        Array.isArray(value) &&
+        (value as unknown[])?.[0] &&
+        'filename' in (value[0] as FormFileField)
+      ) {
         value.map((file: FormFileField) => {
           const instance = new File(file.filename, file.data, file.mimetype);
 
@@ -104,7 +108,9 @@ export class Request {
   public isFileRequest(): boolean {
     const urlLastSegment = this.url()?.slice(this.url()?.lastIndexOf('/') ?? 0 + 1);
 
-    return (urlLastSegment?.includes('.') ?? false) && this.method() === HttpMethod.Get;
+    return (
+      (urlLastSegment?.includes('.') ?? false) && this.method() === HttpMethod.Get
+    );
   }
 
   public locale(): string | string[] {

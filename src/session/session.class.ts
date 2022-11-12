@@ -10,7 +10,8 @@ import { readJson } from '../utils/functions/read-json.function';
 
 @Service()
 export class Session {
-  private readonly directoryPath = env<string>('SESSION_PATH') ?? 'node_modules/.northle/sessions';
+  private readonly directoryPath =
+    env<string>('SESSION_PATH') ?? 'node_modules/.northle/sessions';
 
   private variables: Record<string, any> = {};
 

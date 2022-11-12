@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import * as constants from '../constants';
+import { nonce } from '../http/functions/nonce.function';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
@@ -11,7 +12,6 @@ import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
-import { nonce } from '../http/functions/nonce.function';
 
 @Service()
 export class ViewCompiler {

@@ -39,10 +39,11 @@ export class Handler {
     try {
       file = fileMatch ? fileURLToPath(fileMatch[1]) : 'unknown';
 
-      file = file
-        .replace(file.replace(/([^:]*:){2}/, ''), '')
-        ?.slice(0, -1)
-        ?.replaceAll('\\', '/') ?? file;
+      file =
+        file
+          .replace(file.replace(/([^:]*:){2}/, ''), '')
+          ?.slice(0, -1)
+          ?.replaceAll('\\', '/') ?? file;
 
       const isAppFile = !file.includes('node_modules') && !file.includes('/core');
 

@@ -3,7 +3,11 @@ import { createWriteStream, existsSync } from 'node:fs';
 export class File {
   private buffer: Buffer;
 
-  constructor(public readonly originalName: string, content: Buffer, public readonly mimeType: string) {
+  constructor(
+    public readonly originalName: string,
+    content: Buffer,
+    public readonly mimeType: string,
+  ) {
     this.buffer = content;
   }
 
