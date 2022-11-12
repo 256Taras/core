@@ -1,10 +1,15 @@
-import { MultipartFile } from '@fastify/multipart';
 import { FastifyRequest } from 'fastify';
 import { Service } from '../injector/decorators/service.decorator';
 import { HttpMethod } from './enums/http-method.enum';
 import { Session } from '../session/session.class';
 import { Encrypter } from '../crypto/encrypter.class';
 import { File } from './file.class';
+
+interface FormFileField {
+  data: Buffer;
+  filename: string;
+  mimetype: string;
+}
 
 @Service()
 export class Request {
@@ -41,28 +46,31 @@ export class Request {
     return this.cookies[cookie] ?? null;
   }
 
-  public async file(name: string): Promise<File | null> {
-    const files = await this.files();
-
-    const file = files.filter((file) => file.name === name)[0];
-
-    return file ?? null;
+  public file(name: string): File[] | null {
+    return this.files[name] ?? null;
   }
 
-  public files(): Promise<File[]> {
-    return new Promise((resolve) => {
-      this.instance!.saveRequestFiles().then((files) => {
-        const instances: File[] = [];
-      
-        for (const file of files) {
-          const instance = new File(file.filename, file.filepath);
+  public get files(): Record<string, File[]> {
+    const fields = this.body;
+    const result: Record<string, File[]> = {};
 
-          instances.push(instance);
-        }
+    for (const [field, value] of Object.entries(fields)) {
+      if (Array.isArray(value) && (value as unknown[])?.[0] && 'filename' in (value[0] as FormFileField)) {
+        value.map((file: FormFileField) => {
+          const instance = new File(file.filename, file.data, file.mimetype);
 
-        resolve(instances);
-      });
-    });
+          const cleanFieldName = field.replace('[]', '');
+
+          if (!(cleanFieldName in result)) {
+            result[cleanFieldName] = [];
+          }
+
+          (result[cleanFieldName] as File[]).push(instance);
+        });
+      }
+    }
+
+    return result;
   }
 
   public has(field: string): boolean {

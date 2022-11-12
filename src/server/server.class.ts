@@ -68,7 +68,7 @@ export class Server {
         this.request.input('_token') ??
         this.request.header('X-CSRF-TOKEN') ??
         this.request.header('X-XSRF-TOKEN');
-console.log(this.request.input('_csrf'), this.request.body)
+
       if (!token || token !== this.session.get('_csrfToken')) {
         this.handler.handleInvalidToken();
       }
@@ -124,6 +124,7 @@ console.log(this.request.input('_csrf'), this.request.body)
     };
 
     const multipartOptions: FastifyMultipartOptions = {
+      addToBody: true,
       limits: {
         fieldSize: (env<number>('FIELD_LIMIT') ?? 10) * 1024 * 1024,
         fileSize: (env<number>('UPLOAD_LIMIT') ?? 100) * 1024 * 1024,
