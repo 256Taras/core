@@ -12,6 +12,8 @@ import { Request } from './request.class';
 export class Response {
   private instance: FastifyReply | null = null;
 
+  private terminated = false;
+
   constructor(
     private request: Request,
     private session: Session,
@@ -101,6 +103,10 @@ export class Response {
     return this;
   }
 
+  public isTerminated(): boolean {
+    return this.terminated;
+  }
+
   public json(data?: Record<string, unknown>): this {
     this.instance?.send(data);
 
@@ -168,5 +174,9 @@ export class Response {
     this.instance?.send(data);
 
     return this;
+  }
+
+  public terminate(terminate = true): void {
+    this.terminated = terminate;
   }
 }

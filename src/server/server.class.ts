@@ -230,6 +230,8 @@ export class Server {
         this.request.$setInstance(request);
         this.response.$setInstance(response);
 
+        this.response.terminate(false);
+
         if (!this.request.isFileRequest()) {
           await this.session.$setup();
         }
@@ -237,11 +239,13 @@ export class Server {
         startTime = process.hrtime();
       });
 
-      this.instance.addHook('onResponse', async (request, response) => {
+      this.instance.addHook('preValidation', async () => {
         if (!this.request.isFileRequest()) {
           this.handleCsrfToken();
         }
+      });
 
+      this.instance.addHook('onResponse', async (request, response) => {
         await this.session.$writeSession();
 
         if (!this.request.isFileRequest()) {

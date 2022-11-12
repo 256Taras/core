@@ -127,6 +127,8 @@ export class Handler {
       ? `views/errors/${statusCode}`
       : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
+    this.response.terminate();
+
     await this.response.render(file, data);
   }
 
@@ -175,6 +177,8 @@ export class Handler {
       ? `views/errors/${statusCode}`
       : `${fileURLToPath(import.meta.url)}/../../../views/http`;
 
+    this.response.terminate();
+
     this.response.render(view, data);
   }
 
@@ -205,6 +209,8 @@ export class Handler {
     const view = existsSync(customViewTemplate)
       ? `views/errors/${statusCode}`
       : `${fileURLToPath(import.meta.url)}/../../../views/http`;
+
+    this.response.terminate();
 
     this.response.render(view, data);
   }

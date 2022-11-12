@@ -48,9 +48,13 @@ export class Router {
     method: string | symbol,
     ...args: unknown[]
   ): Promise<void> {
-    try {
-      const requestParams = Object.values(this.request.params);
+    const requestParams = Object.values(this.request.params);
 
+    if (this.response.isTerminated()) {
+      return;
+    }
+
+    try {
       let content = inject(controller)[method](...requestParams, ...args);
 
       if (content instanceof Promise) {
