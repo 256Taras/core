@@ -8,6 +8,8 @@ export class Logger {
 
   private readonly locale = 'en-us';
 
+  public readonly colorOrange = '#ffa57c';
+
   public readonly colorRed = '#f87777';
 
   public readonly colorYellow = '#f8c377';

@@ -254,12 +254,12 @@ console.log(this.request.input('_csrf'), this.request.body)
 
         const status = response.statusCode;
         const red = this.logger.colorRed;
-        const yellow = this.logger.colorYellow;
+        const orange = this.logger.colorOrange;
 
         const statusMapping = {
           [String(status >= 100 && status < 200)]: chalk.blueBright(status),
           [String(status >= 200 && status < 400)]: chalk.green(status),
-          [String(status >= 400 && status < 500)]: chalk.hex(yellow)(status),
+          [String(status >= 400 && status < 500)]: chalk.hex(orange)(status),
           [String(status >= 500 && status < 600)]: chalk.hex(red)(status),
         };
 

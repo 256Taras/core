@@ -8,6 +8,8 @@ describe('Logger class', () => {
   logger.$disable();
 
   it('exposes public property', () => {
+    expect(logger.colorOrange).toBe('#ffa57c');
+    expect(logger.colorRed).toBe('#f87777');
     expect(logger.colorYellow).toBe('#f8c377');
   });
 
