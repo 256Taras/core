@@ -77,6 +77,10 @@ export class Request {
     return result;
   }
 
+  public form<T>(): T {
+    return this.body as T;
+  }
+
   public has(field: string): boolean {
     return this.input(field) ? true : false;
   }
