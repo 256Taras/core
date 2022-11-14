@@ -133,7 +133,7 @@ export class Request {
   }
 
   public nonce(): string {
-    return this.encrypter.uuid();
+    return this.encrypter.randomBytes(16, 'base64');
   }
 
   public param(param: string): string | null {
