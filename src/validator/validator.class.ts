@@ -1,4 +1,4 @@
-import { isIP, isIPv4 } from 'net';
+import { isIP, isIPv4 } from 'node:net';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
