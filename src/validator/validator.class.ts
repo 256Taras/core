@@ -1,9 +1,9 @@
-import { isIP, isIPv4 } from 'net';
+import { isIP, isIPv4 } from 'node:net';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
-import { ValidationAssertions } from './interfaces/validation-assertions.interface';
+import { ValidationRules } from './interfaces/validation-rules.interface';
 
 @Service()
 export class Validator {
@@ -164,6 +164,18 @@ export class Validator {
     return true;
   }
 
+  private validateLowercase(
+    value: string,
+    lowercase: boolean,
+    fieldName: string,
+  ): boolean | string {
+    if (lowercase && value !== value.toLowerCase()) {
+      return `Field ${fieldName} must be a lowercased string`;
+    }
+
+    return true;
+  }
+
   private validateMax(
     value: number,
     length: number,
@@ -296,6 +308,18 @@ export class Validator {
     return true;
   }
 
+  private validateUppercase(
+    value: string,
+    uppercase: boolean,
+    fieldName: string,
+  ): boolean | string {
+    if (uppercase && value !== value.toUpperCase()) {
+      return `Field ${fieldName} must be an uppercased string`;
+    }
+
+    return true;
+  }
+
   private validateUsername(
     value: string,
     isUsername: boolean,
@@ -316,8 +340,8 @@ export class Validator {
     this.response = response;
   }
 
-  public assert(rules: ValidationAssertions, checkOnly = false): boolean {
-    const ruleMapper: Record<string, any> = {
+  public assert(rules: Record<string, ValidationRules>, checkOnly = false): boolean {
+    const ruleMapper: Record<string, Function> = {
       accepted: this.validateAccepted,
       date: this.validateDate,
       doesntEndWith: this.validateDoesntEndWith,
@@ -330,6 +354,7 @@ export class Validator {
       ip: this.validateIp,
       ipv4: this.validateIpv4,
       length: this.validateLength,
+      lowercase: this.validateLowercase,
       max: this.validateMax,
       maxLength: this.validateMaxLength,
       min: this.validateMin,
@@ -341,6 +366,7 @@ export class Validator {
       required: this.validateRequired,
       sameAs: this.validateSameAs,
       startsWith: this.validateStartsWith,
+      uppercase: this.validateUppercase,
       username: this.validateUsername,
     };
 
