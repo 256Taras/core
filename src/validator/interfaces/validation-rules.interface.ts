@@ -13,6 +13,7 @@ export interface ValidationRules {
   ip?: boolean;
   ipv4?: boolean;
   length?: Integer;
+  lowercase?: boolean;
   max?: Integer;
   maxLength?: Integer;
   min?: Integer;
@@ -24,5 +25,6 @@ export interface ValidationRules {
   required?: boolean;
   sameAs?: string;
   startsWith?: string;
+  uppercase?: boolean;
   username?: boolean;
 }
