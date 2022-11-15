@@ -3,7 +3,7 @@ import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
-import { ValidationAssertions } from './interfaces/validation-assertions.interface';
+import { ValidationRules } from './interfaces/validation-rules.interface';
 
 @Service()
 export class Validator {
@@ -340,7 +340,7 @@ export class Validator {
     this.response = response;
   }
 
-  public assert(rules: ValidationAssertions, checkOnly = false): boolean {
+  public assert(rules: Record<string, ValidationRules>, checkOnly = false): boolean {
     const ruleMapper: Record<string, Function> = {
       accepted: this.validateAccepted,
       date: this.validateDate,
