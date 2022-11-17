@@ -47,7 +47,7 @@ export class Session {
 
       this.variables = savedSessionData;
     } else {
-      const generatedId = this.encrypter.uuid();
+      const generatedId = this.encrypter.uuid({ clean: true });
       const path = `${this.directoryPath}/${generatedId}.json`;
 
       this.response?.cookie('sessionId', generatedId, {
@@ -94,7 +94,11 @@ export class Session {
     return this.variables;
   }
 
-  public decrement(key: string, by = 1): number {
+  public decrement(key: string, by = 1, defaultValue?: number): number {
+    if (!this.has(key) && defaultValue) {
+      this.data[key] = defaultValue;
+    }
+
     if (typeof this.data[key] !== 'number') {
       throw new Error(`Session value '${key}' is not a number`);
     }
@@ -114,7 +118,7 @@ export class Session {
     await unlink(`${this.directoryPath}/${this.key}.json`);
   }
 
-  public flash<T>(key: string, value?: unknown): T | void {
+  public flash<T = string>(key: string, value?: unknown): T | null {
     const flashKey = `_flash:${key}`;
 
     if (value === undefined) {
@@ -126,9 +130,23 @@ export class Session {
     }
 
     this.data[flashKey] = value;
+
+    return this.data[flashKey];
   }
 
-  public get<T>(key: string): T | null {
+  public get flashData(): Record<string, any> {
+    const flashData: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(this.data)) {
+      if (key.startsWith('_flash:')) {
+        flashData[key] = value;
+      }
+    }
+
+    return flashData;
+  }
+
+  public get<T = string>(key: string): T | null {
     return this.data[key] ?? null;
   }
 
@@ -140,7 +158,11 @@ export class Session {
     return this.data.id;
   }
 
-  public increment(key: string, by = 1): number {
+  public increment(key: string, by = 1, defaultValue?: number): number {
+    if (!this.has(key) && defaultValue) {
+      this.data[key] = defaultValue;
+    }
+
     if (typeof this.data[key] !== 'number') {
       throw new Error(`Session value '${key}' is not a number`);
     }

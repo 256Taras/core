@@ -1,8 +1,8 @@
 import { inject } from '../../injector/functions/inject.function';
 import { Session } from '../session.class';
 
-export const session = <T>(key: string) => {
-  const sessionInstance = inject(Session);
+export const session = <T = string>(key: string) => {
+  const session = inject(Session);
 
-  return sessionInstance.get(key) as T;
+  return session.get<T>(key);
 };

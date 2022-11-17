@@ -7,6 +7,7 @@ import {
 } from 'node:crypto';
 import { Service } from '../injector/decorators/service.decorator';
 import { Integer } from '../utils/types/integer.type';
+import { UuidOptions } from './interfaces/uuid-options.interface';
 
 @Service()
 export class Encrypter {
@@ -51,7 +52,9 @@ export class Encrypter {
     return randomBytes(length).toString(encoding);
   }
 
-  public uuid(): string {
-    return randomUUID();
+  public uuid(options?: UuidOptions): string {
+    const uuid = randomUUID();
+
+    return options?.clean ? uuid.replaceAll('-', '') : uuid;
   }
 }

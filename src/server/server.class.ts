@@ -234,6 +234,8 @@ export class Server {
 
         if (!this.request.isFileRequest()) {
           await this.session.$setup();
+
+          this.session.increment('_requestId', 1, 0);
         }
 
         startTime = process.hrtime();
