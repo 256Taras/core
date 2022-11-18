@@ -97,6 +97,10 @@ export class Request {
     return this.instance?.hostname ?? null;
   }
 
+  public id(): number {
+    return this.session.get<number>('_requestId') ?? 0;
+  }
+
   public input<T = string>(field: string): T | null {
     return (this.body[field] as T) ?? null;
   }

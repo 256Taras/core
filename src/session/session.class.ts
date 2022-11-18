@@ -7,19 +7,20 @@ import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { env } from '../utils/functions/env.function';
 import { readJson } from '../utils/functions/read-json.function';
+import { FlashedData } from './interfaces/flashed-data.interface';
 
 @Service()
 export class Session {
   private readonly directoryPath =
     env<string>('SESSION_PATH') ?? 'node_modules/.northle/sessions';
+  
+  private key: string | null = null;
+  
+  private request: FastifyRequest | null = null;
+  
+  private response: FastifyReply | null = null;
 
   private variables: Record<string, any> = {};
-
-  private key: string | null = null;
-
-  private request: FastifyRequest | null = null;
-
-  private response: FastifyReply | null = null;
 
   constructor(private encrypter: Encrypter) {
     this.encrypter = inject(Encrypter);
@@ -43,9 +44,9 @@ export class Session {
     const sessionFilePath = `${this.directoryPath}/${this.key}.json`;
 
     if (this.key && existsSync(sessionFilePath)) {
-      const savedSessionData = await readJson(sessionFilePath);
+      const savedData = await readJson(sessionFilePath);
 
-      this.variables = savedSessionData;
+      this.variables = savedData;
     } else {
       const generatedId = this.encrypter.uuid({ clean: true });
       const path = `${this.directoryPath}/${generatedId}.json`;
@@ -77,12 +78,18 @@ export class Session {
   public async $writeSession(): Promise<void> {
     const path = `${this.directoryPath}/${this.key}.json`;
 
+    const data = { ...this.data };
+
+    for (const [key, value] of Object.entries(data)) {
+      if (key.startsWith('_flash:') && (value as FlashedData).requestId < (this.get<number>('_requestId') ?? 0)) {
+        delete data[key];
+      }
+    }
+
     try {
       await writeFile(
         path,
-        JSON.stringify({
-          ...this.data,
-        }),
+        JSON.stringify(data),
         'utf-8',
       );
     } catch (error) {
@@ -120,30 +127,30 @@ export class Session {
 
   public flash<T = string>(key: string, value?: unknown): T | null {
     const flashKey = `_flash:${key}`;
+    const flashValue = (this.data[flashKey] as FlashedData).value ?? null;
 
     if (value === undefined) {
-      const data = this.data[flashKey] ?? null;
-
-      this.delete(flashKey);
-
-      return data;
+      return flashValue;
     }
 
-    this.data[flashKey] = value;
+    (this.data[flashKey] as FlashedData) = {
+      requestId: this.get('_requestId') ?? 0,
+      value,
+    };
 
-    return this.data[flashKey];
+    return flashValue;
   }
 
-  public get flashData(): Record<string, any> {
-    const flashData: Record<string, any> = {};
+  public get flashed(): Record<string, any> {
+    const data: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(this.data)) {
       if (key.startsWith('_flash:')) {
-        flashData[key] = value;
+        data[key] = (value as FlashedData).value;
       }
     }
 
-    return flashData;
+    return data;
   }
 
   public get<T = string>(key: string): T | null {
@@ -152,10 +159,6 @@ export class Session {
 
   public has(key: string): boolean {
     return key in this.data;
-  }
-
-  public id(): string {
-    return this.data.id;
   }
 
   public increment(key: string, by = 1, defaultValue?: number): number {
