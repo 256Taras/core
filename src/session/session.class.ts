@@ -127,7 +127,7 @@ export class Session {
 
   public flash<T = string>(key: string, value?: unknown): T | null {
     const flashKey = `_flash:${key}`;
-    const flashValue = (this.data[flashKey] as FlashedData).value ?? null;
+    const flashValue = (this.data[flashKey] as FlashedData)?.value ?? null;
 
     if (value === undefined) {
       return flashValue;
