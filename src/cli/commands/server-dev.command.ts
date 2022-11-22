@@ -65,7 +65,7 @@ export class ServerDevCommand {
       childProcess.kill();
 
       childProcess = fork(entryFile, processOptions);
-    }, 680);
+    }, 560);
 
     sourceWatcher.on('all', () => {
       restartProcess();
