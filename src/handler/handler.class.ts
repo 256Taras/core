@@ -35,9 +35,9 @@ export class Handler {
     const at = where?.slice(where.indexOf('at ') + 2, where.length) ?? 'unknown';
     const caller = at.split('(')[0] ?? 'unknown';
     const fileMatch = at.match(/\((.*?)\)/);
-    const line = fileMatch?.[1]?.match(/(.*):(.*):(.*)/)?.[2] ?? 1;
 
     let file = '';
+    let line: number | null = +(fileMatch?.[1]?.match(/(.*):(.*):(.*)/)?.[2] ?? 1);
 
     try {
       file = fileMatch ? fileURLToPath(fileMatch[1]) : 'unknown';
@@ -58,6 +58,7 @@ export class Handler {
         file = (existsSync(originalSourceFile) ? originalSourceFile : file);
       } else {
         file = '@northle/core package';
+        line = null;
       }
     } catch (err) {
       file = 'unknown';
@@ -65,7 +66,7 @@ export class Handler {
 
     this.caller = caller;
     this.file = file;
-    this.line = +line;
+    this.line = line;
   }
 
   public async handleError(error: Error): Promise<void> {
@@ -96,6 +97,9 @@ export class Handler {
 
     if (this.file) {
       this.logger.sub(`File: ${this.file}`);
+    }
+
+    if (this.line) {
       this.logger.sub(`Line: ${this.line}`);
     }
 
@@ -160,6 +164,9 @@ export class Handler {
 
     if (this.file) {
       this.logger.sub(`File: ${this.file}`);
+    }
+
+    if (this.line) {
       this.logger.sub(`Line: ${this.line}`);
     }
 
