@@ -102,7 +102,7 @@ export class Session {
   }
 
   public decrement(key: string, by = 1, defaultValue?: number): number {
-    if (!this.has(key) && defaultValue) {
+    if (!this.has(key) && defaultValue !== undefined) {
       this.data[key] = defaultValue;
     }
 
@@ -162,7 +162,7 @@ export class Session {
   }
 
   public increment(key: string, by = 1, defaultValue?: number): number {
-    if (!this.has(key) && defaultValue) {
+    if (!this.has(key) && defaultValue !== undefined) {
       this.data[key] = defaultValue;
     }
 
