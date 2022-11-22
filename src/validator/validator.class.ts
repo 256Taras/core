@@ -7,11 +7,6 @@ import { ValidationRules } from './interfaces/validation-rules.interface';
 
 @Service()
 export class Validator {
-  private emailRegexp =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-  private usernameRegexp = /^[a-z][a-z0-9]*(?:[ _-][a-z0-9]*)*$/iu;
-
   constructor(private request: Request, private response: Response) {}
 
   private validateAccepted(
@@ -85,7 +80,10 @@ export class Validator {
     isEmail: boolean,
     fieldName: string,
   ): boolean | string {
-    if (isEmail && !this.emailRegexp.test(value)) {
+    const emailRegexp =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (isEmail && !emailRegexp.test(value)) {
       return `Field ${fieldName} must be a valid email`;
     }
 
@@ -325,7 +323,9 @@ export class Validator {
     isUsername: boolean,
     fieldName: string,
   ): boolean | string {
-    if (isUsername && !this.usernameRegexp.test(value)) {
+    const usernameRegexp = /^[a-z][a-z0-9]*(?:[ _-][a-z0-9]*)*$/iu;
+
+    if (isUsername && !usernameRegexp.test(value)) {
       return `Field ${fieldName} must be a valid username`;
     }
 
