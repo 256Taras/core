@@ -136,18 +136,24 @@ export class ViewCompiler {
   }
 
   private parseErrorDirectives(): void {
-    const matches = this.html.matchAll(/\[error *?\((.*?)\)\]/g) ?? [];
+    const matches = this.html.matchAll(/\[error *?\((.*?)\)\]((\n|\r\n*?)?((.|\n|\r\n)*?)\[\/error\])?/g) ?? [];
 
     for (const match of matches) {
       const value = match[1];
       const renderFunction = this.getRenderFunction(`return ${value};`);
+      const fieldName = renderFunction<string>();
 
-      const error =
-        flash<Record<string, string>>('errors')?.[
-          renderFunction<string>()
-        ] ?? '';
+      const errors = flash<Record<string, string>>('errors') ?? {};
 
-      this.html = this.html.replace(match[0], error);
+      if (fieldName in errors) {
+        const error = match[2] ? match[4] : errors[fieldName];
+  
+        this.html = this.html.replace(match[0], error);
+
+        continue;
+      }
+
+      this.html = this.html.replace(match[0], '');
     }
   }
 
