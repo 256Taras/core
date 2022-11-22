@@ -6,9 +6,15 @@ import { Service } from '../injector/decorators/service.decorator';
 export class Logger {
   private enabled = true;
 
+  private lastColor = '#ffffff';
+
+  private lastLabel = 'log';
+
   private readonly locale = 'en-us';
 
   public readonly colorOrange = '#ffa57c';
+
+  public readonly colorGreen = '#0dbc79';
 
   public readonly colorRed = '#f87777';
 
@@ -55,31 +61,37 @@ export class Logger {
     this.enabled = false;
   }
 
-  public error(data: string, type = 'error'): void {
+  public error(data: string, label = 'error'): void {
     if (!this.enabled) {
       return;
     }
 
+    this.lastLabel = label;
+    this.lastColor = this.colorRed;
+
     const output = `\n${chalk
       .bgHex(this.colorRed)
-      .black(` ${type.toUpperCase()} `)} ${chalk.bold.hex(this.colorRed)(data)}\n`;
+      .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(this.colorRed)(data)}\n`;
 
     console.error(output);
   }
 
-  public info(data: string, type = 'info'): void {
+  public info(data: string, label = 'info'): void {
     if (!this.enabled) {
       return;
     }
 
+    this.lastLabel = label;
+    this.lastColor = this.colorGreen;
+
     const output = `\n${chalk.bgGreen.black(
-      ' ' + type.toUpperCase() + ' ',
+      ' ' + label.toUpperCase() + ' ',
     )} ${chalk.bold.green(data)}\n`;
 
     console.log(output);
   }
 
-  public log(data: string, type = 'log', additionalData = ''): void {
+  public log(data: string, label = 'log', additionalData = ''): void {
     if (!this.enabled) {
       return;
     }
@@ -88,8 +100,8 @@ export class Logger {
     const time = this.getTime();
 
     const timestamp = `${chalk.gray(
-      `[${chalk.white(type.charAt(0).toUpperCase() + type.slice(1))}]${' '.repeat(
-        7 - type.length,
+      `[${chalk.white(label.charAt(0).toUpperCase() + label.slice(1))}]${' '.repeat(
+        7 - label.length,
       )}`,
     )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
@@ -98,19 +110,36 @@ export class Logger {
     const left = `${timestamp} ${chalk.white.bold(mainOutput)}`;
     const right = chalk.gray(additionalData);
 
-    const dots = this.renderDots(timestamp + mainOutput + type);
+    const dots = this.renderDots(timestamp + mainOutput + label);
 
     console.log(left, dots, right);
   }
 
-  public warn(data: string, type = 'warning'): void {
+  public sub(data: string): void {
     if (!this.enabled) {
       return;
     }
 
+    const indent = ' '.repeat(this.lastLabel.length + 2);
+
+    const output = `${indent} ${chalk.bold.hex(this.lastColor)(
+      data,
+    )}\n`;
+
+    console.log(output);
+  }
+
+  public warn(data: string, label = 'warning'): void {
+    if (!this.enabled) {
+      return;
+    }
+
+    this.lastLabel = label;
+    this.lastColor = this.colorYellow;
+
     const output = `\n${chalk
       .bgHex(this.colorYellow)
-      .black(' ' + type.toUpperCase() + ' ')} ${chalk.bold.hex(this.colorYellow)(
+      .black(' ' + label.toUpperCase() + ' ')} ${chalk.bold.hex(this.colorYellow)(
       data,
     )}\n`;
 
