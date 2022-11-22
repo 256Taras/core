@@ -35,7 +35,7 @@ export class Handler {
     const at = where?.slice(where.indexOf('at ') + 2, where.length) ?? 'unknown';
     const caller = at.split('(')[0] ?? 'unknown';
     const fileMatch = at.match(/\((.*?)\)/);
-    const line = fileMatch?.[1]?.match(/(.*):(.*)/)?.[2] ?? 2;
+    const line = fileMatch?.[1]?.match(/(.*):(.*):(.*)/)?.[2] ?? 1;
 
     let file = '';
 
@@ -65,7 +65,7 @@ export class Handler {
 
     this.caller = caller;
     this.file = file;
-    this.line = +line - 1;
+    this.line = +line;
   }
 
   public async handleError(error: Error): Promise<void> {
