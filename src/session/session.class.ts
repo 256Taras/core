@@ -13,11 +13,11 @@ import { FlashedData } from './interfaces/flashed-data.interface';
 export class Session {
   private readonly directoryPath =
     env<string>('SESSION_PATH') ?? 'node_modules/.northle/sessions';
-  
+
   private key: string | null = null;
-  
+
   private request: FastifyRequest | null = null;
-  
+
   private response: FastifyReply | null = null;
 
   private variables: Record<string, any> = {};
@@ -81,17 +81,16 @@ export class Session {
     const data = { ...this.data };
 
     for (const [key, value] of Object.entries(data)) {
-      if (key.startsWith('_flash:') && (value as FlashedData).requestId < (this.get<number>('_requestId') ?? 0)) {
+      if (
+        key.startsWith('_flash:') &&
+        (value as FlashedData).requestId < (this.get<number>('_requestId') ?? 0)
+      ) {
         delete data[key];
       }
     }
 
     try {
-      await writeFile(
-        path,
-        JSON.stringify(data),
-        'utf-8',
-      );
+      await writeFile(path, JSON.stringify(data), 'utf-8');
     } catch (error) {
       throw new Error('Unable to write session');
     }

@@ -55,7 +55,7 @@ export class Handler {
 
         const originalSourceFile = file.replace('.js', '.ts');
 
-        file = (existsSync(originalSourceFile) ? originalSourceFile : file);
+        file = existsSync(originalSourceFile) ? originalSourceFile : file;
       } else {
         file = '@northle/core package';
         line = null;
@@ -157,10 +157,7 @@ export class Handler {
 
     const message = error.message.charAt(0).toUpperCase() + error.message.slice(1);
 
-    this.logger.error(
-      message,
-      'fatal error',
-    );
+    this.logger.error(message, 'fatal error');
 
     if (this.file) {
       this.logger.sub(`File: ${this.file}`);

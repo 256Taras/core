@@ -122,9 +122,7 @@ export class Logger {
 
     const indent = ' '.repeat(this.lastLabel.length + 2);
 
-    const output = `${indent} ${chalk.bold.hex(this.lastColor)(
-      data,
-    )}\n`;
+    const output = `${indent} ${chalk.bold.hex(this.lastColor)(data)}\n`;
 
     console.log(output);
   }

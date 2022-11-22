@@ -13,11 +13,11 @@ describe('Validator class', async () => {
 
   inject(Validator).$setRequest(request);
   inject(Validator).$setResponse(response);
-  
+
   const app = fastify();
-  
+
   await app.register(cookieMiddleware);
-  
+
   app.get('/', async (request, response) => {
     inject(Session).$setRequest(request);
     inject(Request).$setInstance(request);

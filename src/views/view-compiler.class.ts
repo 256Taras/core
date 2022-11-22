@@ -136,7 +136,10 @@ export class ViewCompiler {
   }
 
   private parseErrorDirectives(): void {
-    const matches = this.html.matchAll(/\[error *?\((.*?)\)\]((\n|\r\n*?)?((.|\n|\r\n)*?)\[\/error\])?/g) ?? [];
+    const matches =
+      this.html.matchAll(
+        /\[error *?\((.*?)\)\]((\n|\r\n*?)?((.|\n|\r\n)*?)\[\/error\])?/g,
+      ) ?? [];
 
     for (const match of matches) {
       const value = match[1];
@@ -147,7 +150,7 @@ export class ViewCompiler {
 
       if (fieldName in errors) {
         const error = match[2] ? match[4] : errors[fieldName];
-  
+
         this.html = this.html.replace(match[0], error);
 
         continue;

@@ -48,7 +48,10 @@ export class Encrypter {
     return hashedData;
   }
 
-  public randomBytes(length: Integer = 16, encoding: BufferEncoding = 'hex'): string {
+  public randomBytes(
+    length: Integer = 16,
+    encoding: BufferEncoding = 'hex',
+  ): string {
     return randomBytes(length).toString(encoding);
   }
 
