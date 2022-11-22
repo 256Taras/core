@@ -247,7 +247,7 @@ export class ViewCompiler {
   }
 
   private parseTokenDirectives(): void {
-    const matches = this.html.matchAll(/\[token\]/g) ?? [];
+    const matches = this.html.matchAll(/\[token|csrf\]/g) ?? [];
     const token = csrfToken();
 
     for (const match of matches) {
