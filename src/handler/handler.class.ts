@@ -17,6 +17,8 @@ export class Handler {
 
   private file: string | null = null;
 
+  private line: number | null = null;
+
   private notFoundHandler: (() => unknown) | null = null;
 
   constructor(
@@ -28,13 +30,14 @@ export class Handler {
   private async readErrorStack(): Promise<void> {
     const stack = this.error?.stack ?? 'Error\n    at <anonymous>:1:1';
 
-    const line = stack.split('\n')[1];
+    const where = stack.split('\n')[1];
 
-    const at = line?.slice(line.indexOf('at ') + 2, line.length) ?? 'unknown';
+    const at = where?.slice(where.indexOf('at ') + 2, where.length) ?? 'unknown';
     const caller = at.split('(')[0] ?? 'unknown';
     const fileMatch = at.match(/\((.*?)\)/);
 
     let file = '';
+    let line: number | null = +(fileMatch?.[1]?.match(/(.*):(.*):(.*)/)?.[2] ?? 1);
 
     try {
       file = fileMatch ? fileURLToPath(fileMatch[1]) : 'unknown';
@@ -52,9 +55,10 @@ export class Handler {
 
         const originalSourceFile = file.replace('.js', '.ts');
 
-        file = existsSync(originalSourceFile) ? originalSourceFile : file;
+        file = (existsSync(originalSourceFile) ? originalSourceFile : file);
       } else {
         file = '@northle/core package';
+        line = null;
       }
     } catch (err) {
       file = 'unknown';
@@ -62,6 +66,7 @@ export class Handler {
 
     this.caller = caller;
     this.file = file;
+    this.line = line;
   }
 
   public async handleError(error: Error): Promise<void> {
@@ -88,7 +93,15 @@ export class Handler {
           ' ',
         );
 
-    this.logger.error(`${message}${this.file ? ` [${this.file}]` : ''}`);
+    this.logger.error(message);
+
+    if (this.file) {
+      this.logger.sub(`File: ${this.file}`);
+    }
+
+    if (this.line) {
+      this.logger.sub(`Line: ${this.line}`);
+    }
 
     const data = {
       statusCode,
@@ -145,9 +158,17 @@ export class Handler {
     const message = error.message.charAt(0).toUpperCase() + error.message.slice(1);
 
     this.logger.error(
-      `${message}${this.file ? ` [${this.file}]` : ''}`,
+      message,
       'fatal error',
     );
+
+    if (this.file) {
+      this.logger.sub(`File: ${this.file}`);
+    }
+
+    if (this.line) {
+      this.logger.sub(`Line: ${this.line}`);
+    }
 
     if (!env<boolean>('DEVELOPMENT')) {
       process.exit(1);

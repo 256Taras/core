@@ -29,6 +29,7 @@ import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from '../websocket/interfaces/authorizer.nterface';
 import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
+import { Validator } from '../validator/validator.class';
 
 @Service()
 export class Server {
@@ -227,8 +228,11 @@ export class Server {
           this.session.$setResponse(response);
         }
 
-        this.request.$setInstance(request);
-        this.response.$setInstance(response);
+        const requestService = this.request.$setInstance(request);
+        const responseService = this.response.$setInstance(response);
+
+        inject(Validator).$setRequest(requestService);
+        inject(Validator).$setResponse(responseService);
 
         this.response.terminate(false);
 

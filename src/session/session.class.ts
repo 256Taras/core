@@ -102,7 +102,7 @@ export class Session {
   }
 
   public decrement(key: string, by = 1, defaultValue?: number): number {
-    if (!this.has(key) && defaultValue) {
+    if (!this.has(key) && defaultValue !== undefined) {
       this.data[key] = defaultValue;
     }
 
@@ -127,7 +127,7 @@ export class Session {
 
   public flash<T = string>(key: string, value?: unknown): T | null {
     const flashKey = `_flash:${key}`;
-    const flashValue = (this.data[flashKey] as FlashedData).value ?? null;
+    const flashValue = (this.data[flashKey] as FlashedData)?.value ?? null;
 
     if (value === undefined) {
       return flashValue;
@@ -162,7 +162,7 @@ export class Session {
   }
 
   public increment(key: string, by = 1, defaultValue?: number): number {
-    if (!this.has(key) && defaultValue) {
+    if (!this.has(key) && defaultValue !== undefined) {
       this.data[key] = defaultValue;
     }
 
