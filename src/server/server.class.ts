@@ -26,7 +26,6 @@ import { env } from '../utils/functions/env.function';
 import { readJson } from '../utils/functions/read-json.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
-import { Validator } from '../validator/validator.class';
 import { Authorizer } from '../websocket/interfaces/authorizer.nterface';
 import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
@@ -228,11 +227,8 @@ export class Server {
           this.session.$setResponse(response);
         }
 
-        const requestService = this.request.$setInstance(request);
-        const responseService = this.response.$setInstance(response);
-
-        inject(Validator).$setRequest(requestService);
-        inject(Validator).$setResponse(responseService);
+        this.request.$setInstance(request);
+        this.response.$setInstance(response);
 
         this.response.terminate(false);
 
@@ -254,7 +250,7 @@ export class Server {
       this.instance.addHook('onResponse', async (request, response) => {
         await this.session.$writeSession();
 
-        if (!this.request.isFileRequest()) {
+        if (!this.request.isFileRequest() && [HttpMethod.Get, HttpMethod.Head].includes(this.request.method())) {
           this.session.set('_previousLocation', request.url);
         }
 

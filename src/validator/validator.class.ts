@@ -370,6 +370,8 @@ export class Validator {
       username: this.validateUsername,
     };
 
+    const errors: Record<string, string> = {};
+
     for (const [fieldName, ruleSet] of Object.entries(rules)) {
       const fieldValue = this.request.input(fieldName);
 
@@ -378,23 +380,20 @@ export class Validator {
           throw new Error(`Invalid validation rule '${rule}'`);
         }
 
-        const messagesOrSuccess = ruleMapper[rule](fieldValue, ruleValue, fieldName);
+        const result = ruleMapper[rule](fieldValue, ruleValue, fieldName);
 
-        if (typeof messagesOrSuccess === 'string') {
-          if (!checkOnly) {
-            this.response.redirectBack(
-              {
-                errors: messagesOrSuccess,
-              },
-              StatusCode.BadRequest,
-            );
+        if (typeof result === 'string') {
+          errors[fieldName] = result;
 
-            continue;
+          if (checkOnly) {
+            return false;
           }
-
-          return false;
         }
       }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      this.response.redirectBack(errors, StatusCode.BadRequest);
     }
 
     return true;
