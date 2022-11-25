@@ -6,15 +6,17 @@ import { Service } from '../injector/decorators/service.decorator';
 export class Translator {
   private locale = 'en';
 
-  private translations: Map<string, string>;
+  private translations: Map<string, string> = new Map<string, string>;
 
   public async $setup(): Promise<void> {
     const path = `lang/${this.locale}.json`;
 
-    const data = (await readFile(path, 'utf8')).toString();
-
     if (existsSync(path)) {
-      this.translations = new Map<string, string>(Object.entries(JSON.parse(data)));
+      const data = (await readFile(path, 'utf8')).toString();
+
+      for (const [key, value] of Object.entries<string>(JSON.parse(data))) {
+        this.translations.set(key, value);
+      }
     }
   }
 
