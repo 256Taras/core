@@ -6,7 +6,7 @@ import { Service } from '../injector/decorators/service.decorator';
 export class Translator {
   private locale = 'en';
 
-  private translations: Map<string, string> = new Map<string, string>;
+  private translations: Map<string, string> = new Map<string, string>();
 
   public async $setup(): Promise<void> {
     const path = `lang/${this.locale}.json`;
