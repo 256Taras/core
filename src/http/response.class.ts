@@ -1,5 +1,6 @@
 import { FastifyReply } from 'fastify';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync} from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
@@ -154,7 +155,7 @@ export class Response {
       throw new Error(`View '${file}' does not exist`);
     }
 
-    const fileContent = readFileSync(file);
+    const fileContent = await readFile(file, 'utf-8');
 
     const html = await this.viewCompiler.compile(fileContent.toString(), data, file);
 
