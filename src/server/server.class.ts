@@ -204,6 +204,8 @@ export class Server {
         this.socketEmitter.registerChannels(socketChannels);
       });
 
+      await this.translator.$setup();
+
       this.translator.setLocale(options.config?.locale);
     } catch (error) {
       await this.handler.handleError(error as Error);

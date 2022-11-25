@@ -5,14 +5,18 @@ import { Service } from '../injector/decorators/service.decorator';
 export class Translator {
   private locale = 'en';
 
-  public get(text: string): string {
+  private translations: Record<string, string> = {};
+
+  public async $setup(): Promise<void> {
     const path = `lang/${this.locale}.json`;
 
-    const translations = existsSync(path)
+    this.translations = existsSync(path)
       ? JSON.parse(readFileSync(path, 'utf-8').toString())
       : {};
+  }
 
-    return translations[text] ?? text;
+  public get(text: string): string {
+    return this.translations[text] ?? text;
   }
 
   public setLocale(lang?: string): void {
