@@ -80,10 +80,10 @@ export class Session {
 
     const data = { ...this.data };
 
-    for (const [key, value] of Object.entries(data)) {
+    for (const [key, value] of Object.entries<FlashedData>(data)) {
       if (
         key.startsWith('_flash:') &&
-        (value as FlashedData).requestId < (this.get<number>('_requestId') ?? 0)
+        value.requestId < (this.get<number>('_requestId') ?? 0)
       ) {
         delete data[key];
       }
@@ -143,9 +143,9 @@ export class Session {
   public get flashed(): Record<string, any> {
     const data: Record<string, any> = {};
 
-    for (const [key, value] of Object.entries(this.data)) {
+    for (const [key, value] of Object.entries<FlashedData>(this.data)) {
       if (key.startsWith('_flash:')) {
-        data[key] = (value as FlashedData).value;
+        data[key] = value.value;
       }
     }
 

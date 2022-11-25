@@ -54,7 +54,7 @@ export class Request {
     const fields = this.body;
     const result: Record<string, File[]> = {};
 
-    for (const [field, value] of Object.entries(fields)) {
+    for (const [field, value] of Object.entries<unknown | unknown[]>(fields)) {
       if (
         Array.isArray(value) &&
         (value as unknown[])?.[0] &&
