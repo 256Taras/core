@@ -1,22 +1,25 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
 export class Translator {
   private locale = 'en';
 
-  private translations: Record<string, string> = {};
+  private translations: Map<string, string>;
 
   public async $setup(): Promise<void> {
     const path = `lang/${this.locale}.json`;
 
-    this.translations = existsSync(path)
-      ? JSON.parse(readFileSync(path, 'utf-8').toString())
-      : {};
+    const data = (await readFile(path, 'utf8')).toString();
+
+    if (existsSync(path)) {
+      this.translations = new Map<string, string>(Object.entries(JSON.parse(data)));
+    }
   }
 
   public get(text: string): string {
-    return this.translations[text] ?? text;
+    return this.translations.get(text) ?? text;
   }
 
   public setLocale(lang?: string): void {
