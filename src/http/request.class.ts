@@ -168,7 +168,7 @@ export class Request {
     return this.protocol() === 'https';
   }
 
-  public url(): string | null {
-    return this.instance?.url ?? null;
+  public url(): string {
+    return this.instance?.url ?? '/';
   }
 }

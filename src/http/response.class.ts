@@ -123,8 +123,8 @@ export class Response {
       this.session.set('_redirectData', data);
     }
 
-    this.instance?.status(status);
     this.instance?.redirect(url);
+    this.instance?.status(status);
 
     return this;
   }
@@ -137,8 +137,8 @@ export class Response {
       this.session.set('_redirectData', data);
     }
 
+    this.instance?.redirect(this.session.get('_previousLocation') ?? this.request.url());
     this.instance?.status(status);
-    this.instance?.redirect(this.session.get('_previousLocation') ?? '/');
 
     return this;
   }
