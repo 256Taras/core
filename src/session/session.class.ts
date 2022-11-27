@@ -126,10 +126,9 @@ export class Session {
 
   public flash<T = string>(key: string, value?: unknown): T | null {
     const flashKey = `_flash:${key}`;
-    const flashValue = (this.data[flashKey] as FlashedData)?.value ?? null;
 
     if (value === undefined) {
-      return flashValue;
+      return (this.data[flashKey] as FlashedData)?.value ?? null;
     }
 
     (this.data[flashKey] as FlashedData) = {
@@ -137,7 +136,7 @@ export class Session {
       value,
     };
 
-    return flashValue;
+    return value as T;
   }
 
   public get flashed(): Record<string, any> {
