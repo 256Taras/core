@@ -119,8 +119,10 @@ export class Response {
     data: Record<string, unknown> = {},
     status: StatusCode = StatusCode.Found,
   ): this {
-    if (!Object.keys(data).length) {
-      this.session.set('_redirectData', data);
+    if (Object.keys(data).length) {
+      for (const [key, value] of Object.entries(data)) {
+        this.session.flash(key, value);
+      }
     }
 
     this.instance?.redirect(url);
@@ -133,8 +135,10 @@ export class Response {
     data: Record<string, unknown> = {},
     status: StatusCode = StatusCode.Found,
   ): this {
-    if (!Object.keys(data).length) {
-      this.session.set('_redirectData', data);
+    if (Object.keys(data).length) {
+      for (const [key, value] of Object.entries(data)) {
+        this.session.flash(key, value);
+      }
     }
 
     this.instance?.redirect(this.session.get('_previousLocation') ?? this.request.url());

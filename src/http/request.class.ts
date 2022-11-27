@@ -160,10 +160,6 @@ export class Request {
     return (this.instance?.query as Record<string, string>) ?? {};
   }
 
-  public redirectData(): Record<string, unknown> | null {
-    return this.session.get<Record<string, unknown>>('_redirectData') ?? null;
-  }
-
   public secure(): boolean {
     return this.protocol() === 'https';
   }

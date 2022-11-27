@@ -393,7 +393,7 @@ export class Validator {
     }
 
     if (Object.keys(errors).length > 0) {
-      this.response.redirectBack(errors, StatusCode.BadRequest);
+      this.response.redirectBack({ errors }, StatusCode.BadRequest);
     }
 
     return true;
