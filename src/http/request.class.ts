@@ -140,6 +140,10 @@ export class Request {
     return this.encrypter.randomBytes(16, 'base64');
   }
 
+  public oldInput(key: string): string {
+    return this.session.flash<Record<string, string>>('oldInput')?.[key] ?? '';
+  }
+
   public param(param: string): string | null {
     return this.params[param] ?? null;
   }

@@ -9,6 +9,7 @@ export * from './http-client.class';
 export * from './functions/download.function';
 export * from './functions/json.function';
 export * from './functions/nonce.function';
+export * from './functions/old-input.function';
 export * from './functions/redirect.function';
 export * from './functions/redirect-back.function';
 export * from './functions/view.function';

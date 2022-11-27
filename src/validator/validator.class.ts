@@ -371,6 +371,7 @@ export class Validator {
     };
 
     const errors: Record<string, string> = {};
+    const oldInput: Record<string, string> = {};
 
     for (const [fieldName, ruleSet] of Object.entries(rules)) {
       const fieldValue = this.request.input(fieldName);
@@ -384,6 +385,7 @@ export class Validator {
 
         if (typeof result === 'string') {
           errors[fieldName] = result;
+          oldInput[fieldName] = fieldValue ?? '';
 
           if (checkOnly) {
             return false;
@@ -393,7 +395,7 @@ export class Validator {
     }
 
     if (Object.keys(errors).length > 0) {
-      this.response.redirectBack({ errors }, StatusCode.BadRequest);
+      this.response.redirectBack({ errors, oldInput }, StatusCode.BadRequest);
     }
 
     return true;
