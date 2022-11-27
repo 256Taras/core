@@ -238,6 +238,10 @@ export class Server {
           await this.session.$setup();
 
           this.session.increment('_requestId', 1, 0);
+
+          if (![HttpMethod.Get, HttpMethod.Head].includes(this.request.method())) {
+            this.session.flash<Record<string, unknown>>('oldInput', this.request.body);
+          }
         }
 
         startTime = process.hrtime();
