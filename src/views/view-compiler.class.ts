@@ -151,7 +151,7 @@ export class ViewCompiler {
       const errors = flash<Record<string, string>>('errors') ?? {};
 
       if (fieldName in errors) {
-        const error = match[2] ? match[4] : errors[fieldName];
+        const error = match[2] ? match[4] : errors[fieldName][0];
 
         this.html = this.html.replace(match[0], error);
 

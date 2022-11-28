@@ -275,7 +275,7 @@ export class Validator {
     isRequired: boolean,
     fieldName: string,
   ): boolean | string {
-    if ((isRequired && !value) || value === '') {
+    if (isRequired && (!value || value === '')) {
       return `Field ${fieldName} is required`;
     }
 
@@ -370,7 +370,7 @@ export class Validator {
       username: this.validateUsername,
     };
 
-    const errors: Record<string, string> = {};
+    const errors: Record<string, string[]> = {};
 
     for (const [fieldName, ruleSet] of Object.entries(rules)) {
       const fieldValue = this.request.input(fieldName);
@@ -380,10 +380,14 @@ export class Validator {
           throw new Error(`Invalid validation rule '${rule}'`);
         }
 
-        const result = ruleMapper[rule](fieldValue, ruleValue, fieldName);
+        const result = ruleMapper[rule].apply(this, [fieldValue, ruleValue, fieldName]);
 
         if (typeof result === 'string') {
-          errors[fieldName] = result;
+          if (!(fieldName in errors)) {
+            errors[fieldName] = [];
+          }
+
+          errors[fieldName].push(result);
 
           if (checkOnly) {
             return false;
