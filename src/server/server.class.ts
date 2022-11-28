@@ -239,7 +239,7 @@ export class Server {
 
           this.session.increment('_requestId', 1, 0);
 
-          if (![HttpMethod.Get, HttpMethod.Head].includes(this.request.method())) {
+          if (this.request.isFormRequest()) {
             this.session.flash<Record<string, unknown>>('oldInput', this.request.body);
           }
         }
@@ -256,7 +256,7 @@ export class Server {
       this.instance.addHook('onResponse', async (request, response) => {
         await this.session.$writeSession();
 
-        if (!this.request.isFileRequest() && [HttpMethod.Get, HttpMethod.Head].includes(this.request.method())) {
+        if (!this.request.isFileRequest() && !this.request.isFormRequest()) {
           this.session.set('_previousLocation', request.url);
         }
 

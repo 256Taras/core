@@ -121,6 +121,10 @@ export class Request {
     );
   }
 
+  public isFormRequest(): boolean {
+    return ![HttpMethod.Get, HttpMethod.Head].includes(this.method());
+  }
+
   public locale(): string | string[] {
     return this.header('accept-language')?.slice(0, 2) ?? 'en';
   }
@@ -150,6 +154,10 @@ export class Request {
 
   public get params(): Record<string, string> {
     return (this.instance?.params as Record<string, string>) ?? {};
+  }
+
+  public previousUrl(): string {
+    return this.session.get('_previousLocation') ?? this.url();
   }
 
   public protocol(): string | null {
