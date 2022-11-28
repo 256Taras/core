@@ -238,10 +238,6 @@ export class Server {
           await this.session.$setup();
 
           this.session.increment('_requestId', 1, 0);
-
-          if (this.request.isFormRequest()) {
-            this.session.flash<Record<string, unknown>>('oldInput', this.request.body);
-          }
         }
 
         startTime = process.hrtime();
@@ -250,6 +246,10 @@ export class Server {
       this.instance.addHook('preValidation', async () => {
         if (!this.request.isFileRequest()) {
           this.handleCsrfToken();
+
+          if (this.request.isFormRequest()) {
+            this.session.flash<Record<string, unknown>>('oldInput', this.request.body);
+          }
         }
       });
 
