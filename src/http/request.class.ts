@@ -34,8 +34,8 @@ export class Request {
     );
   }
 
-  public get body(): Record<string, unknown> {
-    return (this.instance?.body as Record<string, unknown>) ?? {};
+  public get body(): Record<string, string> {
+    return (this.instance?.body as Record<string, string>) ?? {};
   }
 
   public get cookies(): Record<string, string | undefined> {
