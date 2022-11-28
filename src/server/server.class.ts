@@ -248,7 +248,10 @@ export class Server {
           this.handleCsrfToken();
 
           if (this.request.isFormRequest()) {
-            this.session.flash<Record<string, unknown>>('oldInput', this.request.body);
+            this.session.flash<Record<string, unknown>>(
+              'oldInput',
+              this.request.body,
+            );
           }
         }
       });

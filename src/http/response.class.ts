@@ -1,5 +1,5 @@
 import { FastifyReply } from 'fastify';
-import { existsSync} from 'node:fs';
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { Service } from '../injector/decorators/service.decorator';
@@ -141,7 +141,9 @@ export class Response {
       }
     }
 
-    this.instance?.redirect(this.session.get('_previousLocation') ?? this.request.url());
+    this.instance?.redirect(
+      this.session.get('_previousLocation') ?? this.request.url(),
+    );
     this.instance?.status(status);
 
     return this;

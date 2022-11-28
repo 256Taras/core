@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { existsSync } from 'node:fs';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { dirname } from 'node:path';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Service } from '../injector/decorators/service.decorator';
@@ -8,12 +9,14 @@ import { inject } from '../injector/functions/inject.function';
 import { env } from '../utils/functions/env.function';
 import { readJson } from '../utils/functions/read-json.function';
 import { FlashedData } from './interfaces/flashed-data.interface';
-import { tmpdir } from 'node:os';
 
 @Service()
 export class Session {
   private readonly directoryPath =
-    env<string>('SESSION_PATH') ?? (env<boolean>('DEBUG') ? 'node_modules/.northle/sessions' : `${tmpdir()}/northle/sessions`);
+    env<string>('SESSION_PATH') ??
+    (env<boolean>('DEBUG')
+      ? 'node_modules/.northle/sessions'
+      : `${tmpdir()}/northle/sessions`);
 
   private key: string | null = null;
 

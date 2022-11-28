@@ -380,7 +380,11 @@ export class Validator {
           throw new Error(`Invalid validation rule '${rule}'`);
         }
 
-        const result = ruleMapper[rule].apply(this, [fieldValue, ruleValue, fieldName]);
+        const result = ruleMapper[rule].apply(this, [
+          fieldValue,
+          ruleValue,
+          fieldName,
+        ]);
 
         if (typeof result === 'string') {
           if (!(fieldName in errors)) {
