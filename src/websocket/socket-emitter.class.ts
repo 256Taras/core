@@ -1,3 +1,4 @@
+import { Reflection as Reflect } from '@abraham/reflection';
 import { RawServerDefault } from 'fastify';
 import { Socket, Server as SocketServer } from 'socket.io';
 import { Service } from '../injector/decorators/service.decorator';
@@ -15,9 +16,19 @@ export class SocketEmitter {
 
   constructor(private logger: Logger) {}
 
+  public $setup(server: RawServerDefault): void {
+    this.socketServer = new SocketServer(server);
+
+    this.socketServer.on('connection', (socket: Socket) => {
+      this.logger.log(`Established connection: ${socket.id}`, 'socket');
+    });
+  }
+
   public emit(event: string, channelName: string, ...data: unknown[]): void {
-    this.channels.forEach((channel) => {
-      if (channel.namePattern.test(channelName) && channel.passesUser()) {
+    this.channels.map((channel) => {
+      const pattern = Reflect.getMetadata<RegExp>('pattern', channel);
+
+      if (pattern?.test(channelName) && channel.passesUser()) {
         this.socketServer.emit(`${channelName}/${event}`, ...data);
 
         this.logger.log(`Emitted: ${channelName}/${event}`, 'socket');
@@ -28,18 +39,10 @@ export class SocketEmitter {
   }
 
   public registerChannels(channels: (Constructor & Authorizer)[]): void {
-    channels.forEach((channel) => {
+    channels.map((channel) => {
       const instance = inject(channel as unknown as Constructor);
 
       this.channels.push(instance);
-    });
-  }
-
-  public setup(server: RawServerDefault): void {
-    this.socketServer = new SocketServer(server);
-
-    this.socketServer.on('connection', (socket: Socket) => {
-      this.logger.log(`Established connection: ${socket.id}`, 'socket');
     });
   }
 }

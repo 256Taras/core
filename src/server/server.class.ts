@@ -192,7 +192,7 @@ export class Server {
         this.logger.$disable();
       }
 
-      this.socketEmitter.setup(this.instance.server);
+      this.socketEmitter.$setup(this.instance.server);
 
       options.modules.map((module: Constructor) => {
         const instance = inject(module);
@@ -201,6 +201,7 @@ export class Server {
           Reflect.getMetadata('socketChannels', module) ?? [];
 
         this.modules.push(instance);
+
         this.socketEmitter.registerChannels(socketChannels);
       });
 
