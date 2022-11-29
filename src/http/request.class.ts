@@ -78,7 +78,7 @@ export class Request {
   }
 
   public form<T>(): T {
-    return this.body as T;
+    return this.body as unknown as T;
   }
 
   public has(field: string): boolean {
@@ -89,7 +89,7 @@ export class Request {
     return this.instance?.headers[header] ?? null;
   }
 
-  public get headers(): Record<string, unknown> {
+  public get headers(): Record<string, string | string[] | undefined> {
     return this.instance?.headers ?? {};
   }
 
@@ -101,8 +101,8 @@ export class Request {
     return this.session.get<number>('_requestId') ?? 0;
   }
 
-  public input<T = string>(field: string): T | null {
-    return (this.body[field] as T) ?? null;
+  public input(field: string): string | null {
+    return this.body[field] ?? null;
   }
 
   public ip(): string | null {
