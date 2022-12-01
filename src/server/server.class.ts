@@ -13,7 +13,6 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
-import { HttpMethod } from '../http/enums/http-method.enum';
 import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
@@ -62,7 +61,7 @@ export class Server {
       this.response.cookie('csrfToken', token);
     }
 
-    if (![HttpMethod.Get, HttpMethod.Head].includes(this.request.method())) {
+    if (this.request.isFormRequest()) {
       const token =
         this.request.input('_csrf') ??
         this.request.input('_token') ??
@@ -109,6 +108,11 @@ export class Server {
                   'ws://localhost:*',
                 ],
                 'script-src-attr': `'unsafe-inline'`,
+                'style-src': [
+                  `'self'`,
+                  `'unsafe-inline'`,
+                  `http://localhost:*`,
+                ],
               },
               ...((this.options.config?.contentSecurityPolicy ?? {}) as Record<
                 string,
@@ -181,7 +185,9 @@ export class Server {
       const envFile = options.config?.env ?? '.env';
 
       if (!existsSync(envFile)) {
-        throw new Error('Environment configuration file not found');
+        const error = new Error('Environment configuration file not found');
+
+        await this.handler.handleError(error as Error);
       }
 
       configDotenv({
@@ -295,7 +301,7 @@ export class Server {
       await this.instance.listen({ port, host });
 
       if (env<boolean>('DEVELOPMENT')) {
-        this.setupDevelopmentEnvironment();
+        await this.setupDevelopmentEnvironment();
       }
     } catch (error) {
       await this.handler.handleError(error as Error);

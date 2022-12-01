@@ -1,5 +1,4 @@
 import { FastifyRequest } from 'fastify';
-import { Encrypter } from '../crypto/encrypter.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
 import { HttpMethod } from './enums/http-method.enum';
@@ -15,7 +14,7 @@ interface FormFileField {
 export class Request {
   private instance: FastifyRequest | null = null;
 
-  constructor(private encrypter: Encrypter, private session: Session) {}
+  constructor(private session: Session) {}
 
   public $getInstance(): FastifyRequest | null {
     return this.instance;
@@ -81,8 +80,8 @@ export class Request {
     return this.body as unknown as T;
   }
 
-  public has(field: string): boolean {
-    return this.input(field) ? true : false;
+  public has(key: string): boolean {
+    return key in this.body;
   }
 
   public header(header: string): string | string[] | null {
@@ -138,10 +137,6 @@ export class Request {
       Object.values(HttpMethod).filter((value) => value === method)[0] ??
       HttpMethod.Get
     );
-  }
-
-  public nonce(): string {
-    return this.encrypter.randomBytes(16, 'base64');
   }
 
   public oldInput(key: string): string {
