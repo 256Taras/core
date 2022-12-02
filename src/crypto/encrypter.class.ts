@@ -1,10 +1,5 @@
 import { compare, hash } from 'bcrypt';
-import {
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-  randomUUID,
-} from 'node:crypto';
+import { createCipheriv, createDecipheriv, randomBytes, randomUUID, } from 'node:crypto';
 import { Service } from '../injector/decorators/service.decorator';
 import { Integer } from '../utils/types/integer.type';
 import { UuidOptions } from './interfaces/uuid-options.interface';
@@ -18,9 +13,7 @@ export class Encrypter {
   private key = randomBytes(32);
 
   public async compareHash(data: string, hash: string): Promise<boolean> {
-    const matches = await compare(data, hash);
-
-    return matches;
+    return await compare(data, hash);
   }
 
   public async decrypt(encryptedData: string): Promise<string> {
@@ -43,9 +36,7 @@ export class Encrypter {
   }
 
   public async hash(data: string, saltRounds: Integer = 12): Promise<string> {
-    const hashedData = await hash(data, saltRounds);
-
-    return hashedData;
+    return await hash(data, saltRounds);
   }
 
   public randomBytes(

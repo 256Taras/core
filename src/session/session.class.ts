@@ -48,9 +48,7 @@ export class Session {
     const sessionFilePath = `${this.directoryPath}/${this.key}.json`;
 
     if (this.key && existsSync(sessionFilePath)) {
-      const savedData = await readJson(sessionFilePath);
-
-      this.variables = savedData;
+      this.variables = await readJson(sessionFilePath);
     } else {
       const generatedId = this.encrypter.uuid({ clean: true });
       const path = `${this.directoryPath}/${generatedId}.json`;

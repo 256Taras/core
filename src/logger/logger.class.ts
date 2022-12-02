@@ -43,18 +43,14 @@ export class Logger {
   private renderDots(data: string): string {
     const outputLength = stripAnsi(data).length;
     const sign = '.';
-    const dots = chalk.gray(sign.repeat(process.stdout.columns - outputLength - 12));
 
-    return dots;
+    return chalk.gray(sign.repeat(process.stdout.columns - outputLength - 12));
   }
 
   private truncate(data: string): string {
     const maxLength = Math.trunc(process.stdout.columns / 2);
 
-    const truncated =
-      stripAnsi(data).length > maxLength ? data.slice(0, maxLength) + '...' : data;
-
-    return truncated;
+    return stripAnsi(data).length > maxLength ? data.slice(0, maxLength) + '...' : data;
   }
 
   public $disable(): void {

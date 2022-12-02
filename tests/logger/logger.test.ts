@@ -12,11 +12,4 @@ describe('Logger class', () => {
     expect(logger.colorRed).toBe('#f87777');
     expect(logger.colorYellow).toBe('#f8c377');
   });
-
-  it('exposes log methods', () => {
-    expect(logger.error('test')).toBe(undefined);
-    expect(logger.info('test')).toBe(undefined);
-    expect(logger.log('test')).toBe(undefined);
-    expect(logger.warn('test')).toBe(undefined);
-  });
 });

@@ -48,10 +48,10 @@ export class Authenticator {
     return false;
   }
 
-  public logout(): void {
+  public async logout(): Promise<void> {
     this.session.set('_auth', false);
 
-    this.session.destroy();
+    await this.session.destroy();
   }
 
   public user(): SchemaUser | null {
