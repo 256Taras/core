@@ -73,30 +73,40 @@ export class Response {
     return this;
   }
 
+  public deleteHeader(header: string): this {
+    this.instance?.removeHeader(header);
+
+    return this;
+  }
+
   public download(file: string): this {
     this.instance?.download(file);
 
     return this;
   }
 
+  public hasHeader(header: string): boolean {
+    return this.instance?.hasHeader(header) ?? false;
+  }
+
   public header(
-    headers: string | Record<string, string>,
+    header: string,
     value?: string,
   ): string | string[] | number | null | this {
     if (value === undefined) {
-      return this.instance?.getHeader(headers as string) ?? null;
+      return this.instance?.getHeader(header) ?? null;
     }
 
-    if (typeof headers !== 'string') {
-      this.instance?.headers(headers);
-    }
-
-    this.instance?.header(headers as string, value);
+    this.instance?.header(header, value);
 
     return this;
   }
 
-  public headers(headers: Record<string, string>): this {
+  public headers(headers?: Record<string, string>): Record<string, string | string[] | number | undefined> | this {
+    if (headers === undefined) {
+      return this.instance?.getHeaders() ?? {};
+    }
+
     this.instance?.headers(headers);
 
     return this;
