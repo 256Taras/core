@@ -84,6 +84,10 @@ export class Request {
     return key in this.body;
   }
 
+  public hasHeader(header: string): boolean {
+    return header in this.headers;
+  }
+
   public header(header: string): string | string[] | null {
     return this.instance?.headers[header] ?? null;
   }
