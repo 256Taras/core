@@ -235,9 +235,11 @@ export class Server {
           this.session.$setRequest(request);
           this.session.$setResponse(response);
         }
-
+        
         this.request.$setInstance(request);
         this.response.$setInstance(response);
+
+        this.request.$generateNonce();
 
         this.response.terminate(false);
 
@@ -261,6 +263,11 @@ export class Server {
             );
           }
         }
+
+        this.response.header(
+          'content-security-policy',
+          (this.response.header('content-security-policy') as string | undefined)?.replaceAll(/(script|style)-src /g, `$1-src 'nonce-${this.request.nonce()}' `)
+        );
       });
 
       this.instance.addHook('onResponse', async (request, response) => {

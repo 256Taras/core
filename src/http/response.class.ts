@@ -102,7 +102,7 @@ export class Response {
     return this;
   }
 
-  public headers(headers?: Record<string, string>): Record<string, string | string[] | number | undefined> | this {
+  public headers(headers?: Record<string, string | string[] | number>): Record<string, string | string[] | number | undefined> | this {
     if (headers === undefined) {
       return this.instance?.getHeaders() ?? {};
     }
@@ -178,10 +178,6 @@ export class Response {
     return this;
   }
 
-  public scriptNonce(): string {
-    return this.instance?.cspNonce?.script ?? '';
-  }
-
   public status(status: StatusCode): this {
     this.instance?.status(status);
 
@@ -193,10 +189,6 @@ export class Response {
     this.instance?.send(data);
 
     return this;
-  }
-
-  public styleNonce(): string {
-    return this.instance?.cspNonce?.style ?? '';
   }
 
   public terminate(terminate = true): void {

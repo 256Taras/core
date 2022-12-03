@@ -2,6 +2,7 @@ import { FastifyRequest } from 'fastify';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
 import { HttpMethod } from './enums/http-method.enum';
+import { Encrypter } from '../crypto/encrypter.class';
 import { File } from './file.class';
 
 interface FormFileField {
@@ -12,9 +13,17 @@ interface FormFileField {
 
 @Service()
 export class Request {
+  private cspNonce: string | null = null;
+
   private instance: FastifyRequest | null = null;
 
-  constructor(private session: Session) {}
+  constructor(private encrypter: Encrypter, private session: Session) {}
+
+  public $generateNonce(): this {
+    this.cspNonce = this.encrypter.randomBytes(16, 'base64');
+
+    return this;
+  }
 
   public $getInstance(): FastifyRequest | null {
     return this.instance;
@@ -141,6 +150,10 @@ export class Request {
       Object.values(HttpMethod).filter((value) => value === method)[0] ??
       HttpMethod.Get
     );
+  }
+
+  public nonce(): string {
+    return this.cspNonce ?? '';
   }
 
   public oldInput(key: string): string {

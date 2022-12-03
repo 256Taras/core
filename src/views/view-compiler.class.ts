@@ -1,8 +1,7 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import * as constants from '../constants';
-import { scriptNonce } from '../http/functions/script-nonce.function';
-import { styleNonce } from '../http/functions/style-nonce.function';
+import { nonce } from '../http/functions/nonce.function';
 import { oldInput } from '../http/functions/old-input.function';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
@@ -27,11 +26,10 @@ export class ViewCompiler {
     csrfToken,
     flash,
     inject,
+    nonce,
     oldInput,
     range,
-    scriptNonce: () => '123',
     session,
-    styleNonce: () => '123',
     trans,
   };
 
