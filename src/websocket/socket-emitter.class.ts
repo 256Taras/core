@@ -5,7 +5,7 @@ import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Authorizer } from './interfaces/authorizer.nterface';
+import { Authorizer } from './interfaces/authorizer.interface';
 import { Channel } from './types/channel.type';
 
 @Service()

@@ -25,7 +25,7 @@ import { env } from '../utils/functions/env.function';
 import { readJson } from '../utils/functions/read-json.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
-import { Authorizer } from '../websocket/interfaces/authorizer.nterface';
+import { Authorizer } from '../websocket/interfaces/authorizer.interface';
 import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
 
