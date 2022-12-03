@@ -102,7 +102,9 @@ export class Response {
     return this;
   }
 
-  public headers(headers?: Record<string, string | string[] | number>): Record<string, string | string[] | number | undefined> | this {
+  public headers(
+    headers?: Record<string, string | string[] | number>,
+  ): Record<string, string | string[] | number | undefined> | this {
     if (headers === undefined) {
       return this.instance?.getHeaders() ?? {};
     }

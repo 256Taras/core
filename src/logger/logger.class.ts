@@ -50,7 +50,9 @@ export class Logger {
   private truncate(data: string): string {
     const maxLength = Math.trunc(process.stdout.columns / 2);
 
-    return stripAnsi(data).length > maxLength ? data.slice(0, maxLength) + '...' : data;
+    return stripAnsi(data).length > maxLength
+      ? data.slice(0, maxLength) + '...'
+      : data;
   }
 
   public $disable(): void {

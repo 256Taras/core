@@ -1,5 +1,10 @@
 import { compare, hash } from 'bcrypt';
-import { createCipheriv, createDecipheriv, randomBytes, randomUUID, } from 'node:crypto';
+import {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  randomUUID,
+} from 'node:crypto';
 import { Service } from '../injector/decorators/service.decorator';
 import { Integer } from '../utils/types/integer.type';
 import { UuidOptions } from './interfaces/uuid-options.interface';

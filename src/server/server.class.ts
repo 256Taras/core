@@ -108,11 +108,7 @@ export class Server {
                   'ws://localhost:*',
                 ],
                 'script-src-attr': `'unsafe-inline'`,
-                'style-src': [
-                  `'self'`,
-                  `'unsafe-inline'`,
-                  `http://localhost:*`,
-                ],
+                'style-src': [`'self'`, `'unsafe-inline'`, `http://localhost:*`],
               },
               ...((this.options.config?.contentSecurityPolicy ?? {}) as Record<
                 string,
@@ -235,7 +231,7 @@ export class Server {
           this.session.$setRequest(request);
           this.session.$setResponse(response);
         }
-        
+
         this.request.$setInstance(request);
         this.response.$setInstance(response);
 
@@ -266,7 +262,12 @@ export class Server {
 
         this.response.header(
           'content-security-policy',
-          (this.response.header('content-security-policy') as string | undefined)?.replaceAll(/(script|style)-src /g, `$1-src 'nonce-${this.request.nonce()}' `)
+          (
+            this.response.header('content-security-policy') as string | undefined
+          )?.replaceAll(
+            /(script|style)-src /g,
+            `$1-src 'nonce-${this.request.nonce()}' `,
+          ),
         );
       });
 

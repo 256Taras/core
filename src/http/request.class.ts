@@ -1,8 +1,8 @@
 import { FastifyRequest } from 'fastify';
+import { Encrypter } from '../crypto/encrypter.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
 import { HttpMethod } from './enums/http-method.enum';
-import { Encrypter } from '../crypto/encrypter.class';
 import { File } from './file.class';
 
 interface FormFileField {
