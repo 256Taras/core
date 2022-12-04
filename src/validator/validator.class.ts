@@ -401,7 +401,16 @@ export class Validator {
     }
 
     if (Object.keys(errors).length > 0) {
+      if (this.request.ajax()) {
+        this.response.json({ errors });
+        this.response.status(StatusCode.BadRequest);
+
+        return false;
+      }
+
       this.response.redirectBack({ errors }, StatusCode.BadRequest);
+
+      return false;
     }
 
     return true;
