@@ -6,7 +6,7 @@ export const Channel = (name: string): ClassDecorator => {
   return (target) => {
     const pattern = pathToRegexp(name);
 
-    Reflect.defineMetadata('pattern', pattern, target);
+    Reflect.defineMetadata('namePattern', pattern, target);
 
     return target;
   };

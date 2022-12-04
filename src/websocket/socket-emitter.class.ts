@@ -20,15 +20,20 @@ export class SocketEmitter {
     this.socketServer = new SocketServer(server);
 
     this.socketServer.on('connection', (socket: Socket) => {
-      this.logger.log(`Established connection: ${socket.id}`, 'socket');
+      this.logger.log(`Established connection [ID ${socket.id}]`, 'socket');
+    });
+
+    this.socketServer.on('close', (socket: Socket) => {
+      this.logger.log(`Closed connection [ID ${socket.id}]`, 'socket');
     });
   }
 
   public emit(event: string, channelName: string, ...data: unknown[]): void {
     this.channels.map((channel) => {
-      const pattern = Reflect.getMetadata<RegExp>('pattern', channel);
+      const pattern = Reflect.getMetadata<RegExp>('namePattern', channel);
 
       if (pattern?.test(channelName) && channel.passesUser()) {
+        console.log('emitted')
         this.socketServer.emit(`${channelName}/${event}`, ...data);
 
         this.logger.log(`Emitted: ${channelName}/${event}`, 'socket');

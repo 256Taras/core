@@ -12,6 +12,8 @@ export class Logger {
 
   private readonly locale = 'en-us';
 
+  private readonly logLabelPadding = 8;
+
   public readonly colorOrange = '#ffa57c';
 
   public readonly colorGreen = '#0dbc79';
@@ -97,9 +99,11 @@ export class Logger {
     const day = this.getDay();
     const time = this.getTime();
 
+    const formattedLabel = `[${chalk.white(label.charAt(0).toUpperCase() + label.slice(1))}]`;
+
     const timestamp = `${chalk.gray(
-      `[${chalk.white(label.charAt(0).toUpperCase() + label.slice(1))}]${' '.repeat(
-        7 - label.length,
+      `${formattedLabel}${' '.repeat(
+        this.logLabelPadding - label.length,
       )}`,
     )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
@@ -108,7 +112,7 @@ export class Logger {
     const left = `${timestamp} ${chalk.white.bold(mainOutput)}`;
     const right = chalk.gray(additionalData);
 
-    const dots = this.renderDots(timestamp + mainOutput + label);
+    const dots = this.renderDots(timestamp + mainOutput + label + ' '.repeat(7 - label.length));
 
     console.log(left, dots, right);
   }
