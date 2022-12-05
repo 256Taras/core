@@ -57,7 +57,7 @@
     "@fastify/formbody": "^7.3.0",
     "@fastify/helmet": "^10.1.0",
     "@fastify/multipart": "^7.3.0",
-    "@fastify/static": "^6.5.1",
+    "@fastify/static": "^6.6.0",
     "bcrypt": "^5.1.0",
     "chalk": "^5.1.2",
     "chokidar": "^3.5.3",
