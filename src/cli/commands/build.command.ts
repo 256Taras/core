@@ -1,4 +1,5 @@
 import { logInfo } from '../../logger/functions/log-info.function';
+import { logSub } from '../../logger/functions/log-sub.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 
@@ -8,6 +9,8 @@ import { Command } from '../decorators/command.decorator';
 export class BuildCommand {
   public async handle(): Promise<void> {
     logInfo('Building app...');
+
+    logSub('Copying assets...');
 
     runCommand('tsc', {
       showOutput: true,
