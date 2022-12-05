@@ -19,6 +19,8 @@ import { setupStdin } from '../functions/setup-stdin.function';
   },
 })
 export class ServerDevCommand {
+  private readonly copyCommand = 'copyfiles -u 1 src/**/*.html dist/';
+
   public async handle(open: boolean): Promise<void> {
     logInfo(
       `Starting development server... ${chalk.gray(
@@ -70,7 +72,7 @@ export class ServerDevCommand {
     sourceWatcher.on('all', () => {
       restartProcess();
 
-      runCommand('copyfiles -u 1 src/**/*.html dist/');
+      runCommand(this.copyCommand);
     });
 
     if (env<boolean>('DEVELOPER_MODE')) {
@@ -83,7 +85,7 @@ export class ServerDevCommand {
     }
 
     viewWatcher.on('all', () => {
-      runCommand('copyfiles -u 1 src/**/*.html dist/');
+      runCommand(this.copyCommand);
     });
 
     envWatcher.on('all', restartProcess);
