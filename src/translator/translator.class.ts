@@ -8,7 +8,7 @@ export class Translator {
 
   private translations: Map<string, string> = new Map<string, string>();
 
-  public async $setup(): Promise<void> {
+  private async loadTranslations(): Promise<void> {
     const path = `lang/${this.locale}.json`;
 
     if (existsSync(path)) {
@@ -20,11 +20,17 @@ export class Translator {
     }
   }
 
+  public async $setup(): Promise<void> {
+    await this.loadTranslations();
+  }
+
   public get(text: string): string {
     return this.translations.get(text) ?? text;
   }
 
-  public setLocale(lang?: string): void {
-    this.locale = lang ?? 'en';
+  public async setLocale(locale: string): Promise<void> {
+    this.locale = locale;
+
+    await this.loadTranslations();
   }
 }
