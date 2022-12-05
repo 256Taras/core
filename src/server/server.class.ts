@@ -215,7 +215,7 @@ export class Server {
 
       await this.translator.$setup();
 
-      this.translator.setLocale(options.config?.locale);
+      this.translator.setLocale(options.config?.locale ?? 'en');
     } catch (error) {
       await this.handler.handleError(error as Error);
     }
