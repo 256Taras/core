@@ -8,9 +8,10 @@ import { Command } from '../decorators/command.decorator';
 })
 export class BuildCommand {
   public async handle(): Promise<void> {
-    logInfo('Building app...');
+    logInfo('Building project...');
 
     logSub('Copying assets...');
+    logSub('Preparing dist...');
 
     runCommand('tsc', {
       showOutput: true,
