@@ -194,7 +194,7 @@ export class Server {
         this.logger.$disable();
       }
 
-      this.socketEmitter.$setup(this.instance.server);
+      const channels = [];
 
       options.modules.map((module: Constructor) => {
         const instance = inject(module);
@@ -205,7 +205,13 @@ export class Server {
         this.modules.push(instance);
 
         this.socketEmitter.registerChannels(socketChannels);
+
+        channels.push(...socketChannels);
       });
+
+      if (channels.length) {
+        this.socketEmitter.$setup(this.instance.server);
+      }
 
       await this.translator.$setup();
 

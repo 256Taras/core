@@ -30,10 +30,9 @@ export class SocketEmitter {
 
   public emit(event: string, channelName: string, ...data: unknown[]): void {
     this.channels.map((channel) => {
-      const pattern = Reflect.getMetadata<RegExp>('namePattern', channel);
+      const pattern = channel.namePattern;
 
-      if (pattern?.test(channelName) && channel.passesUser()) {
-        console.log('emitted')
+      if (pattern?.test(channelName) && channel.pass()) {
         this.socketServer.emit(`${channelName}/${event}`, ...data);
 
         this.logger.log(`Emitted: ${channelName}/${event}`, 'socket');

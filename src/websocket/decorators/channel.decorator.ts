@@ -1,13 +1,12 @@
-import { Reflection as Reflect } from '@abraham/reflection';
 import { pathToRegexp } from 'path-to-regexp';
 import { ClassDecorator } from '../../utils/types/class-decorator.type';
 
 export const Channel = (name: string): ClassDecorator => {
+  const pattern = pathToRegexp(name);
+
   return (target) => {
-    const pattern = pathToRegexp(name);
-
-    Reflect.defineMetadata('namePattern', pattern, target);
-
-    return target;
-  };
+    return class extends target {
+      public readonly namePattern: RegExp = pattern;
+    }
+  }
 };

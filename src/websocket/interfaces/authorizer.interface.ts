@@ -1,3 +1,3 @@
 export interface Authorizer {
-  passesUser(): boolean;
+  pass(): boolean;
 }
