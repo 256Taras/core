@@ -1,4 +1,3 @@
-import { Reflection as Reflect } from '@abraham/reflection';
 import { RawServerDefault } from 'fastify';
 import { Socket, Server as SocketServer } from 'socket.io';
 import { Service } from '../injector/decorators/service.decorator';
@@ -20,11 +19,11 @@ export class SocketEmitter {
     this.socketServer = new SocketServer(server);
 
     this.socketServer.on('connection', (socket: Socket) => {
-      this.logger.log(`Established connection [ID ${socket.id}]`, 'socket');
+      this.logger.log(`[${socket.id}] Established connection`, 'socket');
     });
 
     this.socketServer.on('close', (socket: Socket) => {
-      this.logger.log(`Closed connection [ID ${socket.id}]`, 'socket');
+      this.logger.log(`[${socket.id}] Closed connection`, 'socket');
     });
   }
 
