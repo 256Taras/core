@@ -3,7 +3,7 @@ import { Translator } from '../translator.class';
 
 export const useTranslator = (): [
   (text: string) => string,
-  (lang?: string) => void,
+  (lang: string) => Promise<void>,
 ] => {
   const instance = inject(Translator);
 
