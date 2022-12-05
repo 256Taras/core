@@ -7,7 +7,7 @@ import { Command } from '../decorators/command.decorator';
 })
 export class BuildCommand {
   public async handle(): Promise<void> {
-    logInfo('Building started...');
+    logInfo('Building app...');
 
     runCommand('tsc', {
       showOutput: true,
