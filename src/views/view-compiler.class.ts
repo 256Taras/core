@@ -410,6 +410,14 @@ export class ViewCompiler {
     }
   }
 
+  private removeComments(): void {
+    const matches = this.html.matchAll(/\{\{(@?)--(.*?)--\}\}/g) ?? [];
+
+    for (const match of matches) {
+      this.html = this.html.replace(match[0], '');
+    }
+  }
+
   private restoreRawContent(): void {
     const matches = this.html.matchAll(/\$_raw([0-9]+)/g) ?? [];
 
@@ -431,6 +439,7 @@ export class ViewCompiler {
     this.rawContent = [];
 
     this.parseRawDirectives();
+    this.removeComments();
 
     await this.parseEachDirectives();
 
