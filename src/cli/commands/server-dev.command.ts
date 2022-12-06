@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import { logInfo } from '../../logger/functions/log-info.function';
 import { debounce } from '../../utils/functions/debounce.function';
 import { env } from '../../utils/functions/env.function';
@@ -22,27 +23,13 @@ export class ServerDevCommand {
   private readonly copyCommand = 'copyfiles -u 1 src/**/*.html dist/';
 
   public async handle(open: boolean): Promise<void> {
+    const serverTempPath = `${tmpdir()}/northle/server`;
+
     logInfo(
       `Starting development server... ${chalk.gray(
         `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
       )}`,
     );
-
-    const browserAliases: Record<string, string> = {
-      darwin: 'open',
-      linux: 'sensible-browser',
-      win32: 'explorer',
-    };
-
-    if (open) {
-      setTimeout(() => {
-        runCommand(
-          `${browserAliases[process.platform] ?? 'xdg-open'} http://localhost:${
-            env<number>('PORT') ?? 8000
-          }`,
-        );
-      }, 2000);
-    }
 
     const entryFile = 'dist/main.js';
 
@@ -54,6 +41,23 @@ export class ServerDevCommand {
     const sourceWatcher = watch('dist', watcherOptions);
     const viewWatcher = watch('src/**/*.html', watcherOptions);
     const envWatcher = watch('.env', watcherOptions);
+    const serverTempWatcher = watch(serverTempPath);
+
+    const browserAliases: Record<string, string> = {
+      darwin: 'open',
+      linux: 'sensible-browser',
+      win32: 'explorer',
+    };
+
+    serverTempWatcher.on('add', () => {
+      if (open) {
+        runCommand(
+          `${browserAliases[process.platform] ?? 'xdg-open'} http://localhost:${
+            env<number>('PORT') ?? 8000
+          }`,
+        );
+      }
+    })
 
     const processOptions = {
       execArgv: ['--experimental-specifier-resolution=node', '--no-warnings'],

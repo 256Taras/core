@@ -9,8 +9,10 @@ import chalk from 'chalk';
 import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { tmpdir } from 'node:os';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
@@ -38,6 +40,8 @@ export class Server {
   private instance = fastify();
 
   private modules: Constructor[] = [];
+
+  private tempFilePath = `${tmpdir()}/northle/server/server.txt`;
 
   private options: ServerOptions;
 
@@ -313,6 +317,10 @@ export class Server {
       this.registerHandlers();
 
       await this.instance.listen({ port, host });
+
+      if (!existsSync(this.tempFilePath)) {
+        await writeFile(this.tempFilePath, 'Northle server is running...');
+      }
 
       if (env<boolean>('DEVELOPMENT')) {
         await this.setupDevelopmentEnvironment();
