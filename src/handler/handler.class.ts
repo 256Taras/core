@@ -241,4 +241,12 @@ export class Handler {
   public setNotFoundHandler(callback: () => unknown): void {
     this.notFoundHandler = callback;
   }
+
+  public useDefaultErrorHandler(): void {
+    this.errorHandler = null;
+  }
+
+  public useDefaultNotFound(): void {
+    this.notFoundHandler = null;
+  }
 }
