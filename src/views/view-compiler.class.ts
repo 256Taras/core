@@ -292,6 +292,59 @@ export class ViewCompiler {
     }
   }
 
+  private parseSwitchDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[switch ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/switch\]/gm) ?? [];
+
+    for (const match of matches) {
+      const renderFunction = this.getRenderFunction(`return ${match[1]};`);
+      const switchCondition = renderFunction<unknown>();
+
+      const casesString = match[3];
+      const cases = new Map<unknown, string>();
+
+      let defaultCaseValue: string | null = null;
+
+      const caseMatches = casesString.matchAll(/\[(case|default) ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/(case|default)\]/gm);
+
+      for (const caseMatch of caseMatches) {
+        if (caseMatch[1] === 'default') {
+          if (defaultCaseValue) {
+            throw new Error('Switch statement can only have one default case');
+          }
+
+          defaultCaseValue = caseMatch[4];
+
+          continue;
+        }
+
+        const caseRenderFunction = this.getRenderFunction(`return ${caseMatch[2]};`);
+
+        cases.set(caseRenderFunction<unknown>(), caseMatch[4]);
+      }
+
+      let matchesOneCase = false;
+
+      cases.forEach((value, key) => {
+        if (key === switchCondition) {
+          this.html = this.html.replace(match[0], value);
+
+          matchesOneCase = true;
+
+          return;
+        }
+      });
+
+      if (!matchesOneCase && defaultCaseValue) {
+        this.html = this.html.replace(match[0], defaultCaseValue);
+
+        return;
+      }
+
+      this.html = this.html.replace(match[0], '');
+    }
+  }
+
   private parseViteDirectives(): void {
     const matches = this.html.matchAll(/\[vite *?\((.*?)\)\]/gm) ?? [];
 
@@ -384,6 +437,7 @@ export class ViewCompiler {
     this.parseDataDisplays();
     this.parseIfElseDirectives();
     this.parseIfDirectives();
+    this.parseSwitchDirectives();
     this.parseJsonDirectives();
     this.parseErrorDirectives();
     this.parseTokenDirectives();
