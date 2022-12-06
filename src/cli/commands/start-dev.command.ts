@@ -1,9 +1,9 @@
 import concurrently from 'concurrently';
-import { logInfo } from '../../logger/functions/log-info.function';
-import { Command } from '../decorators/command.decorator';
 import { existsSync } from 'node:fs';
 import { unlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
+import { logInfo } from '../../logger/functions/log-info.function';
+import { Command } from '../decorators/command.decorator';
 
 @Command({
   signature: 'start:dev',

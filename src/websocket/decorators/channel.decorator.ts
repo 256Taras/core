@@ -7,6 +7,6 @@ export const Channel = (name: string): ClassDecorator => {
   return (target) => {
     return class extends target {
       public readonly namePattern: RegExp = pattern;
-    }
-  }
+    };
+  };
 };

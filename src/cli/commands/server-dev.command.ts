@@ -57,7 +57,7 @@ export class ServerDevCommand {
           }`,
         );
       }
-    })
+    });
 
     const processOptions = {
       execArgv: ['--experimental-specifier-resolution=node', '--no-warnings'],

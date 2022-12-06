@@ -99,12 +99,12 @@ export class Logger {
     const day = this.getDay();
     const time = this.getTime();
 
-    const formattedLabel = `[${chalk.white(label.charAt(0).toUpperCase() + label.slice(1))}]`;
+    const formattedLabel = `[${chalk.white(
+      label.charAt(0).toUpperCase() + label.slice(1),
+    )}]`;
 
     const timestamp = `${chalk.gray(
-      `${formattedLabel}${' '.repeat(
-        this.logLabelPadding - label.length,
-      )}`,
+      `${formattedLabel}${' '.repeat(this.logLabelPadding - label.length)}`,
     )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
     const mainOutput = this.truncate(data);
@@ -112,7 +112,9 @@ export class Logger {
     const left = `${timestamp} ${chalk.white.bold(mainOutput)}`;
     const right = chalk.gray(additionalData);
 
-    const dots = this.renderDots(timestamp + mainOutput + label + ' '.repeat(7 - label.length));
+    const dots = this.renderDots(
+      timestamp + mainOutput + label + ' '.repeat(7 - label.length),
+    );
 
     console.log(left, dots, right);
   }
