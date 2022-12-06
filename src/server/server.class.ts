@@ -168,6 +168,10 @@ export class Server {
 
       process.exit(1);
     }
+
+    if (!existsSync(this.tempFilePath)) {
+      await writeFile(this.tempFilePath, 'Northle server is running...');
+    }
   }
 
   public async setup(options: ServerOptions): Promise<this> {
@@ -317,10 +321,6 @@ export class Server {
       this.registerHandlers();
 
       await this.instance.listen({ port, host });
-
-      if (!existsSync(this.tempFilePath)) {
-        await writeFile(this.tempFilePath, 'Northle server is running...');
-      }
 
       if (env<boolean>('DEVELOPMENT')) {
         await this.setupDevelopmentEnvironment();
