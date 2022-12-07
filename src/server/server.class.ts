@@ -9,9 +9,9 @@ import chalk from 'chalk';
 import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
-import { writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import path from 'node:path';
+import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
@@ -169,7 +169,11 @@ export class Server {
       process.exit(1);
     }
 
-    if (!existsSync(this.tempFilePath)) {
+    if (!existsSync(dirname(this.tempFilePath))) {
+      await mkdir(dirname(this.tempFilePath), {
+        recursive: true,
+      });
+
       await writeFile(this.tempFilePath, 'Northle server is running...');
     }
   }

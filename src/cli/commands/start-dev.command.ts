@@ -19,6 +19,8 @@ export class StartDevCommand {
   public async handle(open: boolean): Promise<void> {
     const serverTempPath = `${tmpdir()}/northle/server/server.txt`;
 
+    console.clear();
+
     const { result } = concurrently(
       ['tsc --watch', `app server:dev${open ? ' --open' : ''}`],
       {
