@@ -22,7 +22,7 @@ export class ViewCompiler {
 
   private html: string;
 
-  private functions = {
+  private readonly functions = {
     csrfToken,
     flash,
     inject,
@@ -34,6 +34,8 @@ export class ViewCompiler {
   };
 
   private rawContent: string[] = [];
+
+  public static stacks: Map<string, string[]> = new Map<string, string[]>();
 
   constructor(private request: Request) {}
 
@@ -251,18 +253,6 @@ export class ViewCompiler {
     }
   }
 
-  private parseTokenDirectives(): void {
-    const matches = this.html.matchAll(/\[(token|csrf)\]/g) ?? [];
-    const token = csrfToken();
-
-    for (const match of matches) {
-      this.html = this.html.replace(
-        match[0],
-        `<input type="hidden" name="_csrf" value="${token}">`,
-      );
-    }
-  }
-
   private parseMethodDirectives(): void {
     const matches = this.html.matchAll(/\[method *?\((.*?)\)\]/g) ?? [];
 
@@ -274,6 +264,24 @@ export class ViewCompiler {
         match[0],
         `<input type="hidden" name="_method" value="${renderFunction<string>().toUpperCase()}">`,
       );
+    }
+  }
+
+  private parsePushDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[push ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/push\]/gm) ?? [];
+
+    for (const match of matches) {
+      const value = match[1];
+      const renderFunction = this.getRenderFunction(`return ${value};`);
+
+      const stack = renderFunction<string>();
+
+      const { stacks } = (this.constructor as unknown as { stacks: Map<string, string[]> });
+
+      stacks.set(stack, stacks.has(stack) ? [...stacks.get(stack) ?? []] : [match[3]]);
+
+      this.html = this.html.replace(match[0], '');
     }
   }
 
@@ -289,6 +297,25 @@ export class ViewCompiler {
       this.rawContent.push(match[2]);
 
       count += 1;
+    }
+  }
+
+  private parseStackDirectives(): void {
+    const matches = this.html.matchAll(/\[stack *?\((.*?)\)\]/g) ?? [];
+
+    for (const match of matches) {
+      const value = match[1];
+      const renderFunction = this.getRenderFunction(`return ${value};`);
+
+      const { stacks } = (this.constructor as unknown as { stacks: Map<string, string[]> });
+
+      const content = stacks.get(renderFunction<string>()) ?? [];
+
+      const result = content.reduce((sum, item) => {
+        return sum + item;
+      });
+
+      this.html = this.html.replace(match[0], result);
     }
   }
 
@@ -428,6 +455,18 @@ export class ViewCompiler {
     }
   }
 
+  private parseTokenDirectives(): void {
+    const matches = this.html.matchAll(/\[(token|csrf)\]/g) ?? [];
+    const token = csrfToken();
+
+    for (const match of matches) {
+      this.html = this.html.replace(
+        match[0],
+        `<input type="hidden" name="_csrf" value="${token}">`,
+      );
+    }
+  }
+
   public async compile(
     html: string,
     data: Record<string, any> = {},
@@ -449,11 +488,13 @@ export class ViewCompiler {
     this.parseSwitchDirectives();
     this.parseJsonDirectives();
     this.parseErrorDirectives();
+    this.parsePushDirectives();
     this.parseTokenDirectives();
 
     await this.parseIncludeDirectives();
 
     this.parseMethodDirectives();
+    this.parseStackDirectives();
     this.parseViteDirectives();
 
     this.restoreRawContent();
