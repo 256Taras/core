@@ -175,6 +175,8 @@ export class Response {
 
     const html = await this.viewCompiler.compile(fileContent.toString(), data, file);
 
+    ViewCompiler.stacks.clear();
+
     this.send(html);
 
     return this;
