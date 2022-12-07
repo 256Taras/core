@@ -38,7 +38,7 @@ export class ServerDevCommand {
       cwd: process.cwd(),
     };
 
-    const sourceWatcher = watch('dist', watcherOptions);
+    const sourceWatcher = watch('dist/**/*.js', watcherOptions);
     const viewWatcher = watch('src/**/*.html', watcherOptions);
     const envWatcher = watch('.env', watcherOptions);
     const serverTempWatcher = watch(serverTempPath);

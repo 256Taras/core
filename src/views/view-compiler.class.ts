@@ -279,7 +279,7 @@ export class ViewCompiler {
 
       const { stacks } = (this.constructor as unknown as { stacks: Map<string, string[]> });
 
-      stacks.set(stack, stacks.has(stack) ? [...stacks.get(stack) ?? []] : [match[3]]);
+      stacks.set(stack, stacks.has(stack) ? [...stacks.get(stack)!, match[3]] : [match[3]]);
 
       this.html = this.html.replace(match[0], '');
     }
@@ -311,11 +311,7 @@ export class ViewCompiler {
 
       const content = stacks.get(renderFunction<string>()) ?? [];
 
-      const result = content.reduce((sum, item) => {
-        return sum + item;
-      });
-
-      this.html = this.html.replace(match[0], result);
+     this.html = this.html.replace(match[0], content.join(''));
     }
   }
 
