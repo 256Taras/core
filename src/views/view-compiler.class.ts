@@ -13,6 +13,7 @@ import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
+import { Authenticator } from '../auth/authenticator.class';
 
 @Service()
 export class ViewCompiler {
@@ -37,7 +38,7 @@ export class ViewCompiler {
 
   public static stacks: Map<string, string[]> = new Map<string, string[]>();
 
-  constructor(private request: Request) {}
+  constructor(private authenticator: Authenticator, private request: Request) {}
 
   private getRenderFunction(body: string, variables: Record<string, unknown> = {}) {
     const globalVariables = {
@@ -161,6 +162,28 @@ export class ViewCompiler {
       }
 
       this.html = this.html.replace(match[0], '');
+    }
+  }
+
+  private parseAuthDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[auth\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/auth\]/gm) ?? [];
+
+    for (const match of matches) {
+      const authenticated = this.authenticator.check();
+
+      this.html = this.html.replace(match[0], authenticated ? match[2] : '');
+    }
+  }
+
+  private parseGuestDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[guest\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/guest\]/gm) ?? [];
+
+    for (const match of matches) {
+      const authenticated = this.authenticator.check();
+
+      this.html = this.html.replace(match[0], authenticated ? '' : match[2]);
     }
   }
 
@@ -484,6 +507,8 @@ export class ViewCompiler {
     this.parseSwitchDirectives();
     this.parseJsonDirectives();
     this.parseErrorDirectives();
+    this.parseAuthDirectives();
+    this.parseGuestDirectives();
     this.parsePushDirectives();
     this.parseTokenDirectives();
 
