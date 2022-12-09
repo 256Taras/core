@@ -98,6 +98,10 @@ export class Session {
     }
   }
 
+  public all(): Record<string, any> {
+    return this.data;
+  }
+
   public get data(): Record<string, any> {
     return this.variables;
   }
