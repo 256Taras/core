@@ -1,19 +1,7 @@
 import { Constructor } from '../../utils/interfaces/constructor.interface';
-import { Integer } from '../../utils/types/integer.type';
+import { AppConfig } from '../../config/interfaces/app-config.interface';
 
 export interface ServerOptions {
-  config?: {
-    contentSecurityPolicy?: Record<string, string | string[]> | boolean;
-    cors?: {
-      allowedHeaders?: string | string[];
-      credentials: boolean;
-      maxAge: Integer;
-      methods?: string | string[];
-      origin: boolean | string | string[] | RegExp | RegExp[];
-    };
-    env?: string;
-    locale?: string;
-    logger?: boolean;
-  };
+  config?: AppConfig;
   modules: Constructor[];
 }

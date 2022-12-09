@@ -30,6 +30,7 @@ import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from '../websocket/interfaces/authorizer.interface';
 import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
+import { Configurator } from '../config/configurator.class';
 
 @Service()
 export class Server {
@@ -43,9 +44,8 @@ export class Server {
 
   private tempFilePath = `${tmpdir()}/northle/server/server.txt`;
 
-  private options: ServerOptions;
-
   constructor(
+    private configurator: Configurator,
     private encrypter: Encrypter,
     private handler: Handler,
     private logger: Logger,
@@ -89,7 +89,7 @@ export class Server {
   }
 
   private async registerMiddleware(): Promise<void> {
-    const cspOptions = this.options.config?.contentSecurityPolicy;
+    const cspOptions = this.configurator.entries.contentSecurityPolicy;
 
     const helmetOptions: FastifyHelmetOptions = {
       contentSecurityPolicy:
@@ -114,14 +114,14 @@ export class Server {
                 'script-src-attr': `'unsafe-inline'`,
                 'style-src': [`'self'`, `'unsafe-inline'`, `http://localhost:*`],
               },
-              ...((this.options.config?.contentSecurityPolicy ?? {}) as Record<
+              ...((this.configurator.entries.contentSecurityPolicy ?? {}) as Record<
                 string,
                 unknown
               >),
             },
     };
 
-    const corsOptions: FastifyCorsOptions = this.options.config?.cors ?? {};
+    const corsOptions: FastifyCorsOptions = this.configurator.entries.cors ?? {};
 
     const cookieOptions: FastifyCookieOptions = {
       secret: env('ENCRYPT_KEY') ?? this.encrypter.randomBytes(16),
@@ -178,9 +178,9 @@ export class Server {
     }
   }
 
-  public async setup(options: ServerOptions): Promise<this> {
+  public async $setup(options: ServerOptions): Promise<this> {
     try {
-      this.options = options;
+      this.configurator.$setup(options.config ?? {});
 
       process.on('uncaughtException', async (error) => {
         await this.handler.handleFatalError(error);
@@ -190,7 +190,7 @@ export class Server {
         await this.handler.handleFatalError(error);
       });
 
-      const envFile = options.config?.env ?? '.env';
+      const envFile = this.configurator.entries.env ?? '.env';
 
       if (!existsSync(envFile)) {
         const error = new Error('Environment configuration file not found');
@@ -202,7 +202,7 @@ export class Server {
         path: envFile,
       });
 
-      if (!(options.config?.logger ?? true)) {
+      if (!(this.configurator.entries.logger ?? true)) {
         this.logger.$disable();
       }
 
@@ -227,7 +227,7 @@ export class Server {
 
       await this.translator.$setup();
 
-      this.translator.setLocale(options.config?.locale ?? 'en');
+      this.translator.setLocale(this.configurator.entries.locale ?? 'en');
     } catch (error) {
       await this.handler.handleError(error as Error);
     }
