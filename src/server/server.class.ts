@@ -281,7 +281,7 @@ export class Server {
         this.response.header(
           'content-security-policy',
           (
-            this.response.header('content-security-policy') as string | undefined
+            this.response.header('content-security-policy') as string | null
           )?.replaceAll(
             /(script|style)-src /g,
             `$1-src 'nonce-${this.request.nonce()}' `,
@@ -290,11 +290,11 @@ export class Server {
       });
 
       this.instance.addHook('onResponse', async (request, response) => {
-        await this.session.$writeSession();
-
         if (!this.request.isFileRequest() && !this.request.isFormRequest()) {
           this.session.set('_previousLocation', request.url);
         }
+
+        await this.session.$writeSession();
 
         const endTime = process.hrtime(startTime);
 

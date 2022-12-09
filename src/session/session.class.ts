@@ -14,7 +14,7 @@ import { FlashedData } from './interfaces/flashed-data.interface';
 export class Session {
   private readonly directoryPath =
     env<string>('SESSION_PATH') ??
-    (env<boolean>('DEBUG')
+    (env<boolean>('DEVELOPMENT')
       ? 'node_modules/.northle/sessions'
       : `${tmpdir()}/northle/sessions`);
 
