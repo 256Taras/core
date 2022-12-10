@@ -18,7 +18,7 @@
 - [Creating Pull Requests](#creating-pull-requests)
 - [Development Setup](#development-setup)
   - [Core package](#core-package)
-  - [Project Template](#app-template)
+  - [App Template](#app-template)
 
 ## Creating Pull Requests
 
@@ -44,9 +44,9 @@ $ npm link
 
 Then, change the import path in the `src/database` directory: `PrismaClient` and `User` should be imported from `../../../app-template/node_modules/@prisma/client` in development mode. Don't forget to change it back before creating a [Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)!
 
-### Project Template
+### App Template
 
-Next, clone project template repository (in the parent folder of the `core` repository):
+Next, clone app template repository (in the parent folder of the `core` repository):
 
 ```shell
 $ git clone https://github.com/northle/app-template.git
@@ -55,6 +55,7 @@ $ cd app-template
 $ cp .env.example .env
 $ npm install
 $ npm link @northle/core
+$ npm run key:generate
 ```
 
 Then, set the `DEVELOPER_MODE` variable in `.env` file to `true`.

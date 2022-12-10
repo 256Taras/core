@@ -18,6 +18,6 @@ export class Configurator {
   }
 
   public get<T = string>(option: string): T {
-    return this.options[option as keyof AppConfig] as T;
+    return this.options[option as keyof AppConfig] as unknown as T;
   }
 }

@@ -1,7 +1,7 @@
 export * from './constants';
 
 export * from './auth/auth.module';
-export * from './config/configurator.module';
+export * from './configurator/configurator.module';
 export * from './crypto/crypto.module';
 export * from './database/database.module';
 export * from './handler/handler.module';

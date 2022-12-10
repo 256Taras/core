@@ -428,9 +428,9 @@ export class ViewCompiler {
             const data = manifest[`app/${fileEntry}`];
 
             output = `
-              ${data.css ? `<link rel="stylesheet" href="/${data.css}">` : ''}
+              ${data.css ? `<link rel="stylesheet" href="/${data.css}" nonce="${nonce()}">` : ''}
     
-              <script type="module" src="/${data.file}"></script>
+              <script type="module" src="/${data.file}" nonce="${nonce()}"></script>
             `;
           })();
         }
@@ -438,7 +438,7 @@ export class ViewCompiler {
 
       if (usesReactRefresh) {
         output = `
-          <script type="module">
+          <script type="module" nonce="${nonce()}">
             import RefreshRuntime from 'http://localhost:5173/@react-refresh';
 
             RefreshRuntime.injectIntoGlobalHook(window);

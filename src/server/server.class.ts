@@ -30,7 +30,7 @@ import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from '../websocket/interfaces/authorizer.interface';
 import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
-import { Configurator } from '../config/configurator.class';
+import { Configurator } from '../configurator/configurator.class';
 
 @Service()
 export class Server {

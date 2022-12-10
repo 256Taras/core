@@ -42,19 +42,19 @@ await Promise.all(
     const requiredArguments: Record<string, Parameter> =
       Reflect.getMetadata('parameters', command) ?? {};
 
-    const { values } = parseArgs({
+    const argumentValues = parseArgs({
       args: process.argv.slice(3),
       options: {
         ...requiredArguments,
       },
       strict: false,
-    });
+    }).values;
 
     if (name === process.argv[2]) {
       const instance: Command = new command();
 
       try {
-        await instance.handle(...Object.values(values));
+        await instance.handle(...Object.values(argumentValues));
       } catch (error) {
         logError((error as Error).message);
 
