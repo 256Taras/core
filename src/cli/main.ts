@@ -39,22 +39,35 @@ await Promise.all(
   commands.map(async (command: Constructor<Command>) => {
     const name = Reflect.getMetadata('signature', command);
 
-    const requiredArguments: Record<string, Parameter> =
-      Reflect.getMetadata('parameters', command) ?? {};
-
-    const argumentValues = parseArgs({
-      args: process.argv.slice(3),
-      options: {
-        ...requiredArguments,
-      },
-      strict: false,
-    }).values;
-
     if (name === process.argv[2]) {
+      const requiredArguments: Record<string, Parameter> =
+        Reflect.getMetadata('parameters', command) ?? {};
+
+      const { values, positionals } = parseArgs({
+        args: process.argv.slice(3),
+        options: {
+          ...requiredArguments,
+        },
+        allowPositionals: true,
+        strict: false,
+      });
+
       const instance: Command = new command();
 
+      const requiredPositionals = Object.values(requiredArguments).filter(
+        (parameter) => parameter.type === 'string',
+      );
+
+      const resolvedPositionals = new Array(requiredPositionals.length);
+
+      positionals.map((positional, index) => {
+        resolvedPositionals[index] = positional;
+      });
+
+      resolvedPositionals.fill(undefined, positionals.length);
+
       try {
-        await instance.handle(...Object.values(argumentValues));
+        await instance.handle(...resolvedPositionals, values);
       } catch (error) {
         logError((error as Error).message);
 

@@ -22,7 +22,7 @@ import { setupStdin } from '../functions/setup-stdin.function';
 export class ServerDevCommand {
   private readonly copyCommand = 'copyfiles -u 1 src/**/*.html dist/';
 
-  public async handle(open: boolean): Promise<void> {
+  public async handle(flags: Record<string, boolean>): Promise<void> {
     const serverTempPath = `${tmpdir()}/northle/server`;
 
     logInfo(
@@ -43,16 +43,16 @@ export class ServerDevCommand {
     const envWatcher = watch('.env', watcherOptions);
     const serverTempWatcher = watch(serverTempPath);
 
-    const browserAliases: Record<string, string> = {
+    const openAliases: Record<string, string> = {
       darwin: 'open',
       linux: 'sensible-browser',
       win32: 'explorer',
     };
 
     serverTempWatcher.on('add', () => {
-      if (open) {
+      if (flags.open) {
         runCommand(
-          `${browserAliases[process.platform] ?? 'xdg-open'} http://localhost:${
+          `${openAliases[process.platform] ?? 'xdg-open'} http://localhost:${
             env<number>('PORT') ?? 8000
           }`,
         );

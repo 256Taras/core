@@ -16,13 +16,13 @@ import { Command } from '../decorators/command.decorator';
   },
 })
 export class StartDevCommand {
-  public async handle(open: boolean): Promise<void> {
+  public async handle(flags: Record<string, boolean>): Promise<void> {
     const serverTempPath = `${tmpdir()}/northle/server/server.txt`;
 
     console.clear();
 
     const { result } = concurrently(
-      ['tsc --watch', `app server:dev${open ? ' --open' : ''}`],
+      ['tsc --watch', `app server:dev${flags.open ? ' --open' : ''}`],
       {
         killOthers: ['failure', 'success'],
         raw: true,
