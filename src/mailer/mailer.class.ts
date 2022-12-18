@@ -5,7 +5,7 @@ import { Service } from '../injector/decorators/service.decorator';
 import { callerFile } from '../utils/functions/caller-file.function';
 import { env } from '../utils/functions/env.function';
 import { resolveViewFile } from '../utils/functions/resolve-view-file.function';
-import { ViewCompiler } from '../views/view-compiler.class';
+import { TemplateCompiler } from '../templates/template-compiler.class';
 import { MailData } from './interfaces/mail-data.interface';
 
 @Service()
@@ -14,7 +14,7 @@ export class Mailer {
 
   constructor(
     private configurator: Configurator,
-    private viewCompiler: ViewCompiler,
+    private templateCompiler: TemplateCompiler,
   ) {
     const { address, host, password, port } = this.configurator.entries.mail ?? {};
 
@@ -46,7 +46,7 @@ export class Mailer {
 
       const fileContent = await readFile(view, 'utf-8');
 
-      html = await this.viewCompiler.compile(fileContent, data);
+      html = await this.templateCompiler.compile(fileContent, data);
     }
 
     const info = await this.transporter.sendMail({

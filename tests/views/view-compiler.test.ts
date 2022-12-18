@@ -2,14 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { Request } from '../../src/http/request.class';
 import { inject } from '../../src/injector/functions/inject.function';
 import { Session } from '../../src/session/session.class';
-import { ViewCompiler } from '../../src/views/view-compiler.class';
+import { TemplateCompiler } from '../../src/views/view-compiler.class';
 
-describe('ViewCompiler class', () => {
+describe('TemplateCompiler class', () => {
   const request = inject(Request);
 
   inject(Session).$setRequest(request);
 
-  const compiler = inject(ViewCompiler);
+  const compiler = inject(TemplateCompiler);
 
   it('correctly compiles data renders', async () => {
     const template = '{{ count + 1 }}';

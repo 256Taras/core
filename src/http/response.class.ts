@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
-import { ViewCompiler } from '../views/view-compiler.class';
+import { TemplateCompiler } from '../templates/template-compiler.class';
 import { StatusCode } from './enums/status-code.enum';
 import { CookieOptions } from './interfaces/cookie-options.interface';
 import { Request } from './request.class';
@@ -18,7 +18,7 @@ export class Response {
   constructor(
     private request: Request,
     private session: Session,
-    private viewCompiler: ViewCompiler,
+    private templateCompiler: TemplateCompiler,
   ) {}
 
   public $getInstance(): FastifyReply | null {
@@ -173,9 +173,9 @@ export class Response {
 
     const fileContent = await readFile(file, 'utf-8');
 
-    const html = await this.viewCompiler.compile(fileContent.toString(), data, file);
+    const html = await this.templateCompiler.compile(fileContent.toString(), data, file);
 
-    ViewCompiler.stacks.clear();
+    TemplateCompiler.stacks.clear();
 
     this.send(html);
 

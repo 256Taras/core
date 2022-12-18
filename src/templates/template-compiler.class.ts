@@ -17,7 +17,7 @@ import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
 
 @Service()
-export class ViewCompiler {
+export class TemplateCompiler {
   private data: Record<string, any> = {};
 
   private file?: string;
@@ -128,7 +128,7 @@ export class ViewCompiler {
               $odd: index % 2 === 1,
             };
 
-            const compiler = inject(ViewCompiler, { freshInstance: true });
+            const compiler = inject(TemplateCompiler, { freshInstance: true });
 
             content = await compiler.compile(content, {
               ...this.data,
@@ -251,7 +251,7 @@ export class ViewCompiler {
         throw new Error(`Template partial '${partial}' does not exist`);
       }
 
-      const compiler = inject(ViewCompiler, { freshInstance: true });
+      const compiler = inject(TemplateCompiler, { freshInstance: true });
 
       const fileContent = await readFile(file, 'utf-8');
       const compiledPartial = await compiler.compile(fileContent, this.data);

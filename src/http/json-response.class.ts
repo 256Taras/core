@@ -1,6 +1,6 @@
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
-import { ViewCompiler } from '../views/view-compiler.class';
+import { TemplateCompiler } from '../templates/template-compiler.class';
 import { Request } from './request.class';
 import { Response } from './response.class';
 
@@ -8,8 +8,8 @@ import { Response } from './response.class';
 export class JsonResponse extends Response {
   private variables: Record<string, unknown>;
 
-  constructor(request: Request, session: Session, viewCompiler: ViewCompiler) {
-    super(request, session, viewCompiler);
+  constructor(request: Request, session: Session, templateCompiler: TemplateCompiler) {
+    super(request, session, templateCompiler);
   }
 
   public get data(): Record<string, unknown> {
