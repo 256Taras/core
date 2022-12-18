@@ -27,7 +27,7 @@ export interface AppConfig {
   session?: {
     lifetime?: Integer;
     path?: string;
-  },
+  };
   upload?: {
     fieldLimit?: Integer;
     fileLimit?: Integer;

@@ -13,6 +13,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { Configurator } from '../configurator/configurator.class';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
 import { Request } from '../http/request.class';
@@ -30,7 +31,6 @@ import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from '../websocket/interfaces/authorizer.interface';
 import { SocketEmitter } from '../websocket/socket-emitter.class';
 import { ServerOptions } from './interfaces/server-options.interface';
-import { Configurator } from '../configurator/configurator.class';
 
 @Service()
 export class Server {
@@ -124,14 +124,27 @@ export class Server {
     const corsOptions: FastifyCorsOptions = this.configurator.entries.cors ?? {};
 
     const cookieOptions: FastifyCookieOptions = {
-      secret: (this.configurator.entries.crypto?.key ?? env('ENCRYPT_KEY')) ?? this.encrypter.randomBytes(16),
+      secret:
+        this.configurator.entries.crypto?.key ??
+        env('ENCRYPT_KEY') ??
+        this.encrypter.randomBytes(16),
     };
 
     const multipartOptions: FastifyMultipartOptions = {
       addToBody: true,
       limits: {
-        fieldSize: (this.configurator.entries.upload?.fieldLimit ?? env<number>('UPLOAD_FIELD_LIMIT') ?? 10) * 1024 * 1024,
-        fileSize: (this.configurator.entries.upload?.fileLimit ?? env<number>('UPLOAD_FILE_LIMIT') ?? 100) * 1024 * 1024,
+        fieldSize:
+          (this.configurator.entries.upload?.fieldLimit ??
+            env<number>('UPLOAD_FIELD_LIMIT') ??
+            10) *
+          1024 *
+          1024,
+        fileSize:
+          (this.configurator.entries.upload?.fileLimit ??
+            env<number>('UPLOAD_FILE_LIMIT') ??
+            100) *
+          1024 *
+          1024,
       },
     };
 
@@ -236,7 +249,9 @@ export class Server {
   }
 
   public async start(
-    port = this.configurator.entries.port ?? env<Integer>('PORT') ?? this.defaultPort,
+    port = this.configurator.entries.port ??
+      env<Integer>('PORT') ??
+      this.defaultPort,
     host = this.configurator.entries.host ?? env<string>('HOST') ?? this.defaultHost,
   ): Promise<void> {
     try {

@@ -1,5 +1,7 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
+import { Authenticator } from '../auth/authenticator.class';
+import { Configurator } from '../configurator/configurator.class';
 import * as constants from '../constants';
 import { nonce } from '../http/functions/nonce.function';
 import { oldInput } from '../http/functions/old-input.function';
@@ -13,8 +15,6 @@ import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
-import { Configurator } from '../configurator/configurator.class';
-import { Authenticator } from '../auth/authenticator.class';
 
 @Service()
 export class ViewCompiler {
@@ -39,7 +39,11 @@ export class ViewCompiler {
 
   public static stacks: Map<string, string[]> = new Map<string, string[]>();
 
-  constructor(private authenticator: Authenticator, private configurator: Configurator, private request: Request) {}
+  constructor(
+    private authenticator: Authenticator,
+    private configurator: Configurator,
+    private request: Request,
+  ) {}
 
   private getRenderFunction(body: string, variables: Record<string, unknown> = {}) {
     const globalVariables = {
@@ -293,7 +297,8 @@ export class ViewCompiler {
 
   private parsePushDirectives(): void {
     const matches =
-      this.html.matchAll(/\[push ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/push\]/gm) ?? [];
+      this.html.matchAll(/\[push ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/push\]/gm) ??
+      [];
 
     for (const match of matches) {
       const value = match[1];
@@ -301,9 +306,14 @@ export class ViewCompiler {
 
       const stack = renderFunction<string>();
 
-      const { stacks } = (this.constructor as unknown as { stacks: Map<string, string[]> });
+      const { stacks } = this.constructor as unknown as {
+        stacks: Map<string, string[]>;
+      };
 
-      stacks.set(stack, stacks.has(stack) ? [...stacks.get(stack)!, match[3]] : [match[3]]);
+      stacks.set(
+        stack,
+        stacks.has(stack) ? [...stacks.get(stack)!, match[3]] : [match[3]],
+      );
 
       this.html = this.html.replace(match[0], '');
     }
@@ -331,17 +341,21 @@ export class ViewCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(`return ${value};`);
 
-      const { stacks } = (this.constructor as unknown as { stacks: Map<string, string[]> });
+      const { stacks } = this.constructor as unknown as {
+        stacks: Map<string, string[]>;
+      };
 
       const content = stacks.get(renderFunction<string>()) ?? [];
 
-     this.html = this.html.replace(match[0], content.join(''));
+      this.html = this.html.replace(match[0], content.join(''));
     }
   }
 
   private parseSwitchDirectives(): void {
     const matches =
-      this.html.matchAll(/\[switch ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/switch\]/gm) ?? [];
+      this.html.matchAll(
+        /\[switch ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/switch\]/gm,
+      ) ?? [];
 
     for (const match of matches) {
       const renderFunction = this.getRenderFunction(`return ${match[1]};`);
@@ -352,7 +366,9 @@ export class ViewCompiler {
 
       let defaultCaseValue: string | null = null;
 
-      const caseMatches = casesString.matchAll(/\[(case|default) ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/(case|default)\]/gm);
+      const caseMatches = casesString.matchAll(
+        /\[(case|default) ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/(case|default)\]/gm,
+      );
 
       for (const caseMatch of caseMatches) {
         if (caseMatch[1] === 'default') {
@@ -429,7 +445,11 @@ export class ViewCompiler {
             const data = manifest[`app/${fileEntry}`];
 
             output = `
-              ${data.css ? `<link rel="stylesheet" href="/${data.css}" nonce="${nonce()}">` : ''}
+              ${
+                data.css
+                  ? `<link rel="stylesheet" href="/${data.css}" nonce="${nonce()}">`
+                  : ''
+              }
     
               <script type="module" src="/${data.file}" nonce="${nonce()}"></script>
             `;
