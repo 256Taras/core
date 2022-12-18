@@ -9,7 +9,27 @@ export interface AppConfig {
     methods?: string | string[];
     origin: boolean | string | string[] | RegExp | RegExp[];
   };
+  crypto?: {
+    key?: string;
+  };
+  development?: boolean;
   env?: string;
+  host?: string;
   locale?: string;
   logger?: boolean;
+  mail?: {
+    address?: string;
+    host?: string;
+    password?: string;
+    port?: Integer;
+  };
+  port?: Integer;
+  session?: {
+    lifetime?: Integer;
+    path?: string;
+  },
+  upload?: {
+    fieldLimit?: Integer;
+    fileLimit?: Integer;
+  };
 }

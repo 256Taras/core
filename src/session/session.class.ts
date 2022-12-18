@@ -9,12 +9,13 @@ import { inject } from '../injector/functions/inject.function';
 import { env } from '../utils/functions/env.function';
 import { readJson } from '../utils/functions/read-json.function';
 import { FlashedData } from './interfaces/flashed-data.interface';
+import { Configurator } from '../configurator/configurator.class';
 
 @Service()
 export class Session {
   private readonly directoryPath =
-    env<string>('SESSION_PATH') ??
-    (env<boolean>('DEVELOPMENT')
+  this.configurator.entries.session?.path ?? env<string>('SESSION_PATH') ??
+    (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT')
       ? 'node_modules/.northle/sessions'
       : `${tmpdir()}/northle/sessions`);
 
@@ -26,7 +27,7 @@ export class Session {
 
   private variables: Record<string, any> = {};
 
-  constructor(private encrypter: Encrypter) {
+  constructor(private configurator: Configurator, private encrypter: Encrypter) {
     this.encrypter = inject(Encrypter);
   }
 
@@ -55,7 +56,7 @@ export class Session {
 
       this.response?.cookie('sessionId', generatedId, {
         expires: new Date(
-          Date.now() + (env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
+          Date.now() + (this.configurator.entries.session?.lifetime ?? env<number>('SESSION_LIFETIME') ?? 7) * 1000 * 60 * 60 * 24,
         ),
       });
 

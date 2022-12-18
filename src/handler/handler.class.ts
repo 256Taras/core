@@ -5,6 +5,7 @@ import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Logger } from '../logger/logger.class';
+import { Configurator } from '../configurator/configurator.class';
 import { env } from '../utils/functions/env.function';
 
 @Service()
@@ -22,6 +23,7 @@ export class Handler {
   private notFoundHandler: (() => unknown) | null = null;
 
   constructor(
+    private configurator: Configurator,
     private logger: Logger,
     private request: Request,
     private response: Response,
@@ -114,7 +116,7 @@ export class Handler {
       return;
     }
 
-    if (env<boolean>('DEVELOPMENT')) {
+    if (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT')) {
       const customViewTemplate = `views/errors/${statusCode}.html`;
 
       const view = existsSync(customViewTemplate)
@@ -167,7 +169,7 @@ export class Handler {
       this.logger.sub(`Line: ${this.line}`);
     }
 
-    if (!env<boolean>('DEVELOPMENT')) {
+    if (!(this.configurator.entries.development ?? env<boolean>('DEVELOPMENT'))) {
       process.exit(1);
     }
 

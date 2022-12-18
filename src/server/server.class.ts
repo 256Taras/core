@@ -124,14 +124,14 @@ export class Server {
     const corsOptions: FastifyCorsOptions = this.configurator.entries.cors ?? {};
 
     const cookieOptions: FastifyCookieOptions = {
-      secret: env('ENCRYPT_KEY') ?? this.encrypter.randomBytes(16),
+      secret: (this.configurator.entries.crypto?.key ?? env('ENCRYPT_KEY')) ?? this.encrypter.randomBytes(16),
     };
 
     const multipartOptions: FastifyMultipartOptions = {
       addToBody: true,
       limits: {
-        fieldSize: (env<number>('FIELD_LIMIT') ?? 10) * 1024 * 1024,
-        fileSize: (env<number>('UPLOAD_LIMIT') ?? 100) * 1024 * 1024,
+        fieldSize: (this.configurator.entries.upload?.fieldLimit ?? env<number>('UPLOAD_FIELD_LIMIT') ?? 10) * 1024 * 1024,
+        fileSize: (this.configurator.entries.upload?.fileLimit ?? env<number>('UPLOAD_FILE_LIMIT') ?? 100) * 1024 * 1024,
       },
     };
 
@@ -236,8 +236,8 @@ export class Server {
   }
 
   public async start(
-    port = env<Integer>('PORT') ?? this.defaultPort,
-    host = env<string>('HOST') ?? this.defaultHost,
+    port = this.configurator.entries.port ?? env<Integer>('PORT') ?? this.defaultPort,
+    host = this.configurator.entries.host ?? env<string>('HOST') ?? this.defaultHost,
   ): Promise<void> {
     try {
       let startTime: [number, number];
@@ -326,7 +326,7 @@ export class Server {
 
       await this.instance.listen({ port, host });
 
-      if (env<boolean>('DEVELOPMENT')) {
+      if (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT')) {
         await this.setupDevelopmentEnvironment();
       }
     } catch (error) {

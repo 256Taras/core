@@ -13,6 +13,7 @@ import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
+import { Configurator } from '../configurator/configurator.class';
 import { Authenticator } from '../auth/authenticator.class';
 
 @Service()
@@ -38,7 +39,7 @@ export class ViewCompiler {
 
   public static stacks: Map<string, string[]> = new Map<string, string[]>();
 
-  constructor(private authenticator: Authenticator, private request: Request) {}
+  constructor(private authenticator: Authenticator, private configurator: Configurator, private request: Request) {}
 
   private getRenderFunction(body: string, variables: Record<string, unknown> = {}) {
     const globalVariables = {
@@ -409,7 +410,7 @@ export class ViewCompiler {
       fileEntries.map((fileEntry) => {
         const fileExtension = fileEntry.split('.').pop() ?? 'js';
 
-        if (env<boolean>('DEVELOPMENT')) {
+        if (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT')) {
           output = `<script type="module" src="http://localhost:5173/app/${fileEntry}"></script>`;
 
           if (['jsx', 'tsx'].includes(fileExtension)) {
