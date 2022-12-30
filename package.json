@@ -35,7 +35,7 @@
     "test:cov": "vitest run --coverage"
   },
   "peerDependencies": {
-    "@prisma/client": "^4.7.1"
+    "@prisma/client": "^4.8.0"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.0.0",
