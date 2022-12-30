@@ -62,7 +62,7 @@ export class Handler {
         file = '@northle/core package';
         line = null;
       }
-    } catch (err) {
+    } catch {
       file = 'unknown';
     }
 

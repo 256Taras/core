@@ -6,7 +6,6 @@ import helmetMiddleware, { FastifyHelmetOptions } from '@fastify/helmet';
 import multipartMiddleware, { FastifyMultipartOptions } from '@fastify/multipart';
 import staticServerMiddleware, { FastifyStaticOptions } from '@fastify/static';
 import chalk from 'chalk';
-import { config as configDotenv } from 'dotenv';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -211,9 +210,7 @@ export class Server {
         await this.handler.handleError(error as Error);
       }
 
-      configDotenv({
-        path: envFile,
-      });
+      await this.configurator.loadEnvironment(envFile);
 
       if (!(this.configurator.entries.logger ?? true)) {
         this.logger.$disable();

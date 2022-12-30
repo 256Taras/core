@@ -1,7 +1,8 @@
 import { Reflection as Reflect } from '@abraham/reflection';
-import { config as configDotenv } from 'dotenv';
 import { parseArgs } from 'node:util';
 import { logError } from '../logger/functions/log-error.function';
+import { inject } from '../injector/functions/inject.function';
+import { Configurator } from '../configurator/configurator.class';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { BuildCommand } from './commands/build.command';
 import { DbMigrateCommand } from './commands/db-migrate.command';
@@ -19,9 +20,7 @@ process.on('uncaughtException', (error: Error) => {
   process.exit(1);
 });
 
-configDotenv({
-  path: '.env',
-});
+await inject(Configurator).loadEnvironment();
 
 const commands: Constructor<Command>[] = [
   BuildCommand,

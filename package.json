@@ -61,7 +61,6 @@
     "chalk": "^5.2.0",
     "chokidar": "^3.5.3",
     "concurrently": "^7.6.0",
-    "dotenv": "^16.0.3",
     "fastify": "^4.10.2",
     "nodemailer": "^6.8.0",
     "path-to-regexp": "^6.2.1",

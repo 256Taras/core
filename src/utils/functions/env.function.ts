@@ -6,9 +6,5 @@ export const env = <T = any>(
     return null as unknown as T;
   }
 
-  try {
-    return JSON.parse(process.env[key]?.toString() ?? String(defaultValue));
-  } catch {
-    return (process.env[key] ?? defaultValue) as unknown as T;
-  }
+  return (process.env[key] ?? defaultValue) as unknown as T;
 };
