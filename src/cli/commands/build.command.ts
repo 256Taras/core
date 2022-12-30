@@ -2,6 +2,7 @@ import { logInfo } from '../../logger/functions/log-info.function';
 import { logSub } from '../../logger/functions/log-sub.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
+import { cloneFiles } from '../../utils/functions/clone-files.function';
 
 @Command({
   signature: 'build',
@@ -17,7 +18,7 @@ export class BuildCommand {
       showOutput: true,
     });
 
-    runCommand('copyfiles -u 1 src/**/*.html dist/');
+    await cloneFiles('src', 'dist', '.html');
 
     logInfo('Build successful');
   }

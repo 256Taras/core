@@ -8,6 +8,7 @@ import { env } from '../../utils/functions/env.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 import { setupStdin } from '../functions/setup-stdin.function';
+import { cloneFiles } from '../../utils/functions/clone-files.function';
 
 @Command({
   signature: 'server:dev',
@@ -20,8 +21,6 @@ import { setupStdin } from '../functions/setup-stdin.function';
   },
 })
 export class ServerDevCommand {
-  private readonly copyCommand = 'copyfiles -u 1 src/**/*.html dist/';
-
   public async handle(flags: Record<string, boolean>): Promise<void> {
     const serverTempPath = `${tmpdir()}/northle/server`;
 
@@ -73,10 +72,10 @@ export class ServerDevCommand {
       childProcess = fork(entryFile, processOptions);
     }, 560);
 
-    sourceWatcher.on('all', () => {
+    sourceWatcher.on('all', async () => {
       restartProcess();
 
-      runCommand(this.copyCommand);
+      await cloneFiles('src', 'dist', '.html');
     });
 
     if (env<boolean>('DEVELOPER_MODE')) {
@@ -88,8 +87,8 @@ export class ServerDevCommand {
       frameworkWatcher.on('change', restartProcess);
     }
 
-    viewWatcher.on('all', () => {
-      runCommand(this.copyCommand);
+    viewWatcher.on('all', async () => {
+      await cloneFiles('src', 'dist', '.html');
     });
 
     envWatcher.on('all', restartProcess);
