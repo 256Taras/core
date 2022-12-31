@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import stripAnsi from 'strip-ansi';
+import { stripAnsiChars } from '../utils/functions/strip-ansi-chars.function';
 import { Service } from '../injector/decorators/service.decorator';
 
 @Service()
@@ -43,7 +43,7 @@ export class Logger {
   }
 
   private renderDots(data: string): string {
-    const outputLength = stripAnsi(data).length;
+    const outputLength = stripAnsiChars(data).length;
     const sign = '.';
 
     return chalk.gray(sign.repeat(process.stdout.columns - outputLength - 12));
@@ -52,7 +52,7 @@ export class Logger {
   private truncate(data: string): string {
     const maxLength = Math.trunc(process.stdout.columns / 2);
 
-    return stripAnsi(data).length > maxLength
+    return stripAnsiChars(data).length > maxLength
       ? data.slice(0, maxLength) + '...'
       : data;
   }
