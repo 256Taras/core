@@ -24,8 +24,12 @@ export class Translator {
     await this.loadTranslations();
   }
 
-  public get(text: string): string {
-    return this.translations.get(text) ?? text;
+  public all(): Record<string, string> {
+    return Object.fromEntries(this.translations);
+  }
+
+  public get(text: string, amount = 1): string {
+    return (amount > 1 ? this.translations.get(text)?.[1] : this.translations.get(text)) ?? text;
   }
 
   public async setLocale(locale: string): Promise<void> {
