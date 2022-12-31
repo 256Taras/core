@@ -496,8 +496,8 @@ export class TemplateCompiler {
     }
   }
 
-  private parseTokenDirectives(): void {
-    const matches = this.html.matchAll(/\[(token|csrf)\]/g) ?? [];
+  private parseCsrfTokenDirectives(): void {
+    const matches = this.html.matchAll(/\[(csrfToken|csrf)\]/g) ?? [];
     const token = csrfToken();
 
     for (const match of matches) {
@@ -532,7 +532,7 @@ export class TemplateCompiler {
     this.parseAuthDirectives();
     this.parseGuestDirectives();
     this.parsePushDirectives();
-    this.parseTokenDirectives();
+    this.parseCsrfTokenDirectives();
 
     await this.parseIncludeDirectives();
 
