@@ -13,7 +13,11 @@ export class RedirectResponse extends Response {
 
   private httpStatus: StatusCode;
 
-  constructor(request: Request, session: Session, templateCompiler: TemplateCompiler) {
+  constructor(
+    request: Request,
+    session: Session,
+    templateCompiler: TemplateCompiler,
+  ) {
     super(request, session, templateCompiler);
   }
 

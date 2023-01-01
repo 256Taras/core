@@ -8,7 +8,11 @@ import { Response } from './response.class';
 export class JsonResponse extends Response {
   private variables: Record<string, unknown>;
 
-  constructor(request: Request, session: Session, templateCompiler: TemplateCompiler) {
+  constructor(
+    request: Request,
+    session: Session,
+    templateCompiler: TemplateCompiler,
+  ) {
     super(request, session, templateCompiler);
   }
 

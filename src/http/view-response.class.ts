@@ -10,7 +10,11 @@ export class ViewResponse extends Response {
 
   private variables: Record<string, unknown>;
 
-  constructor(request: Request, session: Session, templateCompiler: TemplateCompiler) {
+  constructor(
+    request: Request,
+    session: Session,
+    templateCompiler: TemplateCompiler,
+  ) {
     super(request, session, templateCompiler);
   }
 

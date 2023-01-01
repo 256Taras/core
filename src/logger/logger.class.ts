@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { stripAnsiChars } from '../utils/functions/strip-ansi-chars.function';
 import { Service } from '../injector/decorators/service.decorator';
+import { stripAnsiChars } from '../utils/functions/strip-ansi-chars.function';
 
 @Service()
 export class Logger {

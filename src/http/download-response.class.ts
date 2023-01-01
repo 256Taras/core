@@ -8,7 +8,11 @@ import { Response } from './response.class';
 export class DownloadResponse extends Response {
   private path: string;
 
-  constructor(request: Request, session: Session, templateCompiler: TemplateCompiler) {
+  constructor(
+    request: Request,
+    session: Session,
+    templateCompiler: TemplateCompiler,
+  ) {
     super(request, session, templateCompiler);
   }
 

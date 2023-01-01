@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
+import { ModuleKind, transpileModule } from 'typescript';
 import { Authenticator } from '../auth/authenticator.class';
 import { Configurator } from '../configurator/configurator.class';
 import * as constants from '../constants';
@@ -15,7 +16,6 @@ import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
-import { transpileModule, ModuleKind } from 'typescript';
 
 @Service()
 export class TemplateCompiler {
@@ -100,7 +100,12 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[3];
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
 
       const variableName = match[1];
 
@@ -154,7 +159,12 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
       const fieldName = renderFunction<string>();
 
       const errors = flash<Record<string, string>>('errors') ?? {};
@@ -199,7 +209,12 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
 
       const condition = renderFunction<boolean>();
 
@@ -221,7 +236,12 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
 
       const condition = renderFunction<boolean>();
 
@@ -240,7 +260,12 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
 
       const partial = renderFunction<string>();
 
@@ -269,8 +294,19 @@ export class TemplateCompiler {
       const value = match[1];
       const prettyPrint = match[2] ?? 'false';
 
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
-      const printRenderFunction = this.getRenderFunction(`return ${transpileModule(prettyPrint, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
+      const printRenderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(prettyPrint, {
+            compilerOptions: { module: ModuleKind.ESNext },
+          }).outputText
+        };`,
+      );
 
       const json = JSON.stringify(
         renderFunction<object>(),
@@ -287,7 +323,12 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
 
       this.html = this.html.replace(
         match[0],
@@ -303,7 +344,12 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
 
       const stack = renderFunction<string>();
 
@@ -340,7 +386,12 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
 
       const { stacks } = this.constructor as unknown as {
         stacks: Map<string, string[]>;
@@ -359,7 +410,13 @@ export class TemplateCompiler {
       ) ?? [];
 
     for (const match of matches) {
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(match[1], { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(match[1], {
+            compilerOptions: { module: ModuleKind.ESNext },
+          }).outputText
+        };`,
+      );
       const switchCondition = renderFunction<unknown>();
 
       const casesString = match[3];
@@ -382,7 +439,13 @@ export class TemplateCompiler {
           continue;
         }
 
-        const caseRenderFunction = this.getRenderFunction(`return ${transpileModule(caseMatch[2], { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+        const caseRenderFunction = this.getRenderFunction(
+          `return ${
+            transpileModule(caseMatch[2], {
+              compilerOptions: { module: ModuleKind.ESNext },
+            }).outputText
+          };`,
+        );
 
         cases.set(caseRenderFunction<unknown>(), caseMatch[4]);
       }
@@ -414,7 +477,12 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
-      const renderFunction = this.getRenderFunction(`return ${transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } }).outputText};`);
+      const renderFunction = this.getRenderFunction(
+        `return ${
+          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        };`,
+      );
 
       let fileEntries = renderFunction<string | string[]>();
       let output = '';

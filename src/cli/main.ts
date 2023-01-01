@@ -1,8 +1,8 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { parseArgs } from 'node:util';
-import { logError } from '../logger/functions/log-error.function';
-import { inject } from '../injector/functions/inject.function';
 import { Configurator } from '../configurator/configurator.class';
+import { inject } from '../injector/functions/inject.function';
+import { logError } from '../logger/functions/log-error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { BuildCommand } from './commands/build.command';
 import { DbMigrateCommand } from './commands/db-migrate.command';

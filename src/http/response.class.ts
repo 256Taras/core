@@ -173,7 +173,11 @@ export class Response {
 
     const fileContent = await readFile(file, 'utf-8');
 
-    const html = await this.templateCompiler.compile(fileContent.toString(), data, file);
+    const html = await this.templateCompiler.compile(
+      fileContent.toString(),
+      data,
+      file,
+    );
 
     TemplateCompiler.stacks.clear();
 

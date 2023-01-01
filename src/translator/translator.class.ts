@@ -29,7 +29,11 @@ export class Translator {
   }
 
   public get(text: string, amount = 1): string {
-    return (amount > 1 ? this.translations.get(text)?.[1] : this.translations.get(text)) ?? text;
+    return (
+      (amount > 1
+        ? this.translations.get(text)?.[1]
+        : this.translations.get(text)) ?? text
+    );
   }
 
   public async setLocale(locale: string): Promise<void> {
