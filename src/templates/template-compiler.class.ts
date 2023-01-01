@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { ModuleKind, transpileModule } from 'typescript';
 import { Authenticator } from '../auth/authenticator.class';
 import { Configurator } from '../configurator/configurator.class';
+import { Gate } from '../auth/gate.class';
 import * as constants from '../constants';
 import { nonce } from '../http/functions/nonce.function';
 import { oldInput } from '../http/functions/old-input.function';
@@ -17,7 +18,6 @@ import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
-import { Gate } from '../main';
 
 @Service()
 export class TemplateCompiler {
