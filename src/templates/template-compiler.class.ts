@@ -9,6 +9,7 @@ import { oldInput } from '../http/functions/old-input.function';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
+import { Constructor } from '../utils/interfaces/constructor.interface';
 import { flash } from '../session/functions/flash.function';
 import { session } from '../session/functions/session.function';
 import { trans } from '../translator/functions/trans.function';
@@ -16,6 +17,7 @@ import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
+import { Gate } from '../main';
 
 @Service()
 export class TemplateCompiler {
@@ -200,6 +202,44 @@ export class TemplateCompiler {
       const authenticated = this.authenticator.check();
 
       this.html = this.html.replace(match[0], authenticated ? '' : match[2]);
+    }
+  }
+
+  private parseCanDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[can *?\((.*?)\)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/can\]/gm) ?? [];
+
+    for (const match of matches) {
+      const renderFunction = this.getRenderFunction(
+        `return [${
+          transpileModule(match[1], { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        }];`,
+      );
+      const props = renderFunction<string[] | Constructor[]>();
+
+      const authorized = (new (props[1] as Constructor<Gate>)).allows(props[0] as string, props[2]);
+
+      this.html = this.html.replace(match[0], authorized ? match[3] : '');
+    }
+  }
+
+  private parseCannotDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[cannot *?\((.*?)\)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/cannot\]/gm) ?? [];
+
+    for (const match of matches) {
+      const renderFunction = this.getRenderFunction(
+        `return [${
+          transpileModule(match[1], { compilerOptions: { module: ModuleKind.ESNext } })
+            .outputText
+        }];`,
+      );
+      const props = renderFunction<string[] | Constructor[]>();
+
+      const authorized = (new (props[1] as Constructor<Gate>)).allows(props[0] as string, props[2]);
+
+      this.html = this.html.replace(match[0], authorized ? '' : match[3]);
     }
   }
 
@@ -599,6 +639,8 @@ export class TemplateCompiler {
     this.parseErrorDirectives();
     this.parseAuthDirectives();
     this.parseGuestDirectives();
+    this.parseCanDirectives();
+    this.parseCannotDirectives();
     this.parsePushDirectives();
     this.parseCsrfTokenDirectives();
 
