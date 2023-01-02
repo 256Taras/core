@@ -1,4 +1,4 @@
-export const setupStdin = (callback?: () => void) => {
+export const setupStdin = (exitCallback?: () => Promise<boolean | void>) => {
   if (process.stdin.setRawMode) {
     process.stdin.setRawMode(true);
   }
@@ -11,7 +11,7 @@ export const setupStdin = (callback?: () => void) => {
     q: 113,
   };
 
-  process.stdin.on('data', (data) => {
+  process.stdin.on('data', async (data) => {
     const key = data.toString().trim().toLowerCase().charCodeAt(0);
 
     if (key === 3) {
@@ -19,7 +19,9 @@ export const setupStdin = (callback?: () => void) => {
     }
 
     if ([...Object.values(exitKeys)].includes(key)) {
-      callback?.();
+      if (await exitCallback?.()) {
+        return;
+      }
 
       process.exit();
     }
