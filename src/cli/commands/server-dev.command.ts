@@ -93,6 +93,6 @@ export class ServerDevCommand {
 
     envWatcher.on('all', restartProcess);
 
-    setupStdin(() => childProcess.kill());
+    setupStdin(async () => childProcess.kill());
   }
 }

@@ -1,9 +1,13 @@
 import chalk from 'chalk';
+import { fork } from 'node:child_process';
 import { platform } from 'node:os';
 import { logInfo } from '../../logger/functions/log-info.function';
 import { logWarning } from '../../logger/functions/log-warning.function';
 import { env } from '../../utils/functions/env.function';
-import { runCommand } from '../../utils/functions/run-command.function';
+import { setupStdin } from '../functions/setup-stdin.function';
+import { createInterface } from 'node:readline/promises';
+import { Logger } from '../../logger/logger.class';
+import { inject } from '../../injector/functions/inject.function';
 import { Command } from '../decorators/command.decorator';
 
 @Command({
@@ -25,9 +29,27 @@ export class StartProdCommand {
       logWarning('You are running production server in debug mode');
     }
 
-    runCommand(
-      'node --experimental-specifier-resolution=node --no-warnings dist/main',
-      { showOutput: true },
-    );
+    const processOptions = {
+      execArgv: ['--experimental-specifier-resolution=node', '--no-warnings'],
+    };
+
+    const childProcess = fork('dist/main.js', processOptions);
+
+    setupStdin(async () => {
+      const { question, close } = createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+      const reply = await question(chalk.hex(inject(Logger).colorOrange)('Are you sure you want to quit? (y/n) '));
+
+      close();
+
+      if (['y', 'yes'].includes(reply.trim().toLowerCase())) {
+        return true;
+      }
+
+      childProcess.kill();
+    });
   }
 }
