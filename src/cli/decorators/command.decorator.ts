@@ -5,14 +5,16 @@ import { Parameter } from '../interfaces/parameter.interface';
 
 interface Data {
   signature: string;
+  signatures?: string[];
   parameters?: Record<string, Parameter>;
 }
 
 export const Command = (data: Data): ClassDecorator => {
   return (target: Constructor) => {
-    const { signature, parameters } = data;
+    const { signature, signatures, parameters } = data;
 
     Reflect.defineMetadata('signature', signature, target);
+    Reflect.defineMetadata('signatures', signatures, target);
     Reflect.defineMetadata('parameters', parameters, target);
 
     return target;
