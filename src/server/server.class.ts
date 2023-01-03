@@ -234,9 +234,9 @@ export class Server {
         this.socketEmitter.$setup(this.instance.server);
       }
 
-      await this.translator.$setup();
+      await this.translator.$setup(this.configurator.entries.locale ?? 'en');
 
-      this.translator.setLocale(this.configurator.entries.locale ?? 'en');
+      this.translator.setRequestLocale(this.configurator.entries.locale ?? 'en');
     } catch (error) {
       await this.handler.handleError(error as Error);
     }
