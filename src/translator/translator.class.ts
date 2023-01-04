@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { Service } from '../injector/decorators/service.decorator';
 import { readJson } from '../utils/functions/read-json.function';
+import { Integer } from '../utils/types/integer.type';
 
 @Service()
 export class Translator {
@@ -30,9 +31,9 @@ export class Translator {
     return Object.fromEntries(this.translations);
   }
 
-  public get(text: string, amount = 1): string {
+  public get(text: string, quantity: Integer = 1): string {
     return (
-      (amount > 1
+      (quantity > 1
         ? this.translations.get(text)?.[1]
         : this.translations.get(text)) ?? text
     );
