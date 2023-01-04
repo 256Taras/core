@@ -7,5 +7,5 @@ export const useTranslator = (): [
 ] => {
   const instance = inject(Translator);
 
-  return [instance.get, instance.setLocale];
+  return [instance.get, instance.setRequestLocale];
 };
