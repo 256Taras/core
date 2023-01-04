@@ -116,7 +116,7 @@ export class Handler {
       return;
     }
 
-    if (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT')) {
+    if (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT')) {
       const customViewTemplate = `views/errors/${statusCode}.html`;
 
       const view = existsSync(customViewTemplate)
@@ -169,7 +169,7 @@ export class Handler {
       this.logger.sub(`Line: ${this.line}`);
     }
 
-    if (!(this.configurator.entries.development ?? env<boolean>('DEVELOPMENT'))) {
+    if (!(this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT'))) {
       process.exit(1);
     }
 

@@ -87,7 +87,7 @@ export class Server {
   }
 
   private async registerMiddleware(): Promise<void> {
-    const cspOptions = this.configurator.entries.contentSecurityPolicy;
+    const cspOptions = this.configurator.entries?.contentSecurityPolicy;
 
     const helmetOptions: FastifyHelmetOptions = {
       contentSecurityPolicy:
@@ -112,18 +112,18 @@ export class Server {
                 'script-src-attr': `'unsafe-inline'`,
                 'style-src': [`'self'`, `'unsafe-inline'`, `http://localhost:*`],
               },
-              ...((this.configurator.entries.contentSecurityPolicy ?? {}) as Record<
+              ...((this.configurator.entries?.contentSecurityPolicy ?? {}) as Record<
                 string,
                 unknown
               >),
             },
     };
 
-    const corsOptions: FastifyCorsOptions = this.configurator.entries.cors ?? {};
+    const corsOptions: FastifyCorsOptions = this.configurator.entries?.cors ?? {};
 
     const cookieOptions: FastifyCookieOptions = {
       secret:
-        this.configurator.entries.crypto?.key ??
+        this.configurator.entries?.crypto?.key ??
         env('ENCRYPT_KEY') ??
         this.encrypter.randomBytes(16),
     };
@@ -132,13 +132,13 @@ export class Server {
       addToBody: true,
       limits: {
         fieldSize:
-          (this.configurator.entries.upload?.fieldLimit ??
+          (this.configurator.entries?.upload?.fieldLimit ??
             env<number>('UPLOAD_FIELD_LIMIT') ??
             10) *
           1024 *
           1024,
         fileSize:
-          (this.configurator.entries.upload?.fileLimit ??
+          (this.configurator.entries?.upload?.fileLimit ??
             env<number>('UPLOAD_FILE_LIMIT') ??
             100) *
           1024 *
@@ -201,7 +201,7 @@ export class Server {
         await this.handler.handleFatalError(error);
       });
 
-      const envFile = this.configurator.entries.env ?? '.env';
+      const envFile = this.configurator.entries?.env ?? '.env';
 
       if (!existsSync(envFile)) {
         const error = new Error('Environment configuration file not found');
@@ -211,7 +211,7 @@ export class Server {
 
       await this.configurator.loadEnvironment(envFile);
 
-      if (!(this.configurator.entries.logger ?? true)) {
+      if (!(this.configurator.entries?.logger ?? true)) {
         this.logger.$disable();
       }
 
@@ -234,9 +234,9 @@ export class Server {
         this.socketEmitter.$setup(this.instance.server);
       }
 
-      await this.translator.$setup(this.configurator.entries.locale ?? 'en');
+      await this.translator.$setup(this.configurator.entries?.locale ?? 'en');
 
-      this.translator.setRequestLocale(this.configurator.entries.locale ?? 'en');
+      this.translator.setRequestLocale(this.configurator.entries?.locale ?? 'en');
     } catch (error) {
       await this.handler.handleError(error as Error);
     }
@@ -245,10 +245,10 @@ export class Server {
   }
 
   public async start(
-    port = this.configurator.entries.port ??
+    port = this.configurator.entries?.port ??
       env<Integer>('PORT') ??
       this.defaultPort,
-    host = this.configurator.entries.host ?? env<string>('HOST') ?? this.defaultHost,
+    host = this.configurator.entries?.host ?? env<string>('HOST') ?? this.defaultHost,
   ): Promise<void> {
     try {
       let startTime: [number, number];
@@ -337,7 +337,7 @@ export class Server {
 
       await this.instance.listen({ port, host });
 
-      if (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT')) {
+      if (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT')) {
         await this.setupDevelopmentEnvironment();
       }
     } catch (error) {

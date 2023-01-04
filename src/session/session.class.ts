@@ -14,9 +14,9 @@ import { FlashedData } from './interfaces/flashed-data.interface';
 @Service()
 export class Session {
   private readonly directoryPath =
-    this.configurator.entries.session?.path ??
+    this.configurator.entries?.session?.path ??
     env<string>('SESSION_PATH') ??
-    (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT')
+    (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT')
       ? 'node_modules/.northle/sessions'
       : `${tmpdir()}/northle/sessions`);
 
@@ -58,7 +58,7 @@ export class Session {
       this.response?.cookie('sessionId', generatedId, {
         expires: new Date(
           Date.now() +
-            (this.configurator.entries.session?.lifetime ??
+            (this.configurator.entries?.session?.lifetime ??
               env<number>('SESSION_LIFETIME') ??
               7) *
               1000 *

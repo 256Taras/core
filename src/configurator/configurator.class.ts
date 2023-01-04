@@ -23,22 +23,26 @@ export class Configurator {
   }
 
   public async loadEnvironment(file = '.env'): Promise<void> {
-    const env = await readFile(file, 'utf8');
+    const envContent = await readFile(file, 'utf8');
 
-    if (env) {
+    if (envContent) {
       let multilineValueOpen = false;
       let multilineValue = '';
 
-      env
+      envContent
         .replaceAll('\r\n', '\n')
         .split('\n')
         .map((line) => {
           if (
             !multilineValueOpen &&
             line.trim() !== '' &&
-            !line.match(/^(((export)?\s+?[a-zA-Z_]+[a-zA-Z0-9_]*=(.*?)?)|")$/)
+            !line.match(/^(((export)?(\s+)?[a-zA-Z_]+[a-zA-Z0-9_]*=(.*?)?)|")$/)
           ) {
             throw new Error('.env file syntax is not valid');
+          }
+
+          if (line.trim() === '') {
+            return;
           }
 
           const [key] = line.split('=');
@@ -47,7 +51,7 @@ export class Configurator {
 
           value = value.replace(/export *?/, '').replace(/#.*?$/, '');
 
-          [...value.matchAll(/\$\{([a-zA-Z_]+[a-zA-Z0-9_]*)\}/)].map((match) => {
+          [...value.matchAll(/\$\{([a-zA-Z_]+[a-zA-Z0-9_]*)\}/g)].map((match) => {
             value.replace(match[0], process.env[match[1]]?.toString() ?? '');
           });
 

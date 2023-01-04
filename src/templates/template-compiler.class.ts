@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { ModuleKind, transpileModule } from 'typescript';
+import typescript from 'typescript';
 import { Authenticator } from '../auth/authenticator.class';
 import { Configurator } from '../configurator/configurator.class';
 import { Gate } from '../auth/gate.class';
@@ -104,7 +104,7 @@ export class TemplateCompiler {
       const value = match[3];
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
@@ -163,7 +163,7 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
@@ -212,7 +212,7 @@ export class TemplateCompiler {
     for (const match of matches) {
       const renderFunction = this.getRenderFunction(
         `return [${
-          transpileModule(match[1], { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(match[1], { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         }];`,
       );
@@ -231,7 +231,7 @@ export class TemplateCompiler {
     for (const match of matches) {
       const renderFunction = this.getRenderFunction(
         `return [${
-          transpileModule(match[1], { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(match[1], { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         }];`,
       );
@@ -251,7 +251,7 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
@@ -278,7 +278,7 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
@@ -302,7 +302,7 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
@@ -336,14 +336,14 @@ export class TemplateCompiler {
 
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
       const printRenderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(prettyPrint, {
-            compilerOptions: { module: ModuleKind.ESNext },
+          typescript.transpileModule(prettyPrint, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
           }).outputText
         };`,
       );
@@ -365,7 +365,7 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
@@ -386,7 +386,7 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
@@ -428,7 +428,7 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
@@ -452,8 +452,8 @@ export class TemplateCompiler {
     for (const match of matches) {
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(match[1], {
-            compilerOptions: { module: ModuleKind.ESNext },
+          typescript.transpileModule(match[1], {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
           }).outputText
         };`,
       );
@@ -481,8 +481,8 @@ export class TemplateCompiler {
 
         const caseRenderFunction = this.getRenderFunction(
           `return ${
-            transpileModule(caseMatch[2], {
-              compilerOptions: { module: ModuleKind.ESNext },
+            typescript.transpileModule(caseMatch[2], {
+              compilerOptions: { module: typescript.ModuleKind.ESNext },
             }).outputText
           };`,
         );
@@ -519,7 +519,7 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          transpileModule(value, { compilerOptions: { module: ModuleKind.ESNext } })
+          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
             .outputText
         };`,
       );
@@ -535,7 +535,7 @@ export class TemplateCompiler {
       fileEntries.map((fileEntry) => {
         const fileExtension = fileEntry.split('.').pop() ?? 'js';
 
-        if (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT')) {
+        if (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT')) {
           output = `<script type="module" src="http://localhost:5173/app/${fileEntry}"></script>`;
 
           if (['jsx', 'tsx'].includes(fileExtension)) {
