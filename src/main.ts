@@ -10,6 +10,7 @@ export * from './injector/injector.module';
 export * from './logger/logger.module';
 export * from './mailer/mailer.module';
 export * from './router/router.module';
+export * from './scheduler/scheduler.module';
 export * from './server/server.module';
 export * from './session/session.module';
 export * from './translator/translator.module';
