@@ -2,8 +2,8 @@ import { inject } from '../../injector/functions/inject.function';
 import { MailData } from '../interfaces/mail-data.interface';
 import { Mailer } from '../mailer.class';
 
-export const useMail = (): ((options: MailData) => Promise<string>) => {
+export function useMail(): (options: MailData) => Promise<string> {
   const instance = inject(Mailer);
 
   return instance.send;
-};
+}

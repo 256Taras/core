@@ -78,8 +78,8 @@ export class Session {
 
           await writeFile(path, JSON.stringify({}), 'utf-8');
         }
-      } catch (error) {
-        throw new Error('Unable to initialize session');
+      } catch {
+        throw new Error('Session initialization failed');
       }
     }
 
@@ -102,8 +102,8 @@ export class Session {
 
     try {
       await writeFile(path, JSON.stringify(data), 'utf-8');
-    } catch (error) {
-      throw new Error('Unable to write session');
+    } catch {
+      throw new Error('Session write failed');
     }
   }
 
@@ -121,7 +121,7 @@ export class Session {
     }
 
     if (typeof this.data[key] !== 'number') {
-      throw new Error(`Session value '${key}' is not a number`);
+      throw new Error(`Cannot decrement session value '${key}' as it is not a number`);
     }
 
     this.data[key] -= by;
@@ -180,7 +180,7 @@ export class Session {
     }
 
     if (typeof this.data[key] !== 'number') {
-      throw new Error(`Session value '${key}' is not a number`);
+      throw new Error(`Cannot increment session value '${key}' as it is not a number`);
     }
 
     this.data[key] += by;

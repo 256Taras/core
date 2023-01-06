@@ -1,4 +1,4 @@
-export const resolveViewFile = (caller: string, file: string) => {
+export function resolveViewFile(caller: string, file: string) {
   switch (true) {
     case file.startsWith('./'):
       file = `${caller}/../${file.slice(2)}`;
@@ -20,4 +20,4 @@ export const resolveViewFile = (caller: string, file: string) => {
   }
 
   return file;
-};
+}

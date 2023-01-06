@@ -1,14 +1,14 @@
 import chalk from 'chalk';
 import { fork } from 'node:child_process';
 import { platform } from 'node:os';
+import { createInterface } from 'node:readline/promises';
+import { inject } from '../../injector/functions/inject.function';
 import { logInfo } from '../../logger/functions/log-info.function';
 import { logWarning } from '../../logger/functions/log-warning.function';
-import { env } from '../../utils/functions/env.function';
-import { setupStdin } from '../functions/setup-stdin.function';
-import { createInterface } from 'node:readline/promises';
 import { Logger } from '../../logger/logger.class';
-import { inject } from '../../injector/functions/inject.function';
+import { env } from '../../utils/functions/env.function';
 import { Command } from '../decorators/command.decorator';
+import { setupStdin } from '../functions/setup-stdin.function';
 
 @Command({
   signature: 'start:prod',
@@ -41,7 +41,11 @@ export class StartProdCommand {
         output: process.stdout,
       });
 
-      const reply = await question(chalk.hex(inject(Logger).colorOrange)('Are you sure you want to quit? (y/n) '));
+      const reply = await question(
+        chalk.hex(inject(Logger).colorOrange)(
+          'Are you sure you want to quit? (y/n) ',
+        ),
+      );
 
       close();
 

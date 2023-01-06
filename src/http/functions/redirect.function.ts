@@ -2,11 +2,11 @@ import { inject } from '../../injector/functions/inject.function';
 import { StatusCode } from '../enums/status-code.enum';
 import { RedirectResponse } from '../redirect-response.class';
 
-export const redirect = (
+export function redirect(
   url: string,
   data: Record<string, unknown> = {},
   status: StatusCode = StatusCode.Found,
-) => {
+) {
   const instance = inject(RedirectResponse);
 
   instance.setData(data);
@@ -14,4 +14,4 @@ export const redirect = (
   instance.setUrl(url);
 
   return instance;
-};
+}

@@ -2,15 +2,14 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import typescript from 'typescript';
 import { Authenticator } from '../auth/authenticator.class';
-import { Configurator } from '../configurator/configurator.class';
 import { Gate } from '../auth/gate.class';
+import { Configurator } from '../configurator/configurator.class';
 import * as constants from '../constants';
 import { nonce } from '../http/functions/nonce.function';
 import { oldInput } from '../http/functions/old-input.function';
 import { Request } from '../http/request.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
-import { Constructor } from '../utils/interfaces/constructor.interface';
 import { flash } from '../session/functions/flash.function';
 import { session } from '../session/functions/session.function';
 import { trans } from '../translator/functions/trans.function';
@@ -18,6 +17,7 @@ import { csrfToken } from '../utils/functions/csrf-token.function';
 import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
+import { Constructor } from '../utils/interfaces/constructor.interface';
 
 @Service()
 export class TemplateCompiler {
@@ -104,8 +104,9 @@ export class TemplateCompiler {
       const value = match[3];
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
 
@@ -163,8 +164,9 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
       const fieldName = renderFunction<string>();
@@ -207,18 +209,24 @@ export class TemplateCompiler {
 
   private parseCanDirectives(): void {
     const matches =
-      this.html.matchAll(/\[can *?\((.*?)\)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/can\]/gm) ?? [];
+      this.html.matchAll(
+        /\[can *?\((.*?)\)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/can\]/gm,
+      ) ?? [];
 
     for (const match of matches) {
       const renderFunction = this.getRenderFunction(
         `return [${
-          typescript.transpileModule(match[1], { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(match[1], {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         }];`,
       );
       const props = renderFunction<string[] | Constructor[]>();
 
-      const authorized = (new (props[1] as Constructor<Gate>)).allows(props[0] as string, props[2]);
+      const authorized = new (props[1] as Constructor<Gate>)().allows(
+        props[0] as string,
+        props[2],
+      );
 
       this.html = this.html.replace(match[0], authorized ? match[3] : '');
     }
@@ -226,18 +234,24 @@ export class TemplateCompiler {
 
   private parseCannotDirectives(): void {
     const matches =
-      this.html.matchAll(/\[cannot *?\((.*?)\)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/cannot\]/gm) ?? [];
+      this.html.matchAll(
+        /\[cannot *?\((.*?)\)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/cannot\]/gm,
+      ) ?? [];
 
     for (const match of matches) {
       const renderFunction = this.getRenderFunction(
         `return [${
-          typescript.transpileModule(match[1], { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(match[1], {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         }];`,
       );
       const props = renderFunction<string[] | Constructor[]>();
 
-      const authorized = (new (props[1] as Constructor<Gate>)).allows(props[0] as string, props[2]);
+      const authorized = new (props[1] as Constructor<Gate>)().allows(
+        props[0] as string,
+        props[2],
+      );
 
       this.html = this.html.replace(match[0], authorized ? '' : match[3]);
     }
@@ -251,8 +265,9 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
 
@@ -278,8 +293,9 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
 
@@ -302,8 +318,9 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
 
@@ -314,7 +331,7 @@ export class TemplateCompiler {
       }/${partial}.html`;
 
       if (!existsSync(file)) {
-        throw new Error(`Template partial '${partial}' does not exist`);
+        throw new Error(`View partial '${partial}' does not exist`);
       }
 
       const compiler = inject(TemplateCompiler, { freshInstance: true });
@@ -336,8 +353,9 @@ export class TemplateCompiler {
 
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
       const printRenderFunction = this.getRenderFunction(
@@ -365,8 +383,9 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
 
@@ -386,8 +405,9 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
 
@@ -428,8 +448,9 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
 
@@ -471,7 +492,7 @@ export class TemplateCompiler {
       for (const caseMatch of caseMatches) {
         if (caseMatch[1] === 'default') {
           if (defaultCaseValue) {
-            throw new Error('Switch statement can only have one default case');
+            throw new Error('Switch directive can only have one default case');
           }
 
           defaultCaseValue = caseMatch[4];
@@ -519,8 +540,9 @@ export class TemplateCompiler {
       const value = match[1];
       const renderFunction = this.getRenderFunction(
         `return ${
-          typescript.transpileModule(value, { compilerOptions: { module: typescript.ModuleKind.ESNext } })
-            .outputText
+          typescript.transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          }).outputText
         };`,
       );
 

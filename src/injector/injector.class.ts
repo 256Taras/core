@@ -46,7 +46,7 @@ export class Injector {
       ) ||
       ['null', 'undefined'].includes(typeof target)
     ) {
-      throw new Error('Cannot inject primitive type');
+      throw new Error('Primitive types are not injectable');
     }
 
     const deps: Constructor[] =

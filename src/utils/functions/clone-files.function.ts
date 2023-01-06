@@ -1,11 +1,11 @@
 import { existsSync } from 'node:fs';
 import { copyFile, lstat, mkdir, readdir } from 'node:fs/promises';
 
-export const cloneFiles = async (
+export async function cloneFiles(
   source: string,
   destination: string,
   extension: string,
-) => {
+) {
   const files = await readdir(source);
 
   await Promise.all(
@@ -27,4 +27,4 @@ export const cloneFiles = async (
       }
     }),
   );
-};
+}

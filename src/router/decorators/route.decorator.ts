@@ -10,7 +10,7 @@ import { Router } from '../router.class';
 
 const router = inject(Router);
 
-const resolveUrl = (url: string, controller: Constructor) => {
+function resolveUrl(url: string, controller: Constructor) {
   let baseUrl: string | undefined = Reflect.getMetadata('baseUrl', controller);
 
   if (baseUrl && baseUrl.length > 1 && baseUrl.charAt(0) !== '/') {
@@ -18,9 +18,9 @@ const resolveUrl = (url: string, controller: Constructor) => {
   }
 
   return baseUrl ? `${baseUrl}/${url}` : url;
-};
+}
 
-const resolveRouteAction = (target: Constructor, propertyKey: string | symbol) => {
+function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
   return async (...args: unknown[]) => {
     const redirectUrl: string | undefined = Reflect.getMetadata(
       'redirectUrl',
@@ -50,9 +50,9 @@ const resolveRouteAction = (target: Constructor, propertyKey: string | symbol) =
 
     await router.respond(target.constructor as Constructor, propertyKey, ...args);
   };
-};
+}
 
-export const Error = (statusCode: 404 | 500): MethodDecorator => {
+export function Error(statusCode: 404 | 500): MethodDecorator {
   const handler = inject(Handler);
 
   return (target, propertyKey) => {
@@ -64,9 +64,9 @@ export const Error = (statusCode: 404 | 500): MethodDecorator => {
       handler.setNotFoundHandler(callback);
     }
   };
-};
+}
 
-export const Any = (url: string): MethodDecorator => {
+export function Any(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -78,9 +78,9 @@ export const Any = (url: string): MethodDecorator => {
       );
     }
   };
-};
+}
 
-export const Methods = (methods: HttpMethod[], url: string): MethodDecorator => {
+export function Methods(methods: HttpMethod[], url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -92,9 +92,9 @@ export const Methods = (methods: HttpMethod[], url: string): MethodDecorator => 
       );
     });
   };
-};
+}
 
-export const Copy = (url: string): MethodDecorator => {
+export function Copy(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -104,9 +104,9 @@ export const Copy = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Delete = (url: string): MethodDecorator => {
+export function Delete(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -116,9 +116,9 @@ export const Delete = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Get = (url: string): MethodDecorator => {
+export function Get(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -128,9 +128,9 @@ export const Get = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Head = (url: string): MethodDecorator => {
+export function Head(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -140,9 +140,9 @@ export const Head = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Lock = (url: string): MethodDecorator => {
+export function Lock(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -152,9 +152,9 @@ export const Lock = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Mkcol = (url: string): MethodDecorator => {
+export function Mkcol(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -164,9 +164,9 @@ export const Mkcol = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Move = (url: string): MethodDecorator => {
+export function Move(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -176,9 +176,9 @@ export const Move = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Options = (url: string): MethodDecorator => {
+export function Options(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -188,9 +188,9 @@ export const Options = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Patch = (url: string): MethodDecorator => {
+export function Patch(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -200,9 +200,9 @@ export const Patch = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Post = (url: string): MethodDecorator => {
+export function Post(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -212,9 +212,9 @@ export const Post = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const PropFind = (url: string): MethodDecorator => {
+export function PropFind(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -224,9 +224,9 @@ export const PropFind = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const PropPatch = (url: string): MethodDecorator => {
+export function PropPatch(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -236,9 +236,9 @@ export const PropPatch = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Put = (url: string): MethodDecorator => {
+export function Put(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -248,9 +248,9 @@ export const Put = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Search = (url: string): MethodDecorator => {
+export function Search(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -260,9 +260,9 @@ export const Search = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Trace = (url: string): MethodDecorator => {
+export function Trace(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -272,9 +272,9 @@ export const Trace = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}
 
-export const Unlock = (url: string): MethodDecorator => {
+export function Unlock(url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
@@ -284,4 +284,4 @@ export const Unlock = (url: string): MethodDecorator => {
       callback,
     );
   };
-};
+}

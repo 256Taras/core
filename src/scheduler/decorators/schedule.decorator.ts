@@ -1,9 +1,9 @@
-import { Scheduler } from '../scheduler.class';
 import { inject } from '../../injector/functions/inject.function';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
+import { Scheduler } from '../scheduler.class';
 
-export const Schedule = (pattern: string): MethodDecorator => {
+export function Schedule(pattern: string): MethodDecorator {
   return (target, propertyKey) => {
     const scheduler = inject(Scheduler);
 
@@ -13,4 +13,4 @@ export const Schedule = (pattern: string): MethodDecorator => {
 
     scheduler.schedule(pattern, callback);
   };
-};
+}

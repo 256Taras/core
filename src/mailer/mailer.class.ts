@@ -28,8 +28,8 @@ export class Mailer {
           pass: password ?? env('MAIL_PASSWORD'),
         },
       });
-    } catch (error) {
-      throw new Error('Failed to set up mail service');
+    } catch {
+      throw new Error('Mail service setup failed');
     }
   }
 

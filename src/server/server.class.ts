@@ -151,8 +151,8 @@ export class Server {
     };
 
     await this.instance.register(helmetMiddleware, helmetOptions);
-    await this.instance.register(corsMiddleware, corsOptions);
     await this.instance.register(cookieMiddleware, cookieOptions);
+    await this.instance.register(corsMiddleware, corsOptions);
     await this.instance.register(formMiddleware);
     await this.instance.register(multipartMiddleware, multipartOptions);
     await this.instance.register(staticServerMiddleware, staticServerOptions);
@@ -172,7 +172,7 @@ export class Server {
 
     if (satisfiesVersion === -1) {
       this.logger.warn(
-        `Northle requires NodeJS v${requiredNodeVersion.slice(
+        `Northle requires Node.js v${requiredNodeVersion.slice(
           2,
         )} or greater [update on https://nodejs.org]`,
       );
@@ -248,7 +248,9 @@ export class Server {
     port = this.configurator.entries?.port ??
       env<Integer>('PORT') ??
       this.defaultPort,
-    host = this.configurator.entries?.host ?? env<string>('HOST') ?? this.defaultHost,
+    host = this.configurator.entries?.host ??
+      env<string>('HOST') ??
+      this.defaultHost,
   ): Promise<void> {
     try {
       let startTime: [number, number];

@@ -1,4 +1,4 @@
-export const setupStdin = (exitCallback?: () => Promise<boolean | void>) => {
+export function setupStdin(exitCallback?: () => Promise<boolean | void>) {
   if (process.stdin.setRawMode) {
     process.stdin.setRawMode(true);
   }
@@ -26,4 +26,4 @@ export const setupStdin = (exitCallback?: () => Promise<boolean | void>) => {
       process.exit();
     }
   });
-};
+}

@@ -1,3 +1,3 @@
-export const raise = (message: string) => {
+export function raise(message: string) {
   throw new Error(message);
-};
+}

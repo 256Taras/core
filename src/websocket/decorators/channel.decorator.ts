@@ -1,7 +1,7 @@
 import { pathToRegexp } from 'path-to-regexp';
 import { ClassDecorator } from '../../utils/types/class-decorator.type';
 
-export const Channel = (name: string): ClassDecorator => {
+export function Channel(name: string): ClassDecorator {
   const pattern = pathToRegexp(name);
 
   return (target) => {
@@ -9,4 +9,4 @@ export const Channel = (name: string): ClassDecorator => {
       public readonly namePattern: RegExp = pattern;
     };
   };
-};
+}

@@ -1,10 +1,10 @@
-import { Scheduler } from '../scheduler.class';
 import { inject } from '../../injector/functions/inject.function';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
-import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { Integer } from '../../utils/types/integer.type';
+import { MethodDecorator } from '../../utils/types/method-decorator.type';
+import { Scheduler } from '../scheduler.class';
 
-export const Timeout = (milliseconds: Integer): MethodDecorator => {
+export function Timeout(milliseconds: Integer): MethodDecorator {
   return (target, propertyKey) => {
     const scheduler = inject(Scheduler);
 
@@ -14,4 +14,4 @@ export const Timeout = (milliseconds: Integer): MethodDecorator => {
 
     scheduler.timeout(callback, milliseconds);
   };
-};
+}

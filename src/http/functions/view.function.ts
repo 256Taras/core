@@ -3,10 +3,10 @@ import { callerFile } from '../../utils/functions/caller-file.function';
 import { resolveViewFile } from '../../utils/functions/resolve-view-file.function';
 import { ViewResponse } from '../view-response.class';
 
-export const view = (
+export function view(
   file: string,
   data: Record<string, unknown> = {},
-): ViewResponse => {
+): ViewResponse {
   const caller = callerFile();
 
   file = resolveViewFile(caller, file);
@@ -17,4 +17,4 @@ export const view = (
   instance.setFile(file);
 
   return instance;
-};
+}

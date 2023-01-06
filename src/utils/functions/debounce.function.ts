@@ -1,7 +1,4 @@
-export const debounce = (
-  callback: (...args: unknown[]) => unknown,
-  timeout = 150,
-) => {
+export function debounce(callback: (...args: unknown[]) => unknown, timeout = 150) {
   let timer: NodeJS.Timeout;
 
   return async (...args: unknown[]) => {
@@ -15,4 +12,4 @@ export const debounce = (
       }, timeout);
     });
   };
-};
+}

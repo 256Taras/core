@@ -1,5 +1,5 @@
-import { Service } from '../injector/decorators/service.decorator';
 import { schedule } from 'node-cron';
+import { Service } from '../injector/decorators/service.decorator';
 import { Integer } from '../utils/types/integer.type';
 
 @Service()

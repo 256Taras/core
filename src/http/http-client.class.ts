@@ -28,7 +28,7 @@ export class HttpClient {
       });
 
       return response.json();
-    } catch (error) {
+    } catch {
       return null;
     }
   }

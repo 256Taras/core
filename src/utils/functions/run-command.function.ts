@@ -4,14 +4,14 @@ interface Options {
   showOutput?: boolean;
 }
 
-export const runCommand = (command: string, options?: Options) => {
+export function runCommand(command: string, options?: Options) {
   try {
     execSync(command, {
       stdio: options?.showOutput ?? false ? 'inherit' : 'pipe',
     });
 
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
-};
+}

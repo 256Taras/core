@@ -18,12 +18,12 @@ export class Authenticator {
 
   public async login(email: string, password: string): Promise<boolean> {
     if (!('user' in this.db)) {
-      throw new Error('Database schema must contain a User model');
+      throw new Error('Auth service requires schema User model');
     }
 
     if (!('email' in this.db.user) || !('password' in this.db.user)) {
       throw new Error(
-        `User model in database must contain 'email' and 'password' columns`,
+        `Schema User model must contain 'email' and 'password' columns`,
       );
     }
 
