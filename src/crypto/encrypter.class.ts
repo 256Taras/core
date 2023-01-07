@@ -21,7 +21,7 @@ export class Encrypter {
     return await compare(data, hash);
   }
 
-  public async decrypt(encryptedData: string): Promise<string> {
+  public decrypt(encryptedData: string): string {
     const decipher = createDecipheriv(this.algorithm, this.key, this.iv);
 
     const decryptedData = Buffer.concat([
@@ -32,7 +32,7 @@ export class Encrypter {
     return decryptedData.toString();
   }
 
-  public async encrypt(rawData: string): Promise<string> {
+  public encrypt(rawData: string): string {
     const cipher = createCipheriv(this.algorithm, this.key, this.iv);
 
     const encryptedData = Buffer.concat([cipher.update(rawData), cipher.final()]);
