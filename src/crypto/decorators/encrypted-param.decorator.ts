@@ -1,5 +1,5 @@
-import { ParameterDecorator } from '../../utils/types/parameter-decorator.type';
 import { inject } from '../../injector/functions/inject.function';
+import { ParameterDecorator } from '../../utils/types/parameter-decorator.type';
 import { Encrypter } from '../encrypter.class';
 
 export function EncryptedParam(): ParameterDecorator {

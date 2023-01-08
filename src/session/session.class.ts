@@ -121,7 +121,9 @@ export class Session {
     }
 
     if (typeof this.data[key] !== 'number') {
-      throw new Error(`Cannot decrement session value '${key}' as it is not a number`);
+      throw new Error(
+        `Cannot decrement session value '${key}' as it is not a number`,
+      );
     }
 
     this.data[key] -= by;
@@ -180,7 +182,9 @@ export class Session {
     }
 
     if (typeof this.data[key] !== 'number') {
-      throw new Error(`Cannot increment session value '${key}' as it is not a number`);
+      throw new Error(
+        `Cannot increment session value '${key}' as it is not a number`,
+      );
     }
 
     this.data[key] += by;
