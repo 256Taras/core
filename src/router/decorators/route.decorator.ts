@@ -52,6 +52,22 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
   };
 }
 
+function createRouteDecorator(methods: HttpMethod[]) {
+  return (url: string): MethodDecorator => {
+    return (target, propertyKey) => {
+      const callback = resolveRouteAction(target, propertyKey);
+
+      methods.map((method) => {
+        router.addRoute(
+          resolveUrl(url, target.constructor as Constructor),
+          method,
+          callback,
+        );
+      });
+    };
+  };
+}
+
 export function Error(statusCode: 404 | 500): MethodDecorator {
   const handler = inject(Handler);
 
@@ -66,19 +82,7 @@ export function Error(statusCode: 404 | 500): MethodDecorator {
   };
 }
 
-export function Any(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
-
-    for (const method of Object.values(HttpMethod)) {
-      router.addRoute(
-        resolveUrl(url, target.constructor as Constructor),
-        method,
-        callback,
-      );
-    }
-  };
-}
+export const Any = createRouteDecorator(Object.values(HttpMethod));
 
 export function Methods(methods: HttpMethod[], url: string): MethodDecorator {
   return (target, propertyKey) => {
@@ -94,194 +98,34 @@ export function Methods(methods: HttpMethod[], url: string): MethodDecorator {
   };
 }
 
-export function Copy(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
+export const Copy = createRouteDecorator([HttpMethod.Copy]);
 
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Copy,
-      callback,
-    );
-  };
-}
+export const Delete = createRouteDecorator([HttpMethod.Delete]);
 
-export function Delete(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
+export const Get = createRouteDecorator([HttpMethod.Get]);
 
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Delete,
-      callback,
-    );
-  };
-}
+export const Head = createRouteDecorator([HttpMethod.Head]);
 
-export function Get(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
+export const Lock = createRouteDecorator([HttpMethod.Lock]);
 
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Get,
-      callback,
-    );
-  };
-}
+export const Mkcol = createRouteDecorator([HttpMethod.Mkcol]);
 
-export function Head(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
+export const Move = createRouteDecorator([HttpMethod.Move]);
 
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Head,
-      callback,
-    );
-  };
-}
+export const Options = createRouteDecorator([HttpMethod.Options]);
 
-export function Lock(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
+export const Patch = createRouteDecorator([HttpMethod.Patch]);
 
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Lock,
-      callback,
-    );
-  };
-}
+export const Post = createRouteDecorator([HttpMethod.Post]);
 
-export function Mkcol(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
+export const PropFind = createRouteDecorator([HttpMethod.PropFind]);
 
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Mkcol,
-      callback,
-    );
-  };
-}
+export const PropPatch = createRouteDecorator([HttpMethod.PropPatch]);
 
-export function Move(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
+export const Put = createRouteDecorator([HttpMethod.Put]);
 
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Move,
-      callback,
-    );
-  };
-}
+export const Search = createRouteDecorator([HttpMethod.Search]);
 
-export function Options(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
+export const Trace = createRouteDecorator([HttpMethod.Trace]);
 
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Options,
-      callback,
-    );
-  };
-}
-
-export function Patch(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
-
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Patch,
-      callback,
-    );
-  };
-}
-
-export function Post(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
-
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Post,
-      callback,
-    );
-  };
-}
-
-export function PropFind(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
-
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.PropFind,
-      callback,
-    );
-  };
-}
-
-export function PropPatch(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
-
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.PropPatch,
-      callback,
-    );
-  };
-}
-
-export function Put(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
-
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Put,
-      callback,
-    );
-  };
-}
-
-export function Search(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
-
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Search,
-      callback,
-    );
-  };
-}
-
-export function Trace(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
-
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Trace,
-      callback,
-    );
-  };
-}
-
-export function Unlock(url: string): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = resolveRouteAction(target, propertyKey);
-
-    router.addRoute(
-      resolveUrl(url, target.constructor as Constructor),
-      HttpMethod.Unlock,
-      callback,
-    );
-  };
-}
+export const Unlock = createRouteDecorator([HttpMethod.Unlock]);
