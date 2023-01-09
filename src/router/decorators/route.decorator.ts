@@ -82,8 +82,6 @@ export function Error(statusCode: 404 | 500): MethodDecorator {
   };
 }
 
-export const Any = createRouteDecorator(Object.values(HttpMethod));
-
 export function Methods(methods: HttpMethod[], url: string): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
@@ -97,6 +95,8 @@ export function Methods(methods: HttpMethod[], url: string): MethodDecorator {
     });
   };
 }
+
+export const Any = createRouteDecorator(Object.values(HttpMethod));
 
 export const Copy = createRouteDecorator([HttpMethod.Copy]);
 

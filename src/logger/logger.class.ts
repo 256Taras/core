@@ -1,6 +1,11 @@
 import chalk from 'chalk';
 import { Service } from '../injector/decorators/service.decorator';
 import { stripAnsiChars } from '../utils/functions/strip-ansi-chars.function';
+import {
+  LOGGER_COLOR_GREEN,
+  LOGGER_COLOR_RED,
+  LOGGER_COLOR_YELLOW,
+} from './constants';
 
 @Service()
 export class Logger {
@@ -13,14 +18,6 @@ export class Logger {
   private readonly locale = 'en-us';
 
   private readonly logLabelPadding = 8;
-
-  public readonly colorOrange = '#ffa57c';
-
-  public readonly colorGreen = '#0dbc79';
-
-  public readonly colorRed = '#f87777';
-
-  public readonly colorYellow = '#f8c377';
 
   private getDay(): string {
     const date = new Date();
@@ -67,11 +64,13 @@ export class Logger {
     }
 
     this.lastLabel = label;
-    this.lastColor = this.colorRed;
+    this.lastColor = LOGGER_COLOR_RED;
 
     const output = `\n${chalk
-      .bgHex(this.colorRed)
-      .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(this.colorRed)(data)}\n`;
+      .bgHex(LOGGER_COLOR_RED)
+      .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_RED)(
+      data,
+    )}\n`;
 
     console.error(output);
   }
@@ -82,7 +81,7 @@ export class Logger {
     }
 
     this.lastLabel = label;
-    this.lastColor = this.colorGreen;
+    this.lastColor = LOGGER_COLOR_GREEN;
 
     const output = `\n${chalk.bgGreen.black(
       ' ' + label.toUpperCase() + ' ',
@@ -137,11 +136,11 @@ export class Logger {
     }
 
     this.lastLabel = label;
-    this.lastColor = this.colorYellow;
+    this.lastColor = LOGGER_COLOR_YELLOW;
 
     const output = `\n${chalk
-      .bgHex(this.colorYellow)
-      .black(' ' + label.toUpperCase() + ' ')} ${chalk.bold.hex(this.colorYellow)(
+      .bgHex(LOGGER_COLOR_YELLOW)
+      .black(' ' + label.toUpperCase() + ' ')} ${chalk.bold.hex(LOGGER_COLOR_YELLOW)(
       data,
     )}\n`;
 

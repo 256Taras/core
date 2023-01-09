@@ -20,13 +20,13 @@ export class Mailer {
 
     try {
       this.transporter = createTransport({
-        host: host ?? env('MAIL_HOST') ?? 'smtp.gmail.com',
-        port: port ?? env('MAIL_PORT') ?? 587,
-        secure: (port ?? env('MAIL_PORT')) === 465 ? true : false,
         auth: {
           user: address ?? env('MAIL_ADDRESS'),
           pass: password ?? env('MAIL_PASSWORD'),
         },
+        host: host ?? env('MAIL_HOST') ?? 'smtp.gmail.com',
+        port: port ?? env('MAIL_PORT') ?? 587,
+        secure: (port ?? env('MAIL_PORT')) === 465 ? true : false,
       });
     } catch {
       throw new Error('Mail service setup failed');
@@ -36,8 +36,9 @@ export class Mailer {
   public async send(options: MailData): Promise<string> {
     const { to, subject, text, data } = options;
 
-    let html = '';
     let { view } = options;
+
+    let html = '';
 
     if (view) {
       const caller = callerFile();

@@ -19,6 +19,7 @@ import { Request } from '../http/request.class';
 import { Response } from '../http/response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
+import { LOGGER_COLOR_ORANGE, LOGGER_COLOR_RED } from '../logger/constants';
 import { Logger } from '../logger/logger.class';
 import { Router } from '../router/router.class';
 import { Session } from '../session/session.class';
@@ -315,14 +316,14 @@ export class Server {
         const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(9, ' '));
 
         const status = response.statusCode;
-        const red = this.logger.colorRed;
-        const orange = this.logger.colorOrange;
 
         const statusMapping = {
           [String(status >= 100 && status < 200)]: chalk.blueBright(status),
           [String(status >= 200 && status < 400)]: chalk.green(status),
-          [String(status >= 400 && status < 500)]: chalk.hex(orange)(status),
-          [String(status >= 500 && status < 600)]: chalk.hex(red)(status),
+          [String(status >= 400 && status < 500)]:
+            chalk.hex(LOGGER_COLOR_ORANGE)(status),
+          [String(status >= 500 && status < 600)]:
+            chalk.hex(LOGGER_COLOR_RED)(status),
         };
 
         const formattedStatus = statusMapping['true'] ?? status.toString();

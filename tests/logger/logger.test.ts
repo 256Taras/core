@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { inject } from '../../src/injector/functions/inject.function';
+import {
+  LOGGER_COLOR_GREEN,
+  LOGGER_COLOR_ORANGE,
+  LOGGER_COLOR_RED,
+  LOGGER_COLOR_YELLOW,
+} from '../../src/logger/constants';
 import { Logger } from '../../src/logger/logger.class';
 
 describe('Logger class', () => {
@@ -7,9 +13,10 @@ describe('Logger class', () => {
 
   logger.$disable();
 
-  it('exposes public property', () => {
-    expect(logger.colorOrange).toBe('#ffa57c');
-    expect(logger.colorRed).toBe('#f87777');
-    expect(logger.colorYellow).toBe('#f8c377');
+  it('exposes constants', () => {
+    expect(LOGGER_COLOR_ORANGE).toBe('#ffa57c');
+    expect(LOGGER_COLOR_GREEN).toBe('#0dbc79');
+    expect(LOGGER_COLOR_RED).toBe('#f87777');
+    expect(LOGGER_COLOR_YELLOW).toBe('#f8c377');
   });
 });
