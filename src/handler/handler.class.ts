@@ -22,6 +22,8 @@ export class Handler {
 
   private notFoundHandler: (() => unknown) | null = null;
 
+  private tooManyRequestsHandler: (() => unknown) | null = null;
+
   constructor(
     private configurator: Configurator,
     private logger: Logger,
@@ -236,12 +238,49 @@ export class Handler {
     this.response.render(view, data);
   }
 
+  public handleTooManyRequests(): void {
+    const statusCode = StatusCode.TooManyRequests;
+
+    this.response.status(statusCode);
+
+    if (this.tooManyRequestsHandler) {
+      this.tooManyRequestsHandler();
+
+      return;
+    }
+
+    const data = {
+      statusCode,
+      message: 'Too Many Requests',
+    };
+
+    if (this.request.ajax()) {
+      this.response.send(data);
+
+      return;
+    }
+
+    const customViewTemplate = `views/errors/${statusCode}.html`;
+
+    const view = existsSync(customViewTemplate)
+      ? `views/errors/${statusCode}`
+      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
+
+    this.response.terminate();
+
+    this.response.render(view, data);
+  }
+
   public setErrorHandler(callback: () => unknown): void {
     this.errorHandler = callback;
   }
 
   public setNotFoundHandler(callback: () => unknown): void {
     this.notFoundHandler = callback;
+  }
+
+  public setTooManyRequestsHandler(callback: () => unknown): void {
+    this.tooManyRequestsHandler = callback;
   }
 
   public useDefaultErrorHandler(): void {

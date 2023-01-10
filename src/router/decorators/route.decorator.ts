@@ -2,13 +2,19 @@ import { Reflection as Reflect } from '@abraham/reflection';
 import { Handler } from '../../handler/handler.class';
 import { HttpMethod } from '../../http/enums/http-method.enum';
 import { MiddlewareHandler } from '../../http/interfaces/middleware-handler.interface';
+import { Request } from '../../http/request.class';
 import { Response } from '../../http/response.class';
 import { inject } from '../../injector/functions/inject.function';
+import { Session } from '../../session/session.class';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
+import { Integer } from '../../utils/types/integer.type';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { Router } from '../router.class';
 
+const handler = inject(Handler);
+const request = inject(Request);
 const router = inject(Router);
+const session = inject(Session);
 
 function resolveUrl(url: string, controller: Constructor) {
   let baseUrl: string | undefined = Reflect.getMetadata('baseUrl', controller);
@@ -22,11 +28,6 @@ function resolveUrl(url: string, controller: Constructor) {
 
 function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
   return async (...args: unknown[]) => {
-    const redirectUrl: string | undefined = Reflect.getMetadata(
-      'redirectUrl',
-      target,
-    );
-
     const middleware: Constructor<MiddlewareHandler> | undefined =
       Reflect.getMetadata('middleware', target);
 
@@ -35,6 +36,11 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
 
       instance.handle();
     }
+
+    const redirectUrl: string | undefined = Reflect.getMetadata(
+      'redirectUrl',
+      target,
+    );
 
     if (redirectUrl) {
       const response = inject(Response);
@@ -46,6 +52,19 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
       );
 
       return;
+    }
+
+    const maxRequestsPerMinute: Integer | undefined = Reflect.getMetadata(
+      'maxRequestsPerMinute',
+      target,
+    );
+
+    if (
+      maxRequestsPerMinute !== undefined &&
+      (session.get<Integer[]>(`_lastMinuteRequests:${request.url()}`) ?? [])
+        .length >= maxRequestsPerMinute
+    ) {
+      handler.handleTooManyRequests();
     }
 
     await router.respond(target.constructor as Constructor, propertyKey, ...args);
@@ -69,8 +88,6 @@ function createRouteDecorator(methods: HttpMethod[]) {
 }
 
 export function Error(statusCode: 404 | 500): MethodDecorator {
-  const handler = inject(Handler);
-
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 

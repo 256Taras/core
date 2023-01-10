@@ -2,9 +2,9 @@ import chalk from 'chalk';
 import { fork } from 'node:child_process';
 import { platform } from 'node:os';
 import { createInterface } from 'node:readline/promises';
+import { LOGGER_COLOR_ORANGE } from '../../logger/constants';
 import { logInfo } from '../../logger/functions/log-info.function';
 import { logWarning } from '../../logger/functions/log-warning.function';
-import { LOGGER_COLOR_ORANGE } from '../../logger/constants';
 import { env } from '../../utils/functions/env.function';
 import { Command } from '../decorators/command.decorator';
 import { setupStdin } from '../functions/setup-stdin.function';
@@ -41,9 +41,7 @@ export class StartProdCommand {
       });
 
       const reply = await question(
-        chalk.hex(LOGGER_COLOR_ORANGE)(
-          'Are you sure you want to quit? (y/n) ',
-        ),
+        chalk.hex(LOGGER_COLOR_ORANGE)('Are you sure you want to quit? (y/n) '),
       );
 
       close();

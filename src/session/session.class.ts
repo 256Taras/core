@@ -168,8 +168,8 @@ export class Session {
     return data;
   }
 
-  public get<T = string>(key: string): T | null {
-    return this.data[key] ?? null;
+  public get<T = string>(key: string, defaultValue: unknown = null): T | null {
+    return this.data[key] ?? defaultValue;
   }
 
   public has(key: string): boolean {

@@ -275,6 +275,19 @@ export class Server {
           await this.session.$setup();
 
           this.session.increment('_requestId', 1, 0);
+
+          this.session.set(`_lastMinuteRequests:${this.request.url()}`, [
+            ...(
+              this.session.get<Integer[]>(
+                `_lastMinuteRequests:${this.request.url()}`,
+              ) ?? []
+            ).filter((timestamp) => {
+              const currentDate = new Date();
+              const timestampDate = new Date(timestamp);
+
+              return currentDate.getMinutes() === timestampDate.getMinutes();
+            }),
+          ]);
         }
 
         startTime = process.hrtime();
