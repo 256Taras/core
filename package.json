@@ -48,7 +48,7 @@
     "@vitest/coverage-c8": "^0.26.3",
     "eslint": "^8.31.0",
     "prettier": "^2.8.2",
-    "vitest": "^0.26.3"
+    "vitest": "^0.27.0"
   },
   "dependencies": {
     "@abraham/reflection": "^0.11.0",
