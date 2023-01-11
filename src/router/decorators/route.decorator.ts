@@ -77,7 +77,7 @@ function createRouteDecorator(methods: HttpMethod[]) {
       const callback = resolveRouteAction(target, propertyKey);
 
       methods.map((method) => {
-        router.addRoute(
+        router.createRoute(
           resolveUrl(url, target.constructor as Constructor),
           method,
           callback,
@@ -104,7 +104,7 @@ export function Methods(methods: HttpMethod[], url: string): MethodDecorator {
     const callback = resolveRouteAction(target, propertyKey);
 
     methods.map((method) => {
-      router.addRoute(
+      router.createRoute(
         resolveUrl(url, target.constructor as Constructor),
         method,
         callback,

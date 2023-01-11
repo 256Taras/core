@@ -23,7 +23,7 @@ export class Router {
     private response: Response,
   ) {}
 
-  public addRoute(url: string, method: HttpMethod, action: () => unknown): void {
+  public createRoute(url: string, method: HttpMethod, action: () => unknown): void {
     const route = {
       url,
       method,
