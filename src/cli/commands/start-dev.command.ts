@@ -18,7 +18,7 @@ import { Command } from '../decorators/command.decorator';
 })
 export class StartDevCommand {
   public async handle(flags: Record<string, boolean>): Promise<void> {
-    const serverTempPath = `${tmpdir()}/northle/server/server.txt`;
+    const serverTempPath = `${tmpdir()}/northle/server/server.tmp`;
 
     console.clear();
 

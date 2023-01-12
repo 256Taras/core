@@ -42,7 +42,7 @@ export class Server {
 
   private modules: Constructor[] = [];
 
-  private tempFilePath = `${tmpdir()}/northle/server/server.txt`;
+  private tempFilePath = `${tmpdir()}/northle/server/server.tmp`;
 
   constructor(
     private configurator: Configurator,
@@ -185,9 +185,9 @@ export class Server {
       await mkdir(dirname(this.tempFilePath), {
         recursive: true,
       });
-
-      await writeFile(this.tempFilePath, 'Northle server is running...');
     }
+
+    await writeFile(this.tempFilePath, 'Northle server is running...');
   }
 
   public async $setup(options: ServerOptions): Promise<this> {
