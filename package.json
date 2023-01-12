@@ -45,7 +45,7 @@
     "@types/nodemailer": "^6.4.7",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
     "@typescript-eslint/parser": "^5.48.1",
-    "@vitest/coverage-c8": "^0.27.0",
+    "@vitest/coverage-c8": "^0.27.1",
     "eslint": "^8.31.0",
     "prettier": "^2.8.2",
     "vitest": "^0.27.1"
@@ -64,7 +64,7 @@
     "concurrently": "^7.6.0",
     "fastify": "^4.11.0",
     "node-cron": "^3.0.2",
-    "nodemailer": "^6.8.0",
+    "nodemailer": "^6.9.0",
     "path-to-regexp": "^6.2.1",
     "socket.io": "^4.5.4",
     "tslib": "^2.4.1",
