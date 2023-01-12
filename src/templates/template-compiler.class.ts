@@ -70,16 +70,22 @@ export class TemplateCompiler {
     };
   }
 
-  private parseDataDisplays(): void {
+  private parseDataInterpolations(): void {
     const matches = this.html.matchAll(/\{\{(@?)(.*?)\}\}/g) ?? [];
 
     for (const match of matches) {
       const value = match[2].trim();
 
       const renderFunction = this.getRenderFunction(
-        `return ${
-          match[1] === '@' ? true : false
-        } ? String(${value}) : String(${value}).replace(/[&<>'"]/g, (char) => ({
+        `return ${match[1] === '@' ? true : false} ? String(${typescript
+          .transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          })
+          .outputText.replace(/^(.*?);$/m, '$1')}) : String(${typescript
+          .transpileModule(value, {
+            compilerOptions: { module: typescript.ModuleKind.ESNext },
+          })
+          .outputText.replace(/^(.*?);$/m, '$1')}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
@@ -653,7 +659,7 @@ export class TemplateCompiler {
 
     await this.parseEachDirectives();
 
-    this.parseDataDisplays();
+    this.parseDataInterpolations();
     this.parseIfElseDirectives();
     this.parseIfDirectives();
     this.parseSwitchDirectives();

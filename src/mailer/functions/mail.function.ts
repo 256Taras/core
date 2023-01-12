@@ -1,6 +1,6 @@
 import { inject } from '../../injector/functions/inject.function';
-import { Mailer } from '../mailer.class';
 import { MailData } from '../interfaces/mail-data.interface';
+import { Mailer } from '../mailer.class';
 
 export async function mail(options: MailData): Promise<string> {
   const mailer = inject(Mailer);
