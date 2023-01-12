@@ -6,6 +6,7 @@ import { logError } from '../logger/functions/log-error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { BuildCommand } from './commands/build.command';
 import { DbMigrateCommand } from './commands/db-migrate.command';
+import { DbSeedCommand } from './commands/db-seed.command';
 import { KeyGenerateCommand } from './commands/key-generate.command';
 import { PreparePublishCommand } from './commands/prepare-publish.command';
 import { ServerDevCommand } from './commands/server-dev.command';
@@ -25,6 +26,7 @@ await inject(Configurator).loadEnvironment();
 const commands: Constructor<Command>[] = [
   BuildCommand,
   DbMigrateCommand,
+  DbSeedCommand,
   KeyGenerateCommand,
   PreparePublishCommand,
   ServerDevCommand,
