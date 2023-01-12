@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { unlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { logInfo } from '../../logger/functions/log-info.function';
+import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
 
 @Command({
@@ -20,6 +21,8 @@ export class StartDevCommand {
     const serverTempPath = `${tmpdir()}/northle/server/server.txt`;
 
     console.clear();
+
+    runCommand('tsc');
 
     const { result } = concurrently(
       ['tsc --watch', `app server:dev${flags.open ? ' --open' : ''}`],
