@@ -1,4 +1,4 @@
-import { closeSync, existsSync, openSync, unlinkSync } from 'node:fs';
+import { existsSync, unlinkSync } from 'node:fs';
 import { copyFile, lstat, mkdir, readdir } from 'node:fs/promises';
 
 export async function cloneFiles(

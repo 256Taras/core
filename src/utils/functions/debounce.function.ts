@@ -2,7 +2,11 @@ interface DebounceOptions {
   onlyAfterInitialCall?: boolean;
 }
 
-export function debounce(callback: (...args: unknown[]) => unknown, timeout = 150, options?: DebounceOptions) {
+export function debounce(
+  callback: (...args: unknown[]) => unknown,
+  timeout = 150,
+  options?: DebounceOptions,
+) {
   let timer: NodeJS.Timeout;
   let initialCall = true;
 
@@ -18,6 +22,8 @@ export function debounce(callback: (...args: unknown[]) => unknown, timeout = 15
         const result = callback(...args);
 
         resolve(result);
+
+        return;
       }
 
       timer = setTimeout(() => {

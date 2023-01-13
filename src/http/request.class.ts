@@ -1,4 +1,5 @@
 import { FastifyRequest } from 'fastify';
+import { parse as parseUrl } from 'node:url';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.class';
@@ -89,6 +90,10 @@ export class Request {
     return this.body as unknown as T;
   }
 
+  public fullUrl(): string | null {
+    return this.instance?.raw?.url ?? null;
+  }
+
   public has(key: string): boolean {
     return key in this.body;
   }
@@ -166,6 +171,12 @@ export class Request {
 
   public get params(): Record<string, string> {
     return (this.instance?.params as Record<string, string>) ?? {};
+  }
+
+  public port(): number | null {
+    return this.fullUrl()
+      ? (parseUrl(this.fullUrl()!)?.port as number | null)
+      : null;
   }
 
   public previousUrl(): string {

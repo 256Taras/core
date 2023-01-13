@@ -52,7 +52,7 @@ export class Handler {
           ?.slice(0, -1)
           ?.replaceAll('\\', '/') ?? file;
 
-      const isAppFile = !file.includes('node_modules') && !file.includes('/core');
+      const isAppFile = !file.includes('/node_modules') && !file.includes('/core');
 
       if (isAppFile) {
         file = file.replace(/^.*?dist[/\\]/, `src/`);
@@ -100,11 +100,7 @@ export class Handler {
     this.logger.error(message);
 
     if (this.file) {
-      this.logger.sub(`File: ${this.file}`);
-    }
-
-    if (this.line) {
-      this.logger.sub(`Line: ${this.line}`);
+      this.logger.sub(`File: ${this.file} in line ${this.line}`);
     }
 
     const data = {
@@ -131,9 +127,6 @@ export class Handler {
         message,
         caller,
         file,
-        statusCode,
-        method: this.request.method(),
-        route: this.request.url(),
       });
 
       return;
@@ -164,11 +157,7 @@ export class Handler {
     this.logger.error(message, 'fatal error');
 
     if (this.file) {
-      this.logger.sub(`File: ${this.file}`);
-    }
-
-    if (this.line) {
-      this.logger.sub(`Line: ${this.line}`);
+      this.logger.sub(`File: ${this.file} in line ${this.line}`);
     }
 
     if (!(this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT'))) {

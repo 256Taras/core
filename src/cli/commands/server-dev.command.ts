@@ -70,7 +70,7 @@ export class ServerDevCommand {
       childProcess.kill();
 
       childProcess = fork(entryFile, processOptions);
-    }, 560, { onlyAfterInitialCall: true });
+    }, 550);
 
     sourceWatcher.on('all', async () => {
       restartProcess();
