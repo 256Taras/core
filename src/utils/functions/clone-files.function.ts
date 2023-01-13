@@ -1,5 +1,5 @@
-import { existsSync } from 'node:fs';
-import { copyFile, lstat, mkdir, readdir, unlink } from 'node:fs/promises';
+import { closeSync, existsSync, openSync, unlinkSync } from 'node:fs';
+import { copyFile, lstat, mkdir, readdir } from 'node:fs/promises';
 
 export async function cloneFiles(
   source: string,
@@ -25,7 +25,7 @@ export async function cloneFiles(
 
       if (file.endsWith(extension)) {
         if (existsSync(destinationPath)) {
-          await unlink(destinationPath);
+          unlinkSync(destinationPath);
         }
 
         await copyFile(`${source}/${file}`, destinationPath);
