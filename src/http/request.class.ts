@@ -91,7 +91,7 @@ export class Request {
   }
 
   public fullUrl(): string | null {
-    return this.instance?.raw?.url ?? null;
+    return `${this.protocol()}://${this.host()}${this.instance?.raw?.url}` ?? null;
   }
 
   public has(key: string): boolean {
