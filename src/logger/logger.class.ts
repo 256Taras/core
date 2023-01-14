@@ -76,16 +76,14 @@ export class Logger {
       this.repeatedMessageCount = 0;
     }
 
-    const output = `\n${chalk.gray(
-      `${
-        message === this.lastMessage && label === this.lastLabel
-          ? `x${this.repeatedMessageCount + 1}`
-          : '  '
-      }`,
-    )} ${chalk
+    const output = `\n${chalk
       .bgHex(LOGGER_COLOR_RED)
       .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_RED)(
-      message,
+      `${message}${
+        message === this.lastMessage && label === this.lastLabel
+          ? ` [x${this.repeatedMessageCount + 1}]`
+          : ''
+      }`,
     )}\n`;
 
     console.error(output);
@@ -108,14 +106,14 @@ export class Logger {
       this.repeatedMessageCount = 0;
     }
 
-    const output = `\n${chalk.gray(
-      `${
+    const output = `\n${chalk.bgGreen.black(
+      ` ${label.toUpperCase()} `,
+    )} ${chalk.bold.green(
+      `${message}${
         message === this.lastMessage && label === this.lastLabel
-          ? `x${this.repeatedMessageCount + 1}`
-          : '  '
+          ? ` [x${this.repeatedMessageCount + 1}]`
+          : ''
       }`,
-    )} ${chalk.bgGreen.black(` ${label.toUpperCase()} `)} ${chalk.bold.green(
-      message,
     )}\n`;
 
     console.log(output);
@@ -141,19 +139,21 @@ export class Logger {
     const day = this.getDay();
     const time = this.getTime();
 
-    const formattedLabel = `${chalk.gray(
-      `${
-        message === this.lastMessage && label === this.lastLabel
-          ? `x${this.repeatedMessageCount + 1}`
-          : '  '
-      }`,
-    )} [${chalk.white(`${label.charAt(0).toUpperCase()}${label.slice(1)}`)}]`;
+    const formattedLabel = `[${chalk.white(
+      `${label.charAt(0).toUpperCase()}${label.slice(1)}`,
+    )}]`;
 
     const timestamp = `${chalk.gray(
       `${formattedLabel}${' '.repeat(this.logLabelPadding - label.length)}`,
     )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
-    const mainOutput = this.truncate(message);
+    const mainOutput = this.truncate(
+      `${message}${
+        message === this.lastMessage && label === this.lastLabel
+          ? ` [x${this.repeatedMessageCount + 1}]`
+          : ''
+      }`,
+    );
 
     const left = `${timestamp} ${chalk.white.bold(mainOutput)}`;
     const right = chalk.gray(additionalmessage);
@@ -174,7 +174,7 @@ export class Logger {
 
     this.lastMessage = null;
 
-    const indent = ' '.repeat(this.lastLabel.length + 5);
+    const indent = ' '.repeat(this.lastLabel.length + 2);
 
     const output = `${indent} ${chalk.bold.hex(this.lastColor)(message)}\n`;
 
@@ -196,16 +196,14 @@ export class Logger {
       this.repeatedMessageCount = 0;
     }
 
-    const output = `\n${chalk.gray(
-      `${
-        message === this.lastMessage && label === this.lastLabel
-          ? `x${this.repeatedMessageCount + 1}`
-          : '  '
-      }`,
-    )} ${chalk
+    const output = `\n${chalk
       .bgHex(LOGGER_COLOR_YELLOW)
       .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_YELLOW)(
-      message,
+      `${message}${
+        message === this.lastMessage && label === this.lastLabel
+          ? ` [x${this.repeatedMessageCount + 1}]`
+          : ''
+      }`,
     )}\n`;
 
     console.warn(output);
