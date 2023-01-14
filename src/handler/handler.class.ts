@@ -91,7 +91,7 @@ export class Handler {
     const undefinedVariableRegex = /(.*?) is not defined/;
 
     const message = undefinedVariableRegex.test(error.message)
-      ? error.message.replace(undefinedVariableRegex, '`$1` is not defined')
+      ? error.message.replace(undefinedVariableRegex, `Variable '$1' is not defined`)
       : (error.message.charAt(0).toUpperCase() + error.message.slice(1)).replaceAll(
           /\n|\r\n/g,
           ' ',
