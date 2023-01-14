@@ -100,7 +100,11 @@ export class Handler {
     this.logger.error(message);
 
     if (this.file) {
-      this.logger.sub(`File: ${this.file}${this.file !== 'unknown' ? ` in line ${this.line}` : ''}`);
+      this.logger.sub(
+        `File: ${this.file}${
+          this.file !== 'unknown' ? ` in line ${this.line}` : ''
+        }`,
+      );
     }
 
     const data = {

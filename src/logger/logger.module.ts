@@ -1,5 +1,6 @@
 export * from './constants';
 
+export * from './functions/clear-line.function';
 export * from './functions/log.function';
 export * from './functions/log-error.function';
 export * from './functions/log-info.function';

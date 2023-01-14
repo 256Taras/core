@@ -6,6 +6,7 @@ import {
   LOGGER_COLOR_RED,
   LOGGER_COLOR_YELLOW,
 } from './constants';
+import { clearLine } from './functions/clear-line.function';
 
 @Service()
 export class Logger {
@@ -15,9 +16,13 @@ export class Logger {
 
   private lastLabel = 'log';
 
+  private lastMessage: string | null = null;
+
   private readonly locale = 'en-us';
 
   private readonly logLabelPadding = 8;
+
+  private repeatedMessageCount = 0;
 
   private getDay(): string {
     const date = new Date();
@@ -39,111 +44,174 @@ export class Logger {
     });
   }
 
-  private renderDots(data: string): string {
-    const outputLength = stripAnsiChars(data).length;
+  private renderDots(message: string): string {
+    const outputLength = stripAnsiChars(message).length;
     const sign = '.';
 
     return chalk.gray(sign.repeat(process.stdout.columns - outputLength - 12));
   }
 
-  private truncate(data: string): string {
+  private truncate(message: string): string {
     const maxLength = Math.trunc(process.stdout.columns / 2);
 
-    return stripAnsiChars(data).length > maxLength
-      ? data.slice(0, maxLength) + '...'
-      : data;
+    return stripAnsiChars(message).length > maxLength
+      ? message.slice(0, maxLength) + '...'
+      : message;
   }
 
   public $disable(): void {
     this.enabled = false;
   }
 
-  public error(data: string, label = 'error'): void {
+  public error(message: string, label = 'error'): void {
     if (!this.enabled) {
       return;
     }
 
-    this.lastLabel = label;
-    this.lastColor = LOGGER_COLOR_RED;
+    if (message === this.lastMessage && label === this.lastLabel) {
+      this.repeatedMessageCount += 1;
 
-    const output = `\n${chalk
+      clearLine(3);
+    } else {
+      this.repeatedMessageCount = 0;
+    }
+
+    const output = `\n${chalk.gray(
+      `${
+        message === this.lastMessage && label === this.lastLabel
+          ? `x${this.repeatedMessageCount + 1}`
+          : '  '
+      }`,
+    )} ${chalk
       .bgHex(LOGGER_COLOR_RED)
       .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_RED)(
-      data,
+      message,
     )}\n`;
 
     console.error(output);
+
+    this.lastLabel = label;
+    this.lastColor = LOGGER_COLOR_RED;
+    this.lastMessage = message;
   }
 
-  public info(data: string, label = 'info'): void {
+  public info(message: string, label = 'info'): void {
     if (!this.enabled) {
       return;
     }
 
-    this.lastLabel = label;
-    this.lastColor = LOGGER_COLOR_GREEN;
+    if (message === this.lastMessage && label === this.lastLabel) {
+      this.repeatedMessageCount += 1;
 
-    const output = `\n${chalk.bgGreen.black(
-      ' ' + label.toUpperCase() + ' ',
-    )} ${chalk.bold.green(data)}\n`;
+      clearLine(3);
+    } else {
+      this.repeatedMessageCount = 0;
+    }
+
+    const output = `\n${chalk.gray(
+      `${
+        message === this.lastMessage && label === this.lastLabel
+          ? `x${this.repeatedMessageCount + 1}`
+          : '  '
+      }`,
+    )} ${chalk.bgGreen.black(` ${label.toUpperCase()} `)} ${chalk.bold.green(
+      message,
+    )}\n`;
 
     console.log(output);
+
+    this.lastLabel = label;
+    this.lastColor = LOGGER_COLOR_GREEN;
+    this.lastMessage = message;
   }
 
-  public log(data: string, label = 'log', additionalData = ''): void {
+  public log(message: string, label = 'log', additionalmessage = ''): void {
     if (!this.enabled) {
       return;
+    }
+
+    if (message === this.lastMessage && label === this.lastLabel) {
+      this.repeatedMessageCount += 1;
+
+      clearLine();
+    } else {
+      this.repeatedMessageCount = 0;
     }
 
     const day = this.getDay();
     const time = this.getTime();
 
-    const formattedLabel = `[${chalk.white(
-      label.charAt(0).toUpperCase() + label.slice(1),
-    )}]`;
+    const formattedLabel = `${chalk.gray(
+      `${
+        message === this.lastMessage && label === this.lastLabel
+          ? `x${this.repeatedMessageCount + 1}`
+          : '  '
+      }`,
+    )} [${chalk.white(`${label.charAt(0).toUpperCase()}${label.slice(1)}`)}]`;
 
     const timestamp = `${chalk.gray(
       `${formattedLabel}${' '.repeat(this.logLabelPadding - label.length)}`,
     )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
-    const mainOutput = this.truncate(data);
+    const mainOutput = this.truncate(message);
 
     const left = `${timestamp} ${chalk.white.bold(mainOutput)}`;
-    const right = chalk.gray(additionalData);
+    const right = chalk.gray(additionalmessage);
 
     const dots = this.renderDots(
       timestamp + mainOutput + label + ' '.repeat(7 - label.length),
     );
 
     console.log(left, dots, right);
+
+    this.lastMessage = message;
   }
 
-  public sub(data: string): void {
+  public sub(message: string): void {
     if (!this.enabled) {
       return;
     }
 
-    const indent = ' '.repeat(this.lastLabel.length + 2);
+    this.lastMessage = null;
 
-    const output = `${indent} ${chalk.bold.hex(this.lastColor)(data)}\n`;
+    const indent = ' '.repeat(this.lastLabel.length + 5);
+
+    const output = `${indent} ${chalk.bold.hex(this.lastColor)(message)}\n`;
+
+    clearLine();
 
     console.log(output);
   }
 
-  public warn(data: string, label = 'warning'): void {
+  public warn(message: string, label = 'warning'): void {
     if (!this.enabled) {
       return;
     }
 
-    this.lastLabel = label;
-    this.lastColor = LOGGER_COLOR_YELLOW;
+    if (message === this.lastMessage && label === this.lastLabel) {
+      this.repeatedMessageCount += 1;
 
-    const output = `\n${chalk
+      clearLine(2);
+    } else {
+      this.repeatedMessageCount = 0;
+    }
+
+    const output = `\n${chalk.gray(
+      `${
+        message === this.lastMessage && label === this.lastLabel
+          ? `x${this.repeatedMessageCount + 1}`
+          : '  '
+      }`,
+    )} ${chalk
       .bgHex(LOGGER_COLOR_YELLOW)
-      .black(' ' + label.toUpperCase() + ' ')} ${chalk.bold.hex(LOGGER_COLOR_YELLOW)(
-      data,
+      .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_YELLOW)(
+      message,
     )}\n`;
 
     console.warn(output);
+
+    this.lastLabel = label;
+    this.lastColor = LOGGER_COLOR_YELLOW;
+    this.lastMessage = message;
   }
 }

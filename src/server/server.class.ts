@@ -85,6 +85,12 @@ export class Server {
     this.instance.setNotFoundHandler(() => {
       this.handler.handleNotFound();
     });
+    this.logger.info('Registered handlers');
+    this.logger.info('Registered handlers');
+    this.logger.info('Registered handlers');
+    this.logger.error('Registered handlers');
+    this.logger.error('Registered handlers');
+    this.logger.info('Registered handlers');
   }
 
   private async registerMiddleware(): Promise<void> {
