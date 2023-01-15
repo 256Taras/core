@@ -1,17 +1,21 @@
-import { inject } from '../../injector/functions/inject.function';
+import { Reflection as Reflect } from '@abraham/reflection';
+import { Integer } from '../../utils/types/integer.type';
 import { ParameterDecorator } from '../../utils/types/parameter-decorator.type';
-import { Encrypter } from '../encrypter.class';
 
 export function EncryptedParam(): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
-    const encrypter = inject(Encrypter);
+    Reflect.defineMetadata(
+      'encryptedParamIndexes',
+      [
+        ...(Reflect.getMetadata<Integer[]>(
+          'encryptedParamIndexes',
+          target[propertyKey],
+        ) || []),
+        parameterIndex,
+      ],
+      target[propertyKey],
+    );
 
-    if (target[propertyKey]) {
-      target[propertyKey] = (...args: unknown[]) => {
-        args[parameterIndex] = encrypter.decrypt(String(propertyKey));
-
-        return (args[parameterIndex] as Function)(...args);
-      };
-    }
+    return target;
   };
 }

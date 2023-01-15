@@ -36,13 +36,6 @@ export class Request {
     return this;
   }
 
-  public isAjaxRequest(): boolean {
-    return (
-      this.header('x-requested-with') === 'XMLHttpRequest' ||
-      (this.header('accept') ?? '').includes('application/json')
-    );
-  }
-
   public get body(): Record<string, string> {
     return (this.instance?.body as Record<string, string>) ?? {};
   }
@@ -128,6 +121,13 @@ export class Request {
 
   public ips(): string[] | null {
     return this.instance?.ips ?? null;
+  }
+
+  public isAjaxRequest(): boolean {
+    return (
+      this.header('x-requested-with') === 'XMLHttpRequest' ||
+      (this.header('accept') ?? '').includes('application/json')
+    );
   }
 
   public isFileRequest(): boolean {

@@ -1,4 +1,6 @@
+import { Reflection as Reflect, Target } from '@abraham/reflection';
 import { FastifyInstance } from 'fastify';
+import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
 import { DownloadResponse } from '../http/download-response.class';
 import { HttpMethod } from '../http/enums/http-method.enum';
@@ -11,6 +13,7 @@ import { ViewResponse } from '../http/view-response.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { Integer } from '../utils/types/integer.type';
 import { Route } from './interfaces/route.interface';
 
 @Service()
@@ -18,6 +21,7 @@ export class Router {
   private routes: Route[] = [];
 
   constructor(
+    private encrypter: Encrypter,
     private handler: Handler,
     private request: Request,
     private response: Response,
@@ -55,7 +59,16 @@ export class Router {
     }
 
     try {
-      let content = inject(controller)[method](...requestParams, ...args);
+      const resolvedParams = requestParams.map((param, index) => {
+        return Reflect.getMetadata<Integer[]>(
+          'encryptedParamIndexes',
+          inject(controller)[method],
+        )?.includes(index)
+          ? this.encrypter.encrypt(param)
+          : param;
+      });
+
+      let content = inject(controller)[method](...resolvedParams, ...args);
 
       if (content instanceof Promise) {
         content = await content;
