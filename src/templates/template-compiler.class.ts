@@ -342,7 +342,7 @@ export class TemplateCompiler {
 
       const compiler = inject(TemplateCompiler, { freshInstance: true });
 
-      const fileContent = await readFile(file, 'utf-8');
+      const fileContent = await readFile(file, 'utf8');
       const compiledPartial = await compiler.compile(fileContent, this.data);
 
       this.html = this.html.replace(match[0], compiledPartial);

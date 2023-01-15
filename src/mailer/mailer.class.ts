@@ -45,7 +45,7 @@ export class Mailer {
 
       view = resolveViewFile(caller, view);
 
-      const fileContent = await readFile(view, 'utf-8');
+      const fileContent = await readFile(view, 'utf8');
 
       html = await this.templateCompiler.compile(fileContent, data);
     }

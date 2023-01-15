@@ -99,13 +99,18 @@ export class Handler {
 
     this.logger.error(message);
 
+    this.logger.sub('---');
+
     if (this.file) {
       this.logger.sub(
-        `File: ${this.file}${
+        `in file: ${this.file}${
           this.file !== 'unknown' ? ` in line ${this.line}` : ''
         }`,
       );
     }
+
+    this.logger.sub(`on route: ${this.request.fullUrl()}`);
+    this.logger.sub(`from IP: ${this.request.ip()}`);
 
     const data = {
       statusCode,

@@ -76,7 +76,7 @@ export class Session {
             });
           }
 
-          await writeFile(path, JSON.stringify({}), 'utf-8');
+          await writeFile(path, JSON.stringify({}), 'utf8');
         }
       } catch {
         throw new Error('Session initialization failed');
@@ -101,7 +101,7 @@ export class Session {
     }
 
     try {
-      await writeFile(path, JSON.stringify(data), 'utf-8');
+      await writeFile(path, JSON.stringify(data), 'utf8');
     } catch {
       throw new Error('Session write failed');
     }

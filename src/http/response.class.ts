@@ -171,7 +171,7 @@ export class Response {
       throw new Error(`View '${file}' does not exist`);
     }
 
-    const fileContent = await readFile(file, 'utf-8');
+    const fileContent = await readFile(file, 'utf8');
 
     const html = await this.templateCompiler.compile(
       fileContent.toString(),

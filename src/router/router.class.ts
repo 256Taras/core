@@ -1,4 +1,4 @@
-import { Reflection as Reflect, Target } from '@abraham/reflection';
+import { Reflection as Reflect } from '@abraham/reflection';
 import { FastifyInstance } from 'fastify';
 import { Encrypter } from '../crypto/encrypter.class';
 import { Handler } from '../handler/handler.class';
@@ -64,7 +64,7 @@ export class Router {
           'encryptedParamIndexes',
           inject(controller)[method],
         )?.includes(index)
-          ? this.encrypter.encrypt(param)
+          ? this.encrypter.decrypt(param)
           : param;
       });
 
