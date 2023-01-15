@@ -124,9 +124,7 @@ export class Server {
 
     const cookieOptions: FastifyCookieOptions = {
       secret:
-        this.configurator.entries?.crypto?.key ??
-        env('ENCRYPT_KEY') ??
-        this.encrypter.randomBytes(16),
+        this.configurator.entries?.crypto?.key ?? env('ENCRYPT_KEY') ?? 'northle',
     };
 
     const multipartOptions: FastifyMultipartOptions = {

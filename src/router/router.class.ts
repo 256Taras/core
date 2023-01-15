@@ -1,6 +1,7 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { FastifyInstance } from 'fastify';
 import { Encrypter } from '../crypto/encrypter.class';
+import { EncryptionAlgorithm } from '../crypto/types/encryption-algorithm.type';
 import { Handler } from '../handler/handler.class';
 import { DownloadResponse } from '../http/download-response.class';
 import { HttpMethod } from '../http/enums/http-method.enum';
@@ -60,11 +61,13 @@ export class Router {
 
     try {
       const resolvedParams = requestParams.map((param, index) => {
-        return Reflect.getMetadata<Integer[]>(
-          'encryptedParamIndexes',
-          inject(controller)[method],
-        )?.includes(index)
-          ? this.encrypter.decrypt(param)
+        const encryptionData = Reflect.getMetadata<{
+          algorithm: EncryptionAlgorithm;
+          indexes: Integer[];
+        }>('encryptedParams', inject(controller)[method]);
+
+        return encryptionData?.indexes?.includes(index)
+          ? this.encrypter.decrypt(param, encryptionData?.algorithm)
           : param;
       });
 

@@ -5,16 +5,20 @@ import {
   randomBytes,
   randomUUID,
 } from 'node:crypto';
+import { Configurator } from '../configurator/configurator.class';
 import { Service } from '../injector/decorators/service.decorator';
+import { inject } from '../injector/functions/inject.function';
+import { env } from '../utils/functions/env.function';
 import { Integer } from '../utils/types/integer.type';
 import { UuidOptions } from './interfaces/uuid-options.interface';
 import { EncryptionAlgorithm } from './types/encryption-algorithm.type';
 
 @Service()
 export class Encrypter {
-  private iv = randomBytes(16);
-
-  private key = randomBytes(32);
+  private key =
+    inject(Configurator).entries?.crypto?.key ??
+    env<string>('ENCRYPT_KEY') ??
+    'northle';
 
   public async compareHash(data: string, hash: string): Promise<boolean> {
     return await compare(data, hash);
@@ -24,7 +28,11 @@ export class Encrypter {
     encryptedData: string,
     algorithm: EncryptionAlgorithm = 'aes-256-cbc',
   ): string {
-    const decipher = createDecipheriv(algorithm, this.key, this.iv);
+    const decipher = createDecipheriv(
+      algorithm,
+      this.key,
+      this.key.slice(0, Math.trunc(this.key.length / 2)),
+    );
 
     const decryptedData =
       algorithm === 'aes-256-ctr'
@@ -41,7 +49,11 @@ export class Encrypter {
     rawData: string,
     algorithm: EncryptionAlgorithm = 'aes-256-cbc',
   ): string {
-    const cipher = createCipheriv(algorithm, this.key, this.iv);
+    const cipher = createCipheriv(
+      algorithm,
+      this.key,
+      this.key.slice(0, Math.trunc(this.key.length / 2)),
+    );
 
     const encryptedData =
       algorithm === 'aes-256-ctr'
