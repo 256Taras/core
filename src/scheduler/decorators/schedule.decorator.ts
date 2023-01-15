@@ -8,7 +8,7 @@ export function Schedule(pattern: string): MethodDecorator {
     const scheduler = inject(Scheduler);
 
     const callback = () => {
-      inject(target.constructor as Constructor)[propertyKey];
+      inject(target.constructor as Constructor)[propertyKey]();
     };
 
     scheduler.schedule(pattern, callback);

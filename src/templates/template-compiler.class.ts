@@ -95,6 +95,7 @@ export class TemplateCompiler {
       );
 
       const returnedValue = renderFunction();
+
       this.html = this.html.replace(match[0], String(returnedValue));
     }
   }

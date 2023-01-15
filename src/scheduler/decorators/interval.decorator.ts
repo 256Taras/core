@@ -9,7 +9,7 @@ export function Interval(milliseconds: Integer): MethodDecorator {
     const scheduler = inject(Scheduler);
 
     const callback = () => {
-      inject(target.constructor as Constructor)[propertyKey];
+      inject(target.constructor as Constructor)[propertyKey]();
     };
 
     scheduler.interval(callback, milliseconds);

@@ -9,7 +9,7 @@ export function Timeout(milliseconds: Integer): MethodDecorator {
     const scheduler = inject(Scheduler);
 
     const callback = () => {
-      inject(target.constructor as Constructor)[propertyKey];
+      inject(target.constructor as Constructor)[propertyKey]();
     };
 
     scheduler.timeout(callback, milliseconds);
