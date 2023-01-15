@@ -112,7 +112,7 @@ export class Handler {
       message: 'Internal Server Error',
     };
 
-    if (this.request.ajax()) {
+    if (this.request.isAjaxRequest()) {
       this.response.send(data);
 
       return;
@@ -181,7 +181,7 @@ export class Handler {
       message: 'Invalid Token',
     };
 
-    if (this.request.ajax()) {
+    if (this.request.isAjaxRequest()) {
       this.response.send(data);
 
       return;
@@ -214,7 +214,7 @@ export class Handler {
       message: 'Not Found',
     };
 
-    if (this.request.ajax()) {
+    if (this.request.isAjaxRequest()) {
       this.response.send(data);
 
       return;
@@ -247,7 +247,7 @@ export class Handler {
       message: 'Too Many Requests',
     };
 
-    if (this.request.ajax()) {
+    if (this.request.isAjaxRequest()) {
       this.response.send(data);
 
       return;

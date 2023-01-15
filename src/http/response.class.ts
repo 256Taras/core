@@ -46,7 +46,7 @@ export class Response {
       message,
     };
 
-    if (this.request.ajax()) {
+    if (this.request.isAjaxRequest()) {
       this.json(data);
 
       return this;

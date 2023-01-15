@@ -8,7 +8,7 @@ import staticServerMiddleware, { FastifyStaticOptions } from '@fastify/static';
 import chalk from 'chalk';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -349,6 +349,22 @@ export class Server {
       });
 
       this.router.registerRoutes(this.instance);
+
+      if (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT')) {
+        this.instance.get(
+          '/$northle:asset-error.png',
+          async (_request, response) => {
+            const file = await readFile(
+              `${fileURLToPath(import.meta.url)}/../../../assets/error.png`,
+            );
+
+            response.header('Content-Type', 'image/png');
+
+            return file;
+          },
+        );
+      }
+
       this.registerHandlers();
 
       await this.instance.listen({ port, host });

@@ -36,7 +36,7 @@ export class Request {
     return this;
   }
 
-  public ajax(): boolean {
+  public isAjaxRequest(): boolean {
     return (
       this.header('x-requested-with') === 'XMLHttpRequest' ||
       (this.header('accept') ?? '').includes('application/json')

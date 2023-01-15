@@ -81,11 +81,11 @@ export class TemplateCompiler {
           .transpileModule(value, {
             compilerOptions: { module: typescript.ModuleKind.ESNext },
           })
-          .outputText.replace(/^(.*?);$/m, '$1')}) : String(${typescript
+          .outputText.replaceAll(/;/gm, '')}) : String(${typescript
           .transpileModule(value, {
             compilerOptions: { module: typescript.ModuleKind.ESNext },
           })
-          .outputText.replace(/^(.*?);$/m, '$1')}).replace(/[&<>'"]/g, (char) => ({
+          .outputText.replaceAll(/;/gm, '')}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
@@ -95,7 +95,6 @@ export class TemplateCompiler {
       );
 
       const returnedValue = renderFunction();
-
       this.html = this.html.replace(match[0], String(returnedValue));
     }
   }

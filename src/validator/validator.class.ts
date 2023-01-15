@@ -401,7 +401,7 @@ export class Validator {
     }
 
     if (Object.keys(errors).length > 0) {
-      if (this.request.ajax()) {
+      if (this.request.isAjaxRequest()) {
         this.response.json({ errors });
         this.response.status(StatusCode.BadRequest);
 
