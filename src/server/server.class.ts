@@ -210,7 +210,7 @@ export class Server {
 
       await this.configurator.loadEnvironment(envFile);
 
-      if (!this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY')) {
+      if (!(this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY'))) {
         throw new Error('Encryption key is missing in environment configuration');
       }
 

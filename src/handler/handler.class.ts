@@ -102,15 +102,20 @@ export class Handler {
     this.logger.sub('---');
 
     if (this.file) {
-      this.logger.sub(
-        `in file: ${this.file}${
-          this.file !== 'unknown' ? ` in line ${this.line}` : ''
-        }`,
-      );
+      this.logger.sub(`in file: ${this.file}`);
     }
 
-    this.logger.sub(`on route: ${this.request.fullUrl()}`);
-    this.logger.sub(`from IP: ${this.request.ip()}`);
+    if (this.line) {
+      this.logger.sub(`in line: ${this.line}`);
+    }
+
+    if (this.request.fullUrl()) {
+      this.logger.sub(`on route: ${this.request.fullUrl()}`);
+    }
+
+    if (this.request.ip()) {
+      this.logger.sub(`from IP: ${this.request.ip()}`);
+    }
 
     const data = {
       statusCode,
