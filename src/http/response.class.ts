@@ -168,7 +168,9 @@ export class Response {
     }
 
     if (!existsSync(file)) {
-      throw new Error(`View '${file}' does not exist`);
+      throw new Error(`View '${file}' does not exist`, {
+        cause: new Error(`Create '${file}' view file`),
+      });
     }
 
     const fileContent = await readFile(file, 'utf8');

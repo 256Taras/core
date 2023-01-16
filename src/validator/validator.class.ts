@@ -377,7 +377,9 @@ export class Validator {
 
       for (const [rule, ruleValue] of Object.entries(ruleSet)) {
         if (!(rule in ruleMapper)) {
-          throw new Error(`Invalid validation rule '${rule}'`);
+          throw new Error(`Invalid validation rule '${rule}'`, {
+            cause: new Error('Provide a valid validation rule'),
+          });
         }
 
         const result = ruleMapper[rule].apply(this, [

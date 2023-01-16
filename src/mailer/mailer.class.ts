@@ -29,7 +29,9 @@ export class Mailer {
         secure: (port ?? env('MAIL_PORT')) === 465 ? true : false,
       });
     } catch {
-      throw new Error('Mail service setup failed');
+      throw new Error('Mail service setup failed', {
+        cause: new Error('Check your server mail configuration and credentials'),
+      });
     }
   }
 

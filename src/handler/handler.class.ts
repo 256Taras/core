@@ -138,9 +138,10 @@ export class Handler {
       const { caller, file } = this;
 
       await this.response.render(view, {
-        message,
         caller,
+        error,
         file,
+        message,
       });
 
       return;

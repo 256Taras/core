@@ -29,6 +29,7 @@ export class TemplateCompiler {
 
   private readonly functions = {
     csrfToken,
+    env,
     flash,
     inject,
     nonce,
@@ -337,7 +338,9 @@ export class TemplateCompiler {
       }/${partial}.html`;
 
       if (!existsSync(file)) {
-        throw new Error(`View partial '${partial}' does not exist`);
+        throw new Error(`View partial '${partial}' does not exist`, {
+          cause: new Error(`Create '${file}' view partial file`),
+        });
       }
 
       const compiler = inject(TemplateCompiler, { freshInstance: true });
@@ -498,7 +501,9 @@ export class TemplateCompiler {
       for (const caseMatch of caseMatches) {
         if (caseMatch[1] === 'default') {
           if (defaultCaseValue) {
-            throw new Error('Switch directive can only have one default case');
+            throw new Error('Switch directive can only have one default case', {
+              cause: new Error('Remove the extra default case'),
+            });
           }
 
           defaultCaseValue = caseMatch[4];
@@ -574,7 +579,9 @@ export class TemplateCompiler {
             const manifestPath = 'public/manifest.json';
 
             if (!existsSync(manifestPath)) {
-              throw new Error('Vite manifest file not found');
+              throw new Error('Vite manifest file not found', {
+                cause: new Error('Run vite build'),
+              });
             }
 
             const manifest = await readJson(manifestPath);
