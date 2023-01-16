@@ -264,6 +264,28 @@ export class TemplateCompiler {
     }
   }
 
+  private parseDevDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[dev\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/dev\]/gm) ?? [];
+
+    for (const match of matches) {
+      const development = this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+
+      this.html = this.html.replace(match[0], development ? match[2] : '');
+    }
+  }
+
+  private parseProdDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[prod\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/prod\]/gm) ?? [];
+
+    for (const match of matches) {
+      const development = this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+
+      this.html = this.html.replace(match[0], development ? '' : match[2]);
+    }
+  }
+
   private parseIfDirectives(): void {
     const matches =
       this.html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
@@ -676,6 +698,8 @@ export class TemplateCompiler {
     this.parseGuestDirectives();
     this.parseCanDirectives();
     this.parseCannotDirectives();
+    this.parseDevDirectives();
+    this.parseProdDirectives();
     this.parsePushDirectives();
     this.parseCsrfTokenDirectives();
 
