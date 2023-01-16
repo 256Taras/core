@@ -39,7 +39,9 @@ export class Configurator {
             !line.match(/^(((export)?(\s+)?[a-zA-Z_]+[a-zA-Z0-9_]*=(.*?)?)|")$/)
           ) {
             throw new Error('.env file syntax is not valid', {
-              cause: new Error('Check .env file syntax on https://northle.dev/docs/basics/configuration#environment-configuration'),
+              cause: new Error(
+                'Check .env file syntax on https://northle.dev/docs/basics/configuration#environment-configuration',
+              ),
             });
           }
 

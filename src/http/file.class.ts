@@ -21,7 +21,9 @@ export class File {
 
       if (existsSync(fullPath)) {
         throw new Error(`File ${fullPath} already exists`, {
-          cause: new Error('Try to generate unique name for your file or change the file path'),
+          cause: new Error(
+            'Try to generate unique name for your file or change the file path',
+          ),
         });
       }
 
@@ -30,7 +32,9 @@ export class File {
       return fullPath;
     } catch (error) {
       throw new Error(`File upload failed. ${(error as Error).message}`, {
-        cause: new Error('Check your file maximum size configuration or add validation to your file upload form'),
+        cause: new Error(
+          'Check your file maximum size configuration or add validation to your file upload form',
+        ),
       });
     }
   }

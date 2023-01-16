@@ -269,7 +269,8 @@ export class TemplateCompiler {
       this.html.matchAll(/\[dev\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/dev\]/gm) ?? [];
 
     for (const match of matches) {
-      const development = this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+      const development =
+        this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
 
       this.html = this.html.replace(match[0], development ? match[2] : '');
     }
@@ -280,7 +281,8 @@ export class TemplateCompiler {
       this.html.matchAll(/\[prod\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/prod\]/gm) ?? [];
 
     for (const match of matches) {
-      const development = this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+      const development =
+        this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
 
       this.html = this.html.replace(match[0], development ? '' : match[2]);
     }

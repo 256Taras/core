@@ -19,7 +19,9 @@ export class Authenticator {
   public async login(email: string, password: string): Promise<boolean> {
     if (!('user' in this.db)) {
       throw new Error('Auth service requires schema User model', {
-        cause: new Error('Add User model to database schema in *database/schema.prisma* file'),
+        cause: new Error(
+          'Add User model to database schema in *database/schema.prisma* file',
+        ),
       });
     }
 
@@ -27,8 +29,10 @@ export class Authenticator {
       throw new Error(
         `Schema User model must contain 'email' and 'password' columns`,
         {
-          cause: new Error('Add *email* and *password* fields to User model in *database/schema.prisma* file'),
-        }
+          cause: new Error(
+            'Add *email* and *password* fields to User model in *database/schema.prisma* file',
+          ),
+        },
       );
     }
 

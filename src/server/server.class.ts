@@ -123,8 +123,7 @@ export class Server {
     const corsOptions: FastifyCorsOptions = this.configurator.entries?.cors ?? {};
 
     const cookieOptions: FastifyCookieOptions = {
-      secret:
-        this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY')!,
+      secret: this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY')!,
     };
 
     const multipartOptions: FastifyMultipartOptions = {
@@ -212,7 +211,9 @@ export class Server {
 
       if (!(this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY'))) {
         throw new Error('Encryption key is missing in environment configuration', {
-          cause: new Error('Generate *ENCRYPT_KEY* variable in *.env* file by running *npm run key:generate* command'),
+          cause: new Error(
+            'Generate *ENCRYPT_KEY* variable in *.env* file by running *npm run key:generate* command',
+          ),
         });
       }
 
