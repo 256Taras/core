@@ -29,6 +29,7 @@ export class TemplateCompiler {
 
   private readonly functions = {
     csrfToken,
+    env,
     flash,
     inject,
     nonce,
@@ -263,6 +264,30 @@ export class TemplateCompiler {
     }
   }
 
+  private parseDevDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[dev\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/dev\]/gm) ?? [];
+
+    for (const match of matches) {
+      const development =
+        this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+
+      this.html = this.html.replace(match[0], development ? match[2] : '');
+    }
+  }
+
+  private parseProdDirectives(): void {
+    const matches =
+      this.html.matchAll(/\[prod\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/prod\]/gm) ?? [];
+
+    for (const match of matches) {
+      const development =
+        this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+
+      this.html = this.html.replace(match[0], development ? '' : match[2]);
+    }
+  }
+
   private parseIfDirectives(): void {
     const matches =
       this.html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
@@ -337,7 +362,9 @@ export class TemplateCompiler {
       }/${partial}.html`;
 
       if (!existsSync(file)) {
-        throw new Error(`View partial '${partial}' does not exist`);
+        throw new Error(`View partial '${partial}' does not exist`, {
+          cause: new Error(`Create '${file}' view partial file`),
+        });
       }
 
       const compiler = inject(TemplateCompiler, { freshInstance: true });
@@ -498,7 +525,9 @@ export class TemplateCompiler {
       for (const caseMatch of caseMatches) {
         if (caseMatch[1] === 'default') {
           if (defaultCaseValue) {
-            throw new Error('Switch directive can only have one default case');
+            throw new Error('Switch directive can only have one default case', {
+              cause: new Error('Remove the extra default case'),
+            });
           }
 
           defaultCaseValue = caseMatch[4];
@@ -574,7 +603,9 @@ export class TemplateCompiler {
             const manifestPath = 'public/manifest.json';
 
             if (!existsSync(manifestPath)) {
-              throw new Error('Vite manifest file not found');
+              throw new Error('Vite manifest file not found', {
+                cause: new Error('Run vite build'),
+              });
             }
 
             const manifest = await readJson(manifestPath);
@@ -669,6 +700,8 @@ export class TemplateCompiler {
     this.parseGuestDirectives();
     this.parseCanDirectives();
     this.parseCannotDirectives();
+    this.parseDevDirectives();
+    this.parseProdDirectives();
     this.parsePushDirectives();
     this.parseCsrfTokenDirectives();
 

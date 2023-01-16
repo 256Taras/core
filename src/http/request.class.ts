@@ -84,6 +84,10 @@ export class Request {
   }
 
   public fullUrl(): string | null {
+    if (!this.protocol() || !this.host()) {
+      return null;
+    }
+
     return `${this.protocol()}://${this.host()}${this.instance?.raw?.url}` ?? null;
   }
 
