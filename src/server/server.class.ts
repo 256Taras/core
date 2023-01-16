@@ -124,7 +124,7 @@ export class Server {
 
     const cookieOptions: FastifyCookieOptions = {
       secret:
-        this.configurator.entries?.crypto?.key ?? env('ENCRYPT_KEY') ?? 'northle',
+        this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY')!,
     };
 
     const multipartOptions: FastifyMultipartOptions = {
@@ -209,6 +209,10 @@ export class Server {
       }
 
       await this.configurator.loadEnvironment(envFile);
+
+      if (!this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY')) {
+        throw new Error('Encryption key is missing in environment configuration');
+      }
 
       if (!(this.configurator.entries?.logger ?? true)) {
         this.logger.$disable();

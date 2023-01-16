@@ -16,9 +16,7 @@ import { EncryptionAlgorithm } from './types/encryption-algorithm.type';
 @Service()
 export class Encrypter {
   private key =
-    inject(Configurator).entries?.crypto?.key ??
-    env<string>('ENCRYPT_KEY') ??
-    'northle';
+    inject(Configurator).entries?.crypto?.key ?? env<string>('ENCRYPT_KEY')!;
 
   public async compareHash(data: string, hash: string): Promise<boolean> {
     return await compare(data, hash);
