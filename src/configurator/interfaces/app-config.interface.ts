@@ -32,4 +32,7 @@ export interface AppConfig {
     fieldLimit?: Integer;
     fileLimit?: Integer;
   };
+  websocket?: {
+    port?: Integer;
+  };
 }

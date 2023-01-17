@@ -645,6 +645,18 @@ export class TemplateCompiler {
     }
   }
 
+  private parseCsrfTokenDirectives(): void {
+    const matches = this.html.matchAll(/\[(csrfToken|csrf)\]/g) ?? [];
+    const token = csrfToken();
+
+    for (const match of matches) {
+      this.html = this.html.replace(
+        match[0],
+        `<input type="hidden" name="_csrf" value="${token}">`,
+      );
+    }
+  }
+
   private removeComments(): void {
     const matches = this.html.matchAll(/\{\{(@?)--(.*?)--\}\}/g) ?? [];
 
@@ -660,18 +672,6 @@ export class TemplateCompiler {
       const index = parseInt(match[1]);
 
       this.html = this.html.replace(match[0], this.rawContent[index]);
-    }
-  }
-
-  private parseCsrfTokenDirectives(): void {
-    const matches = this.html.matchAll(/\[(csrfToken|csrf)\]/g) ?? [];
-    const token = csrfToken();
-
-    for (const match of matches) {
-      this.html = this.html.replace(
-        match[0],
-        `<input type="hidden" name="_csrf" value="${token}">`,
-      );
     }
   }
 

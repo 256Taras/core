@@ -36,7 +36,7 @@ import { ServerOptions } from './interfaces/server-options.interface';
 export class Server {
   private defaultHost = 'localhost';
 
-  private defaultPort: Integer = 8000;
+  private readonly defaultPort: Integer = 8000;
 
   private instance = fastify();
 
@@ -237,7 +237,7 @@ export class Server {
       });
 
       if (channels.length) {
-        this.socketEmitter.$setup(this.instance.server);
+        this.socketEmitter.$setup();
       }
 
       await this.translator.$setup(this.configurator.entries?.locale ?? 'en');

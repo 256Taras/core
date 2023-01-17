@@ -1,9 +1,11 @@
-import { RawServerDefault } from 'fastify';
-import { Socket, Server as SocketServer } from 'socket.io';
+import { WebSocketServer } from 'ws';
+import { Configurator } from '../configurator/configurator.class';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.class';
+import { env } from '../utils/functions/env.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from './interfaces/authorizer.interface';
 import { Channel } from './types/channel.type';
 
@@ -11,19 +13,22 @@ import { Channel } from './types/channel.type';
 export class SocketEmitter {
   private channels: Channel[] = [];
 
-  private socketServer: SocketServer;
+  private readonly defaultPort: Integer = 8080;
 
-  constructor(private logger: Logger) {}
+  private socketServer: WebSocketServer;
 
-  public $setup(server: RawServerDefault): void {
-    this.socketServer = new SocketServer(server);
+  constructor(private configurator: Configurator, private logger: Logger) {}
 
-    this.socketServer.on('connection', (socket: Socket) => {
-      this.logger.log(`[${socket.id}] Established connection`, 'socket');
+  public $setup(): void {
+    this.socketServer = new WebSocketServer({
+      port:
+        this.configurator.entries?.websocket?.port ??
+        env<Integer>('WEBSOCKET_PORT') ??
+        this.defaultPort,
     });
 
-    this.socketServer.on('close', (socket: Socket) => {
-      this.logger.log(`[${socket.id}] Closed connection`, 'socket');
+    this.socketServer.on('connection', () => {
+      this.logger.log('Established new connection', 'websocket');
     });
   }
 
@@ -34,7 +39,7 @@ export class SocketEmitter {
       if (pattern?.test(channelName) && channel.pass()) {
         this.socketServer.emit(`${channelName}/${event}`, ...data);
 
-        this.logger.log(`Emitted: ${channelName}/${event}`, 'socket');
+        this.logger.log(`Emitted: ${channelName}/${event}`, 'websocket');
 
         return;
       }
