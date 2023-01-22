@@ -18,10 +18,13 @@ import { env } from '../utils/functions/env.function';
 import { range } from '../utils/functions/range.function';
 import { readJson } from '../utils/functions/read-json.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
+import { TemplateDirectiveDefinition } from './interfaces/template-directive-definition.interface';
 
 @Service()
 export class TemplateCompiler {
   private data: Record<string, any> = {};
+
+  private directives: TemplateDirectiveDefinition[] = [];
 
   private file?: string;
 
@@ -80,11 +83,15 @@ export class TemplateCompiler {
       const renderFunction = this.getRenderFunction(
         `return ${match[1] === '@' ? true : false} ? String(${typescript
           .transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+            },
           })
           .outputText.replaceAll(/;/gm, '')}) : String(${typescript
           .transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+            },
           })
           .outputText.replaceAll(/;/gm, '')}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
@@ -646,7 +653,7 @@ export class TemplateCompiler {
   }
 
   private parseCsrfTokenDirectives(): void {
-    const matches = this.html.matchAll(/\[(csrfToken|csrf)\]/g) ?? [];
+    const matches = this.html.matchAll(/\[(csrfToken)\]/g) ?? [];
     const token = csrfToken();
 
     for (const match of matches) {
@@ -711,8 +718,44 @@ export class TemplateCompiler {
     this.parseStackDirectives();
     this.parseViteDirectives();
 
+    this.directives.map((directive) => {
+      const pattern = directive.type === 'single'
+        ? new RegExp(`\\[${directive.name} *?(\\((.*?)\\))?\\]`, 'g')
+        : new RegExp(`\\[${directive.name} *?(\\((.*?)\\))?\\](\n|\r\n*?)?((.|\n|\r\n)*?)\\[\\/${directive.name}\\]`, 'gm');
+
+      const matches = this.html.matchAll(directive.pattern ?? pattern) ?? [];
+
+      for (const match of matches) {
+        const hasArguments = match[1];
+  
+        const argumentsRenderFunction = this.getRenderFunction(
+          `return ${
+            typescript.transpileModule(`[${match[2]}]`, {
+              compilerOptions: {
+                module: typescript.ModuleKind.ESNext,
+              },
+            }).outputText
+          };`,
+        );
+
+        const resolvedArguments = hasArguments ? argumentsRenderFunction<unknown[]>() : [];
+
+        if (directive.handler.length !== resolvedArguments.length) {
+          throw new Error(`Directive [${directive.name}] expects ${directive.handler.length} arguments, ${resolvedArguments.length} given`);
+        }
+
+        const result = directive.handler(...resolvedArguments);
+
+        this.html = this.html.replace(match[0], result);
+      }
+    });
+
     this.restoreRawContent();
 
     return this.html;
+  }
+
+  public registerDirective(directive: TemplateDirectiveDefinition): void {
+    this.directives.push(directive);
   }
 }

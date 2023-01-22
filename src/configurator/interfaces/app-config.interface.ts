@@ -1,4 +1,5 @@
 import { Integer } from '../../utils/types/integer.type';
+import { TemplateDirectiveDefinition } from '../../templates/interfaces/template-directive-definition.interface';
 
 export interface AppConfig {
   contentSecurityPolicy?: Record<string, string | string[]> | boolean;
@@ -27,6 +28,9 @@ export interface AppConfig {
   session?: {
     lifetime?: Integer;
     path?: string;
+  };
+  templates?: {
+    directives?: TemplateDirectiveDefinition[];
   };
   upload?: {
     fieldLimit?: Integer;
