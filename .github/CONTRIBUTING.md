@@ -16,49 +16,55 @@
 ### 📓 Table of Contents
 
 - [Creating Pull Requests](#creating-pull-requests)
-- [Development Setup](#development-setup)
+- [Development setup](#development-setup)
   - [Core package](#core-package)
-  - [App Template](#app-template)
+  - [App template](#app-template)
 
 ## Creating Pull Requests
 
 Contributing in this repository is based on GitHub's [Pull Requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests). Before creating a pull request, please read through the following rules:
 
 - Always provide a short description to your pull request. You can also open an [Issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/about-issues) before working on it.
-- Commit messages must follow a specific convention - they must be short and first letter must be uppercased, for example: `git commit -m "Add feature x"`.
+- Commit messages must follow a specific convention - they must have imperative form and first letter must be uppercased, for example: `git commit -m "Add feature x"`.
 
-## Development Setup
+## Development setup
 
 ### Core package
 
 First, clone the `@northle/core` package repository and install its dependencies:
 
 ```shell
-$ git clone https://github.com/northle/core.git
+git clone https://github.com/northle/core.git
+cd core
 
-$ cd core
-$ npm install
-$ npm run build
-$ npm link
+# If you do not have yarn installed
+$ npm install -g yarn
+
+yarn install
+yarn build
+yarn link
 ```
 
-Then, change the import paths in the `src/database` directory files: `PrismaClient` and `User` should be imported from `../../../app-template/node_modules/@prisma/client` in development mode. Don't forget to change it back before creating a [Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)!
+Then, change the import paths in the `src/database` directory files: `PrismaClient` and `User` should be imported from `../../../app-template/node_modules/@prisma/client` in development mode. Don't forget to change it back before creating a Pull Request!
 
-### App Template
+### App template
 
 Next, clone app template repository (in the parent folder of the `core` repository):
 
 ```shell
-$ git clone https://github.com/northle/app-template.git
+git clone https://github.com/northle/app-template.git
+cd app-template
 
-$ cd app-template
-$ cp .env.example .env
-$ npm install
-$ npm link @northle/core
-$ npm run key:generate
+cp .env.example .env
+
+yarn install
+yarn link @northle/core
+yarn key:generate
 ```
 
-*Remember that after every dependency addition / removal you need to run `npm link` again.*
+::: info
+Remember that after every dependency addition / removal you need to run `yarn link` again.
+:::
 
 Then, set the `DEVELOPER_MODE` variable in `.env` file to `true`.
 

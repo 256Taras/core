@@ -27,8 +27,8 @@ export class SocketEmitter {
         this.defaultPort,
     });
 
-    this.socketServer.on('connection', () => {
-      this.logger.log('Established new connection', 'websocket');
+    this.socketServer.on('connection', (_socket, request) => {
+      this.logger.log(`[${request.socket.remoteAddress}] Established new connection`, 'websocket');
     });
   }
 

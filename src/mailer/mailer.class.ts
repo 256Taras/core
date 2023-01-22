@@ -36,20 +36,20 @@ export class Mailer {
   }
 
   public async send(options: MailData): Promise<string> {
-    const { to, subject, text, data } = options;
+    const { to, subject, text, attachments } = options;
 
-    let { view } = options;
+    let templatePath = options.template?.path;
 
     let html = '';
 
-    if (view) {
+    if (templatePath) {
       const caller = callerFile();
 
-      view = resolveViewFile(caller, view);
+      templatePath = resolveViewFile(caller, templatePath!);
 
-      const fileContent = await readFile(view, 'utf8');
+      const fileContent = await readFile(templatePath!, 'utf8');
 
-      html = await this.templateCompiler.compile(fileContent, data);
+      html = await this.templateCompiler.compile(fileContent, options.template?.data ?? {});
     }
 
     const info = await this.transporter.sendMail({
@@ -57,7 +57,8 @@ export class Mailer {
       to,
       subject,
       ...(text && { text }),
-      ...(view && { html }),
+      ...(templatePath && { html }),
+      attachments,
     });
 
     return info.messageId;

@@ -1,7 +1,12 @@
+import { Attachment } from './attachment.interface';
+
 export interface MailData {
   to: string;
   subject: string;
   text?: string;
-  view?: string;
-  data?: Record<string, unknown>;
+  template?: {
+    path?: string;
+    data?: Record<string, unknown>;
+  };
+  attachments?: Attachment[];
 }
