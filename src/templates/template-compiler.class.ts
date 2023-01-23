@@ -50,7 +50,242 @@ export class TemplateCompiler {
     private authenticator: Authenticator,
     private configurator: Configurator,
     private request: Request,
-  ) {}
+  ) {
+    this.directives = [
+      {
+        name: 'csrfToken',
+        type: 'single',
+        handler: () => {
+          return `<input type="hidden" name="_csrf" value="${csrfToken()}">`;
+        },
+      },
+      {
+        name: 'method',
+        type: 'single',
+        handler: (method: string) => {
+          return `<input type="hidden" name="_method" value="${method.toUpperCase()}">`;
+        },
+      },
+      {
+        name: 'json',
+        type: 'single',
+        handler: (data: object, prettyPrint?: boolean) => {
+          return JSON.stringify(data, undefined, prettyPrint ? 2 : 0);
+        },
+      },
+      {
+        name: 'error',
+        type: 'single',
+        handler: (fieldName: string, customMessage?: string) => {
+          const errors = flash<Record<string, string>>('errors') ?? {};
+
+          if (fieldName in errors) {
+            const error = customMessage ?? errors[fieldName][0];
+
+            return error;
+          }
+        },
+      },
+      {
+        name: 'errorBlock',
+        type: 'block',
+        handler: (content: string, fieldName: string) => {
+          const errors = flash<Record<string, string>>('errors') ?? {};
+
+          if (fieldName in errors) {
+            return content;
+          }
+        },
+      },
+      {
+        name: 'auth',
+        type: 'block',
+        handler: (content: string) => {
+          return this.authenticator.isAuthentcated() ? content : '';
+        },
+      },
+      {
+        name: 'guest',
+        type: 'block',
+        handler: (content: string) => {
+          return this.authenticator.isAuthentcated() ? '' : content;
+        },
+      },
+      {
+        name: 'can',
+        type: 'block',
+        handler: (
+          content: string,
+          action: string,
+          gate: Constructor<Gate>,
+          subject: unknown,
+        ) => {
+          const isAuthorized = new gate().allows(action, subject);
+
+          return isAuthorized ? content : '';
+        },
+      },
+      {
+        name: 'cannot',
+        type: 'block',
+        handler: (
+          content: string,
+          action: string,
+          gate: Constructor<Gate>,
+          subject: unknown,
+        ) => {
+          const isAuthorized = new gate().allows(action, subject);
+
+          return isAuthorized ? '' : content;
+        },
+      },
+      {
+        name: 'dev',
+        type: 'block',
+        handler: (content: string) => {
+          const isDevelopment =
+            this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+
+          return isDevelopment ? content : '';
+        },
+      },
+      {
+        name: 'prod',
+        type: 'block',
+        handler: (content: string) => {
+          const isDevelopment =
+            this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+
+          return isDevelopment ? '' : content;
+        },
+      },
+      {
+        name: 'push',
+        type: 'block',
+        handler: (content: string, stack: string) => {
+          const { stacks } = this.constructor as unknown as {
+            stacks: Map<string, string[]>;
+          };
+
+          stacks.set(
+            stack,
+            stacks.has(stack) ? [...stacks.get(stack)!, content] : [content],
+          );
+
+          return '';
+        },
+      },
+      {
+        name: 'include',
+        type: 'single',
+        handler: async (partial: string) => {
+          const file = `${
+            this.file ? `${this.file}/..` : 'dist/app/views'
+          }/${partial}.html`;
+
+          if (!existsSync(file)) {
+            throw new Error(`View partial '${partial}' does not exist`, {
+              cause: new Error(`Create '${file}' view partial file`),
+            });
+          }
+
+          const compiler = inject(TemplateCompiler, { freshInstance: true });
+
+          const fileContent = await readFile(file, 'utf8');
+          const compiledPartial = await compiler.compile(fileContent, this.data);
+
+          return compiledPartial;
+        },
+      },
+      {
+        name: 'stack',
+        type: 'single',
+        handler: (stackName: string) => {
+          const { stacks } = this.constructor as unknown as {
+            stacks: Map<string, string[]>;
+          };
+
+          const stackedContent = stacks.get(stackName) ?? [];
+
+          return stackedContent.join('');
+        },
+      },
+      {
+        name: 'vite',
+        type: 'single',
+        handler: (fileEntries: string | string[]) => {
+          let output = '';
+          let usesReactRefresh = false;
+
+          if (!Array.isArray(fileEntries)) {
+            fileEntries = [fileEntries];
+          }
+
+          fileEntries.map((fileEntry) => {
+            const fileExtension = fileEntry.split('.').pop() ?? 'js';
+
+            if (
+              this.configurator.entries?.development ??
+              env<boolean>('DEVELOPMENT')
+            ) {
+              output = `<script type="module" src="http://localhost:5173/app/${fileEntry}"></script>`;
+
+              if (['jsx', 'tsx'].includes(fileExtension)) {
+                usesReactRefresh = true;
+              }
+            } else {
+              (async () => {
+                const manifestPath = 'public/manifest.json';
+
+                if (!existsSync(manifestPath)) {
+                  throw new Error('Vite manifest file not found', {
+                    cause: new Error('Run vite build'),
+                  });
+                }
+
+                const manifest = await readJson(manifestPath);
+
+                const data = manifest[`app/${fileEntry}`];
+
+                output = `
+                  ${
+                    data.css
+                      ? `<link rel="stylesheet" href="/${
+                          data.css
+                        }" nonce="${nonce()}">`
+                      : ''
+                  }
+        
+                  <script type="module" src="/${
+                    data.file
+                  }" nonce="${nonce()}"></script>
+                `;
+              })();
+            }
+          });
+
+          if (usesReactRefresh) {
+            output = `
+              <script type="module" nonce="${nonce()}">
+                import RefreshRuntime from 'http://localhost:5173/@react-refresh';
+
+                RefreshRuntime.injectIntoGlobalHook(window);
+
+                window.$RefreshReg$ = () => {};
+                window.$RefreshSig$ = () => (type) => type;
+                window.__vite_plugin_react_preamble_installed__ = true;
+              </script>
+
+              ${output}
+            `;
+          }
+
+          return output;
+        },
+      },
+      ...(this.configurator.entries?.templates?.directives ?? []),
+    ];
+  }
 
   private getRenderFunction(body: string, variables: Record<string, unknown> = {}) {
     const globalVariables = {
@@ -168,133 +403,6 @@ export class TemplateCompiler {
     }
   }
 
-  private parseErrorDirectives(): void {
-    const matches =
-      this.html.matchAll(
-        /\[error *?\((.*?)\)\]((\n|\r\n*?)?((.|\n|\r\n)*?)\[\/error\])?/g,
-      ) ?? [];
-
-    for (const match of matches) {
-      const value = match[1];
-      const renderFunction = this.getRenderFunction(
-        `return ${
-          typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        };`,
-      );
-      const fieldName = renderFunction<string>();
-
-      const errors = flash<Record<string, string>>('errors') ?? {};
-
-      if (fieldName in errors) {
-        const error = match[2] ? match[4] : errors[fieldName][0];
-
-        this.html = this.html.replace(match[0], error);
-
-        continue;
-      }
-
-      this.html = this.html.replace(match[0], '');
-    }
-  }
-
-  private parseAuthDirectives(): void {
-    const matches =
-      this.html.matchAll(/\[auth\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/auth\]/gm) ?? [];
-
-    for (const match of matches) {
-      const authenticated = this.authenticator.check();
-
-      this.html = this.html.replace(match[0], authenticated ? match[2] : '');
-    }
-  }
-
-  private parseGuestDirectives(): void {
-    const matches =
-      this.html.matchAll(/\[guest\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/guest\]/gm) ?? [];
-
-    for (const match of matches) {
-      const authenticated = this.authenticator.check();
-
-      this.html = this.html.replace(match[0], authenticated ? '' : match[2]);
-    }
-  }
-
-  private parseCanDirectives(): void {
-    const matches =
-      this.html.matchAll(
-        /\[can *?\((.*?)\)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/can\]/gm,
-      ) ?? [];
-
-    for (const match of matches) {
-      const renderFunction = this.getRenderFunction(
-        `return [${
-          typescript.transpileModule(match[1], {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        }];`,
-      );
-      const props = renderFunction<string[] | Constructor[]>();
-
-      const authorized = new (props[1] as Constructor<Gate>)().allows(
-        props[0] as string,
-        props[2],
-      );
-
-      this.html = this.html.replace(match[0], authorized ? match[3] : '');
-    }
-  }
-
-  private parseCannotDirectives(): void {
-    const matches =
-      this.html.matchAll(
-        /\[cannot *?\((.*?)\)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/cannot\]/gm,
-      ) ?? [];
-
-    for (const match of matches) {
-      const renderFunction = this.getRenderFunction(
-        `return [${
-          typescript.transpileModule(match[1], {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        }];`,
-      );
-      const props = renderFunction<string[] | Constructor[]>();
-
-      const authorized = new (props[1] as Constructor<Gate>)().allows(
-        props[0] as string,
-        props[2],
-      );
-
-      this.html = this.html.replace(match[0], authorized ? '' : match[3]);
-    }
-  }
-
-  private parseDevDirectives(): void {
-    const matches =
-      this.html.matchAll(/\[dev\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/dev\]/gm) ?? [];
-
-    for (const match of matches) {
-      const development =
-        this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
-
-      this.html = this.html.replace(match[0], development ? match[2] : '');
-    }
-  }
-
-  private parseProdDirectives(): void {
-    const matches =
-      this.html.matchAll(/\[prod\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/prod\]/gm) ?? [];
-
-    for (const match of matches) {
-      const development =
-        this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
-
-      this.html = this.html.replace(match[0], development ? '' : match[2]);
-    }
-  }
-
   private parseIfDirectives(): void {
     const matches =
       this.html.matchAll(/\[if ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/if\]/gm) ?? [];
@@ -349,123 +457,6 @@ export class TemplateCompiler {
     }
   }
 
-  private async parseIncludeDirectives(): Promise<void> {
-    const matches = this.html.matchAll(/\[include *?\((.*?)\)\]/g) ?? [];
-
-    for (const match of matches) {
-      const value = match[1];
-      const renderFunction = this.getRenderFunction(
-        `return ${
-          typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        };`,
-      );
-
-      const partial = renderFunction<string>();
-
-      const file = `${
-        this.file ? `${this.file}/..` : 'dist/app/views'
-      }/${partial}.html`;
-
-      if (!existsSync(file)) {
-        throw new Error(`View partial '${partial}' does not exist`, {
-          cause: new Error(`Create '${file}' view partial file`),
-        });
-      }
-
-      const compiler = inject(TemplateCompiler, { freshInstance: true });
-
-      const fileContent = await readFile(file, 'utf8');
-      const compiledPartial = await compiler.compile(fileContent, this.data);
-
-      this.html = this.html.replace(match[0], compiledPartial);
-    }
-  }
-
-  private parseJsonDirectives(): void {
-    const matches =
-      this.html.matchAll(/\[json *?\((.*?),? *?(true|false)?\)\]/g) ?? [];
-
-    for (const match of matches) {
-      const value = match[1];
-      const prettyPrint = match[2] ?? 'false';
-
-      const renderFunction = this.getRenderFunction(
-        `return ${
-          typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        };`,
-      );
-      const printRenderFunction = this.getRenderFunction(
-        `return ${
-          typescript.transpileModule(prettyPrint, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        };`,
-      );
-
-      const json = JSON.stringify(
-        renderFunction<object>(),
-        undefined,
-        printRenderFunction<boolean>() ? 2 : 0,
-      );
-
-      this.html = this.html.replace(match[0], json);
-    }
-  }
-
-  private parseMethodDirectives(): void {
-    const matches = this.html.matchAll(/\[method *?\((.*?)\)\]/g) ?? [];
-
-    for (const match of matches) {
-      const value = match[1];
-      const renderFunction = this.getRenderFunction(
-        `return ${
-          typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        };`,
-      );
-
-      this.html = this.html.replace(
-        match[0],
-        `<input type="hidden" name="_method" value="${renderFunction<string>().toUpperCase()}">`,
-      );
-    }
-  }
-
-  private parsePushDirectives(): void {
-    const matches =
-      this.html.matchAll(/\[push ?(.*?)\](\n|\r\n*?)?((.|\n|\r\n)*?)\[\/push\]/gm) ??
-      [];
-
-    for (const match of matches) {
-      const value = match[1];
-      const renderFunction = this.getRenderFunction(
-        `return ${
-          typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        };`,
-      );
-
-      const stack = renderFunction<string>();
-
-      const { stacks } = this.constructor as unknown as {
-        stacks: Map<string, string[]>;
-      };
-
-      stacks.set(
-        stack,
-        stacks.has(stack) ? [...stacks.get(stack)!, match[3]] : [match[3]],
-      );
-
-      this.html = this.html.replace(match[0], '');
-    }
-  }
-
   private parseRawDirectives(): void {
     const matches =
       this.html.matchAll(/\[raw\](\n|\r\n)?((.*?|\s*?)*?)\[\/raw\]/gm) ?? [];
@@ -478,29 +469,6 @@ export class TemplateCompiler {
       this.rawContent.push(match[2]);
 
       count += 1;
-    }
-  }
-
-  private parseStackDirectives(): void {
-    const matches = this.html.matchAll(/\[stack *?\((.*?)\)\]/g) ?? [];
-
-    for (const match of matches) {
-      const value = match[1];
-      const renderFunction = this.getRenderFunction(
-        `return ${
-          typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        };`,
-      );
-
-      const { stacks } = this.constructor as unknown as {
-        stacks: Map<string, string[]>;
-      };
-
-      const content = stacks.get(renderFunction<string>()) ?? [];
-
-      this.html = this.html.replace(match[0], content.join(''));
     }
   }
 
@@ -575,95 +543,6 @@ export class TemplateCompiler {
     }
   }
 
-  private parseViteDirectives(): void {
-    const matches = this.html.matchAll(/\[vite *?\((.*?)\)\]/gm) ?? [];
-
-    for (const match of matches) {
-      const value = match[1];
-      const renderFunction = this.getRenderFunction(
-        `return ${
-          typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
-          }).outputText
-        };`,
-      );
-
-      let fileEntries = renderFunction<string | string[]>();
-      let output = '';
-      let usesReactRefresh = false;
-
-      if (!Array.isArray(fileEntries)) {
-        fileEntries = [fileEntries];
-      }
-
-      fileEntries.map((fileEntry) => {
-        const fileExtension = fileEntry.split('.').pop() ?? 'js';
-
-        if (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT')) {
-          output = `<script type="module" src="http://localhost:5173/app/${fileEntry}"></script>`;
-
-          if (['jsx', 'tsx'].includes(fileExtension)) {
-            usesReactRefresh = true;
-          }
-        } else {
-          (async () => {
-            const manifestPath = 'public/manifest.json';
-
-            if (!existsSync(manifestPath)) {
-              throw new Error('Vite manifest file not found', {
-                cause: new Error('Run vite build'),
-              });
-            }
-
-            const manifest = await readJson(manifestPath);
-
-            const data = manifest[`app/${fileEntry}`];
-
-            output = `
-              ${
-                data.css
-                  ? `<link rel="stylesheet" href="/${data.css}" nonce="${nonce()}">`
-                  : ''
-              }
-    
-              <script type="module" src="/${data.file}" nonce="${nonce()}"></script>
-            `;
-          })();
-        }
-      });
-
-      if (usesReactRefresh) {
-        output = `
-          <script type="module" nonce="${nonce()}">
-            import RefreshRuntime from 'http://localhost:5173/@react-refresh';
-
-            RefreshRuntime.injectIntoGlobalHook(window);
-
-            window.$RefreshReg$ = () => {};
-            window.$RefreshSig$ = () => (type) => type;
-            window.__vite_plugin_react_preamble_installed__ = true;
-          </script>
-
-          ${output}
-        `;
-      }
-
-      this.html = this.html.replace(match[0], output);
-    }
-  }
-
-  private parseCsrfTokenDirectives(): void {
-    const matches = this.html.matchAll(/\[(csrfToken)\]/g) ?? [];
-    const token = csrfToken();
-
-    for (const match of matches) {
-      this.html = this.html.replace(
-        match[0],
-        `<input type="hidden" name="_csrf" value="${token}">`,
-      );
-    }
-  }
-
   private removeComments(): void {
     const matches = this.html.matchAll(/\{\{(@?)--(.*?)--\}\}/g) ?? [];
 
@@ -701,54 +580,45 @@ export class TemplateCompiler {
     this.parseIfElseDirectives();
     this.parseIfDirectives();
     this.parseSwitchDirectives();
-    this.parseJsonDirectives();
-    this.parseErrorDirectives();
-    this.parseAuthDirectives();
-    this.parseGuestDirectives();
-    this.parseCanDirectives();
-    this.parseCannotDirectives();
-    this.parseDevDirectives();
-    this.parseProdDirectives();
-    this.parsePushDirectives();
-    this.parseCsrfTokenDirectives();
 
-    await this.parseIncludeDirectives();
+    await Promise.all(
+      this.directives.map(async (directive) => {
+        const pattern =
+          directive.type === 'single'
+            ? new RegExp(`\\[${directive.name} *?(\\((.*?)\\))?\\]`, 'g')
+            : new RegExp(
+                `\\[${directive.name} *?(\\((.*?)\\))?\\](\n|\r\n*?)?((.|\n|\r\n)*?)\\[\\/${directive.name}\\]`,
+                'gm',
+              );
 
-    this.parseMethodDirectives();
-    this.parseStackDirectives();
-    this.parseViteDirectives();
+        const matches = this.html.matchAll(directive.pattern ?? pattern) ?? [];
 
-    this.directives.map((directive) => {
-      const pattern = directive.type === 'single'
-        ? new RegExp(`\\[${directive.name} *?(\\((.*?)\\))?\\]`, 'g')
-        : new RegExp(`\\[${directive.name} *?(\\((.*?)\\))?\\](\n|\r\n*?)?((.|\n|\r\n)*?)\\[\\/${directive.name}\\]`, 'gm');
+        for (const match of matches) {
+          const hasArguments = match[1];
 
-      const matches = this.html.matchAll(directive.pattern ?? pattern) ?? [];
+          const argumentsRenderFunction = this.getRenderFunction(
+            `return ${
+              typescript.transpileModule(`[${match[2]}]`, {
+                compilerOptions: {
+                  module: typescript.ModuleKind.ESNext,
+                },
+              }).outputText
+            };`,
+          );
 
-      for (const match of matches) {
-        const hasArguments = match[1];
-  
-        const argumentsRenderFunction = this.getRenderFunction(
-          `return ${
-            typescript.transpileModule(`[${match[2]}]`, {
-              compilerOptions: {
-                module: typescript.ModuleKind.ESNext,
-              },
-            }).outputText
-          };`,
-        );
+          const resolvedArguments = hasArguments
+            ? [match[5], ...argumentsRenderFunction<unknown[]>()]
+            : [];
 
-        const resolvedArguments = hasArguments ? argumentsRenderFunction<unknown[]>() : [];
+          const result = directive.handler(...resolvedArguments);
 
-        if (directive.handler.length !== resolvedArguments.length) {
-          throw new Error(`Directive [${directive.name}] expects ${directive.handler.length} arguments, ${resolvedArguments.length} given`);
+          this.html = this.html.replace(
+            match[0],
+            result instanceof Promise ? await result : result,
+          );
         }
-
-        const result = directive.handler(...resolvedArguments);
-
-        this.html = this.html.replace(match[0], result);
-      }
-    });
+      }),
+    );
 
     this.restoreRawContent();
 

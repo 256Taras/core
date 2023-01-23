@@ -13,6 +13,7 @@ export * from './router/router.module';
 export * from './scheduler/scheduler.module';
 export * from './server/server.module';
 export * from './session/session.module';
+export * from './templates/templates.module';
 export * from './translator/translator.module';
 export * from './utils/utils.module';
 export * from './validator/validator.module';

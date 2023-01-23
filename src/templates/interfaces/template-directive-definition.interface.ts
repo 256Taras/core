@@ -1,6 +1,6 @@
 export interface TemplateDirectiveDefinition {
   name: string;
-  type: 'single' | 'double';
+  type: 'single' | 'double' | 'block';
   pattern?: RegExp;
-  handler: (...args: unknown[]) => string;
+  handler: Function;
 }

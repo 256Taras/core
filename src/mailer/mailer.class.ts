@@ -49,7 +49,10 @@ export class Mailer {
 
       const fileContent = await readFile(templatePath!, 'utf8');
 
-      html = await this.templateCompiler.compile(fileContent, options.template?.data ?? {});
+      html = await this.templateCompiler.compile(
+        fileContent,
+        options.template?.data ?? {},
+      );
     }
 
     const info = await this.transporter.sendMail({

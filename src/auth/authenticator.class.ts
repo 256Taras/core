@@ -16,6 +16,10 @@ export class Authenticator {
     return this.session.get('_auth') ?? false;
   }
 
+  public isAuthentcated(): boolean {
+    return this.check();
+  }
+
   public async login(email: string, password: string): Promise<boolean> {
     if (!('user' in this.db)) {
       throw new Error('Auth service requires schema User model', {
