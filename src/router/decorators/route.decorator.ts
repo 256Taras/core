@@ -5,6 +5,7 @@ import { MiddlewareHandler } from '../../http/interfaces/middleware-handler.inte
 import { Request } from '../../http/request.class';
 import { Response } from '../../http/response.class';
 import { inject } from '../../injector/functions/inject.function';
+import { StatusCode } from '../../http/enums/status-code.enum';
 import { Session } from '../../session/session.class';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { Integer } from '../../utils/types/integer.type';
@@ -13,6 +14,7 @@ import { Router } from '../router.class';
 
 const handler = inject(Handler);
 const request = inject(Request);
+const response = inject(Response);
 const router = inject(Router);
 const session = inject(Session);
 
@@ -52,6 +54,13 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
       );
 
       return;
+    }
+
+    const statusCode: StatusCode | undefined =
+      Reflect.getMetadata('statusCode', target);
+
+    if (statusCode) {
+      response.status(statusCode);
     }
 
     const maxRequestsPerMinute: Integer | undefined = Reflect.getMetadata(

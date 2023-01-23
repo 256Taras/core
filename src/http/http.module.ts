@@ -1,6 +1,7 @@
 export * from './decorators/controller.decorator';
 export * from './decorators/middleware.decorator';
 export * from './decorators/redirect.decorator';
+export * from './decorators/status.decorator';
 export * from './download-response.class';
 export * from './file.class';
 export * from './enums/http-method.enum';
