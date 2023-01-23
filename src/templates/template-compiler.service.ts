@@ -44,7 +44,7 @@ export class TemplateCompiler {
 
   private rawContent: string[] = [];
 
-  public static stacks: Map<string, string[]> = new Map<string, string[]>();
+  public static stacks = new Map<string, string[]>();
 
   constructor(
     private authenticator: Authenticator,

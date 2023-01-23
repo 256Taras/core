@@ -7,7 +7,7 @@ import { Integer } from '../utils/types/integer.type';
 export class Translator {
   private locale = 'en';
 
-  private translations: Map<string, string> = new Map<string, string>();
+  private translations = new Map<string, string | string[]>();
 
   private async loadTranslations(): Promise<void> {
     const path = `lang/${this.locale}.json`;
@@ -15,7 +15,7 @@ export class Translator {
     if (existsSync(path)) {
       const data = await readJson(path);
 
-      for (const [key, value] of Object.entries<string>(data)) {
+      for (const [key, value] of Object.entries<string | string[]>(data)) {
         this.translations.set(key, value);
       }
     }
@@ -27,16 +27,24 @@ export class Translator {
     await this.loadTranslations();
   }
 
-  public all(): Record<string, string> {
+  public all(): Record<string, string | string[]> {
     return Object.fromEntries(this.translations);
   }
 
   public get(text: string, quantity: Integer = 1): string {
-    return (
-      (quantity > 1
-        ? this.translations.get(text)?.[1]
-        : this.translations.get(text)) ?? text
-    );
+    if (quantity > 1) {
+      const key = [...this.translations.keys()].filter((key) => {
+        return key.startsWith(`${text}|`);
+      })[0];
+
+      if (!Array.isArray(this.translations.get(key))) {
+        throw new Error(`Pluralized translation for '${text}' is not an array`);
+      }
+
+      return this.translations.get(text)?.[1] ?? text;
+    }
+
+    return this.translations.get(text) as string ?? text;
   }
 
   public async setRequestLocale(locale: string): Promise<void> {
