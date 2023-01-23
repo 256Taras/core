@@ -1,17 +1,17 @@
 import { Reflection as Reflect } from '@abraham/reflection';
-import { Handler } from '../../handler/handler.class';
+import { Handler } from '../../handler/handler.service';
 import { HttpMethod } from '../../http/enums/http-method.enum';
 import { StatusCode } from '../../http/enums/status-code.enum';
 import { MiddlewareHandler } from '../../http/interfaces/middleware-handler.interface';
-import { Request } from '../../http/request.class';
-import { Response } from '../../http/response.class';
+import { Request } from '../../http/request.service';
+import { Response } from '../../http/response.service';
 import { inject } from '../../injector/functions/inject.function';
-import { Session } from '../../session/session.class';
+import { Session } from '../../session/session.service';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { Integer } from '../../utils/types/integer.type';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
 import { RouteOptions } from '../interfaces/route-options.interface';
-import { Router } from '../router.class';
+import { Router } from '../router.service';
 
 const handler = inject(Handler);
 const request = inject(Request);
@@ -114,19 +114,23 @@ function createRouteDecorator(methods: HttpMethod[], options?: RouteOptions) {
   };
 }
 
-export function Error(statusCode: 404 | 500): MethodDecorator {
+export function Error(
+  statusCode: StatusCode.NotFound | StatusCode.InternalServerError,
+): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
-    if (statusCode === 500) {
-      handler.setErrorHandler(callback);
-    } else {
-      handler.setNotFoundHandler(callback);
-    }
+    statusCode === StatusCode.InternalServerError
+      ? handler.setErrorHandler(callback)
+      : handler.setNotFoundHandler(callback);
   };
 }
 
-export function Methods(methods: HttpMethod[], url: string, options?: RouteOptions): MethodDecorator {
+export function Methods(
+  methods: HttpMethod[],
+  url: string,
+  options?: RouteOptions,
+): MethodDecorator {
   return (target, propertyKey) => {
     Reflect.defineMetadata(
       'maxRequestsPerMinute',

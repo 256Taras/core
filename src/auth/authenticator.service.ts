@@ -1,8 +1,8 @@
-import { Encrypter } from '../crypto/encrypter.class';
-import { DatabaseClient } from '../database/database-client.class';
+import { Encrypter } from '../crypto/encrypter.service';
+import { DatabaseClient } from '../database/database-client.service';
 import { SchemaUser } from '../database/types/schema-user.type';
 import { Service } from '../injector/decorators/service.decorator';
-import { Session } from '../session/session.class';
+import { Session } from '../session/session.service';
 
 @Service()
 export class Authenticator {

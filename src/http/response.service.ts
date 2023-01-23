@@ -3,11 +3,11 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { Service } from '../injector/decorators/service.decorator';
-import { Session } from '../session/session.class';
-import { TemplateCompiler } from '../templates/template-compiler.class';
+import { Session } from '../session/session.service';
+import { TemplateCompiler } from '../templates/template-compiler.service';
 import { StatusCode } from './enums/status-code.enum';
 import { CookieOptions } from './interfaces/cookie-options.interface';
-import { Request } from './request.class';
+import { Request } from './request.service';
 
 @Service()
 export class Response {

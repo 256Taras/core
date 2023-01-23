@@ -1,6 +1,6 @@
 import { inject } from '../../injector/functions/inject.function';
 import { StatusCode } from '../enums/status-code.enum';
-import { RedirectResponse } from '../redirect-response.class';
+import { RedirectResponse } from '../redirect-response.service';
 
 export function redirect(
   url: string,

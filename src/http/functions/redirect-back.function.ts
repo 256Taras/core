@@ -1,6 +1,6 @@
 import { inject } from '../../injector/functions/inject.function';
 import { StatusCode } from '../enums/status-code.enum';
-import { RedirectBackResponse } from '../redirect-back-response.class';
+import { RedirectBackResponse } from '../redirect-back-response.service';
 
 export function redirectBack(
   data: Record<string, unknown> = {},

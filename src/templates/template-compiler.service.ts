@@ -1,13 +1,13 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import typescript from 'typescript';
-import { Authenticator } from '../auth/authenticator.class';
+import { Authenticator } from '../auth/authenticator.service';
 import { Gate } from '../auth/gate.class';
-import { Configurator } from '../configurator/configurator.class';
+import { Configurator } from '../configurator/configurator.service';
 import * as constants from '../constants';
 import { nonce } from '../http/functions/nonce.function';
 import { oldInput } from '../http/functions/old-input.function';
-import { Request } from '../http/request.class';
+import { Request } from '../http/request.service';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { flash } from '../session/functions/flash.function';
@@ -53,64 +53,10 @@ export class TemplateCompiler {
   ) {
     this.directives = [
       {
-        name: 'csrfToken',
-        type: 'single',
-        handler: () => {
-          return `<input type="hidden" name="_csrfToken" value="${csrfToken()}">`;
-        },
-      },
-      {
-        name: 'method',
-        type: 'single',
-        handler: (method: string) => {
-          method = method.toUpperCase();
-
-          return `<input type="hidden" name="_method" value="${method}">`;
-        },
-      },
-      {
-        name: 'json',
-        type: 'single',
-        handler: (data: object, prettyPrint?: boolean) => {
-          return JSON.stringify(data, undefined, prettyPrint ? 2 : 0);
-        },
-      },
-      {
-        name: 'error',
-        type: 'single',
-        handler: (fieldName: string, customMessage?: string) => {
-          const errors = flash<Record<string, string>>('errors') ?? {};
-
-          if (fieldName in errors) {
-            const error = customMessage ?? errors[fieldName][0];
-
-            return error;
-          }
-        },
-      },
-      {
-        name: 'errorBlock',
-        type: 'block',
-        handler: (content: string, fieldName: string) => {
-          const errors = flash<Record<string, string>>('errors') ?? {};
-
-          if (fieldName in errors) {
-            return content;
-          }
-        },
-      },
-      {
         name: 'auth',
         type: 'block',
         handler: (content: string) => {
           return this.authenticator.isAuthentcated() ? content : '';
-        },
-      },
-      {
-        name: 'guest',
-        type: 'block',
-        handler: (content: string) => {
-          return this.authenticator.isAuthentcated() ? '' : content;
         },
       },
       {
@@ -142,6 +88,13 @@ export class TemplateCompiler {
         },
       },
       {
+        name: 'csrfToken',
+        type: 'single',
+        handler: () => {
+          return `<input type="hidden" name="_csrfToken" value="${csrfToken()}">`;
+        },
+      },
+      {
         name: 'dev',
         type: 'block',
         handler: (content: string) => {
@@ -149,6 +102,53 @@ export class TemplateCompiler {
             this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
 
           return isDevelopment ? content : '';
+        },
+      },
+      {
+        name: 'error',
+        type: 'single',
+        handler: (fieldName: string, customMessage?: string) => {
+          const errors = flash<Record<string, string>>('errors') ?? {};
+
+          if (fieldName in errors) {
+            const error = customMessage ?? errors[fieldName][0];
+
+            return error;
+          }
+        },
+      },
+      {
+        name: 'errorBlock',
+        type: 'block',
+        handler: (content: string, fieldName: string) => {
+          const errors = flash<Record<string, string>>('errors') ?? {};
+
+          if (fieldName in errors) {
+            return content;
+          }
+        },
+      },
+      {
+        name: 'guest',
+        type: 'block',
+        handler: (content: string) => {
+          return this.authenticator.isAuthentcated() ? '' : content;
+        },
+      },
+      {
+        name: 'json',
+        type: 'single',
+        handler: (data: object, prettyPrint?: boolean) => {
+          return JSON.stringify(data, undefined, prettyPrint ? 2 : 0);
+        },
+      },
+      {
+        name: 'method',
+        type: 'single',
+        handler: (method: string) => {
+          method = method.toUpperCase();
+
+          return `<input type="hidden" name="_method" value="${method}">`;
         },
       },
       {

@@ -5,7 +5,7 @@ import {
   randomBytes,
   randomUUID,
 } from 'node:crypto';
-import { Configurator } from '../configurator/configurator.class';
+import { Configurator } from '../configurator/configurator.service';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { env } from '../utils/functions/env.function';

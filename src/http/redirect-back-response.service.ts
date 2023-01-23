@@ -1,9 +1,9 @@
 import { Service } from '../injector/decorators/service.decorator';
-import { Session } from '../session/session.class';
-import { TemplateCompiler } from '../templates/template-compiler.class';
+import { Session } from '../session/session.service';
+import { TemplateCompiler } from '../templates/template-compiler.service';
 import { StatusCode } from './enums/status-code.enum';
-import { Request } from './request.class';
-import { Response } from './response.class';
+import { Request } from './request.service';
+import { Response } from './response.service';
 
 @Service()
 export class RedirectBackResponse extends Response {

@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { Transporter, createTransport } from 'nodemailer';
-import { Configurator } from '../configurator/configurator.class';
+import { Configurator } from '../configurator/configurator.service';
 import { Service } from '../injector/decorators/service.decorator';
-import { TemplateCompiler } from '../templates/template-compiler.class';
+import { TemplateCompiler } from '../templates/template-compiler.service';
 import { callerFile } from '../utils/functions/caller-file.function';
 import { env } from '../utils/functions/env.function';
 import { resolveViewFile } from '../utils/functions/resolve-view-file.function';

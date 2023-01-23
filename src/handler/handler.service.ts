@@ -1,11 +1,11 @@
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { Configurator } from '../configurator/configurator.class';
+import { Configurator } from '../configurator/configurator.service';
 import { StatusCode } from '../http/enums/status-code.enum';
-import { Request } from '../http/request.class';
-import { Response } from '../http/response.class';
+import { Request } from '../http/request.service';
+import { Response } from '../http/response.service';
 import { Service } from '../injector/decorators/service.decorator';
-import { Logger } from '../logger/logger.class';
+import { Logger } from '../logger/logger.service';
 import { env } from '../utils/functions/env.function';
 
 @Service()
