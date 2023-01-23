@@ -352,10 +352,14 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[3];
+
       const renderFunction = this.getRenderFunction(
         `return ${
           typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+              target: typescript.ScriptTarget.ESNext,
+            },
           }).outputText
         };`,
       );
@@ -410,10 +414,14 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
+
       const renderFunction = this.getRenderFunction(
         `return ${
           typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+              target: typescript.ScriptTarget.ESNext,
+            },
           }).outputText
         };`,
       );
@@ -438,10 +446,14 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
+
       const renderFunction = this.getRenderFunction(
         `return ${
           typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+              target: typescript.ScriptTarget.ESNext,
+            },
           }).outputText
         };`,
       );
@@ -483,7 +495,10 @@ export class TemplateCompiler {
       const renderFunction = this.getRenderFunction(
         `return ${
           typescript.transpileModule(match[1], {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+              target: typescript.ScriptTarget.ESNext,
+            },
           }).outputText
         };`,
       );
@@ -514,7 +529,10 @@ export class TemplateCompiler {
         const caseRenderFunction = this.getRenderFunction(
           `return ${
             typescript.transpileModule(caseMatch[2], {
-              compilerOptions: { module: typescript.ModuleKind.ESNext },
+              compilerOptions: {
+                module: typescript.ModuleKind.ESNext,
+                target: typescript.ScriptTarget.ESNext,
+              },
             }).outputText
           };`,
         );
@@ -594,15 +612,22 @@ export class TemplateCompiler {
 
         const matches = this.html.matchAll(directive.pattern ?? pattern) ?? [];
 
+        enum SegmentIndexes {
+          Expression = 0,
+          Arguments = 2,
+          BlockContent = 4,
+        }
+
         for (const match of matches) {
           const hasArguments = match[1];
 
           const argumentsRenderFunction = hasArguments
             ? this.getRenderFunction(
                 `return ${
-                  typescript.transpileModule(`[${match[2]}]`, {
+                  typescript.transpileModule(`[${match[SegmentIndexes.Arguments]}]`, {
                     compilerOptions: {
                       module: typescript.ModuleKind.ESNext,
+                      target: typescript.ScriptTarget.ESNext,
                     },
                   }).outputText
                 };`,
@@ -616,10 +641,10 @@ export class TemplateCompiler {
           const result =
             directive.type === 'single'
               ? directive.handler(...resolvedArguments)
-              : directive.handler(match[5], ...resolvedArguments);
+              : directive.handler(match[SegmentIndexes.BlockContent], ...resolvedArguments);
 
           this.html = this.html.replace(
-            match[0],
+            match[SegmentIndexes.Expression],
             result instanceof Promise ? await result : result,
           );
         }
