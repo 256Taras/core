@@ -1,15 +1,16 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { Handler } from '../../handler/handler.class';
 import { HttpMethod } from '../../http/enums/http-method.enum';
+import { StatusCode } from '../../http/enums/status-code.enum';
 import { MiddlewareHandler } from '../../http/interfaces/middleware-handler.interface';
 import { Request } from '../../http/request.class';
 import { Response } from '../../http/response.class';
 import { inject } from '../../injector/functions/inject.function';
-import { StatusCode } from '../../http/enums/status-code.enum';
 import { Session } from '../../session/session.class';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { Integer } from '../../utils/types/integer.type';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
+import { RouteOptions } from '../interfaces/route-options.interface';
 import { Router } from '../router.class';
 
 const handler = inject(Handler);
@@ -30,13 +31,19 @@ function resolveUrl(url: string, controller: Constructor) {
 
 function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
   return async (...args: unknown[]) => {
-    const middleware: Constructor<MiddlewareHandler> | undefined =
-      Reflect.getMetadata('middleware', target);
+    const middleware:
+      | Constructor<MiddlewareHandler>
+      | Constructor<MiddlewareHandler>[]
+      | undefined = Reflect.getMetadata('middleware', target);
 
     if (middleware) {
-      const instance = inject(middleware);
+      const items = Array.isArray(middleware) ? middleware : [middleware];
 
-      instance.handle();
+      items.map((item) => {
+        const instance = inject(item);
+
+        instance.handle();
+      });
     }
 
     const redirectUrl: string | undefined = Reflect.getMetadata(
@@ -56,8 +63,10 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
       return;
     }
 
-    const statusCode: StatusCode | undefined =
-      Reflect.getMetadata('statusCode', target);
+    const statusCode: StatusCode | undefined = Reflect.getMetadata(
+      'statusCode',
+      target,
+    );
 
     if (statusCode) {
       response.status(statusCode);
@@ -80,9 +89,18 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
   };
 }
 
-function createRouteDecorator(methods: HttpMethod[]) {
+function createRouteDecorator(methods: HttpMethod[], options?: RouteOptions) {
   return (url: string): MethodDecorator => {
     return (target, propertyKey) => {
+      Reflect.defineMetadata(
+        'maxRequestsPerMinute',
+        options?.maxRequestsPerMinute,
+        target,
+      );
+      Reflect.defineMetadata('middleware', options?.middleware, target);
+      Reflect.defineMetadata('redirectUrl', options?.redirectTo, target);
+      Reflect.defineMetadata('statusCode', options?.statusCode, target);
+
       const callback = resolveRouteAction(target, propertyKey);
 
       methods.map((method) => {
@@ -108,8 +126,17 @@ export function Error(statusCode: 404 | 500): MethodDecorator {
   };
 }
 
-export function Methods(methods: HttpMethod[], url: string): MethodDecorator {
+export function Methods(methods: HttpMethod[], url: string, options?: RouteOptions): MethodDecorator {
   return (target, propertyKey) => {
+    Reflect.defineMetadata(
+      'maxRequestsPerMinute',
+      options?.maxRequestsPerMinute,
+      target,
+    );
+    Reflect.defineMetadata('middleware', options?.middleware, target);
+    Reflect.defineMetadata('redirectUrl', options?.redirectTo, target);
+    Reflect.defineMetadata('statusCode', options?.statusCode, target);
+
     const callback = resolveRouteAction(target, propertyKey);
 
     methods.map((method) => {

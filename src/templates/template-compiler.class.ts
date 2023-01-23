@@ -624,12 +624,15 @@ export class TemplateCompiler {
           const argumentsRenderFunction = hasArguments
             ? this.getRenderFunction(
                 `return ${
-                  typescript.transpileModule(`[${match[SegmentIndexes.Arguments]}]`, {
-                    compilerOptions: {
-                      module: typescript.ModuleKind.ESNext,
-                      target: typescript.ScriptTarget.ESNext,
+                  typescript.transpileModule(
+                    `[${match[SegmentIndexes.Arguments]}]`,
+                    {
+                      compilerOptions: {
+                        module: typescript.ModuleKind.ESNext,
+                        target: typescript.ScriptTarget.ESNext,
+                      },
                     },
-                  }).outputText
+                  ).outputText
                 };`,
               )
             : () => [];
@@ -641,7 +644,10 @@ export class TemplateCompiler {
           const result =
             directive.type === 'single'
               ? directive.handler(...resolvedArguments)
-              : directive.handler(match[SegmentIndexes.BlockContent], ...resolvedArguments);
+              : directive.handler(
+                  match[SegmentIndexes.BlockContent],
+                  ...resolvedArguments,
+                );
 
           this.html = this.html.replace(
             match[SegmentIndexes.Expression],
