@@ -2,7 +2,7 @@ import { pathToRegexp } from 'path-to-regexp';
 import { inject } from '../../injector/functions/inject.function';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { Authorizer } from '../interfaces/authorizer.interface';
-import { SocketEmitter } from '../socket-emitter.class';
+import { SocketEmitter } from '../socket-emitter.service';
 
 export function createChannel(
   name: string,

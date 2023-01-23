@@ -1,7 +1,7 @@
 import { isIP, isIPv4 } from 'node:net';
 import { StatusCode } from '../http/enums/status-code.enum';
-import { Request } from '../http/request.class';
-import { Response } from '../http/response.class';
+import { Request } from '../http/request.service';
+import { Response } from '../http/response.service';
 import { Service } from '../injector/decorators/service.decorator';
 import { ValidationRules } from './interfaces/validation-rules.interface';
 

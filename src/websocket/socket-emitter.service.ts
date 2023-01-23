@@ -1,8 +1,8 @@
 import { WebSocketServer } from 'ws';
-import { Configurator } from '../configurator/configurator.class';
+import { Configurator } from '../configurator/configurator.service';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
-import { Logger } from '../logger/logger.class';
+import { Logger } from '../logger/logger.service';
 import { env } from '../utils/functions/env.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';

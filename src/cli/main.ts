@@ -1,6 +1,6 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { parseArgs } from 'node:util';
-import { Configurator } from '../configurator/configurator.class';
+import { Configurator } from '../configurator/configurator.service';
 import { inject } from '../injector/functions/inject.function';
 import { logError } from '../logger/functions/log-error.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';

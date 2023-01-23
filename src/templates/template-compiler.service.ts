@@ -1,13 +1,13 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import typescript from 'typescript';
-import { Authenticator } from '../auth/authenticator.class';
+import { Authenticator } from '../auth/authenticator.service';
 import { Gate } from '../auth/gate.class';
-import { Configurator } from '../configurator/configurator.class';
+import { Configurator } from '../configurator/configurator.service';
 import * as constants from '../constants';
 import { nonce } from '../http/functions/nonce.function';
 import { oldInput } from '../http/functions/old-input.function';
-import { Request } from '../http/request.class';
+import { Request } from '../http/request.service';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { flash } from '../session/functions/flash.function';
@@ -53,62 +53,10 @@ export class TemplateCompiler {
   ) {
     this.directives = [
       {
-        name: 'csrfToken',
-        type: 'single',
-        handler: () => {
-          return `<input type="hidden" name="_csrf" value="${csrfToken()}">`;
-        },
-      },
-      {
-        name: 'method',
-        type: 'single',
-        handler: (method: string) => {
-          return `<input type="hidden" name="_method" value="${method.toUpperCase()}">`;
-        },
-      },
-      {
-        name: 'json',
-        type: 'single',
-        handler: (data: object, prettyPrint?: boolean) => {
-          return JSON.stringify(data, undefined, prettyPrint ? 2 : 0);
-        },
-      },
-      {
-        name: 'error',
-        type: 'single',
-        handler: (fieldName: string, customMessage?: string) => {
-          const errors = flash<Record<string, string>>('errors') ?? {};
-
-          if (fieldName in errors) {
-            const error = customMessage ?? errors[fieldName][0];
-
-            return error;
-          }
-        },
-      },
-      {
-        name: 'errorBlock',
-        type: 'block',
-        handler: (content: string, fieldName: string) => {
-          const errors = flash<Record<string, string>>('errors') ?? {};
-
-          if (fieldName in errors) {
-            return content;
-          }
-        },
-      },
-      {
         name: 'auth',
         type: 'block',
         handler: (content: string) => {
           return this.authenticator.isAuthentcated() ? content : '';
-        },
-      },
-      {
-        name: 'guest',
-        type: 'block',
-        handler: (content: string) => {
-          return this.authenticator.isAuthentcated() ? '' : content;
         },
       },
       {
@@ -140,6 +88,13 @@ export class TemplateCompiler {
         },
       },
       {
+        name: 'csrfToken',
+        type: 'single',
+        handler: () => {
+          return `<input type="hidden" name="_csrfToken" value="${csrfToken()}">`;
+        },
+      },
+      {
         name: 'dev',
         type: 'block',
         handler: (content: string) => {
@@ -147,6 +102,53 @@ export class TemplateCompiler {
             this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
 
           return isDevelopment ? content : '';
+        },
+      },
+      {
+        name: 'error',
+        type: 'single',
+        handler: (fieldName: string, customMessage?: string) => {
+          const errors = flash<Record<string, string>>('errors') ?? {};
+
+          if (fieldName in errors) {
+            const error = customMessage ?? errors[fieldName][0];
+
+            return error;
+          }
+        },
+      },
+      {
+        name: 'errorBlock',
+        type: 'block',
+        handler: (content: string, fieldName: string) => {
+          const errors = flash<Record<string, string>>('errors') ?? {};
+
+          if (fieldName in errors) {
+            return content;
+          }
+        },
+      },
+      {
+        name: 'guest',
+        type: 'block',
+        handler: (content: string) => {
+          return this.authenticator.isAuthentcated() ? '' : content;
+        },
+      },
+      {
+        name: 'json',
+        type: 'single',
+        handler: (data: object, prettyPrint?: boolean) => {
+          return JSON.stringify(data, undefined, prettyPrint ? 2 : 0);
+        },
+      },
+      {
+        name: 'method',
+        type: 'single',
+        handler: (method: string) => {
+          method = method.toUpperCase();
+
+          return `<input type="hidden" name="_method" value="${method}">`;
         },
       },
       {
@@ -185,7 +187,7 @@ export class TemplateCompiler {
 
           if (!existsSync(file)) {
             throw new Error(`View partial '${partial}' does not exist`, {
-              cause: new Error(`Create '${file}' view partial file`),
+              cause: new Error(`Create '${partial}' view partial file`),
             });
           }
 
@@ -315,20 +317,19 @@ export class TemplateCompiler {
     for (const match of matches) {
       const value = match[2].trim();
 
+      const transpiledJs = typescript
+        .transpileModule(value, {
+          compilerOptions: {
+            module: typescript.ModuleKind.ESNext,
+            target: typescript.ScriptTarget.ESNext,
+          },
+        })
+        .outputText.replaceAll(/;/gm, '');
+
       const renderFunction = this.getRenderFunction(
-        `return ${match[1] === '@' ? true : false} ? String(${typescript
-          .transpileModule(value, {
-            compilerOptions: {
-              module: typescript.ModuleKind.ESNext,
-            },
-          })
-          .outputText.replaceAll(/;/gm, '')}) : String(${typescript
-          .transpileModule(value, {
-            compilerOptions: {
-              module: typescript.ModuleKind.ESNext,
-            },
-          })
-          .outputText.replaceAll(/;/gm, '')}).replace(/[&<>'"]/g, (char) => ({
+        `return ${
+          match[1] === '@' ? true : false
+        } ? String(${transpiledJs}) : String(${transpiledJs}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
@@ -351,10 +352,14 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[3];
+
       const renderFunction = this.getRenderFunction(
         `return ${
           typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+              target: typescript.ScriptTarget.ESNext,
+            },
           }).outputText
         };`,
       );
@@ -409,10 +414,14 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
+
       const renderFunction = this.getRenderFunction(
         `return ${
           typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+              target: typescript.ScriptTarget.ESNext,
+            },
           }).outputText
         };`,
       );
@@ -437,10 +446,14 @@ export class TemplateCompiler {
 
     for (const match of matches) {
       const value = match[1];
+
       const renderFunction = this.getRenderFunction(
         `return ${
           typescript.transpileModule(value, {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+              target: typescript.ScriptTarget.ESNext,
+            },
           }).outputText
         };`,
       );
@@ -482,7 +495,10 @@ export class TemplateCompiler {
       const renderFunction = this.getRenderFunction(
         `return ${
           typescript.transpileModule(match[1], {
-            compilerOptions: { module: typescript.ModuleKind.ESNext },
+            compilerOptions: {
+              module: typescript.ModuleKind.ESNext,
+              target: typescript.ScriptTarget.ESNext,
+            },
           }).outputText
         };`,
       );
@@ -513,7 +529,10 @@ export class TemplateCompiler {
         const caseRenderFunction = this.getRenderFunction(
           `return ${
             typescript.transpileModule(caseMatch[2], {
-              compilerOptions: { module: typescript.ModuleKind.ESNext },
+              compilerOptions: {
+                module: typescript.ModuleKind.ESNext,
+                target: typescript.ScriptTarget.ESNext,
+              },
             }).outputText
           };`,
         );
@@ -576,9 +595,9 @@ export class TemplateCompiler {
 
     await this.parseEachDirectives();
 
-    this.parseDataInterpolations();
     this.parseIfElseDirectives();
     this.parseIfDirectives();
+    this.parseDataInterpolations();
     this.parseSwitchDirectives();
 
     await Promise.all(
@@ -593,27 +612,45 @@ export class TemplateCompiler {
 
         const matches = this.html.matchAll(directive.pattern ?? pattern) ?? [];
 
+        enum SegmentIndexes {
+          Expression = 0,
+          Arguments = 2,
+          BlockContent = 4,
+        }
+
         for (const match of matches) {
           const hasArguments = match[1];
 
-          const argumentsRenderFunction = this.getRenderFunction(
-            `return ${
-              typescript.transpileModule(`[${match[2]}]`, {
-                compilerOptions: {
-                  module: typescript.ModuleKind.ESNext,
-                },
-              }).outputText
-            };`,
-          );
+          const argumentsRenderFunction = hasArguments
+            ? this.getRenderFunction(
+                `return ${
+                  typescript.transpileModule(
+                    `[${match[SegmentIndexes.Arguments]}]`,
+                    {
+                      compilerOptions: {
+                        module: typescript.ModuleKind.ESNext,
+                        target: typescript.ScriptTarget.ESNext,
+                      },
+                    },
+                  ).outputText
+                };`,
+              )
+            : () => [];
 
           const resolvedArguments = hasArguments
-            ? [match[5], ...argumentsRenderFunction<unknown[]>()]
+            ? argumentsRenderFunction<unknown[]>()
             : [];
 
-          const result = directive.handler(...resolvedArguments);
+          const result =
+            directive.type === 'single'
+              ? directive.handler(...resolvedArguments)
+              : directive.handler(
+                  match[SegmentIndexes.BlockContent],
+                  ...resolvedArguments,
+                );
 
           this.html = this.html.replace(
-            match[0],
+            match[SegmentIndexes.Expression],
             result instanceof Promise ? await result : result,
           );
         }

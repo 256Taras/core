@@ -1,1 +1,1 @@
-export * from './database-client.class';
+export * from './database-client.service';

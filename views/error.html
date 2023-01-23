@@ -34,12 +34,13 @@
           <div class="bg-rose-600 font-mono tracking-tighter text-white text-sm rounded-md shadow-lg shadow-rose-500/10 px-3 py-1 mr-4">
             Error
           </div>
-          {{ message }}
+
+          <span>{{ message }}</span>
         </h1>
 
         [if (error.cause && error.cause instanceof Error)]
           <aside class="self-start mt-5 bg-emerald-500 text-slate-100 dark:text-gray-900 px-2 py-0.5 rounded-md">
-            {{@ error.cause.message.replaceAll(/\*(.*?)\*/g, '<strong>$1</strong>') }}
+            {{@ error.cause!.message.replaceAll(/\*(.*?)\*/g, '<strong>$1</strong>') }}
           </aside>
         [/if]
 

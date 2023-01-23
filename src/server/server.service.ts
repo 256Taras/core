@@ -12,24 +12,24 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Configurator } from '../configurator/configurator.class';
-import { Encrypter } from '../crypto/encrypter.class';
-import { Handler } from '../handler/handler.class';
-import { Request } from '../http/request.class';
-import { Response } from '../http/response.class';
+import { Configurator } from '../configurator/configurator.service';
+import { Encrypter } from '../crypto/encrypter.service';
+import { Handler } from '../handler/handler.service';
+import { Request } from '../http/request.service';
+import { Response } from '../http/response.service';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { LOGGER_COLOR_ORANGE, LOGGER_COLOR_RED } from '../logger/constants';
-import { Logger } from '../logger/logger.class';
-import { Router } from '../router/router.class';
-import { Session } from '../session/session.class';
-import { Translator } from '../translator/translator.class';
+import { Logger } from '../logger/logger.service';
+import { Router } from '../router/router.service';
+import { Session } from '../session/session.service';
+import { Translator } from '../translator/translator.service';
 import { env } from '../utils/functions/env.function';
 import { readJson } from '../utils/functions/read-json.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from '../websocket/interfaces/authorizer.interface';
-import { SocketEmitter } from '../websocket/socket-emitter.class';
+import { SocketEmitter } from '../websocket/socket-emitter.service';
 import { ServerOptions } from './interfaces/server-options.interface';
 
 @Service()
@@ -68,6 +68,7 @@ export class Server {
     if (this.request.isFormRequest()) {
       const token =
         this.request.input('_csrf') ??
+        this.request.input('_csrfToken') ??
         this.request.header('X-CSRF-TOKEN') ??
         this.request.header('X-XSRF-TOKEN');
 

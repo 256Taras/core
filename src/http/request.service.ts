@@ -1,8 +1,8 @@
 import { FastifyRequest } from 'fastify';
 import { parse as parseUrl } from 'node:url';
-import { Encrypter } from '../crypto/encrypter.class';
+import { Encrypter } from '../crypto/encrypter.service';
 import { Service } from '../injector/decorators/service.decorator';
-import { Session } from '../session/session.class';
+import { Session } from '../session/session.service';
 import { HttpMethod } from './enums/http-method.enum';
 import { File } from './file.class';
 

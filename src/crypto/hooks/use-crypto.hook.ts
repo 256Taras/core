@@ -1,5 +1,5 @@
 import { inject } from '../../injector/functions/inject.function';
-import { Encrypter } from '../encrypter.class';
+import { Encrypter } from '../encrypter.service';
 
 export function useCrypto(): [
   (rawData: string) => string,

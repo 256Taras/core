@@ -1,7 +1,7 @@
 import { inject } from '../../injector/functions/inject.function';
 import { Constructor } from '../../utils/interfaces/constructor.interface';
 import { MethodDecorator } from '../../utils/types/method-decorator.type';
-import { Scheduler } from '../scheduler.class';
+import { Scheduler } from '../scheduler.service';
 
 export function Schedule(pattern: string): MethodDecorator {
   return (target, propertyKey) => {
