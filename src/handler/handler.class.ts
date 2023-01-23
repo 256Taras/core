@@ -61,7 +61,7 @@ export class Handler {
 
         file = existsSync(originalSourceFile) ? originalSourceFile : file;
       } else {
-        file = '@northle/core package';
+        file = '@northle/core package file';
         line = null;
       }
     } catch {
@@ -105,7 +105,7 @@ export class Handler {
       this.logger.sub(`in file: ${this.file}`);
     }
 
-    if (this.line) {
+    if (this.line && this.file && this.file !== 'unknown') {
       this.logger.sub(`in line: ${this.line}`);
     }
 

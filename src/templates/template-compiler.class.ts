@@ -56,14 +56,16 @@ export class TemplateCompiler {
         name: 'csrfToken',
         type: 'single',
         handler: () => {
-          return `<input type="hidden" name="_csrf" value="${csrfToken()}">`;
+          return `<input type="hidden" name="_csrfToken" value="${csrfToken()}">`;
         },
       },
       {
         name: 'method',
         type: 'single',
         handler: (method: string) => {
-          return `<input type="hidden" name="_method" value="${method.toUpperCase()}">`;
+          method = method.toUpperCase();
+
+          return `<input type="hidden" name="_method" value="${method}">`;
         },
       },
       {
@@ -185,7 +187,7 @@ export class TemplateCompiler {
 
           if (!existsSync(file)) {
             throw new Error(`View partial '${partial}' does not exist`, {
-              cause: new Error(`Create '${file}' view partial file`),
+              cause: new Error(`Create '${partial}' view partial file`),
             });
           }
 
@@ -315,20 +317,19 @@ export class TemplateCompiler {
     for (const match of matches) {
       const value = match[2].trim();
 
+      const transpiledJs = typescript
+        .transpileModule(value, {
+          compilerOptions: {
+            module: typescript.ModuleKind.ESNext,
+            target: typescript.ScriptTarget.ESNext,
+          },
+        })
+        .outputText.replaceAll(/;/gm, '');
+
       const renderFunction = this.getRenderFunction(
-        `return ${match[1] === '@' ? true : false} ? String(${typescript
-          .transpileModule(value, {
-            compilerOptions: {
-              module: typescript.ModuleKind.ESNext,
-            },
-          })
-          .outputText.replaceAll(/;/gm, '')}) : String(${typescript
-          .transpileModule(value, {
-            compilerOptions: {
-              module: typescript.ModuleKind.ESNext,
-            },
-          })
-          .outputText.replaceAll(/;/gm, '')}).replace(/[&<>'"]/g, (char) => ({
+        `return ${
+          match[1] === '@' ? true : false
+        } ? String(${transpiledJs}) : String(${transpiledJs}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
@@ -576,9 +577,9 @@ export class TemplateCompiler {
 
     await this.parseEachDirectives();
 
-    this.parseDataInterpolations();
     this.parseIfElseDirectives();
     this.parseIfDirectives();
+    this.parseDataInterpolations();
     this.parseSwitchDirectives();
 
     await Promise.all(
@@ -596,21 +597,26 @@ export class TemplateCompiler {
         for (const match of matches) {
           const hasArguments = match[1];
 
-          const argumentsRenderFunction = this.getRenderFunction(
-            `return ${
-              typescript.transpileModule(`[${match[2]}]`, {
-                compilerOptions: {
-                  module: typescript.ModuleKind.ESNext,
-                },
-              }).outputText
-            };`,
-          );
+          const argumentsRenderFunction = hasArguments
+            ? this.getRenderFunction(
+                `return ${
+                  typescript.transpileModule(`[${match[2]}]`, {
+                    compilerOptions: {
+                      module: typescript.ModuleKind.ESNext,
+                    },
+                  }).outputText
+                };`,
+              )
+            : () => [];
 
           const resolvedArguments = hasArguments
-            ? [match[5], ...argumentsRenderFunction<unknown[]>()]
+            ? argumentsRenderFunction<unknown[]>()
             : [];
 
-          const result = directive.handler(...resolvedArguments);
+          const result =
+            directive.type === 'single'
+              ? directive.handler(...resolvedArguments)
+              : directive.handler(match[5], ...resolvedArguments);
 
           this.html = this.html.replace(
             match[0],
