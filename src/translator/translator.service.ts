@@ -33,9 +33,9 @@ export class Translator {
 
   public get(text: string, quantity: Integer = 1): string {
     if (quantity > 1) {
-      const key = [...this.translations.keys()].filter((key) => {
+      const key = [...this.translations.keys()].find((key) => {
         return key.startsWith(`${text}|`);
-      })[0];
+      }) ?? text;
 
       if (!Array.isArray(this.translations.get(key))) {
         throw new Error(`Pluralized translation for '${text}' is not an array`);

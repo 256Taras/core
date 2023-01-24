@@ -38,6 +38,10 @@ export class Server {
 
   private readonly defaultPort: Integer = 8000;
 
+  private readonly defaultWebSocketPort: Integer = 8080;
+
+  private development = false;
+
   private instance = fastify();
 
   private modules: Constructor[] = [];
@@ -186,11 +190,19 @@ export class Server {
     }
 
     await writeFile(this.tempFilePath, 'Northle server is running...');
+
+    this.socketEmitter.createChannel('northle/:event', '$northle');
+
+    setInterval(() => {
+      this.socketEmitter.emit('hotReload', '$northle');
+    }, 3000);
   }
 
   public async $setup(options: ServerOptions): Promise<this> {
     try {
       this.configurator.$setup(options.config ?? {});
+
+      this.development = this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT') ?? false;
 
       process.on('uncaughtException', async (error) => {
         await this.handler.handleFatalError(error);
@@ -238,7 +250,14 @@ export class Server {
       });
 
       if (channels.length) {
-        this.socketEmitter.$setup();
+        this.socketEmitter.$setup({
+          main: this.configurator.entries?.websocket?.port ??
+            env<Integer>('WEBSOCKET_PORT') ??
+            this.defaultWebSocketPort,
+          ...(this.development ? {
+            $northle: 6173,
+          } : {}),
+        });
       }
 
       await this.translator.$setup(this.configurator.entries?.locale ?? 'en');
@@ -356,7 +375,7 @@ export class Server {
 
       this.router.registerRoutes(this.instance);
 
-      if (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT')) {
+      if (this.development) {
         this.instance.get(
           '/$northle:asset-error.png',
           async (_request, response) => {
@@ -375,7 +394,7 @@ export class Server {
 
       await this.instance.listen({ port, host });
 
-      if (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT')) {
+      if (this.development) {
         await this.setupDevelopmentEnvironment();
       }
     } catch (error) {

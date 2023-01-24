@@ -285,6 +285,21 @@ export class TemplateCompiler {
           return output;
         },
       },
+      {
+        name: 'hotReload',
+        type: 'single',
+        handler: () => {
+          return `
+            <script nonce="${nonce()}">
+              const socket = new WebSocket('ws://localhost:6173');
+
+              socket.addEventListener('$northle/hotReload', () => {
+                window.location.reload();
+              });
+            </script>
+          `;
+        },
+      },
       ...(this.configurator.entries?.templates?.directives ?? []),
     ];
   }
