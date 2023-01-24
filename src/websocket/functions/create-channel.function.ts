@@ -4,7 +4,7 @@ import { SocketEmitter } from '../socket-emitter.service';
 export function createChannel(
   name: string,
   serverName = 'main',
-  authorizationCallback?: (() => boolean),
+  authorizationCallback?: () => boolean,
 ): void {
   const socketEmitter = inject(SocketEmitter);
 

@@ -68,7 +68,7 @@ export class TemplateCompiler {
           gate: Constructor<Gate>,
           subject: unknown,
         ) => {
-          const isAuthorized = (new gate()).allows(action, subject);
+          const isAuthorized = new gate().allows(action, subject);
 
           return isAuthorized ? content : '';
         },
@@ -293,9 +293,10 @@ export class TemplateCompiler {
             <script nonce="${nonce()}">
               const socket = new WebSocket('ws://localhost:6173');
 
-              socket.addEventListener('$northle/hotReload', () => {
+              socket.onmessage = (payload) => {
+                console.log(456, payload);
                 window.location.reload();
-              });
+              };
             </script>
           `;
         },

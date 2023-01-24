@@ -11,8 +11,8 @@ export class SocketServer {
 
   constructor(private logger: Logger) {}
 
-  public emit(event: string, ...data: unknown[]): void {
-    this.server.emit(event, ...data);
+  public emit(event: string, ...payload: unknown[]): void {
+    this.server.emit(event, ...payload);
   }
 
   public get name(): string | null {
@@ -26,15 +26,14 @@ export class SocketServer {
       port,
     });
 
-    this.logger.log(
-      `Server ${this.name} listening on ws://${port}`,
-      'websocket',
-    );
+    if (this.name !== '$northle') {
+      this.logger.log(`Server ${this.name} listening on ws://${port}`, 'socket');
+    }
 
     this.server.on('connection', (_socket, request) => {
       this.logger.log(
         `[${request.socket.remoteAddress}] Established new connection`,
-        'websocket',
+        'socket',
       );
     });
   }

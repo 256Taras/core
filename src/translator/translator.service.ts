@@ -33,9 +33,10 @@ export class Translator {
 
   public get(text: string, quantity: Integer = 1): string {
     if (quantity > 1) {
-      const key = [...this.translations.keys()].find((key) => {
-        return key.startsWith(`${text}|`);
-      }) ?? text;
+      const key =
+        [...this.translations.keys()].find((key) => {
+          return key.startsWith(`${text}|`);
+        }) ?? text;
 
       if (!Array.isArray(this.translations.get(key))) {
         throw new Error(`Pluralized translation for '${text}' is not an array`);
@@ -44,7 +45,7 @@ export class Translator {
       return this.translations.get(text)?.[1] ?? text;
     }
 
-    return this.translations.get(text) as string ?? text;
+    return (this.translations.get(text) as string) ?? text;
   }
 
   public async setRequestLocale(locale: string): Promise<void> {

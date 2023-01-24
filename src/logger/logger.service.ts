@@ -128,6 +128,10 @@ export class Logger {
       return;
     }
 
+    if (label.length > 8) {
+      label = `${label.slice(0, 4)}...`;
+    }
+
     if (message === this.lastMessage && label === this.lastLabel) {
       this.repeatedMessageCount += 1;
 
@@ -164,6 +168,7 @@ export class Logger {
 
     console.log(left, dots, right);
 
+    this.lastLabel = label;
     this.lastMessage = message;
   }
 

@@ -5,8 +5,8 @@ import { Logger } from '../logger/logger.service';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from './interfaces/authorizer.interface';
-import { Channel } from './types/channel.type';
 import { SocketServer } from './socket-server.service';
+import { Channel } from './types/channel.type';
 
 @Service()
 export class SocketEmitter {
@@ -29,16 +29,16 @@ export class SocketEmitter {
   public createChannel(
     name: string,
     serverName = 'main',
-    authorizationCallback?: (() => boolean),
+    authorizationCallback?: () => boolean,
   ): void {
     const pattern = pathToRegexp(name);
-  
+
     this.registerChannels([
       class implements Authorizer {
         public readonly namePattern = pattern;
-  
+
         public readonly serverName = serverName;
-  
+
         public pass(): boolean {
           return authorizationCallback?.() ?? true;
         }
@@ -46,7 +46,7 @@ export class SocketEmitter {
     ]);
   }
 
-  public emit(event: string, channelName: string, ...data: unknown[]): void {
+  public emit(event: string, channelName: string, ...payload: unknown[]): void {
     this.channels.map((channel) => {
       const pattern = channel.namePattern;
       const serverName = channel.serverName;
@@ -58,9 +58,9 @@ export class SocketEmitter {
           throw new Error(`Server with name '${serverName}' not found`);
         }
 
-        server.emit(`${channelName}/${event}`, ...data);
+        server.emit(`${channelName}/${event}`, ...payload);
 
-        this.logger.log(`Emitted: ${channelName}/${event}`, 'websocket');
+        this.logger.log(`Emitted event: ${channelName}/${event}`, 'socket');
 
         return;
       }

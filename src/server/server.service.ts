@@ -190,19 +190,16 @@ export class Server {
     }
 
     await writeFile(this.tempFilePath, 'Northle server is running...');
-
-    this.socketEmitter.createChannel('northle/:event', '$northle');
-
-    setInterval(() => {
-      this.socketEmitter.emit('hotReload', '$northle');
-    }, 3000);
   }
 
   public async $setup(options: ServerOptions): Promise<this> {
     try {
       this.configurator.$setup(options.config ?? {});
 
-      this.development = this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT') ?? false;
+      this.development =
+        this.configurator.entries?.development ??
+        env<boolean>('DEVELOPMENT') ??
+        false;
 
       process.on('uncaughtException', async (error) => {
         await this.handler.handleFatalError(error);
@@ -249,15 +246,30 @@ export class Server {
         channels.push(...socketChannels);
       });
 
-      if (channels.length) {
-        this.socketEmitter.$setup({
-          main: this.configurator.entries?.websocket?.port ??
-            env<Integer>('WEBSOCKET_PORT') ??
-            this.defaultWebSocketPort,
-          ...(this.development ? {
-            $northle: 6173,
-          } : {}),
-        });
+      if (this.development) {
+        this.socketEmitter.createChannel('$northle', '$northle');
+      }
+
+      this.socketEmitter.$setup({
+        ...(channels.length
+          ? {
+              main:
+                this.configurator.entries?.websocket?.port ??
+                env<Integer>('WEBSOCKET_PORT') ??
+                this.defaultWebSocketPort,
+            }
+          : {}),
+        ...(this.development
+          ? {
+              $northle: 6173,
+            }
+          : {}),
+      });
+
+      if (this.development) {
+        setInterval(() => {
+          this.socketEmitter.emit('hotReload', '$northle');
+        }, 3000);
       }
 
       await this.translator.$setup(this.configurator.entries?.locale ?? 'en');
@@ -341,6 +353,12 @@ export class Server {
         );
       });
 
+      this.instance.addHook('onSend', async (_request, response) => {
+        if (this.request.isFileRequest()) {
+          response.statusCode = 200;
+        }
+      });
+
       this.instance.addHook('onResponse', async (request, response) => {
         if (!this.request.isFileRequest() && !this.request.isFormRequest()) {
           this.session.set('_previousLocation', request.url);
@@ -367,7 +385,7 @@ export class Server {
         const formattedStatus = statusMapping['true'] ?? status.toString();
 
         this.logger.log(
-          `${chalk.bold(formattedStatus)} ${this.request.method()} ${request.url}`,
+          `[${formattedStatus}] ${this.request.method()} ${request.url}`,
           'request',
           timeFormatted,
         );

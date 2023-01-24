@@ -34,6 +34,10 @@ export class Handler {
   private async readErrorStack(): Promise<void> {
     const stack = this.error?.stack ?? 'Error\n    at <anonymous>:1:1';
 
+    if (env<boolean>('DEVELOPER_MODE') ?? false) {
+      console.log(stack);
+    }
+
     const where = stack.split('\n')[1];
 
     const at = where?.slice(where.indexOf('at ') + 2, where.length) ?? 'unknown';
