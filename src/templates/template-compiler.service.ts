@@ -22,7 +22,7 @@ import { TemplateDirectiveDefinition } from './interfaces/template-directive-def
 
 @Service()
 export class TemplateCompiler {
-  private data: Record<string, any> = {};
+  private data: Record<string, unknown> = {};
 
   private directives: TemplateDirectiveDefinition[] = [];
 
@@ -68,7 +68,7 @@ export class TemplateCompiler {
           gate: Constructor<Gate>,
           subject: unknown,
         ) => {
-          const isAuthorized = new gate().allows(action, subject);
+          const isAuthorized = (new gate()).allows(action, subject);
 
           return isAuthorized ? content : '';
         },
@@ -582,7 +582,7 @@ export class TemplateCompiler {
 
   public async compile(
     html: string,
-    data: Record<string, any> = {},
+    data: Record<string, unknown> = {},
     file?: string,
   ): Promise<string> {
     this.data = data;
