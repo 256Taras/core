@@ -1,55 +1,73 @@
-import { WebSocketServer } from 'ws';
-import { Configurator } from '../configurator/configurator.service';
+import { pathToRegexp } from 'path-to-regexp';
 import { Service } from '../injector/decorators/service.decorator';
 import { inject } from '../injector/functions/inject.function';
 import { Logger } from '../logger/logger.service';
-import { env } from '../utils/functions/env.function';
 import { Constructor } from '../utils/interfaces/constructor.interface';
 import { Integer } from '../utils/types/integer.type';
 import { Authorizer } from './interfaces/authorizer.interface';
+import { SocketServer } from './socket-server.service';
 import { Channel } from './types/channel.type';
 
 @Service()
 export class SocketEmitter {
   private channels: Channel[] = [];
 
-  private readonly defaultPort: Integer = 8080;
+  private servers: SocketServer[] = [];
 
-  private socketServer: WebSocketServer;
+  constructor(private logger: Logger) {}
 
-  constructor(private configurator: Configurator, private logger: Logger) {}
+  public $setup(servers: Record<string, Integer>): void {
+    for (const [name, port] of Object.entries(servers)) {
+      const server = inject(SocketServer);
 
-  public $setup(): void {
-    this.socketServer = new WebSocketServer({
-      port:
-        this.configurator.entries?.websocket?.port ??
-        env<Integer>('WEBSOCKET_PORT') ??
-        this.defaultPort,
-    });
+      server.listen(name, port);
 
-    this.socketServer.on('connection', (_socket, request) => {
-      this.logger.log(
-        `[${request.socket.remoteAddress}] Established new connection`,
-        'websocket',
-      );
-    });
+      this.servers.push(server);
+    }
   }
 
-  public emit(event: string, channelName: string, ...data: unknown[]): void {
+  public createChannel(
+    name: string,
+    serverName = 'main',
+    authorizationCallback?: () => boolean,
+  ): void {
+    const pattern = pathToRegexp(name);
+
+    this.registerChannels([
+      class implements Authorizer {
+        public readonly namePattern = pattern;
+
+        public readonly serverName = serverName;
+
+        public pass(): boolean {
+          return authorizationCallback?.() ?? true;
+        }
+      },
+    ]);
+  }
+
+  public emit(event: string, channelName: string, ...payload: unknown[]): void {
     this.channels.map((channel) => {
       const pattern = channel.namePattern;
+      const serverName = channel.serverName;
 
       if (pattern?.test(channelName) && channel.pass()) {
-        this.socketServer.emit(`${channelName}/${event}`, ...data);
+        const server = this.servers.find((server) => server.name === serverName);
 
-        this.logger.log(`Emitted: ${channelName}/${event}`, 'websocket');
+        if (!server) {
+          throw new Error(`Server with name '${serverName}' not found`);
+        }
+
+        server.emit(`${channelName}/${event}`, ...payload);
+
+        this.logger.log(`Emitted event: ${channelName}/${event}`, 'socket');
 
         return;
       }
     });
   }
 
-  public registerChannels(channels: (Constructor & Authorizer)[]): void {
+  public registerChannels(channels: Constructor<Authorizer>[]): void {
     channels.map((channel) => {
       const instance = inject(channel as unknown as Constructor);
 

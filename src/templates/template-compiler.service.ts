@@ -22,7 +22,7 @@ import { TemplateDirectiveDefinition } from './interfaces/template-directive-def
 
 @Service()
 export class TemplateCompiler {
-  private data: Record<string, any> = {};
+  private data: Record<string, unknown> = {};
 
   private directives: TemplateDirectiveDefinition[] = [];
 
@@ -283,6 +283,22 @@ export class TemplateCompiler {
           }
 
           return output;
+        },
+      },
+      {
+        name: 'hotReload',
+        type: 'single',
+        handler: () => {
+          return `
+            <script nonce="${nonce()}">
+              const socket = new WebSocket('ws://localhost:6173');
+
+              socket.onmessage = (payload) => {
+                console.log(456, payload);
+                window.location.reload();
+              };
+            </script>
+          `;
         },
       },
       ...(this.configurator.entries?.templates?.directives ?? []),
@@ -582,7 +598,7 @@ export class TemplateCompiler {
 
   public async compile(
     html: string,
-    data: Record<string, any> = {},
+    data: Record<string, unknown> = {},
     file?: string,
   ): Promise<string> {
     this.data = data;

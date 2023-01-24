@@ -3,10 +3,7 @@ import { Constructor } from '../utils/interfaces/constructor.interface';
 import { ResolveOptions } from './interfaces/resolve-options.interface';
 
 export class Injector {
-  private static cachedInstances = new Map<
-    Constructor,
-    unknown
-  >();
+  private static cachedInstances = new Map<Constructor, unknown>();
 
   public static bind(targets: Constructor | Constructor[]): void {
     if (Array.isArray(targets)) {
