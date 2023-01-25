@@ -70,4 +70,4 @@ Then, set the `DEVELOPER_MODE` variable in `.env` file to `true`.
 
 To compile TypeScript code, run `yarn build:watch` command.
 
-After all these steps, run `yarn start` in the `app-template` directory. Your app will be available on `http://localhost:8000` by default. You can change the port in `.env` file.
+After all these steps, run `yarn start` in the `app-template` directory. Your app will be available on `http://localhost:7000` by default. You can change the port in `.env` file.

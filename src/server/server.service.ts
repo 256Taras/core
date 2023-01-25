@@ -36,9 +36,9 @@ import { ServerOptions } from './interfaces/server-options.interface';
 export class Server {
   private defaultHost = 'localhost';
 
-  private readonly defaultPort: Integer = 8000;
+  private readonly defaultPort: Integer = 7000;
 
-  private readonly defaultWebSocketPort: Integer = 8080;
+  private readonly defaultWebSocketPort: Integer = 7070;
 
   private development = false;
 

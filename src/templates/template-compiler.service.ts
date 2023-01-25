@@ -55,14 +55,14 @@ export class TemplateCompiler {
       {
         name: 'auth',
         type: 'block',
-        handler: (content: string) => {
+        render: (content: string) => {
           return this.authenticator.isAuthentcated() ? content : '';
         },
       },
       {
         name: 'can',
         type: 'block',
-        handler: (
+        render: (
           content: string,
           action: string,
           gate: Constructor<Gate>,
@@ -76,7 +76,7 @@ export class TemplateCompiler {
       {
         name: 'cannot',
         type: 'block',
-        handler: (
+        render: (
           content: string,
           action: string,
           gate: Constructor<Gate>,
@@ -90,14 +90,14 @@ export class TemplateCompiler {
       {
         name: 'csrfToken',
         type: 'single',
-        handler: () => {
+        render: () => {
           return `<input type="hidden" name="_csrfToken" value="${csrfToken()}">`;
         },
       },
       {
         name: 'dev',
         type: 'block',
-        handler: (content: string) => {
+        render: (content: string) => {
           const isDevelopment =
             this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
 
@@ -107,7 +107,7 @@ export class TemplateCompiler {
       {
         name: 'error',
         type: 'single',
-        handler: (fieldName: string, customMessage?: string) => {
+        render: (fieldName: string, customMessage?: string) => {
           const errors = flash<Record<string, string>>('errors') ?? {};
 
           if (fieldName in errors) {
@@ -120,7 +120,7 @@ export class TemplateCompiler {
       {
         name: 'errorBlock',
         type: 'block',
-        handler: (content: string, fieldName: string) => {
+        render: (content: string, fieldName: string) => {
           const errors = flash<Record<string, string>>('errors') ?? {};
 
           if (fieldName in errors) {
@@ -131,21 +131,21 @@ export class TemplateCompiler {
       {
         name: 'guest',
         type: 'block',
-        handler: (content: string) => {
+        render: (content: string) => {
           return this.authenticator.isAuthentcated() ? '' : content;
         },
       },
       {
         name: 'json',
         type: 'single',
-        handler: (data: object, prettyPrint?: boolean) => {
+        render: (data: object, prettyPrint?: boolean) => {
           return JSON.stringify(data, undefined, prettyPrint ? 2 : 0);
         },
       },
       {
         name: 'method',
         type: 'single',
-        handler: (method: string) => {
+        render: (method: string) => {
           method = method.toUpperCase();
 
           return `<input type="hidden" name="_method" value="${method}">`;
@@ -154,7 +154,7 @@ export class TemplateCompiler {
       {
         name: 'prod',
         type: 'block',
-        handler: (content: string) => {
+        render: (content: string) => {
           const isDevelopment =
             this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
 
@@ -164,7 +164,7 @@ export class TemplateCompiler {
       {
         name: 'push',
         type: 'block',
-        handler: (content: string, stack: string) => {
+        render: (content: string, stack: string) => {
           const { stacks } = this.constructor as unknown as {
             stacks: Map<string, string[]>;
           };
@@ -180,7 +180,7 @@ export class TemplateCompiler {
       {
         name: 'include',
         type: 'single',
-        handler: async (partial: string) => {
+        render: async (partial: string) => {
           const file = `${
             this.file ? `${this.file}/..` : 'dist/app/views'
           }/${partial}.html`;
@@ -202,7 +202,7 @@ export class TemplateCompiler {
       {
         name: 'stack',
         type: 'single',
-        handler: (stackName: string) => {
+        render: (stackName: string) => {
           const { stacks } = this.constructor as unknown as {
             stacks: Map<string, string[]>;
           };
@@ -215,7 +215,7 @@ export class TemplateCompiler {
       {
         name: 'vite',
         type: 'single',
-        handler: (fileEntries: string | string[]) => {
+        render: (fileEntries: string | string[]) => {
           let output = '';
           let usesReactRefresh = false;
 
@@ -288,7 +288,7 @@ export class TemplateCompiler {
       {
         name: 'hotReload',
         type: 'single',
-        handler: () => {
+        render: () => {
           return `
             <script nonce="${nonce()}">
               const socket = new WebSocket('ws://localhost:6173');
@@ -659,8 +659,8 @@ export class TemplateCompiler {
 
           const result =
             directive.type === 'single'
-              ? directive.handler(...resolvedArguments)
-              : directive.handler(
+              ? directive.render(...resolvedArguments)
+              : directive.render(
                   match[SegmentIndexes.BlockContent],
                   ...resolvedArguments,
                 );
