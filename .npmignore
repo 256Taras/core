@@ -6,5 +6,5 @@
 .editorconfig
 .eslintrc.json
 .prettierignore
-.prettierrc
+.prettierrc.json
 vitest.config.ts
