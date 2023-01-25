@@ -1,5 +1,6 @@
 import { TemplateDirectiveDefinition } from '../../templates/interfaces/template-directive-definition.interface';
 import { Integer } from '../../utils/types/integer.type';
+import { ValidationRuleDefinition } from '../../validator/interfaces/validation-rule-definition.interface';
 
 export interface AppConfig {
   contentSecurityPolicy?: Record<string, string | string[]> | boolean;
@@ -35,6 +36,9 @@ export interface AppConfig {
   upload?: {
     fieldLimit?: Integer;
     fileLimit?: Integer;
+  };
+  validation?: {
+    rules?: ValidationRuleDefinition[];
   };
   websocket?: {
     port?: Integer;

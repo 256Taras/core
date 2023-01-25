@@ -1,17 +1,22 @@
 import { isIP, isIPv4 } from 'node:net';
+import { Configurator } from '../configurator/configurator.service';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.service';
 import { Response } from '../http/response.service';
 import { Service } from '../injector/decorators/service.decorator';
-import { ValidationRules } from './interfaces/validation-rules.interface';
-import { ValidationRuleDefinition } from './interfaces/validation-rule-definition.interface';
 import { Integer } from '../utils/types/integer.type';
+import { ValidationRuleDefinition } from './interfaces/validation-rule-definition.interface';
+import { ValidationRules } from './interfaces/validation-rules.interface';
 
 @Service()
 export class Validator {
   private rules: ValidationRuleDefinition[] = [];
 
-  constructor(private request: Request, private response: Response) {
+  constructor(
+    private configurator: Configurator,
+    private request: Request,
+    private response: Response,
+  ) {
     this.rules = [
       {
         name: 'accepted',
@@ -24,8 +29,10 @@ export class Validator {
         name: 'date',
         errorMessage: 'Field :field must be a valid date format',
         validate: (value: Date | string | number) => {
-          return (new Date(value) as unknown) !== 'Invalid Date' &&
-            !isNaN(new Date(value) as unknown as number);
+          return (
+            (new Date(value) as unknown) !== 'Invalid Date' &&
+            !isNaN(new Date(value) as unknown as number)
+          );
         },
       },
       {
@@ -181,7 +188,11 @@ export class Validator {
       {
         name: 'otherThan',
         errorMessage: `Field :field must be other than :value`,
-        validate: (value: string | number, fieldName: string, search: string | number) => {
+        validate: (
+          value: string | number,
+          fieldName: string,
+          search: string | number,
+        ) => {
           return value !== search;
         },
       },
@@ -229,6 +240,7 @@ export class Validator {
           return usernameRegexp.test(value);
         },
       },
+      ...(this.configurator.entries?.validation?.rules ?? []),
     ];
   }
 
@@ -266,7 +278,14 @@ export class Validator {
             errors[fieldName] = [];
           }
 
-          errors[fieldName].push(ruleObject.errorMessage.replaceAll(':field', fieldName).replaceAll(':value', Array.isArray(ruleValue) ? ruleValue.join(', ') : String(ruleValue)));
+          errors[fieldName].push(
+            ruleObject.errorMessage
+              .replaceAll(':field', fieldName)
+              .replaceAll(
+                ':value',
+                Array.isArray(ruleValue) ? ruleValue.join(', ') : String(ruleValue),
+              ),
+          );
 
           if (checkOnly) {
             return false;
