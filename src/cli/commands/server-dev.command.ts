@@ -52,7 +52,7 @@ export class ServerDevCommand {
       if (flags.open) {
         runCommand(
           `${openAliases[process.platform] ?? 'xdg-open'} http://localhost:${
-            env<number>('PORT') ?? 8000
+            env<number>('PORT') ?? 7000
           }`,
         );
       }
