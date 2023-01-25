@@ -4,332 +4,232 @@ import { Request } from '../http/request.service';
 import { Response } from '../http/response.service';
 import { Service } from '../injector/decorators/service.decorator';
 import { ValidationRules } from './interfaces/validation-rules.interface';
+import { ValidationRuleDefinition } from './interfaces/validation-rule-definition.interface';
+import { Integer } from '../utils/types/integer.type';
 
 @Service()
 export class Validator {
-  constructor(private request: Request, private response: Response) {}
+  private rules: ValidationRuleDefinition[] = [];
 
-  private validateAccepted(
-    value: string,
-    isAccepted: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if (
-      (isAccepted && !value) ||
-      ![true, 'true', 'on', 'yes', '1', 1].includes(value)
-    ) {
-      return `Field ${fieldName} must be accepted`;
-    }
+  constructor(private request: Request, private response: Response) {
+    this.rules = [
+      {
+        name: 'accepted',
+        errorMessage: 'Field :field must be accepted',
+        validate: (value: string) => {
+          return [true, 'true', 'on', 'yes', '1', 1].includes(value);
+        },
+      },
+      {
+        name: 'date',
+        errorMessage: 'Field :field must be a valid date format',
+        validate: (value: Date | string | number) => {
+          return (new Date(value) as unknown) !== 'Invalid Date' &&
+            !isNaN(new Date(value) as unknown as number);
+        },
+      },
+      {
+        name: 'doesntEndWith',
+        errorMessage: `Field :field must not end with ':value'`,
+        validate: (value: string, fieldName: string, search: string) => {
+          return !value.endsWith(search);
+        },
+      },
+      {
+        name: 'doesntStartWith',
+        errorMessage: `Field :field must not start with ':value'`,
+        validate: (value: string, fieldName: string, search: string) => {
+          return !value.startsWith(search);
+        },
+      },
+      {
+        name: 'endsWith',
+        errorMessage: `Field :field must end with ':value'`,
+        validate: (value: string, fieldName: string, search: string) => {
+          return value.endsWith(search);
+        },
+      },
+      {
+        name: 'email',
+        errorMessage: `Field :field must be a valid email`,
+        validate: (value: string) => {
+          const emailRegexp =
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    return true;
-  }
+          return emailRegexp.test(value);
+        },
+      },
+      {
+        name: 'float',
+        errorMessage: `Field :field must be a floating point number`,
+        validate: (value: number) => {
+          return !Number.isInteger(value) && !isNaN(value);
+        },
+      },
+      {
+        name: 'in',
+        errorMessage: `Field :field must be a value from [:value]`,
+        validate: (value: string, fieldName: string, array: string[]) => {
+          return array.includes(value);
+        },
+      },
+      {
+        name: 'integer',
+        errorMessage: `Field :field must be an integer number`,
+        validate: (value: number) => {
+          return Number.isInteger(value) && !isNaN(value);
+        },
+      },
+      {
+        name: 'ip',
+        errorMessage: `Field :field must be a valid IP address`,
+        validate: (value: string) => {
+          return isIP(value);
+        },
+      },
+      {
+        name: 'ipv4',
+        errorMessage: `Field :field must be a valid IPv4 address`,
+        validate: (value: string) => {
+          return isIPv4(value);
+        },
+      },
+      {
+        name: 'length',
+        errorMessage: `Field :field must be a :value characters long`,
+        validate: (value: string, fieldName: string, length: Integer) => {
+          return value.length === length;
+        },
+      },
+      {
+        name: 'lowercase',
+        errorMessage: `Field :field must be a lowercased string`,
+        validate: (value: string) => {
+          return value === value.toLowerCase();
+        },
+      },
+      {
+        name: 'max',
+        errorMessage: `Field :field must be less than :value`,
+        validate: (value: string, fieldName: string, maxValue: number) => {
+          return value.length < maxValue;
+        },
+      },
+      {
+        name: 'maxOrEqual',
+        errorMessage: `Field :field must be less than or equal to :value`,
+        validate: (value: string, fieldName: string, maxValue: number) => {
+          return value.length <= maxValue;
+        },
+      },
+      {
+        name: 'maxLength',
+        errorMessage: `Field :field must be shorter than :value characters`,
+        validate: (value: string, fieldName: string, length: Integer) => {
+          return value.length < length;
+        },
+      },
+      {
+        name: 'maxOrEqualLength',
+        errorMessage: `Field :field must be shorter than :value characters or equal length`,
+        validate: (value: string, fieldName: string, length: Integer) => {
+          return value.length <= length;
+        },
+      },
+      {
+        name: 'min',
+        errorMessage: `Field :field must be greater than :value`,
+        validate: (value: string, fieldName: string, maxValue: number) => {
+          return value.length > maxValue;
+        },
+      },
+      {
+        name: 'minOrEqual',
+        errorMessage: `Field :field must be greater than or equal to :value`,
+        validate: (value: string, fieldName: string, maxValue: number) => {
+          return value.length >= maxValue;
+        },
+      },
+      {
+        name: 'minLength',
+        errorMessage: `Field :field must be longer than :value characters`,
+        validate: (value: string, fieldName: string, length: Integer) => {
+          return value.length > length;
+        },
+      },
+      {
+        name: 'minOrEqualLength',
+        errorMessage: `Field :field must be longer than :value characters or equal length`,
+        validate: (value: string, fieldName: string, length: Integer) => {
+          return value.length >= length;
+        },
+      },
+      {
+        name: 'notIn',
+        errorMessage: `Field :field must not be a value from [:value]`,
+        validate: (value: string, fieldName: string, array: string[]) => {
+          return !array.includes(value);
+        },
+      },
+      {
+        name: 'numeric',
+        errorMessage: `Field :field must be numeric`,
+        validate: (value: number) => {
+          return !isNaN(value);
+        },
+      },
+      {
+        name: 'otherThan',
+        errorMessage: `Field :field must be other than :value`,
+        validate: (value: string | number, fieldName: string, search: string | number) => {
+          return value !== search;
+        },
+      },
+      {
+        name: 'regexp',
+        errorMessage: `Field :field must follow the :value pattern`,
+        validate: (value: string, fieldName: string, regexp: RegExp) => {
+          return regexp.test(value);
+        },
+      },
+      {
+        name: 'required',
+        errorMessage: `Field :field is required`,
+        validate: (value: string) => {
+          return value && value !== '' && value !== null;
+        },
+      },
+      {
+        name: 'sameAs',
+        errorMessage: `Field :field must be same as :value`,
+        validate: (value: string, fieldName: string, secondField: string) => {
+          return value === this.request.input(secondField);
+        },
+      },
+      {
+        name: 'startsWith',
+        errorMessage: `Field :field must start with ':value'`,
+        validate: (value: string, fieldName: string, search: string) => {
+          return value.startsWith(search);
+        },
+      },
+      {
+        name: 'uppercase',
+        errorMessage: `Field :field must be an uppercased string`,
+        validate: (value: string) => {
+          return value.toUpperCase() === value;
+        },
+      },
+      {
+        name: 'username',
+        errorMessage: `Field :field must be a valid user name`,
+        validate: (value: string) => {
+          const usernameRegexp = /^[a-z][a-z0-9]*(?:[ _-][a-z0-9]*)*$/iu;
 
-  private validateDate(
-    value: string,
-    isDate: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if (
-      (isDate && (new Date(value) as unknown) === 'Invalid Date') ||
-      isNaN(new Date(value) as unknown as number)
-    ) {
-      return `Field ${fieldName} must be a valid date format`;
-    }
-
-    return true;
-  }
-
-  private validateDoesntEndWith(
-    value: string,
-    search: string,
-    fieldName: string,
-  ): boolean | string {
-    if (value.endsWith(search)) {
-      return `Field ${fieldName} must not end with '${search}'`;
-    }
-
-    return true;
-  }
-
-  private validateDoesntStartWith(
-    value: string,
-    search: string,
-    fieldName: string,
-  ): boolean | string {
-    if (value.endsWith(search)) {
-      return `Field ${fieldName} must not start with '${search}'`;
-    }
-
-    return true;
-  }
-
-  private validateEndsWith(
-    value: string,
-    search: string,
-    fieldName: string,
-  ): boolean | string {
-    if (!value.endsWith(search)) {
-      return `Field ${fieldName} must end with '${search}'`;
-    }
-
-    return true;
-  }
-
-  private validateEmail(
-    value: string,
-    isEmail: boolean,
-    fieldName: string,
-  ): boolean | string {
-    const emailRegexp =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    if (isEmail && !emailRegexp.test(value)) {
-      return `Field ${fieldName} must be a valid email`;
-    }
-
-    return true;
-  }
-
-  private validateFloat(
-    value: number,
-    isFloat: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if ((isFloat && Number.isInteger(value)) || isNaN(value)) {
-      return `Field ${fieldName} must be a floating point number`;
-    }
-
-    return true;
-  }
-
-  private validateIn(
-    value: string,
-    array: any[],
-    fieldName: string,
-  ): boolean | string {
-    if (!array.includes(value)) {
-      return `Field ${fieldName} must be a value from [${array.join(', ')}]`;
-    }
-
-    return true;
-  }
-
-  private validateInteger(
-    value: number,
-    isInteger: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if ((isInteger && !Number.isInteger(value)) || isNaN(value)) {
-      return `Field ${fieldName} must be an integer number`;
-    }
-
-    return true;
-  }
-
-  private validateIp(
-    value: string,
-    ip: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if (ip && !isIP(value)) {
-      return `Field ${fieldName} must be a valid IP address`;
-    }
-
-    return true;
-  }
-
-  private validateIpv4(
-    value: string,
-    ipv4: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if (ipv4 && !isIPv4(value)) {
-      return `Field ${fieldName} must be a valid IPv4 address`;
-    }
-
-    return true;
-  }
-
-  private validateLength(
-    value: string,
-    length: number,
-    fieldName: string,
-  ): boolean | string {
-    if (value.length !== length) {
-      return `Field ${fieldName} must be ${length} characters long`;
-    }
-
-    return true;
-  }
-
-  private validateLowercase(
-    value: string,
-    lowercase: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if (lowercase && value !== value.toLowerCase()) {
-      return `Field ${fieldName} must be a lowercased string`;
-    }
-
-    return true;
-  }
-
-  private validateMax(
-    value: number,
-    length: number,
-    fieldName: string,
-  ): boolean | string {
-    if (isNaN(value) || Number(value) > length) {
-      return `Field ${fieldName} must be less than ${length}`;
-    }
-
-    return true;
-  }
-
-  private validateMaxLength(
-    value: string,
-    length: number,
-    fieldName: string,
-  ): boolean | string {
-    if (value.length > length) {
-      return `Field ${fieldName} must be shorther than ${length} characters`;
-    }
-
-    return true;
-  }
-
-  private validateMin(
-    value: number,
-    length: number,
-    fieldName: string,
-  ): boolean | string {
-    if (isNaN(value) || Number(value) < length) {
-      return `Field ${fieldName} must be greater than ${length}`;
-    }
-
-    return true;
-  }
-
-  private validateMinLength(
-    value: string,
-    length: number,
-    fieldName: string,
-  ): boolean | string {
-    if (value.length < length) {
-      return `Field ${fieldName} must be longer than ${length} characters`;
-    }
-
-    return true;
-  }
-
-  private validateNotIn(
-    value: string,
-    array: any[],
-    fieldName: string,
-  ): boolean | string {
-    if (array.includes(value)) {
-      return `Field ${fieldName} must not be a value from [${array.join(', ')}]`;
-    }
-
-    return true;
-  }
-
-  private validateNumeric(
-    value: number,
-    isNumeric: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if (isNumeric && isNaN(value)) {
-      return `Field ${fieldName} must be numeric`;
-    }
-
-    return true;
-  }
-
-  private validateOtherThan(
-    value: string,
-    search: string,
-    fieldName: string,
-  ): boolean | string {
-    if (value === search) {
-      return `Field ${fieldName} must be other than '${search}'`;
-    }
-
-    return true;
-  }
-
-  private validateRegexp(
-    value: string,
-    regexp: RegExp,
-    fieldName: string,
-  ): boolean | string {
-    if (!regexp.test(value)) {
-      return `Field ${fieldName} must follow the ${regexp.toString()} pattern`;
-    }
-
-    return true;
-  }
-
-  private validateRequired(
-    value: string,
-    isRequired: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if (isRequired && (!value || value === '')) {
-      return `Field ${fieldName} is required`;
-    }
-
-    return true;
-  }
-
-  private validateSameAs(
-    value: string,
-    secondField: string,
-    fieldName: string,
-  ): boolean | string {
-    if (value !== this.request.input(secondField)) {
-      return `Field ${fieldName} must be same as ${secondField}`;
-    }
-
-    return true;
-  }
-
-  private validateStartsWith(
-    value: string,
-    search: string,
-    fieldName: string,
-  ): boolean | string {
-    if (!value.startsWith(search)) {
-      return `Field ${fieldName} must start with '${search}'`;
-    }
-
-    return true;
-  }
-
-  private validateUppercase(
-    value: string,
-    uppercase: boolean,
-    fieldName: string,
-  ): boolean | string {
-    if (uppercase && value !== value.toUpperCase()) {
-      return `Field ${fieldName} must be an uppercased string`;
-    }
-
-    return true;
-  }
-
-  private validateUsername(
-    value: string,
-    isUsername: boolean,
-    fieldName: string,
-  ): boolean | string {
-    const usernameRegexp = /^[a-z][a-z0-9]*(?:[ _-][a-z0-9]*)*$/iu;
-
-    if (isUsername && !usernameRegexp.test(value)) {
-      return `Field ${fieldName} must be a valid username`;
-    }
-
-    return true;
+          return usernameRegexp.test(value);
+        },
+      },
+    ];
   }
 
   public $setRequest(request: Request): void {
@@ -341,59 +241,32 @@ export class Validator {
   }
 
   public assert(rules: Record<string, ValidationRules>, checkOnly = false): boolean {
-    const ruleMapper: Record<string, Function> = {
-      accepted: this.validateAccepted,
-      date: this.validateDate,
-      doesntEndWith: this.validateDoesntEndWith,
-      doesntStartWith: this.validateDoesntStartWith,
-      endsWith: this.validateEndsWith,
-      email: this.validateEmail,
-      float: this.validateFloat,
-      in: this.validateIn,
-      integer: this.validateInteger,
-      ip: this.validateIp,
-      ipv4: this.validateIpv4,
-      length: this.validateLength,
-      lowercase: this.validateLowercase,
-      max: this.validateMax,
-      maxLength: this.validateMaxLength,
-      min: this.validateMin,
-      minLength: this.validateMinLength,
-      notIn: this.validateNotIn,
-      numeric: this.validateNumeric,
-      otherThan: this.validateOtherThan,
-      regexp: this.validateRegexp,
-      required: this.validateRequired,
-      sameAs: this.validateSameAs,
-      startsWith: this.validateStartsWith,
-      uppercase: this.validateUppercase,
-      username: this.validateUsername,
-    };
-
     const errors: Record<string, string[]> = {};
 
     for (const [fieldName, ruleSet] of Object.entries(rules)) {
       const fieldValue = this.request.input(fieldName);
 
       for (const [rule, ruleValue] of Object.entries(ruleSet)) {
-        if (!(rule in ruleMapper)) {
+        const ruleObject = this.rules.find((ruleData) => ruleData.name === rule);
+
+        if (!ruleObject) {
           throw new Error(`Invalid validation rule '${rule}'`, {
             cause: new Error('Provide a valid validation rule'),
           });
         }
 
-        const result = ruleMapper[rule].apply(this, [
+        const passes = ruleObject.validate.apply(this, [
           fieldValue,
-          ruleValue,
           fieldName,
+          ruleValue,
         ]);
 
-        if (typeof result === 'string') {
+        if (!passes) {
           if (!(fieldName in errors)) {
             errors[fieldName] = [];
           }
 
-          errors[fieldName].push(result);
+          errors[fieldName].push(ruleObject.errorMessage.replaceAll(':field', fieldName).replaceAll(':value', Array.isArray(ruleValue) ? ruleValue.join(', ') : String(ruleValue)));
 
           if (checkOnly) {
             return false;
