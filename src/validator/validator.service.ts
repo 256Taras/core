@@ -286,13 +286,18 @@ export class Validator {
     this.response = response;
   }
 
-  public assert(rules: Record<string, ValidationRules>, checkOnly = false): boolean {
+  public assert<T = Record<string, any>>(
+    rules: Record<keyof T, ValidationRules>,
+    checkOnly = false,
+  ): boolean {
     const errors: Record<string, string[]> = {};
 
-    for (const [fieldName, ruleSet] of Object.entries(rules)) {
+    for (const [fieldName, ruleSet] of Object.entries<
+      Record<string, Record<keyof T, ValidationRules>> | any
+    >(rules)) {
       const fieldValue = this.request.input(fieldName);
 
-      for (const [rule, ruleValue] of Object.entries(ruleSet)) {
+      for (const [rule, ruleValue] of Object.entries<any>(ruleSet)) {
         const ruleObject = this.rules.find((ruleData) => ruleData.name === rule);
 
         if (!ruleObject) {
