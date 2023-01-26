@@ -4,6 +4,7 @@ import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.service';
 import { Response } from '../http/response.service';
 import { Service } from '../injector/decorators/service.decorator';
+import { Translator } from '../translator/translator.service';
 import { Integer } from '../utils/types/integer.type';
 import { ValidationRuleDefinition } from './interfaces/validation-rule-definition.interface';
 import { ValidationRules } from './interfaces/validation-rules.interface';
@@ -16,6 +17,7 @@ export class Validator {
     private configurator: Configurator,
     private request: Request,
     private response: Response,
+    private translator: Translator,
   ) {
     this.rules = [
       {
@@ -318,7 +320,8 @@ export class Validator {
           }
 
           errors[fieldName].push(
-            ruleObject.errorMessage
+            this.translator
+              .get(ruleObject.errorMessage)
               .replaceAll(':field', fieldName)
               .replaceAll(
                 ':value',
