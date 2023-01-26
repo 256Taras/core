@@ -1,4 +1,4 @@
-import { isIP, isIPv4 } from 'node:net';
+import { isIP, isIPv4, isIPv6 } from 'node:net';
 import { Configurator } from '../configurator/configurator.service';
 import { StatusCode } from '../http/enums/status-code.enum';
 import { Request } from '../http/request.service';
@@ -26,6 +26,13 @@ export class Validator {
         },
       },
       {
+        name: 'boolean',
+        errorMessage: 'Field :field must be a boolean value',
+        validate: (value: string) => {
+          return [true, false, 'true', 'false', '1', '0', 1, 0].includes(value);
+        },
+      },
+      {
         name: 'date',
         errorMessage: 'Field :field must be a valid date format',
         validate: (value: Date | string | number) => {
@@ -33,6 +40,13 @@ export class Validator {
             (new Date(value) as unknown) !== 'Invalid Date' &&
             !isNaN(new Date(value) as unknown as number)
           );
+        },
+      },
+      {
+        name: 'declined',
+        errorMessage: 'Field :field must be declined',
+        validate: (value: string) => {
+          return [false, 'false', 'ooo', 'no', '0', 0].includes(value);
         },
       },
       {
@@ -102,6 +116,26 @@ export class Validator {
         },
       },
       {
+        name: 'ipv6',
+        errorMessage: `Field :field must be a valid IPv6 address`,
+        validate: (value: string) => {
+          return isIPv6(value);
+        },
+      },
+      {
+        name: 'json',
+        errorMessage: `Field :field must be a valid JSON string`,
+        validate: (value: string) => {
+          try {
+            JSON.parse(value);
+          } catch {
+            return false;
+          }
+
+          return true;
+        },
+      },
+      {
         name: 'length',
         errorMessage: `Field :field must be a :value characters long`,
         validate: (value: string, fieldName: string, length: Integer) => {
@@ -123,17 +157,17 @@ export class Validator {
         },
       },
       {
-        name: 'maxOrEqual',
-        errorMessage: `Field :field must be less than or equal to :value`,
-        validate: (value: string, fieldName: string, maxValue: number) => {
-          return value.length <= maxValue;
-        },
-      },
-      {
         name: 'maxLength',
         errorMessage: `Field :field must be shorter than :value characters`,
         validate: (value: string, fieldName: string, length: Integer) => {
           return value.length < length;
+        },
+      },
+      {
+        name: 'maxOrEqual',
+        errorMessage: `Field :field must be less than or equal to :value`,
+        validate: (value: string, fieldName: string, maxValue: number) => {
+          return value.length <= maxValue;
         },
       },
       {
@@ -151,17 +185,17 @@ export class Validator {
         },
       },
       {
-        name: 'minOrEqual',
-        errorMessage: `Field :field must be greater than or equal to :value`,
-        validate: (value: string, fieldName: string, maxValue: number) => {
-          return value.length >= maxValue;
-        },
-      },
-      {
         name: 'minLength',
         errorMessage: `Field :field must be longer than :value characters`,
         validate: (value: string, fieldName: string, length: Integer) => {
           return value.length > length;
+        },
+      },
+      {
+        name: 'minOrEqual',
+        errorMessage: `Field :field must be greater than or equal to :value`,
+        validate: (value: string, fieldName: string, maxValue: number) => {
+          return value.length >= maxValue;
         },
       },
       {
