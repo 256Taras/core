@@ -1,15 +1,16 @@
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
-import { tmpdir } from 'node:os';
 import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { logInfo } from '../../logger/functions/log-info.function';
 import { cloneFiles } from '../../utils/functions/clone-files.function';
 import { debounce } from '../../utils/functions/debounce.function';
 import { env } from '../../utils/functions/env.function';
 import { runCommand } from '../../utils/functions/run-command.function';
 import { Command } from '../decorators/command.decorator';
+import { WebClientAlias } from '../enums/web-client-alias.enum';
 import { setupStdin } from '../functions/setup-stdin.function';
 
 @Command({
@@ -40,30 +41,25 @@ export class ServerDevCommand {
       });
     }
 
-    const watcherOptions = {
+    const watchOptions = {
       ignoreInitial: true,
       cwd: process.cwd(),
     };
 
-    const sourceWatcher = watch('dist/**/*.js', watcherOptions);
-    const viewWatcher = watch('src/**/*.html', watcherOptions);
-    const envWatcher = watch('.env', watcherOptions);
+    const envWatcher = watch('.env', watchOptions);
     const serverTempWatcher = watch(serverTempPath);
-
-    enum WebClientAlias {
-      darwin = 'open',
-      linux = 'sensible-browser',
-      win32 = 'explorer',
-    }
+    const sourceWatcher = watch('dist/**/*.js', watchOptions);
+    const viewWatcher = watch('src/**/*.html', watchOptions);
 
     let openedWebClient = false;
 
     serverTempWatcher.on('add', () => {
       if (flags.open && !openedWebClient) {
         runCommand(
-          `${WebClientAlias[process.platform as 'darwin' | 'linux' | 'win32'] ?? 'xdg-open'} http://localhost:${
-            env<number>('PORT') ?? 7000
-          }`,
+          `${
+            WebClientAlias[process.platform as 'darwin' | 'linux' | 'win32'] ??
+            'xdg-open'
+          } http://localhost:${env<number>('PORT') ?? 7000}`,
         );
 
         openedWebClient = true;
@@ -93,7 +89,7 @@ export class ServerDevCommand {
     if (env<boolean>('DEVELOPER_MODE')) {
       const frameworkWatcher = watch(
         'node_modules/@northle/core/dist',
-        watcherOptions,
+        watchOptions,
       );
 
       frameworkWatcher.on('change', restartProcess);

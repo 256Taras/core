@@ -5,12 +5,7 @@ import { Service } from '../injector/decorators/service.decorator';
 import { Session } from '../session/session.service';
 import { HttpMethod } from './enums/http-method.enum';
 import { File } from './file.class';
-
-interface FormFileField {
-  data: Buffer;
-  filename: string;
-  mimetype: string;
-}
+import { FormFileField } from './interfaces/form-file-field.interface';
 
 @Service()
 export class Request {
@@ -20,14 +15,14 @@ export class Request {
 
   constructor(private encrypter: Encrypter, private session: Session) {}
 
+  public $getInstance(): FastifyRequest | null {
+    return this.instance;
+  }
+
   public $generateNonce(): this {
     this.cspNonce = this.encrypter.randomBytes(16, 'base64');
 
     return this;
-  }
-
-  public $getInstance(): FastifyRequest | null {
-    return this.instance;
   }
 
   public $setInstance(instance: FastifyRequest): this {
@@ -40,12 +35,12 @@ export class Request {
     return (this.instance?.body as Record<string, string>) ?? {};
   }
 
-  public get cookies(): Record<string, string | undefined> {
-    return this.instance?.cookies ?? {};
-  }
-
   public cookie(cookie: string): string | null {
     return this.cookies[cookie] ?? null;
+  }
+
+  public get cookies(): Record<string, string | undefined> {
+    return this.instance?.cookies ?? {};
   }
 
   public file(name: string): File[] | null {
