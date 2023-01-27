@@ -2,6 +2,8 @@ import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { fork } from 'node:child_process';
 import { tmpdir } from 'node:os';
+import { existsSync } from 'node:fs';
+import { mkdir } from 'node:fs/promises';
 import { logInfo } from '../../logger/functions/log-info.function';
 import { cloneFiles } from '../../utils/functions/clone-files.function';
 import { debounce } from '../../utils/functions/debounce.function';
@@ -32,6 +34,12 @@ export class ServerDevCommand {
 
     const entryFile = 'dist/main.js';
 
+    if (!existsSync(serverTempPath)) {
+      await mkdir(serverTempPath, {
+        recursive: true,
+      });
+    }
+
     const watcherOptions = {
       ignoreInitial: true,
       cwd: process.cwd(),
@@ -42,19 +50,23 @@ export class ServerDevCommand {
     const envWatcher = watch('.env', watcherOptions);
     const serverTempWatcher = watch(serverTempPath);
 
-    const openAliases: Record<string, string> = {
-      darwin: 'open',
-      linux: 'sensible-browser',
-      win32: 'explorer',
-    };
+    enum WebClientAlias {
+      darwin = 'open',
+      linux = 'sensible-browser',
+      win32 = 'explorer',
+    }
+
+    let openedWebClient = false;
 
     serverTempWatcher.on('add', () => {
-      if (flags.open) {
+      if (flags.open && !openedWebClient) {
         runCommand(
-          `${openAliases[process.platform] ?? 'xdg-open'} http://localhost:${
+          `${WebClientAlias[process.platform as 'darwin' | 'linux' | 'win32'] ?? 'xdg-open'} http://localhost:${
             env<number>('PORT') ?? 7000
           }`,
         );
+
+        openedWebClient = true;
       }
     });
 
