@@ -15,14 +15,14 @@ export class Request {
 
   constructor(private encrypter: Encrypter, private session: Session) {}
 
-  public $getInstance(): FastifyRequest | null {
-    return this.instance;
-  }
-
   public $generateNonce(): this {
     this.cspNonce = this.encrypter.randomBytes(16, 'base64');
 
     return this;
+  }
+
+  public $getInstance(): FastifyRequest | null {
+    return this.instance;
   }
 
   public $setInstance(instance: FastifyRequest): this {

@@ -78,7 +78,7 @@ export class ServerDevCommand {
       childProcess.kill();
 
       childProcess = fork(entryFile, processOptions);
-    }, 550);
+    }, env<boolean>('DEVELOPER_MODE') ? 400 : 550);
 
     sourceWatcher.on('all', async () => {
       restartProcess();
