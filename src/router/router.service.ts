@@ -1,21 +1,21 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { FastifyInstance } from 'fastify';
-import { Encrypter } from '../crypto/encrypter.service';
-import { EncryptionAlgorithm } from '../crypto/types/encryption-algorithm.type';
-import { Handler } from '../handler/handler.service';
-import { DownloadResponse } from '../http/download-response.service';
-import { HttpMethod } from '../http/enums/http-method.enum';
-import { JsonResponse } from '../http/json-response.service';
-import { RedirectBackResponse } from '../http/redirect-back-response.service';
-import { RedirectResponse } from '../http/redirect-response.service';
-import { Request } from '../http/request.service';
-import { Response } from '../http/response.service';
-import { ViewResponse } from '../http/view-response.service';
-import { Service } from '../injector/decorators/service.decorator';
-import { inject } from '../injector/functions/inject.function';
-import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Integer } from '../utils/types/integer.type';
-import { Route } from './interfaces/route.interface';
+import { Encrypter } from '../crypto/encrypter.service.js';
+import { EncryptionAlgorithm } from '../crypto/types/encryption-algorithm.type.js';
+import { Handler } from '../handler/handler.service.js';
+import { DownloadResponse } from '../http/download-response.service.js';
+import { HttpMethod } from '../http/enums/http-method.enum.js';
+import { JsonResponse } from '../http/json-response.service.js';
+import { RedirectBackResponse } from '../http/redirect-back-response.service.js';
+import { RedirectResponse } from '../http/redirect-response.service.js';
+import { Request } from '../http/request.service.js';
+import { Response } from '../http/response.service.js';
+import { ViewResponse } from '../http/view-response.service.js';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
+import { Constructor } from '../utils/interfaces/constructor.interface.js';
+import { Integer } from '../utils/types/integer.type.js';
+import { Route } from './interfaces/route.interface.js';
 
 @Service()
 export class Router {

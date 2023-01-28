@@ -1,12 +1,12 @@
 import chalk from 'chalk';
-import { Service } from '../injector/decorators/service.decorator';
-import { stripAnsiChars } from '../utils/functions/strip-ansi-chars.function';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { stripAnsiChars } from '../utils/functions/strip-ansi-chars.function.js';
 import {
   LOGGER_COLOR_GREEN,
   LOGGER_COLOR_RED,
   LOGGER_COLOR_YELLOW,
-} from './constants';
-import { clearLine } from './functions/clear-line.function';
+} from './constants.js';
+import { clearLine } from './functions/clear-line.function.js';
 
 @Service()
 export class Logger {

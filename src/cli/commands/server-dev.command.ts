@@ -4,14 +4,14 @@ import { fork } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { logInfo } from '../../logger/functions/log-info.function';
-import { cloneFiles } from '../../utils/functions/clone-files.function';
-import { debounce } from '../../utils/functions/debounce.function';
-import { env } from '../../utils/functions/env.function';
-import { runCommand } from '../../utils/functions/run-command.function';
-import { Command } from '../decorators/command.decorator';
-import { WebClientAlias } from '../enums/web-client-alias.enum';
-import { setupStdin } from '../functions/setup-stdin.function';
+import { logInfo } from '../../logger/functions/log-info.function.js';
+import { cloneFiles } from '../../utils/functions/clone-files.function.js';
+import { debounce } from '../../utils/functions/debounce.function.js';
+import { env } from '../../utils/functions/env.function.js';
+import { runCommand } from '../../utils/functions/run-command.function.js';
+import { Command } from '../decorators/command.decorator.js';
+import { WebClientAlias } from '../enums/web-client-alias.enum.js';
+import { setupStdin } from '../functions/setup-stdin.function.js';
 
 @Command({
   signature: 'server:dev',
@@ -66,18 +66,14 @@ export class ServerDevCommand {
       }
     });
 
-    const processOptions = {
-      execArgv: ['--experimental-specifier-resolution=node', '--no-warnings'],
-    };
-
-    let childProcess = fork(entryFile, processOptions);
+    let childProcess = fork(entryFile);
 
     const restartProcess = debounce(() => {
       logInfo('Reloading development server...');
 
       childProcess.kill();
 
-      childProcess = fork(entryFile, processOptions);
+      childProcess = fork(entryFile);
     }, env<boolean>('DEVELOPER_MODE') ? 400 : 550);
 
     sourceWatcher.on('all', async () => {

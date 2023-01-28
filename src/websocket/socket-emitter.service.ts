@@ -1,12 +1,12 @@
 import { pathToRegexp } from 'path-to-regexp';
-import { Service } from '../injector/decorators/service.decorator';
-import { inject } from '../injector/functions/inject.function';
-import { Logger } from '../logger/logger.service';
-import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Integer } from '../utils/types/integer.type';
-import { Authorizer } from './interfaces/authorizer.interface';
-import { SocketServer } from './socket-server.service';
-import { Channel } from './types/channel.type';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
+import { Logger } from '../logger/logger.service.js';
+import { Constructor } from '../utils/interfaces/constructor.interface.js';
+import { Integer } from '../utils/types/integer.type.js';
+import { Authorizer } from './interfaces/authorizer.interface.js';
+import { SocketServer } from './socket-server.service.js';
+import { Channel } from './types/channel.type.js';
 
 @Service()
 export class SocketEmitter {

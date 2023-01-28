@@ -1,4 +1,4 @@
-import { HttpMethod } from '../../http/enums/http-method.enum';
+import { HttpMethod } from '../../http/enums/http-method.enum.js';
 
 export interface Route {
   url: string;

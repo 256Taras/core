@@ -1,7 +1,7 @@
-import { HttpMethod } from '../../http/enums/http-method.enum';
-import { inject } from '../../injector/functions/inject.function';
-import { Route } from '../interfaces/route.interface';
-import { Router } from '../router.service';
+import { HttpMethod } from '../../http/enums/http-method.enum.js';
+import { inject } from '../../injector/functions/inject.function.js';
+import { Route } from '../interfaces/route.interface.js';
+import { Router } from '../router.service.js';
 
 export function createRoute(
   url: string,

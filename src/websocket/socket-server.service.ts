@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
-import { Service } from '../injector/decorators/service.decorator';
-import { Logger } from '../logger/logger.service';
-import { Integer } from '../utils/types/integer.type';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { Logger } from '../logger/logger.service.js';
+import { Integer } from '../utils/types/integer.type.js';
 
 @Service()
 export class SocketServer {
@@ -12,7 +12,10 @@ export class SocketServer {
   constructor(private logger: Logger) {}
 
   public emit(event: string, ...payload: unknown[]): void {
-    this.server.emit(event, ...payload);
+    // this.server.emit(event, ...payload);
+    this.server.clients.forEach((client) => {
+      client.send(JSON.stringify({ event, payload }));
+    });
   }
 
   public get name(): string | null {
@@ -26,7 +29,7 @@ export class SocketServer {
       port,
     });
 
-    if (this.name !== '$northle') {
+    if (this.name !== '$northleSocket') {
       this.logger.log(`Server ${this.name} listening on ws://${port}`, 'socket');
     }
 

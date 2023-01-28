@@ -1,7 +1,7 @@
-import { inject } from '../../injector/functions/inject.function';
-import { callerFile } from '../../utils/functions/caller-file.function';
-import { resolveViewFile } from '../../utils/functions/resolve-view-file.function';
-import { ViewResponse } from '../view-response.service';
+import { inject } from '../../injector/functions/inject.function.js';
+import { callerFile } from '../../utils/functions/caller-file.function.js';
+import { resolveViewFile } from '../../utils/functions/resolve-view-file.function.js';
+import { ViewResponse } from '../view-response.service.js';
 
 export function view(
   file: string,

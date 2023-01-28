@@ -1,5 +1,5 @@
-import { inject } from '../../injector/functions/inject.function';
-import { Translator } from '../translator.service';
+import { inject } from '../../injector/functions/inject.function.js';
+import { Translator } from '../translator.service.js';
 
 export function useTranslator(): [
   (text: string) => string,

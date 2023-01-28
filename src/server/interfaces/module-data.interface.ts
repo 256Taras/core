@@ -1,4 +1,4 @@
-import { Constructor } from '../../utils/interfaces/constructor.interface';
+import { Constructor } from '../../utils/interfaces/constructor.interface.js';
 
 export interface ModuleData {
   imports?: Constructor[];

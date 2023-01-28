@@ -1,11 +1,11 @@
 import { FastifyRequest } from 'fastify';
 import { parse as parseUrl } from 'node:url';
-import { Encrypter } from '../crypto/encrypter.service';
-import { Service } from '../injector/decorators/service.decorator';
-import { Session } from '../session/session.service';
-import { HttpMethod } from './enums/http-method.enum';
-import { File } from './file.class';
-import { FormFileField } from './interfaces/form-file-field.interface';
+import { Encrypter } from '../crypto/encrypter.service.js';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { Session } from '../session/session.service.js';
+import { HttpMethod } from './enums/http-method.enum.js';
+import { File } from './file.class.js';
+import { FormFileField } from './interfaces/form-file-field.interface.js';
 
 @Service()
 export class Request {

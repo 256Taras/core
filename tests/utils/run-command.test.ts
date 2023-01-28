@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { runCommand } from '../../src/utils/functions/run-command.function';
+import { runCommand } from '../../src/utils/functions/run-command.function.js';
 
 describe('runCommand function', () => {
   it('executes system commands', () => {

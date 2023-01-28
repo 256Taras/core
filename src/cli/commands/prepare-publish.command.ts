@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import { logInfo } from '../../logger/functions/log-info.function';
-import { runCommand } from '../../utils/functions/run-command.function';
-import { Command } from '../decorators/command.decorator';
+import { logInfo } from '../../logger/functions/log-info.function.js';
+import { runCommand } from '../../utils/functions/run-command.function.js';
+import { Command } from '../decorators/command.decorator.js';
 
 @Command({
   signature: 'prepare:publish',

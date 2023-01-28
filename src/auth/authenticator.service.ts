@@ -1,8 +1,8 @@
-import { Encrypter } from '../crypto/encrypter.service';
-import { DatabaseClient } from '../database/database-client.service';
-import { SchemaUser } from '../database/types/schema-user.type';
-import { Service } from '../injector/decorators/service.decorator';
-import { Session } from '../session/session.service';
+import { Encrypter } from '../crypto/encrypter.service.js';
+import { DatabaseClient } from '../database/database-client.service.js';
+import { SchemaUser } from '../database/types/schema-user.type.js';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { Session } from '../session/session.service.js';
 
 @Service()
 export class Authenticator {

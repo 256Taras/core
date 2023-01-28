@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { inject } from '../../src/injector/functions/inject.function';
+import { inject } from '../../src/injector/functions/inject.function.js';
 import {
   LOGGER_COLOR_GREEN,
   LOGGER_COLOR_ORANGE,
   LOGGER_COLOR_RED,
   LOGGER_COLOR_YELLOW,
 } from '../../src/logger/constants';
-import { Logger } from '../../src/logger/logger.class';
+import { Logger } from '../../src/logger/logger.class.js';
 
 describe('Logger class', () => {
   const logger = inject(Logger);

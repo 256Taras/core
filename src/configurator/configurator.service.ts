@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
-import { Service } from '../injector/decorators/service.decorator';
-import { AppConfig } from './interfaces/app-config.interface';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { AppConfig } from './interfaces/app-config.interface.js';
 
 @Service()
 export class Configurator {

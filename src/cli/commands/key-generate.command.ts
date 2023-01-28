@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
-import { logInfo } from '../../logger/functions/log-info.function';
-import { Command } from '../decorators/command.decorator';
+import { logInfo } from '../../logger/functions/log-info.function.js';
+import { Command } from '../decorators/command.decorator.js';
 
 @Command({
   signature: 'key:generate',

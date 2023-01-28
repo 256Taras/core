@@ -1,5 +1,5 @@
-import { inject } from '../../injector/functions/inject.function';
-import { Configurator } from '../configurator.service';
+import { inject } from '../../injector/functions/inject.function.js';
+import { Configurator } from '../configurator.service.js';
 
 export function useConfig<T = string>(option: string): T {
   const instance = inject(Configurator);

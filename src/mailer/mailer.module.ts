@@ -1,3 +1,3 @@
-export * from './functions/mail.function';
-export * from './hooks/use-mail.hook';
-export * from './mailer.service';
+export * from './functions/mail.function.js';
+export * from './hooks/use-mail.hook.js';
+export * from './mailer.service.js';

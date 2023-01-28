@@ -5,13 +5,13 @@ import {
   randomBytes,
   randomUUID,
 } from 'node:crypto';
-import { Configurator } from '../configurator/configurator.service';
-import { Service } from '../injector/decorators/service.decorator';
-import { inject } from '../injector/functions/inject.function';
-import { env } from '../utils/functions/env.function';
-import { Integer } from '../utils/types/integer.type';
-import { UuidOptions } from './interfaces/uuid-options.interface';
-import { EncryptionAlgorithm } from './types/encryption-algorithm.type';
+import { Configurator } from '../configurator/configurator.service.js';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
+import { env } from '../utils/functions/env.function.js';
+import { Integer } from '../utils/types/integer.type.js';
+import { UuidOptions } from './interfaces/uuid-options.interface.js';
+import { EncryptionAlgorithm } from './types/encryption-algorithm.type.js';
 
 @Service()
 export class Encrypter {

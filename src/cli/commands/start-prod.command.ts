@@ -2,12 +2,12 @@ import chalk from 'chalk';
 import { fork } from 'node:child_process';
 import { platform } from 'node:os';
 import { createInterface } from 'node:readline/promises';
-import { LOGGER_COLOR_ORANGE } from '../../logger/constants';
-import { logInfo } from '../../logger/functions/log-info.function';
-import { logWarning } from '../../logger/functions/log-warning.function';
-import { env } from '../../utils/functions/env.function';
-import { Command } from '../decorators/command.decorator';
-import { setupStdin } from '../functions/setup-stdin.function';
+import { LOGGER_COLOR_ORANGE } from '../../logger/constants.js';
+import { logInfo } from '../../logger/functions/log-info.function.js';
+import { logWarning } from '../../logger/functions/log-warning.function.js';
+import { env } from '../../utils/functions/env.function.js';
+import { Command } from '../decorators/command.decorator.js';
+import { setupStdin } from '../functions/setup-stdin.function.js';
 
 @Command({
   signature: 'start:prod',
@@ -28,11 +28,7 @@ export class StartProdCommand {
       logWarning('You are running production server in debug mode');
     }
 
-    const processOptions = {
-      execArgv: ['--experimental-specifier-resolution=node', '--no-warnings'],
-    };
-
-    const childProcess = fork('dist/main.js', processOptions);
+    const childProcess = fork('dist/main.js');
 
     setupStdin(async () => {
       const { question, close } = createInterface({

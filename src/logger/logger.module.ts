@@ -1,9 +1,9 @@
-export * from './constants';
+export * from './constants.js';
 
-export * from './functions/clear-line.function';
-export * from './functions/log.function';
-export * from './functions/log-error.function';
-export * from './functions/log-info.function';
-export * from './functions/log-sub.function';
-export * from './functions/log-warning.function';
-export * from './logger.service';
+export * from './functions/clear-line.function.js';
+export * from './functions/log.function.js';
+export * from './functions/log-error.function.js';
+export * from './functions/log-info.function.js';
+export * from './functions/log-sub.function.js';
+export * from './functions/log-warning.function.js';
+export * from './logger.service.js';

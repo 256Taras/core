@@ -3,7 +3,7 @@
   "version": "1.0.0-alpha.0",
   "description": "Core package of a declarative framework for Node.js",
   "type": "module",
-  "main": "./dist/main",
+  "main": "./dist/main.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/northle/core.git"
@@ -20,7 +20,7 @@
     "access": "public"
   },
   "exports": {
-    ".": "./dist/main"
+    ".": "./dist/main.js"
   },
   "bin": {
     "app": "bin/app.js"

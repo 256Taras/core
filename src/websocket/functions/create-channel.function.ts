@@ -1,5 +1,5 @@
-import { inject } from '../../injector/functions/inject.function';
-import { SocketEmitter } from '../socket-emitter.service';
+import { inject } from '../../injector/functions/inject.function.js';
+import { SocketEmitter } from '../socket-emitter.service.js';
 
 export function createChannel(
   name: string,

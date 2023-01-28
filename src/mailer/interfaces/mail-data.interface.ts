@@ -1,4 +1,4 @@
-import { Attachment } from './attachment.interface';
+import { Attachment } from './attachment.interface.js';
 
 export interface MailData {
   to: string;

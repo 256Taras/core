@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { Request } from '../../src/http/request.class';
-import { inject } from '../../src/injector/functions/inject.function';
-import { Session } from '../../src/session/session.class';
-import { TemplateCompiler } from '../../src/views/view-compiler.class';
+import { Request } from '../../src/http/request.class.js';
+import { inject } from '../../src/injector/functions/inject.function.js';
+import { Session } from '../../src/session/session.class.js';
+import { TemplateCompiler } from '../../src/views/view-compiler.class.js';
 
 describe('TemplateCompiler class', () => {
   const request = inject(Request);

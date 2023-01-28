@@ -1,19 +1,19 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { parseArgs } from 'node:util';
-import { Configurator } from '../configurator/configurator.service';
-import { inject } from '../injector/functions/inject.function';
-import { logError } from '../logger/functions/log-error.function';
-import { Constructor } from '../utils/interfaces/constructor.interface';
-import { BuildCommand } from './commands/build.command';
-import { DbMigrateCommand } from './commands/db-migrate.command';
-import { DbSeedCommand } from './commands/db-seed.command';
-import { KeyGenerateCommand } from './commands/key-generate.command';
-import { PreparePublishCommand } from './commands/prepare-publish.command';
-import { ServerDevCommand } from './commands/server-dev.command';
-import { StartDevCommand } from './commands/start-dev.command';
-import { StartProdCommand } from './commands/start-prod.command';
-import { Command } from './interfaces/command.interface';
-import { Parameter } from './interfaces/parameter.interface';
+import { Configurator } from '../configurator/configurator.service.js';
+import { inject } from '../injector/functions/inject.function.js';
+import { logError } from '../logger/functions/log-error.function.js';
+import { Constructor } from '../utils/interfaces/constructor.interface.js';
+import { BuildCommand } from './commands/build.command.js';
+import { DbMigrateCommand } from './commands/db-migrate.command.js';
+import { DbSeedCommand } from './commands/db-seed.command.js';
+import { KeyGenerateCommand } from './commands/key-generate.command.js';
+import { PreparePublishCommand } from './commands/prepare-publish.command.js';
+import { ServerDevCommand } from './commands/server-dev.command.js';
+import { StartDevCommand } from './commands/start-dev.command.js';
+import { StartProdCommand } from './commands/start-prod.command.js';
+import { Command } from './interfaces/command.interface.js';
+import { Parameter } from './interfaces/parameter.interface.js';
 
 process.on('uncaughtException', (error: Error) => {
   logError(error.message);

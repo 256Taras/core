@@ -1,3 +1,3 @@
-export * from './authenticator.service';
-export * from './gate.class';
-export * from './hooks/use-auth.hook';
+export * from './authenticator.service.js';
+export * from './gate.class.js';
+export * from './hooks/use-auth.hook.js';

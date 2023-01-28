@@ -1,7 +1,7 @@
 import { Reflection as Reflect } from '@abraham/reflection';
-import { Integer } from '../../utils/types/integer.type';
-import { ParameterDecorator } from '../../utils/types/parameter-decorator.type';
-import { EncryptionAlgorithm } from '../types/encryption-algorithm.type';
+import { Integer } from '../../utils/types/integer.type.js';
+import { ParameterDecorator } from '../../utils/types/parameter-decorator.type.js';
+import { EncryptionAlgorithm } from '../types/encryption-algorithm.type.js';
 
 export function EncryptedParam(
   algorithm: EncryptionAlgorithm = 'aes-256-cbc',

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { range } from '../../src/utils/functions/range.function';
+import { range } from '../../src/utils/functions/range.function.js';
 
 describe('range function', () => {
   it('creates a valid number range', () => {

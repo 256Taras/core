@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
-import { Service } from '../injector/decorators/service.decorator';
-import { readJson } from '../utils/functions/read-json.function';
-import { Integer } from '../utils/types/integer.type';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { readJson } from '../utils/functions/read-json.function.js';
+import { Integer } from '../utils/types/integer.type.js';
 
 @Service()
 export class Translator {

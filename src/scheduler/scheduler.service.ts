@@ -1,6 +1,6 @@
 import { schedule } from 'node-cron';
-import { Service } from '../injector/decorators/service.decorator';
-import { Integer } from '../utils/types/integer.type';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { Integer } from '../utils/types/integer.type.js';
 
 @Service()
 export class Scheduler {

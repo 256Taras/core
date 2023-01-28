@@ -1,7 +1,7 @@
 import { Reflection as Reflect } from '@abraham/reflection';
-import { Constructor } from '../../utils/interfaces/constructor.interface';
-import { ClassDecorator } from '../../utils/types/class-decorator.type';
-import { Parameter } from '../interfaces/parameter.interface';
+import { Constructor } from '../../utils/interfaces/constructor.interface.js';
+import { ClassDecorator } from '../../utils/types/class-decorator.type.js';
+import { Parameter } from '../interfaces/parameter.interface.js';
 
 interface Options {
   signature?: string;

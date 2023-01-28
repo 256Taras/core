@@ -3,13 +3,13 @@ import { existsSync } from 'node:fs';
 import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname } from 'node:path';
-import { Configurator } from '../configurator/configurator.service';
-import { Encrypter } from '../crypto/encrypter.service';
-import { Service } from '../injector/decorators/service.decorator';
-import { inject } from '../injector/functions/inject.function';
-import { env } from '../utils/functions/env.function';
-import { readJson } from '../utils/functions/read-json.function';
-import { FlashedData } from './interfaces/flashed-data.interface';
+import { Configurator } from '../configurator/configurator.service.js';
+import { Encrypter } from '../crypto/encrypter.service.js';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
+import { env } from '../utils/functions/env.function.js';
+import { readJson } from '../utils/functions/read-json.function.js';
+import { FlashedData } from './interfaces/flashed-data.interface.js';
 
 @Service()
 export class Session {

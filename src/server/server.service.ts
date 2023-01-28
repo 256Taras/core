@@ -12,25 +12,25 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Configurator } from '../configurator/configurator.service';
-import { Encrypter } from '../crypto/encrypter.service';
-import { Handler } from '../handler/handler.service';
-import { Request } from '../http/request.service';
-import { Response } from '../http/response.service';
-import { Service } from '../injector/decorators/service.decorator';
-import { inject } from '../injector/functions/inject.function';
-import { LOGGER_COLOR_ORANGE, LOGGER_COLOR_RED } from '../logger/constants';
-import { Logger } from '../logger/logger.service';
-import { Router } from '../router/router.service';
-import { Session } from '../session/session.service';
-import { Translator } from '../translator/translator.service';
-import { env } from '../utils/functions/env.function';
-import { readJson } from '../utils/functions/read-json.function';
-import { Constructor } from '../utils/interfaces/constructor.interface';
-import { Integer } from '../utils/types/integer.type';
-import { Authorizer } from '../websocket/interfaces/authorizer.interface';
-import { SocketEmitter } from '../websocket/socket-emitter.service';
-import { ServerOptions } from './interfaces/server-options.interface';
+import { Configurator } from '../configurator/configurator.service.js';
+import { Encrypter } from '../crypto/encrypter.service.js';
+import { Handler } from '../handler/handler.service.js';
+import { Request } from '../http/request.service.js';
+import { Response } from '../http/response.service.js';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
+import { LOGGER_COLOR_ORANGE, LOGGER_COLOR_RED } from '../logger/constants.js';
+import { Logger } from '../logger/logger.service.js';
+import { Router } from '../router/router.service.js';
+import { Session } from '../session/session.service.js';
+import { Translator } from '../translator/translator.service.js';
+import { env } from '../utils/functions/env.function.js';
+import { readJson } from '../utils/functions/read-json.function.js';
+import { Constructor } from '../utils/interfaces/constructor.interface.js';
+import { Integer } from '../utils/types/integer.type.js';
+import { Authorizer } from '../websocket/interfaces/authorizer.interface.js';
+import { SocketEmitter } from '../websocket/socket-emitter.service.js';
+import { ServerOptions } from './interfaces/server-options.interface.js';
 
 @Service()
 export class Server {
@@ -247,7 +247,7 @@ export class Server {
       });
 
       if (this.development) {
-        this.socketEmitter.createChannel('$northle', '$northle');
+        this.socketEmitter.createChannel('$northle', '$northleSocket');
       }
 
       this.socketEmitter.$setup({
@@ -261,7 +261,7 @@ export class Server {
           : {}),
         ...(this.development
           ? {
-              $northle: 6173,
+              $northleSocket: 6173,
             }
           : {}),
       });

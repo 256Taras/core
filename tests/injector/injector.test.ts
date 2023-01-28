@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { Encrypter } from '../../src/crypto/encrypter.class';
-import { inject } from '../../src/injector/functions/inject.function';
-import { Injector } from '../../src/injector/injector.class';
-import { Logger } from '../../src/logger/logger.class';
+import { Encrypter } from '../../src/crypto/encrypter.class.js';
+import { inject } from '../../src/injector/functions/inject.function.js';
+import { Injector } from '../../src/injector/injector.class.js';
+import { Logger } from '../../src/logger/logger.class.js';
 
 describe('Injector class', () => {
   it('properly binds services', () => {

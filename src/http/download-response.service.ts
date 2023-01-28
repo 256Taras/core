@@ -1,8 +1,8 @@
-import { Service } from '../injector/decorators/service.decorator';
-import { Session } from '../session/session.service';
-import { TemplateCompiler } from '../templates/template-compiler.service';
-import { Request } from './request.service';
-import { Response } from './response.service';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { Session } from '../session/session.service.js';
+import { TemplateCompiler } from '../templates/template-compiler.service.js';
+import { Request } from './request.service.js';
+import { Response } from './response.service.js';
 
 @Service()
 export class DownloadResponse extends Response {

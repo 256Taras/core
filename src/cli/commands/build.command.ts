@@ -1,8 +1,8 @@
-import { logInfo } from '../../logger/functions/log-info.function';
-import { logSub } from '../../logger/functions/log-sub.function';
-import { cloneFiles } from '../../utils/functions/clone-files.function';
-import { runCommand } from '../../utils/functions/run-command.function';
-import { Command } from '../decorators/command.decorator';
+import { logInfo } from '../../logger/functions/log-info.function.js';
+import { logSub } from '../../logger/functions/log-sub.function.js';
+import { cloneFiles } from '../../utils/functions/clone-files.function.js';
+import { runCommand } from '../../utils/functions/run-command.function.js';
+import { Command } from '../decorators/command.decorator.js';
 
 @Command({
   signature: 'build',

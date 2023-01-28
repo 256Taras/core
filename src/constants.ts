@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { readJson } from './utils/functions/read-json.function';
+import { readJson } from './utils/functions/read-json.function.js';
 
 export const NODE_VERSION = process.versions.node;
 export const NORTHLE_VERSION = (

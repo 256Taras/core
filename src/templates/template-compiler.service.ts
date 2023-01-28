@@ -1,24 +1,24 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import typescript from 'typescript';
-import { Authenticator } from '../auth/authenticator.service';
-import { Gate } from '../auth/gate.class';
-import { Configurator } from '../configurator/configurator.service';
-import * as constants from '../constants';
-import { nonce } from '../http/functions/nonce.function';
-import { oldInput } from '../http/functions/old-input.function';
-import { Request } from '../http/request.service';
-import { Service } from '../injector/decorators/service.decorator';
-import { inject } from '../injector/functions/inject.function';
-import { flash } from '../session/functions/flash.function';
-import { session } from '../session/functions/session.function';
-import { trans } from '../translator/functions/trans.function';
-import { csrfToken } from '../utils/functions/csrf-token.function';
-import { env } from '../utils/functions/env.function';
-import { range } from '../utils/functions/range.function';
-import { readJson } from '../utils/functions/read-json.function';
-import { Constructor } from '../utils/interfaces/constructor.interface';
-import { TemplateDirectiveDefinition } from './interfaces/template-directive-definition.interface';
+import { Authenticator } from '../auth/authenticator.service.js';
+import { Gate } from '../auth/gate.class.js';
+import { Configurator } from '../configurator/configurator.service.js';
+import * as constants from '../constants.js';
+import { nonce } from '../http/functions/nonce.function.js';
+import { oldInput } from '../http/functions/old-input.function.js';
+import { Request } from '../http/request.service.js';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
+import { flash } from '../session/functions/flash.function.js';
+import { session } from '../session/functions/session.function.js';
+import { trans } from '../translator/functions/trans.function.js';
+import { csrfToken } from '../utils/functions/csrf-token.function.js';
+import { env } from '../utils/functions/env.function.js';
+import { range } from '../utils/functions/range.function.js';
+import { readJson } from '../utils/functions/read-json.function.js';
+import { Constructor } from '../utils/interfaces/constructor.interface.js';
+import { TemplateDirectiveDefinition } from './interfaces/template-directive-definition.interface.js';
 
 @Service()
 export class TemplateCompiler {
@@ -293,9 +293,17 @@ export class TemplateCompiler {
             <script nonce="${nonce()}">
               const socket = new WebSocket('ws://localhost:6173');
 
+              socket.onopen = () => {
+                console.log('opened');
+              };
+
               socket.onmessage = (payload) => {
                 console.log(456, payload);
                 window.location.reload();
+              };
+
+              socket.onclose = () => {
+                console.log('closed');
               };
             </script>
           `;

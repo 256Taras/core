@@ -1,6 +1,6 @@
-import { TemplateDirectiveDefinition } from '../../templates/interfaces/template-directive-definition.interface';
-import { Integer } from '../../utils/types/integer.type';
-import { ValidationRuleDefinition } from '../../validator/interfaces/validation-rule-definition.interface';
+import { TemplateDirectiveDefinition } from '../../templates/interfaces/template-directive-definition.interface.js';
+import { Integer } from '../../utils/types/integer.type.js';
+import { ValidationRuleDefinition } from '../../validator/interfaces/validation-rule-definition.interface.js';
 
 export interface AppConfig {
   contentSecurityPolicy?: Record<string, string | string[]> | boolean;

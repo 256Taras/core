@@ -1,6 +1,6 @@
-export * as Route from './decorators/route.decorator';
+export * as Route from './decorators/route.decorator.js';
 
-export * from './decorators/throttle.decorator';
-export * from './functions/create-route.function';
-export * from './interfaces/route-options.interface';
-export * from './router.service';
+export * from './decorators/throttle.decorator.js';
+export * from './functions/create-route.function.js';
+export * from './interfaces/route-options.interface.js';
+export * from './router.service.js';

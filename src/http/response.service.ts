@@ -2,12 +2,12 @@ import { FastifyReply } from 'fastify';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { Service } from '../injector/decorators/service.decorator';
-import { Session } from '../session/session.service';
-import { TemplateCompiler } from '../templates/template-compiler.service';
-import { StatusCode } from './enums/status-code.enum';
-import { CookieOptions } from './interfaces/cookie-options.interface';
-import { Request } from './request.service';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { Session } from '../session/session.service.js';
+import { TemplateCompiler } from '../templates/template-compiler.service.js';
+import { StatusCode } from './enums/status-code.enum.js';
+import { CookieOptions } from './interfaces/cookie-options.interface.js';
+import { Request } from './request.service.js';
 
 @Service()
 export class Response {

@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { Transporter, createTransport } from 'nodemailer';
-import { Configurator } from '../configurator/configurator.service';
-import { Service } from '../injector/decorators/service.decorator';
-import { TemplateCompiler } from '../templates/template-compiler.service';
-import { callerFile } from '../utils/functions/caller-file.function';
-import { env } from '../utils/functions/env.function';
-import { resolveViewFile } from '../utils/functions/resolve-view-file.function';
-import { MailData } from './interfaces/mail-data.interface';
+import { Configurator } from '../configurator/configurator.service.js';
+import { Service } from '../injector/decorators/service.decorator.js';
+import { TemplateCompiler } from '../templates/template-compiler.service.js';
+import { callerFile } from '../utils/functions/caller-file.function.js';
+import { env } from '../utils/functions/env.function.js';
+import { resolveViewFile } from '../utils/functions/resolve-view-file.function.js';
+import { MailData } from './interfaces/mail-data.interface.js';
 
 @Service()
 export class Mailer {

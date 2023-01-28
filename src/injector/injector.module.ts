@@ -1,2 +1,2 @@
-export * from './decorators/service.decorator';
-export * from './functions/inject.function';
+export * from './decorators/service.decorator.js';
+export * from './functions/inject.function.js';

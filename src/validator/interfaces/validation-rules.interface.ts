@@ -1,4 +1,4 @@
-import { Integer } from '../../utils/types/integer.type';
+import { Integer } from '../../utils/types/integer.type.js';
 
 export interface ValidationRules {
   accepted?: boolean;

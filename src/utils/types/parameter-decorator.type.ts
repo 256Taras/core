@@ -1,4 +1,4 @@
-import { Integer } from './integer.type';
+import { Integer } from './integer.type.js';
 
 export type ParameterDecorator = (
   target: any,

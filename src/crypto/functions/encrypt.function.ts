@@ -1,6 +1,6 @@
-import { inject } from '../../injector/functions/inject.function';
-import { Encrypter } from '../encrypter.service';
-import { EncryptionAlgorithm } from '../types/encryption-algorithm.type';
+import { inject } from '../../injector/functions/inject.function.js';
+import { Encrypter } from '../encrypter.service.js';
+import { EncryptionAlgorithm } from '../types/encryption-algorithm.type.js';
 
 export function encrypt(
   rawData: string,

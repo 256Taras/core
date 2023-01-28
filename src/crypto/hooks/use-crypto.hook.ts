@@ -1,5 +1,5 @@
-import { inject } from '../../injector/functions/inject.function';
-import { Encrypter } from '../encrypter.service';
+import { inject } from '../../injector/functions/inject.function.js';
+import { Encrypter } from '../encrypter.service.js';
 
 export function useCrypto(): [
   (rawData: string) => string,
