@@ -291,20 +291,10 @@ export class TemplateCompiler {
         render: () => {
           return `
             <script nonce="${nonce()}">
-              const socket = new WebSocket('ws://localhost:6173');
+              const ws = new WebSocket('ws://localhost:6173');
 
-              socket.onopen = () => {
-                console.log('opened');
-              };
-
-              socket.onmessage = (payload) => {
-                console.log(456, payload);
-                window.location.reload();
-              };
-
-              socket.onclose = () => {
-                console.log('closed');
-              };
+              ws.onmessage = () => window.location.reload();
+              ws.onclose = () => console.log('[northle] Hot reload socket connection closed');
             </script>
           `;
         },

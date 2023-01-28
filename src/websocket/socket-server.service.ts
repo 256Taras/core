@@ -12,7 +12,6 @@ export class SocketServer {
   constructor(private logger: Logger) {}
 
   public emit(event: string, ...payload: unknown[]): void {
-    // this.server.emit(event, ...payload);
     this.server.clients.forEach((client) => {
       client.send(JSON.stringify({ event, payload }));
     });

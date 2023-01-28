@@ -68,13 +68,16 @@ export class ServerDevCommand {
 
     let childProcess = fork(entryFile);
 
-    const restartProcess = debounce(() => {
-      logInfo('Reloading development server...');
+    const restartProcess = debounce(
+      () => {
+        logInfo('Reloading development server...');
 
-      childProcess.kill();
+        childProcess.kill();
 
-      childProcess = fork(entryFile);
-    }, env<boolean>('DEVELOPER_MODE') ? 400 : 550);
+        childProcess = fork(entryFile);
+      },
+      env<boolean>('DEVELOPER_MODE') ? 400 : 550,
+    );
 
     sourceWatcher.on('all', async () => {
       restartProcess();
