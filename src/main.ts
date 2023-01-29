@@ -2,8 +2,8 @@ export * from './constants.js';
 
 export * from './auth/auth.module.js';
 export * from './configurator/configurator.module.js';
-export * from './crypto/crypto.module.js';
 export * from './database/database.module.js';
+export * from './encrypter/encrypter.module.js';
 export * from './handler/handler.module.js';
 export * from './http/http.module.js';
 export * from './injector/injector.module.js';

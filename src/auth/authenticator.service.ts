@@ -1,6 +1,6 @@
-import { Encrypter } from '../crypto/encrypter.service.js';
 import { DatabaseClient } from '../database/database-client.service.js';
 import { SchemaUser } from '../database/types/schema-user.type.js';
+import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { Session } from '../session/session.service.js';
 

@@ -142,14 +142,16 @@ export class TemplateCompiler {
           const isDevelopment =
             this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
 
-          return isDevelopment ? `
+          return isDevelopment
+            ? `
             <script nonce="${nonce()}">
               const ws = new WebSocket('ws://localhost:6173');
 
               ws.onmessage = () => window.location.reload();
               ws.onclose = () => console.log('[northle] Hot reload disconected');
             </script>
-          ` : '';
+          `
+            : '';
         },
       },
       {

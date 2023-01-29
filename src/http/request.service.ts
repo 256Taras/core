@@ -1,6 +1,6 @@
 import { FastifyRequest } from 'fastify';
 import { parse as parseUrl } from 'node:url';
-import { Encrypter } from '../crypto/encrypter.service.js';
+import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { Session } from '../session/session.service.js';
 import { HttpMethod } from './enums/http-method.enum.js';

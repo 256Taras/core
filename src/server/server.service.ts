@@ -6,15 +6,15 @@ import helmetMiddleware, { FastifyHelmetOptions } from '@fastify/helmet';
 import multipartMiddleware, { FastifyMultipartOptions } from '@fastify/multipart';
 import staticServerMiddleware, { FastifyStaticOptions } from '@fastify/static';
 import chalk from 'chalk';
+import { watch } from 'chokidar';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { watch } from 'chokidar';
 import { Configurator } from '../configurator/configurator.service.js';
-import { Encrypter } from '../crypto/encrypter.service.js';
+import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Handler } from '../handler/handler.service.js';
 import { Request } from '../http/request.service.js';
 import { Response } from '../http/response.service.js';
@@ -367,48 +367,62 @@ export class Server {
           this.session.set('_previousLocation', request.url);
         }
 
-        await this.session.$writeSession();
+        await this.session.$saveSessionData();
 
         const endTime = process.hrtime(startTime);
 
         const elapsedTime = (endTime[0] * 1000 + endTime[1] / 1e6).toFixed(1);
-        const timeFormatted = chalk.gray(`${elapsedTime} ms`.padStart(9, ' '));
+        const elapsedTimeFormatted = chalk.gray(
+          `${elapsedTime} ms`.padStart(9, ' '),
+        );
 
-        const status = response.statusCode;
+        const { statusCode } = response;
 
-        const statusMapping = {
-          [String(status >= 100 && status < 200)]: chalk.blueBright(status),
-          [String(status >= 200 && status < 400)]: chalk.green(status),
-          [String(status >= 400 && status < 500)]:
-            chalk.hex(LOGGER_COLOR_ORANGE)(status),
-          [String(status >= 500 && status < 600)]:
-            chalk.hex(LOGGER_COLOR_RED)(status),
-        };
+        let statusColor = chalk.green;
 
-        const formattedStatus = statusMapping['true'] ?? status.toString();
+        switch (true) {
+          case statusCode >= 100 && statusCode < 200:
+            statusColor = chalk.blueBright;
+
+            break;
+
+          case statusCode >= 200 && statusCode < 400:
+            statusColor = chalk.green;
+
+            break;
+
+          case statusCode >= 400 && statusCode < 500:
+            statusColor = chalk.hex(LOGGER_COLOR_ORANGE);
+
+            break;
+
+          case statusCode >= 500 && statusCode < 600:
+            statusColor = chalk.hex(LOGGER_COLOR_RED);
+
+            break;
+        }
 
         this.logger.log(
-          `[${formattedStatus}] ${this.request.method()} ${request.url}`,
+          `[${statusColor(response.statusCode)}] ${this.request.method()} ${
+            request.url
+          }`,
           'request',
-          timeFormatted,
+          elapsedTimeFormatted,
         );
       });
 
       this.router.registerRoutes(this.instance);
 
       if (this.development) {
-        this.instance.get(
-          '/$northle:asset-error.png',
-          async (_request, response) => {
-            const file = await readFile(
-              `${fileURLToPath(import.meta.url)}/../../../assets/error.png`,
-            );
+        this.instance.get('/$northle:error.png', async (_request, response) => {
+          const file = await readFile(
+            `${fileURLToPath(import.meta.url)}/../../../assets/error.png`,
+          );
 
-            response.header('Content-Type', 'image/png');
+          response.header('content-type', 'image/png');
 
-            return file;
-          },
-        );
+          return file;
+        });
       }
 
       this.registerHandlers();

@@ -1,7 +1,7 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { FastifyInstance } from 'fastify';
-import { Encrypter } from '../crypto/encrypter.service.js';
-import { EncryptionAlgorithm } from '../crypto/types/encryption-algorithm.type.js';
+import { Encrypter } from '../encrypter/encrypter.service.js';
+import { EncryptionAlgorithm } from '../encrypter/types/encryption-algorithm.type.js';
 import { Handler } from '../handler/handler.service.js';
 import { DownloadResponse } from '../http/download-response.service.js';
 import { HttpMethod } from '../http/enums/http-method.enum.js';

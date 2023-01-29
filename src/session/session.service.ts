@@ -4,7 +4,7 @@ import { mkdir, unlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname } from 'node:path';
 import { Configurator } from '../configurator/configurator.service.js';
-import { Encrypter } from '../crypto/encrypter.service.js';
+import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { inject } from '../injector/functions/inject.function.js';
 import { env } from '../utils/functions/env.function.js';
@@ -86,7 +86,7 @@ export class Session {
     return this;
   }
 
-  public async $writeSession(): Promise<void> {
+  public async $saveSessionData(): Promise<void> {
     const path = `${this.directoryPath}/${this.key}.json`;
 
     const data = { ...this.data };
