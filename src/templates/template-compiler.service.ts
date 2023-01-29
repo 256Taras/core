@@ -136,6 +136,23 @@ export class TemplateCompiler {
         },
       },
       {
+        name: 'hotReload',
+        type: 'single',
+        render: () => {
+          const isDevelopment =
+            this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+
+          return isDevelopment ? `
+            <script nonce="${nonce()}">
+              const ws = new WebSocket('ws://localhost:6173');
+
+              ws.onmessage = () => window.location.reload();
+              ws.onclose = () => console.log('[northle] Hot reload disconected');
+            </script>
+          ` : '';
+        },
+      },
+      {
         name: 'json',
         type: 'single',
         render: (data: object, prettyPrint?: boolean) => {
@@ -283,20 +300,6 @@ export class TemplateCompiler {
           }
 
           return output;
-        },
-      },
-      {
-        name: 'hotReload',
-        type: 'single',
-        render: () => {
-          return `
-            <script nonce="${nonce()}">
-              const ws = new WebSocket('ws://localhost:6173');
-
-              ws.onmessage = () => window.location.reload();
-              ws.onclose = () => console.log('[northle] Hot reload socket connection closed');
-            </script>
-          `;
         },
       },
       ...(this.configurator.entries?.templates?.directives ?? []),

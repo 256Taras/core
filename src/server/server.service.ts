@@ -12,6 +12,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { watch } from 'chokidar';
 import { Configurator } from '../configurator/configurator.service.js';
 import { Encrypter } from '../crypto/encrypter.service.js';
 import { Handler } from '../handler/handler.service.js';
@@ -267,9 +268,11 @@ export class Server {
       });
 
       if (this.development) {
-        setInterval(() => {
+        const viewsWatcher = watch('dist/**/*.html');
+
+        viewsWatcher.on('all', () => {
           this.socketEmitter.emit('hotReload', '$northle');
-        }, 3000);
+        });
       }
 
       await this.translator.$setup(this.configurator.entries?.locale ?? 'en');

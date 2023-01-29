@@ -49,7 +49,7 @@ export class ServerDevCommand {
     const envWatcher = watch('.env', watchOptions);
     const serverTempWatcher = watch(serverTempPath);
     const sourceWatcher = watch('dist/**/*.js', watchOptions);
-    const viewWatcher = watch('src/**/*.html', watchOptions);
+    const viewsWatcher = watch('src/**/*.html', watchOptions);
 
     let openedWebClient = false;
 
@@ -94,7 +94,7 @@ export class ServerDevCommand {
       frameworkWatcher.on('change', restartProcess);
     }
 
-    viewWatcher.on('all', async () => {
+    viewsWatcher.on('all', async () => {
       await cloneFiles('src', 'dist', '.html');
     });
 
