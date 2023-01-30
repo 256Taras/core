@@ -6,6 +6,9 @@ import { Gate } from '../auth/gate.class.js';
 import { Configurator } from '../configurator/configurator.service.js';
 import * as constants from '../constants.js';
 import { nonce } from '../http/functions/nonce.function.js';
+import { currentUrl } from '../http/functions/current-url.function.js';
+import { previousUrl } from '../http/functions/previous-url.function.js';
+import { routeUrl } from '../http/functions/route-url.function.js';
 import { oldInput } from '../http/functions/old-input.function.js';
 import { Request } from '../http/request.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
@@ -32,12 +35,15 @@ export class TemplateCompiler {
 
   private readonly functions = {
     csrfToken,
+    currentUrl,
     env,
     flash,
     inject,
     nonce,
     oldInput,
+    previousUrl,
     range,
+    routeUrl,
     session,
     trans,
   };
