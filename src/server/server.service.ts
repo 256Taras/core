@@ -4,18 +4,18 @@ import corsMiddleware, { FastifyCorsOptions } from '@fastify/cors';
 import formMiddleware from '@fastify/formbody';
 import helmetMiddleware, { FastifyHelmetOptions } from '@fastify/helmet';
 import multipartMiddleware, { FastifyMultipartOptions } from '@fastify/multipart';
-import staticServerMiddleware, { FastifyStaticOptions } from '@fastify/static';
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import fastify from 'fastify';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import path, { dirname } from 'node:path';
+import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Configurator } from '../configurator/configurator.service.js';
 import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Handler } from '../handler/handler.service.js';
+import { MIME_TYPES } from '../http/constants.js';
 import { Request } from '../http/request.service.js';
 import { Response } from '../http/response.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
@@ -150,16 +150,11 @@ export class Server {
       },
     };
 
-    const staticServerOptions: FastifyStaticOptions = {
-      root: path.resolve('public'),
-    };
-
     await this.instance.register(helmetMiddleware, helmetOptions);
     await this.instance.register(cookieMiddleware, cookieOptions);
     await this.instance.register(corsMiddleware, corsOptions);
     await this.instance.register(formMiddleware);
     await this.instance.register(multipartMiddleware, multipartOptions);
-    await this.instance.register(staticServerMiddleware, staticServerOptions);
   }
 
   private async setupDevelopmentEnvironment(): Promise<void> {
@@ -356,12 +351,6 @@ export class Server {
         );
       });
 
-      this.instance.addHook('onSend', async (_request, response) => {
-        if (this.request.isFileRequest()) {
-          response.statusCode = 200;
-        }
-      });
-
       this.instance.addHook('onResponse', async (request, response) => {
         if (!this.request.isFileRequest() && !this.request.isFormRequest()) {
           this.session.set('_previousLocation', request.url);
@@ -424,6 +413,19 @@ export class Server {
           return file;
         });
       }
+
+      this.instance.get(
+        '/:file.:extension(^[A-Za-z0-9]+)',
+        async (request, response) => {
+          const params = request.params as Record<string, string>;
+
+          const file = await readFile(`public/${params.file}.${params.extension}`);
+
+          response.header('content-type', MIME_TYPES[params.extension]);
+
+          return file;
+        },
+      );
 
       this.registerHandlers();
 
