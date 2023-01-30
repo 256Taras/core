@@ -1,4 +1,5 @@
 import { Service } from '../injector/decorators/service.decorator.js';
+import { RouteUrl } from '../router/types/route-url.type.js';
 import { Session } from '../session/session.service.js';
 import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { StatusCode } from './enums/status-code.enum.js';
@@ -7,7 +8,7 @@ import { Response } from './response.service.js';
 
 @Service()
 export class RedirectResponse extends Response {
-  private path: string;
+  private path: RouteUrl;
 
   private variables: Record<string, unknown>;
 
@@ -29,7 +30,7 @@ export class RedirectResponse extends Response {
     return this.httpStatus;
   }
 
-  public get url(): string {
+  public get url(): RouteUrl {
     return this.path;
   }
 
@@ -41,7 +42,7 @@ export class RedirectResponse extends Response {
     this.httpStatus = status;
   }
 
-  public setUrl(url: string): void {
+  public setUrl(url: RouteUrl): void {
     this.path = url;
   }
 }

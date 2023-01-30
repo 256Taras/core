@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { Service } from '../injector/decorators/service.decorator.js';
+import { RouteUrl } from '../router/types/route-url.type.js';
 import { Session } from '../session/session.service.js';
 import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { StatusCode } from './enums/status-code.enum.js';
@@ -125,7 +126,7 @@ export class Response {
   }
 
   public redirect(
-    url: string,
+    url: RouteUrl,
     data: Record<string, unknown> = {},
     status: StatusCode = StatusCode.Found,
   ): this {

@@ -16,6 +16,7 @@ import { inject } from '../injector/functions/inject.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { Integer } from '../utils/types/integer.type.js';
 import { Route } from './interfaces/route.interface.js';
+import { RouteUrl } from './types/route-url.type.js';
 
 @Service()
 export class Router {
@@ -28,7 +29,11 @@ export class Router {
     private response: Response,
   ) {}
 
-  public createRoute(url: string, method: HttpMethod, action: () => unknown): void {
+  public createRoute(
+    url: RouteUrl,
+    method: HttpMethod,
+    action: () => unknown,
+  ): void {
     const route = {
       url,
       method,

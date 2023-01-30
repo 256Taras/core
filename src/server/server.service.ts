@@ -83,14 +83,38 @@ export class Server {
     }
   }
 
-  private registerHandlers(): void {
-    this.instance.setErrorHandler(async (error) => {
-      await this.handler.handleError(error);
-    });
+  private registerStaticFileServer(): void {
+    if (this.development) {
+      this.instance.get('/$northle:error.png', async (_request, response) => {
+        const file = await readFile(
+          `${fileURLToPath(import.meta.url)}/../../../assets/error.png`,
+        );
 
-    this.instance.setNotFoundHandler(() => {
-      this.handler.handleNotFound();
-    });
+        response.type('image/png');
+
+        return file;
+      });
+    }
+
+    this.instance.get(
+      '/:file.:extension(^[A-Za-z0-9]+)',
+      async (request, response) => {
+        const params = request.params as Record<string, string>;
+        const filePath = `public/${params.file}.${params.extension}`;
+
+        if (!existsSync(filePath)) {
+          response.callNotFound();
+
+          return;
+        }
+
+        const file = await readFile(filePath);
+
+        response.type(MIME_TYPES[params.extension]);
+
+        return file;
+      },
+    );
   }
 
   private async registerMiddleware(): Promise<void> {
@@ -400,34 +424,17 @@ export class Server {
         );
       });
 
+      this.instance.setErrorHandler(async (error) => {
+        await this.handler.handleError(error);
+      });
+
       this.router.registerRoutes(this.instance);
 
-      if (this.development) {
-        this.instance.get('/$northle:error.png', async (_request, response) => {
-          const file = await readFile(
-            `${fileURLToPath(import.meta.url)}/../../../assets/error.png`,
-          );
+      this.registerStaticFileServer();
 
-          response.header('content-type', 'image/png');
-
-          return file;
-        });
-      }
-
-      this.instance.get(
-        '/:file.:extension(^[A-Za-z0-9]+)',
-        async (request, response) => {
-          const params = request.params as Record<string, string>;
-
-          const file = await readFile(`public/${params.file}.${params.extension}`);
-
-          response.header('content-type', MIME_TYPES[params.extension]);
-
-          return file;
-        },
-      );
-
-      this.registerHandlers();
+      this.instance.setNotFoundHandler(() => {
+        this.handler.handleNotFound();
+      });
 
       await this.instance.listen({ port, host });
 

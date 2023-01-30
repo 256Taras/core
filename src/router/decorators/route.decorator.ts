@@ -12,6 +12,7 @@ import { Integer } from '../../utils/types/integer.type.js';
 import { MethodDecorator } from '../../utils/types/method-decorator.type.js';
 import { RouteOptions } from '../interfaces/route-options.interface.js';
 import { Router } from '../router.service.js';
+import { RouteUrl } from '../types/route-url.type.js';
 
 const handler = inject(Handler);
 const request = inject(Request);
@@ -19,8 +20,8 @@ const response = inject(Response);
 const router = inject(Router);
 const session = inject(Session);
 
-function resolveUrl(url: string, controller: Constructor) {
-  let baseUrl: string | undefined = Reflect.getMetadata('baseUrl', controller);
+function resolveUrl(url: RouteUrl, controller: Constructor): RouteUrl {
+  let baseUrl = Reflect.getMetadata<RouteUrl>('baseUrl', controller);
 
   if (baseUrl && baseUrl.length > 1 && baseUrl.charAt(0) !== '/') {
     baseUrl = `/${baseUrl}`;
@@ -46,10 +47,7 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
       });
     }
 
-    const redirectUrl: string | undefined = Reflect.getMetadata(
-      'redirectUrl',
-      target,
-    );
+    const redirectUrl = Reflect.getMetadata<RouteUrl>('redirectUrl', target);
 
     if (redirectUrl) {
       const response = inject(Response);
@@ -63,16 +61,13 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
       return;
     }
 
-    const statusCode: StatusCode | undefined = Reflect.getMetadata(
-      'statusCode',
-      target,
-    );
+    const statusCode = Reflect.getMetadata<StatusCode>('statusCode', target);
 
     if (statusCode) {
       response.status(statusCode);
     }
 
-    const maxRequestsPerMinute: Integer | undefined = Reflect.getMetadata(
+    const maxRequestsPerMinute = Reflect.getMetadata<Integer>(
       'maxRequestsPerMinute',
       target,
     );
@@ -90,7 +85,7 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
 }
 
 function createRouteDecorator(methods: HttpMethod[], options?: RouteOptions) {
-  return (url: string): MethodDecorator => {
+  return (url: RouteUrl): MethodDecorator => {
     return (target, propertyKey) => {
       Reflect.defineMetadata(
         'maxRequestsPerMinute',
@@ -128,7 +123,7 @@ export function Error(
 
 export function Methods(
   methods: HttpMethod[],
-  url: string,
+  url: RouteUrl,
   options?: RouteOptions,
 ): MethodDecorator {
   return (target, propertyKey) => {

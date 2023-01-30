@@ -2,6 +2,7 @@ import { FastifyRequest } from 'fastify';
 import { parse as parseUrl } from 'node:url';
 import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
+import { RouteUrl } from '../router/types/route-url.type.js';
 import { Session } from '../session/session.service.js';
 import { HttpMethod } from './enums/http-method.enum.js';
 import { File } from './file.class.js';
@@ -198,7 +199,7 @@ export class Request {
     return this.protocol() === 'https';
   }
 
-  public url(): string {
-    return this.instance?.url ?? '/';
+  public url(): RouteUrl {
+    return (this.instance?.url as RouteUrl) ?? '/';
   }
 }

@@ -4,3 +4,4 @@ export * from './decorators/throttle.decorator.js';
 export * from './functions/create-route.function.js';
 export * from './interfaces/route-options.interface.js';
 export * from './router.service.js';
+export * from './types/route-url.type.js';

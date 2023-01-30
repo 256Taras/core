@@ -2,9 +2,10 @@ import { HttpMethod } from '../../http/enums/http-method.enum.js';
 import { inject } from '../../injector/functions/inject.function.js';
 import { Route } from '../interfaces/route.interface.js';
 import { Router } from '../router.service.js';
+import { RouteUrl } from '../types/route-url.type.js';
 
 export function createRoute(
-  url: string,
+  url: RouteUrl,
   method: HttpMethod,
   action: () => unknown,
 ): Route {
