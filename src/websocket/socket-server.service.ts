@@ -30,13 +30,13 @@ export class SocketServer {
 
     if (this.name !== '$northleSocket') {
       this.logger.log(`Server ${this.name} listening on ws://${port}`, 'socket');
-    }
 
-    this.server.on('connection', (_socket, request) => {
-      this.logger.log(
-        `[${request.socket.remoteAddress}] Established new connection`,
-        'socket',
-      );
-    });
+      this.server.on('connection', (_socket, request) => {
+        this.logger.log(
+          `[${request.socket.remoteAddress}] Established new connection`,
+          'socket',
+        );
+      });
+    }
   }
 }

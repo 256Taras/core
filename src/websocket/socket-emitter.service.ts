@@ -60,7 +60,9 @@ export class SocketEmitter {
 
         server.emit(`${channelName}/${event}`, ...payload);
 
-        this.logger.log(`Emitted event: ${channelName}/${event}`, 'socket');
+        if (serverName !== '$northleSocket') {
+          this.logger.log(`Emitted event: ${channelName}/${event}`, 'socket');
+        }
 
         return;
       }
