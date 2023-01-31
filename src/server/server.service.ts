@@ -29,8 +29,8 @@ import { env } from '../utils/functions/env.function.js';
 import { readJson } from '../utils/functions/read-json.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { Integer } from '../utils/types/integer.type.js';
-import { Authorizer } from '../websocket/interfaces/authorizer.interface.js';
-import { SocketEmitter } from '../websocket/socket-emitter.service.js';
+import { Authorizer } from '../socket/interfaces/authorizer.interface.js';
+import { SocketEmitter } from '../socket/socket-emitter.service.js';
 import { ServerOptions } from './interfaces/server-options.interface.js';
 
 @Service()
