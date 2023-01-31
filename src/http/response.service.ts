@@ -9,6 +9,7 @@ import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { StatusCode } from './enums/status-code.enum.js';
 import { CookieOptions } from './interfaces/cookie-options.interface.js';
 import { Request } from './request.service.js';
+import { MIME_TYPES } from '../http/constants.js';
 
 @Service()
 export class Response {
@@ -81,7 +82,13 @@ export class Response {
   }
 
   public download(file: string): this {
-    this.instance?.download(file);
+    const extension = file.split('.').pop();
+
+    this.header('content-disposition', `attachment; filename=${file}`);
+
+    if (extension) {
+      this.header('content-type', MIME_TYPES[extension]);
+    }
 
     return this;
   }
@@ -155,6 +162,7 @@ export class Response {
     this.instance?.redirect(
       this.session.get('_previousLocation') ?? this.request.url(),
     );
+
     this.instance?.status(status);
 
     return this;
