@@ -2,6 +2,7 @@ import { FastifyReply } from 'fastify';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { MIME_TYPES } from '../http/constants.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { RouteUrl } from '../router/types/route-url.type.js';
 import { Session } from '../session/session.service.js';
@@ -9,7 +10,6 @@ import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { StatusCode } from './enums/status-code.enum.js';
 import { CookieOptions } from './interfaces/cookie-options.interface.js';
 import { Request } from './request.service.js';
-import { MIME_TYPES } from '../http/constants.js';
 
 @Service()
 export class Response {
