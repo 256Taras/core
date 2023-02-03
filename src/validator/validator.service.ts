@@ -54,21 +54,21 @@ export class Validator {
       {
         name: 'doesntEndWith',
         errorMessage: `Field :field must not end with ':value'`,
-        validate: (value: string, fieldName: string, search: string) => {
+        validate: (value: string, _fieldName: string, search: string) => {
           return !value.endsWith(search);
         },
       },
       {
         name: 'doesntStartWith',
         errorMessage: `Field :field must not start with ':value'`,
-        validate: (value: string, fieldName: string, search: string) => {
+        validate: (value: string, _fieldName: string, search: string) => {
           return !value.startsWith(search);
         },
       },
       {
         name: 'endsWith',
         errorMessage: `Field :field must end with ':value'`,
-        validate: (value: string, fieldName: string, search: string) => {
+        validate: (value: string, _fieldName: string, search: string) => {
           return value.endsWith(search);
         },
       },
@@ -92,7 +92,7 @@ export class Validator {
       {
         name: 'in',
         errorMessage: `Field :field must be a value from [:value]`,
-        validate: (value: string, fieldName: string, array: string[]) => {
+        validate: (value: string, _fieldName: string, array: string[]) => {
           return array.includes(value);
         },
       },
@@ -140,7 +140,7 @@ export class Validator {
       {
         name: 'length',
         errorMessage: `Field :field must be a :value characters long`,
-        validate: (value: string, fieldName: string, length: Integer) => {
+        validate: (value: string, _fieldName: string, length: Integer) => {
           return value.length === length;
         },
       },
@@ -154,63 +154,63 @@ export class Validator {
       {
         name: 'max',
         errorMessage: `Field :field must be less than :value`,
-        validate: (value: string, fieldName: string, maxValue: number) => {
+        validate: (value: string, _fieldName: string, maxValue: number) => {
           return value.length < maxValue;
         },
       },
       {
         name: 'maxLength',
         errorMessage: `Field :field must be shorter than :value characters`,
-        validate: (value: string, fieldName: string, length: Integer) => {
+        validate: (value: string, _fieldName: string, length: Integer) => {
           return value.length < length;
         },
       },
       {
         name: 'maxOrEqual',
         errorMessage: `Field :field must be less than or equal to :value`,
-        validate: (value: string, fieldName: string, maxValue: number) => {
+        validate: (value: string, _fieldName: string, maxValue: number) => {
           return value.length <= maxValue;
         },
       },
       {
         name: 'maxOrEqualLength',
         errorMessage: `Field :field must be shorter than :value characters or equal length`,
-        validate: (value: string, fieldName: string, length: Integer) => {
+        validate: (value: string, _fieldName: string, length: Integer) => {
           return value.length <= length;
         },
       },
       {
         name: 'min',
         errorMessage: `Field :field must be greater than :value`,
-        validate: (value: string, fieldName: string, maxValue: number) => {
+        validate: (value: string, _fieldName: string, maxValue: number) => {
           return value.length > maxValue;
         },
       },
       {
         name: 'minLength',
         errorMessage: `Field :field must be longer than :value characters`,
-        validate: (value: string, fieldName: string, length: Integer) => {
+        validate: (value: string, _fieldName: string, length: Integer) => {
           return value.length > length;
         },
       },
       {
         name: 'minOrEqual',
         errorMessage: `Field :field must be greater than or equal to :value`,
-        validate: (value: string, fieldName: string, maxValue: number) => {
+        validate: (value: string, _fieldName: string, maxValue: number) => {
           return value.length >= maxValue;
         },
       },
       {
         name: 'minOrEqualLength',
         errorMessage: `Field :field must be longer than :value characters or equal length`,
-        validate: (value: string, fieldName: string, length: Integer) => {
+        validate: (value: string, _fieldName: string, length: Integer) => {
           return value.length >= length;
         },
       },
       {
         name: 'notIn',
         errorMessage: `Field :field must not be a value from [:value]`,
-        validate: (value: string, fieldName: string, array: string[]) => {
+        validate: (value: string, _fieldName: string, array: string[]) => {
           return !array.includes(value);
         },
       },
@@ -235,7 +235,7 @@ export class Validator {
       {
         name: 'regexp',
         errorMessage: `Field :field must follow the :value pattern`,
-        validate: (value: string, fieldName: string, regexp: RegExp) => {
+        validate: (value: string, _fieldName: string, regexp: RegExp) => {
           return regexp.test(value);
         },
       },
@@ -249,14 +249,14 @@ export class Validator {
       {
         name: 'sameAs',
         errorMessage: `Field :field must be same as :value`,
-        validate: (value: string, fieldName: string, secondField: string) => {
+        validate: (value: string, _fieldName: string, secondField: string) => {
           return value === this.request.input(secondField);
         },
       },
       {
         name: 'startsWith',
         errorMessage: `Field :field must start with ':value'`,
-        validate: (value: string, fieldName: string, search: string) => {
+        validate: (value: string, _fieldName: string, search: string) => {
           return value.startsWith(search);
         },
       },
@@ -289,7 +289,7 @@ export class Validator {
   }
 
   public assert<T = Record<string, any>>(
-    rules: Record<keyof T, ValidationRules>,
+    rules: Record<keyof T | string, ValidationRules>,
     checkOnly = false,
   ): boolean {
     const errors: Record<string, string[]> = {};
