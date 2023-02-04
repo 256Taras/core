@@ -25,7 +25,6 @@ export async function cloneFiles(
 
       if (file.endsWith(extension)) {
         if (existsSync(destinationPath)) {
-          console.log(`Removing ${destinationPath}`);
           unlinkSync(destinationPath);
         }
 

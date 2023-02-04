@@ -27,11 +27,7 @@ export class ServerDevCommand {
   public async handle(flags: Record<string, boolean>): Promise<void> {
     const serverTempPath = `${tmpdir()}/northle/server`;
 
-    logInfo(
-      `Starting development server... ${chalk.gray(
-        `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
-      )}`,
-    );
+    logInfo('Starting development server...');
 
     const entryFile = 'dist/main.js';
 
@@ -70,7 +66,13 @@ export class ServerDevCommand {
 
     const restartProcess = debounce(
       () => {
-        logInfo('Reloading development server...');
+        console.clear();
+
+        logInfo(
+          `Reloading development server... ${chalk.gray(
+            `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
+          )}`,
+        );
 
         childProcess.kill();
 
