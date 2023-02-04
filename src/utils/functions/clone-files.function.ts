@@ -25,10 +25,21 @@ export async function cloneFiles(
 
       if (file.endsWith(extension)) {
         if (existsSync(destinationPath)) {
+          console.log(`Removing ${destinationPath}`);
           unlinkSync(destinationPath);
         }
 
-        await copyFile(`${source}/${file}`, destinationPath);
+        let copied = false;
+
+        while (!copied) {
+          try {
+            await copyFile(`${source}/${file}`, destinationPath);
+
+            copied = true;
+          } catch {
+            await new Promise((resolve) => setTimeout(resolve, 50));
+          }
+        }
       }
     }),
   );
