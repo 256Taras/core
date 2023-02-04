@@ -2,7 +2,6 @@ import { Reflection as Reflect } from '@abraham/reflection';
 import { FastifyInstance } from 'fastify';
 import { Encrypter } from '../encrypter/encrypter.service.js';
 import { EncryptionAlgorithm } from '../encrypter/types/encryption-algorithm.type.js';
-import { Handler } from '../handler/handler.service.js';
 import { DownloadResponse } from '../http/download-response.service.js';
 import { HttpMethod } from '../http/enums/http-method.enum.js';
 import { JsonResponse } from '../http/json-response.service.js';
@@ -16,6 +15,7 @@ import { inject } from '../injector/functions/inject.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { Integer } from '../utils/types/integer.type.js';
 import { Route } from './interfaces/route.interface.js';
+import { ResponseContent } from './types/response-content.type.js';
 import { RouteUrl } from './types/route-url.type.js';
 
 @Service()
@@ -24,7 +24,6 @@ export class Router {
 
   constructor(
     private encrypter: Encrypter,
-    private handler: Handler,
     private request: Request,
     private response: Response,
   ) {}
@@ -64,85 +63,83 @@ export class Router {
       return;
     }
 
-    try {
-      const resolvedParams = requestParams.map((param, index) => {
-        const encryptionData = Reflect.getMetadata<{
-          algorithm: EncryptionAlgorithm;
-          indexes: Integer[];
-        }>('encryptedParams', inject(controller)[method]);
+    const resolvedParams = requestParams.map((param, index) => {
+      const encryptionData = Reflect.getMetadata<{
+        algorithm: EncryptionAlgorithm;
+        indexes: Integer[];
+      }>('encryptedParams', inject(controller)[method]);
 
-        return encryptionData?.indexes?.includes(index)
-          ? this.encrypter.decrypt(param, encryptionData?.algorithm)
-          : param;
-      });
+      return encryptionData?.indexes?.includes(index)
+        ? this.encrypter.decrypt(param, encryptionData?.algorithm)
+        : param;
+    });
 
-      let content = inject(controller)[method](...resolvedParams, ...args);
+    let content = inject(controller)[method](...resolvedParams, ...args) as
+      | Promise<ResponseContent>
+      | ResponseContent;
 
-      if (content instanceof Promise) {
-        content = await content;
+    if (content instanceof Promise) {
+      content = await content;
+    }
+
+    const isObject = typeof content === 'object' && content !== null;
+
+    switch (true) {
+      case content instanceof DownloadResponse: {
+        const { file } = content as DownloadResponse;
+
+        this.response.download(file);
+
+        break;
       }
 
-      const isObject = typeof content === 'object' && content !== null;
+      case content instanceof JsonResponse: {
+        const { data } = content as JsonResponse;
 
-      switch (true) {
-        case content instanceof DownloadResponse: {
-          const { file } = content as DownloadResponse;
+        this.response.json(data);
 
-          this.response.download(file);
-
-          break;
-        }
-
-        case content instanceof JsonResponse: {
-          const { data } = content as JsonResponse;
-
-          this.response.json(data);
-
-          break;
-        }
-
-        case content instanceof RedirectBackResponse: {
-          const { data, statusCode } = content as RedirectBackResponse;
-
-          this.response.redirectBack(data, statusCode);
-
-          break;
-        }
-
-        case content instanceof RedirectResponse: {
-          const { data, statusCode, url } = content as RedirectResponse;
-
-          this.response.redirect(url, data, statusCode);
-
-          break;
-        }
-
-        case content instanceof ViewResponse: {
-          const { data, file } = content as ViewResponse;
-
-          await this.response.render(file, data);
-
-          break;
-        }
-
-        case Array.isArray(content) ||
-          (isObject && content.constructor === Object): {
-          this.response.json(content);
-
-          break;
-        }
-
-        case [null, undefined].includes(content): {
-          this.response.send(String(content));
-
-          break;
-        }
-
-        default:
-          this.response.send(content);
+        break;
       }
-    } catch (error) {
-      await this.handler.handleError(error as Error);
+
+      case content instanceof RedirectBackResponse: {
+        const { data, statusCode } = content as RedirectBackResponse;
+
+        this.response.redirectBack(data, statusCode);
+
+        break;
+      }
+
+      case content instanceof RedirectResponse: {
+        const { data, statusCode, url } = content as RedirectResponse;
+
+        this.response.redirect(url, data, statusCode);
+
+        break;
+      }
+
+      case content instanceof ViewResponse: {
+        const { data, file } = content as ViewResponse;
+
+        await this.response.render(file, data);
+
+        break;
+      }
+
+      case Array.isArray(content) ||
+        (isObject && (content as Object).constructor === Object): {
+        this.response.json(content as unknown as Record<string, unknown>);
+
+        break;
+      }
+
+      case ([null, undefined] as unknown[]).includes(content): {
+        this.response.send(String(content));
+
+        break;
+      }
+
+      default:
+        this.response.send(content);
     }
   }
 }

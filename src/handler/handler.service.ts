@@ -7,6 +7,7 @@ import { Response } from '../http/response.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { Logger } from '../logger/logger.service.js';
 import { env } from '../utils/functions/env.function.js';
+import { Integer } from '../utils/types/integer.type.js';
 
 @Service()
 export class Handler {
@@ -45,7 +46,7 @@ export class Handler {
     const fileMatch = at.match(/\((.*?)\)/);
 
     let file = '';
-    let line: number | null = +(fileMatch?.[1]?.match(/(.*):(.*):(.*)/)?.[2] ?? 1);
+    let line: Integer | null = +(fileMatch?.[1]?.match(/(.*):(.*):(.*)/)?.[2] ?? 1);
 
     try {
       file = fileMatch ? fileURLToPath(fileMatch[1]) : 'unknown';

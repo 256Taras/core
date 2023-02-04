@@ -24,13 +24,13 @@ import { LOGGER_COLOR_ORANGE, LOGGER_COLOR_RED } from '../logger/constants.js';
 import { Logger } from '../logger/logger.service.js';
 import { Router } from '../router/router.service.js';
 import { Session } from '../session/session.service.js';
+import { Authorizer } from '../socket/interfaces/authorizer.interface.js';
+import { SocketEmitter } from '../socket/socket-emitter.service.js';
 import { Translator } from '../translator/translator.service.js';
 import { env } from '../utils/functions/env.function.js';
 import { readJson } from '../utils/functions/read-json.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { Integer } from '../utils/types/integer.type.js';
-import { Authorizer } from '../websocket/interfaces/authorizer.interface.js';
-import { SocketEmitter } from '../websocket/socket-emitter.service.js';
 import { ServerOptions } from './interfaces/server-options.interface.js';
 
 @Service()
@@ -127,7 +127,7 @@ export class Server {
           : {
               directives: {
                 ...helmetMiddleware.contentSecurityPolicy.getDefaultDirectives(),
-                'connect-src': [`'self'`, `http://localhost:*`, 'ws://localhost:*'],
+                'connect-src': [`'self'`, 'http://localhost:*', 'ws://localhost:*'],
                 'default-src': [
                   `'self'`,
                   `'unsafe-inline'`,
@@ -137,11 +137,11 @@ export class Server {
                 'script-src': [
                   `'self'`,
                   `'unsafe-inline'`,
-                  `http://localhost:*`,
+                  'http://localhost:*',
                   'ws://localhost:*',
                 ],
                 'script-src-attr': `'unsafe-inline'`,
-                'style-src': [`'self'`, `'unsafe-inline'`, `http://localhost:*`],
+                'style-src': [`'self'`, `'unsafe-inline'`, 'http://localhost:*'],
               },
               ...((this.configurator.entries?.contentSecurityPolicy ?? {}) as Record<
                 string,

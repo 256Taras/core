@@ -2,6 +2,7 @@ import { FastifyReply } from 'fastify';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { MIME_TYPES } from '../http/constants.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { RouteUrl } from '../router/types/route-url.type.js';
 import { Session } from '../session/session.service.js';
@@ -81,7 +82,13 @@ export class Response {
   }
 
   public download(file: string): this {
-    this.instance?.download(file);
+    const extension = file.split('.').pop();
+
+    this.header('content-disposition', `attachment; filename=${file}`);
+
+    if (extension) {
+      this.header('content-type', MIME_TYPES[extension]);
+    }
 
     return this;
   }
@@ -155,6 +162,7 @@ export class Response {
     this.instance?.redirect(
       this.session.get('_previousLocation') ?? this.request.url(),
     );
+
     this.instance?.status(status);
 
     return this;
