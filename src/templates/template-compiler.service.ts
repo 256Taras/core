@@ -154,7 +154,7 @@ export class TemplateCompiler {
               const ws = new WebSocket('ws://localhost:6173');
 
               ws.onmessage = () => window.location.reload();
-              ws.onclose = () => console.log('[northle] Hot reload disconected');
+              ws.onclose = () => console.log('[northle] Hot reload disconnected');
             </script>
           `
             : '';
