@@ -342,7 +342,7 @@ export class TemplateCompiler {
     for (const match of matches) {
       const value = match[2].trim();
 
-      const transpiledJs = typescript
+      const transpiledExpression = typescript
         .transpileModule(value, {
           compilerOptions: {
             module: typescript.ModuleKind.ESNext,
@@ -354,7 +354,19 @@ export class TemplateCompiler {
       const renderFunction = this.getRenderFunction(
         `return ${
           match[1] === '@' ? true : false
-        } ? String(${transpiledJs}) : String(${transpiledJs}).replace(/[&<>'"]/g, (char) => ({
+        } ? String(typeof ${
+          transpiledExpression
+        } === 'object' ? JSON.stringify(${
+          transpiledExpression
+        }) : ${
+          transpiledExpression
+        }) : String(typeof ${
+          transpiledExpression
+        } === 'object' ? JSON.stringify(${
+          transpiledExpression
+        }) : ${
+          transpiledExpression
+        }).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
