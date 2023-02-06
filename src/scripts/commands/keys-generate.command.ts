@@ -4,9 +4,9 @@ import { logInfo } from '../../logger/functions/log-info.function.js';
 import { Command } from '../decorators/command.decorator.js';
 
 @Command({
-  signature: 'key:generate',
+  signature: 'keys:generate',
 })
-export class KeyGenerateCommand {
+export class KeysGenerateCommand {
   public async handle(): Promise<void> {
     const envFile = `${process.cwd()}/.env`;
 
@@ -17,9 +17,12 @@ export class KeyGenerateCommand {
       envContent.replace(
         /ENCRYPT_KEY=.*$/m,
         `ENCRYPT_KEY=${randomBytes(16).toString('hex')}`,
+      ).replace(
+        /JWT_KEY=.*$/m,
+        `JWT_KEY=${randomBytes(32).toString('hex')}`,
       ),
     );
 
-    logInfo('Generated new encryption key');
+    logInfo('Generated new random encryption and JWT keys');
   }
 }
