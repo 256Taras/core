@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import typescript from 'typescript';
-import { Authenticator } from '../auth/authenticator.service.js';
 import { Gate } from '../auth/gate.class.js';
 import { Configurator } from '../configurator/configurator.service.js';
 import * as constants from '../constants.js';
@@ -53,18 +52,10 @@ export class TemplateCompiler {
   public static stacks = new Map<string, string[]>();
 
   constructor(
-    private authenticator: Authenticator,
     private configurator: Configurator,
     private request: Request,
   ) {
     this.directives = [
-      {
-        name: 'auth',
-        type: 'block',
-        render: (content: string) => {
-          return this.authenticator.isAuthentcated() ? content : '';
-        },
-      },
       {
         name: 'can',
         type: 'block',
@@ -132,13 +123,6 @@ export class TemplateCompiler {
           if (fieldName in errors) {
             return content;
           }
-        },
-      },
-      {
-        name: 'guest',
-        type: 'block',
-        render: (content: string) => {
-          return this.authenticator.isAuthentcated() ? '' : content;
         },
       },
       {
