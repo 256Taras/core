@@ -51,10 +51,7 @@ export class TemplateCompiler {
 
   public static stacks = new Map<string, string[]>();
 
-  constructor(
-    private configurator: Configurator,
-    private request: Request,
-  ) {
+  constructor(private configurator: Configurator, private request: Request) {
     this.directives = [
       {
         name: 'can',
@@ -338,19 +335,7 @@ export class TemplateCompiler {
       const renderFunction = this.getRenderFunction(
         `return ${
           match[1] === '@' ? true : false
-        } ? String(typeof ${
-          transpiledExpression
-        } === 'object' ? JSON.stringify(${
-          transpiledExpression
-        }) : ${
-          transpiledExpression
-        }) : String(typeof ${
-          transpiledExpression
-        } === 'object' ? JSON.stringify(${
-          transpiledExpression
-        }) : ${
-          transpiledExpression
-        }).replace(/[&<>'"]/g, (char) => ({
+        } ? String(typeof ${transpiledExpression} === 'object' ? JSON.stringify(${transpiledExpression}) : ${transpiledExpression}) : String(typeof ${transpiledExpression} === 'object' ? JSON.stringify(${transpiledExpression}) : ${transpiledExpression}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',

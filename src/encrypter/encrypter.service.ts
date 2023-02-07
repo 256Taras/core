@@ -29,7 +29,9 @@ export class Encrypter {
   public base64Decode(data: string, urlFriendly = false): string {
     const encoded = Buffer.from(data).toString('base64');
 
-    return urlFriendly ? encoded.replaceAll(/\+\//g, '-').replaceAll('=', '') : encoded;
+    return urlFriendly
+      ? encoded.replaceAll(/\+\//g, '-').replaceAll('=', '')
+      : encoded;
   }
 
   public decrypt(
