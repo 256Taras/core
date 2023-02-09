@@ -22,6 +22,18 @@ export class Encrypter {
     return await compare(data, hash);
   }
 
+  public base64Encode(data: string): string {
+    return Buffer.from(data, 'base64').toString('ascii');
+  }
+
+  public base64Decode(data: string, urlFriendly = false): string {
+    const encoded = Buffer.from(data).toString('base64');
+
+    return urlFriendly
+      ? encoded.replaceAll(/\+\//g, '-').replaceAll('=', '')
+      : encoded;
+  }
+
   public decrypt(
     encryptedData: string,
     algorithm: EncryptionAlgorithm = 'aes-256-cbc',

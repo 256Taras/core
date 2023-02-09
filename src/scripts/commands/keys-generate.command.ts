@@ -14,13 +14,12 @@ export class KeysGenerateCommand {
 
     await writeFile(
       envFile,
-      envContent.replace(
-        /ENCRYPT_KEY=.*$/m,
-        `ENCRYPT_KEY=${randomBytes(16).toString('hex')}`,
-      ).replace(
-        /JWT_KEY=.*$/m,
-        `JWT_KEY=${randomBytes(32).toString('hex')}`,
-      ),
+      envContent
+        .replace(
+          /ENCRYPT_KEY=.*$/m,
+          `ENCRYPT_KEY=${randomBytes(16).toString('hex')}`,
+        )
+        .replace(/JWT_KEY=.*$/m, `JWT_KEY=${randomBytes(32).toString('hex')}`),
     );
 
     logInfo('Generated new random encryption and JWT keys');

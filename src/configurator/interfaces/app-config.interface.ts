@@ -17,6 +17,9 @@ export interface AppConfig {
   development?: boolean;
   env?: string;
   host?: string;
+  jwt?: {
+    key?: string;
+  };
   locale?: string;
   logger?: boolean;
   mail?: {

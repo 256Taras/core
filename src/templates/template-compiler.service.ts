@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import typescript from 'typescript';
-import { Authenticator } from '../auth/authenticator.service.js';
 import { Gate } from '../auth/gate.class.js';
 import { Configurator } from '../configurator/configurator.service.js';
 import * as constants from '../constants.js';
@@ -52,19 +51,8 @@ export class TemplateCompiler {
 
   public static stacks = new Map<string, string[]>();
 
-  constructor(
-    private authenticator: Authenticator,
-    private configurator: Configurator,
-    private request: Request,
-  ) {
+  constructor(private configurator: Configurator, private request: Request) {
     this.directives = [
-      {
-        name: 'auth',
-        type: 'block',
-        render: (content: string) => {
-          return this.authenticator.isAuthentcated() ? content : '';
-        },
-      },
       {
         name: 'can',
         type: 'block',
@@ -132,13 +120,6 @@ export class TemplateCompiler {
           if (fieldName in errors) {
             return content;
           }
-        },
-      },
-      {
-        name: 'guest',
-        type: 'block',
-        render: (content: string) => {
-          return this.authenticator.isAuthentcated() ? '' : content;
         },
       },
       {
@@ -354,19 +335,7 @@ export class TemplateCompiler {
       const renderFunction = this.getRenderFunction(
         `return ${
           match[1] === '@' ? true : false
-        } ? String(typeof ${
-          transpiledExpression
-        } === 'object' ? JSON.stringify(${
-          transpiledExpression
-        }) : ${
-          transpiledExpression
-        }) : String(typeof ${
-          transpiledExpression
-        } === 'object' ? JSON.stringify(${
-          transpiledExpression
-        }) : ${
-          transpiledExpression
-        }).replace(/[&<>'"]/g, (char) => ({
+        } ? String(typeof ${transpiledExpression} === 'object' ? JSON.stringify(${transpiledExpression}) : ${transpiledExpression}) : String(typeof ${transpiledExpression} === 'object' ? JSON.stringify(${transpiledExpression}) : ${transpiledExpression}).replace(/[&<>'"]/g, (char) => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
