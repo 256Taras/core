@@ -15,9 +15,9 @@ import { Command } from '../decorators/command.decorator.js';
       short: 'o',
       default: false,
     },
-    clean: {
+    verbose: {
       type: 'boolean',
-      short: 'c',
+      short: 'v',
       default: false,
     },
   },
@@ -39,7 +39,7 @@ export class StartDevCommand {
 
     const { result } = concurrently(
       [
-        `tsc --watch${flags.clean ? ` > ${buildLogsTempPath}` : ''}`,
+        `tsc --watch${!flags.verbose ? ` > ${buildLogsTempPath}` : ''}`,
         `app server:dev${flags.open ? ' --open' : ''}`,
       ],
       {
