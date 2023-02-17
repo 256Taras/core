@@ -81,7 +81,7 @@ export class Logger {
       .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_RED)(
       `${message}${
         message === this.lastMessage && label === this.lastLabel
-          ? ` [x${this.repeatedMessageCount + 1}]`
+          ? chalk.gray(` [x${this.repeatedMessageCount + 1}]`)
           : ''
       }`,
     )}\n`;
@@ -111,7 +111,7 @@ export class Logger {
     )} ${chalk.bold.green(
       `${message}${
         message === this.lastMessage && label === this.lastLabel
-          ? ` [x${this.repeatedMessageCount + 1}]`
+          ? chalk.gray(` [x${this.repeatedMessageCount + 1}]`)
           : ''
       }`,
     )}\n`;
@@ -154,7 +154,7 @@ export class Logger {
     const mainOutput = this.truncate(
       `${message}${
         message === this.lastMessage && label === this.lastLabel
-          ? ` [x${this.repeatedMessageCount + 1}]`
+          ? chalk.gray(` [x${this.repeatedMessageCount + 1}]`)
           : ''
       }`,
     );
@@ -206,7 +206,7 @@ export class Logger {
       .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_YELLOW)(
       `${message}${
         message === this.lastMessage && label === this.lastLabel
-          ? ` [x${this.repeatedMessageCount + 1}]`
+          ? chalk.gray(` [x${this.repeatedMessageCount + 1}]`)
           : ''
       }`,
     )}\n`;
