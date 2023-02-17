@@ -10,6 +10,7 @@ import { DbSeedCommand } from './commands/db-seed.command.js';
 import { KeysGenerateCommand } from './commands/keys-generate.command.js';
 import { PreparePublishCommand } from './commands/prepare-publish.command.js';
 import { ServerDevCommand } from './commands/server-dev.command.js';
+import { StartCommand } from './commands/start.command.js';
 import { StartDevCommand } from './commands/start-dev.command.js';
 import { StartProdCommand } from './commands/start-prod.command.js';
 import { Command } from './interfaces/command.interface.js';
@@ -30,6 +31,7 @@ const commands: Constructor<Command>[] = [
   KeysGenerateCommand,
   PreparePublishCommand,
   ServerDevCommand,
+  StartCommand,
   StartDevCommand,
   StartProdCommand,
 ];
