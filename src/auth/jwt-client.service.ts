@@ -1,9 +1,9 @@
 import { createHmac } from 'node:crypto';
 import { Configurator } from '../configurator/configurator.service.js';
+import { env } from '../configurator/functions/env.function.js';
 import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { inject } from '../injector/functions/inject.function.js';
-import { env } from '../utils/functions/env.function.js';
 
 @Service()
 export class JwtClient {

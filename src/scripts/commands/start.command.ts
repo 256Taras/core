@@ -1,4 +1,4 @@
-import { env } from '../../utils/functions/env.function.js';
+import { env } from '../../configurator/functions/env.function.js';
 import { Command } from '../decorators/command.decorator.js';
 import { StartDevCommand } from './start-dev.command.js';
 import { StartProdCommand } from './start-prod.command.js';
@@ -20,6 +20,8 @@ import { StartProdCommand } from './start-prod.command.js';
 })
 export class StartCommand {
   public async handle(flags: Record<string, boolean>): Promise<void> {
-    await new (env<boolean>('DEVELOPMENT') ? StartDevCommand : StartProdCommand)().handle(flags);
+    await new (env<boolean>('DEVELOPMENT')
+      ? StartDevCommand
+      : StartProdCommand)().handle(flags);
   }
 }

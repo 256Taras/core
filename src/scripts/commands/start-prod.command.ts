@@ -2,10 +2,10 @@ import chalk from 'chalk';
 import { fork } from 'node:child_process';
 import { platform } from 'node:os';
 import { createInterface } from 'node:readline/promises';
+import { env } from '../../configurator/functions/env.function.js';
 import { LOGGER_COLOR_ORANGE } from '../../logger/constants.js';
 import { logInfo } from '../../logger/functions/log-info.function.js';
 import { logWarning } from '../../logger/functions/log-warning.function.js';
-import { env } from '../../utils/functions/env.function.js';
 import { Command } from '../decorators/command.decorator.js';
 import { setupStdin } from '../functions/setup-stdin.function.js';
 
