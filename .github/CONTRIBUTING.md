@@ -55,11 +55,9 @@ Next, clone app template repository (in the parent folder of the `core` reposito
 git clone https://github.com/northle/app-template.git
 cd app-template
 
-cp .env.example .env
-
 yarn install
 yarn link @northle/core
-yarn key:generate
+yarn env:prepare
 ```
 
 ::: info

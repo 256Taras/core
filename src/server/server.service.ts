@@ -242,7 +242,7 @@ export class Server {
       if (!(this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY'))) {
         throw new Error('Encryption key is missing in environment configuration', {
           cause: new Error(
-            'Generate *ENCRYPT_KEY* variable in *.env* file by running *npm run key:generate* command',
+            'Generate *ENCRYPT_KEY* variable in *.env* file by running *npm run env:prepare* command',
           ),
         });
       }

@@ -7,7 +7,7 @@ import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { BuildCommand } from './commands/build.command.js';
 import { DbMigrateCommand } from './commands/db-migrate.command.js';
 import { DbSeedCommand } from './commands/db-seed.command.js';
-import { KeysGenerateCommand } from './commands/keys-generate.command.js';
+import { EnvPrepareCommand } from './commands/env-prepare.command.js';
 import { PreparePublishCommand } from './commands/prepare-publish.command.js';
 import { ServerDevCommand } from './commands/server-dev.command.js';
 import { StartDevCommand } from './commands/start-dev.command.js';
@@ -28,7 +28,7 @@ const commands: Constructor<Command>[] = [
   BuildCommand,
   DbMigrateCommand,
   DbSeedCommand,
-  KeysGenerateCommand,
+  EnvPrepareCommand,
   PreparePublishCommand,
   ServerDevCommand,
   StartCommand,
