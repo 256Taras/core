@@ -206,6 +206,28 @@ export class TemplateCompiler {
         },
       },
       {
+        name: 'use',
+        type: 'block',
+        render: async (layout: string) => {
+          const file = `${
+            this.file ? `${this.file}/..` : 'dist/app/views'
+          }/${layout}.html`;
+
+          if (!existsSync(file)) {
+            throw new Error(`View layout '${layout}' does not exist`, {
+              cause: new Error(`Create '${layout}' view layout file`),
+            });
+          }
+
+          const compiler = inject(TemplateCompiler, { freshInstance: true });
+
+          const fileContent = await readFile(file, 'utf8');
+          const compiledLayout = await compiler.compile(fileContent, this.data);
+
+          return compiledLayout;
+        },
+      },
+      {
         name: 'stack',
         type: 'single',
         render: (stackName: string) => {

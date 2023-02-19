@@ -1,7 +1,5 @@
 <div align="center">
-  <img src=".github/logo-full.png" width="310">
-
-  <h1>Northle.js</h1>
+  <img src=".github/logo-full.png" width="300">
 
   <p align="center">Modern and declarative backend development framework for Node.js.</p>
 
