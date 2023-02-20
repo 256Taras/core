@@ -8,6 +8,7 @@ import { Response } from '../http/response.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { Logger } from '../logger/logger.service.js';
 import { Integer } from '../utils/types/integer.type.js';
+import { HttpError } from '../http/http-error.class.js';
 
 @Service()
 export class Handler {
@@ -79,6 +80,12 @@ export class Handler {
   }
 
   public async handleError(error: Error): Promise<void> {
+    if (error instanceof HttpError) {
+      this.response.abort(error.status, error.message);
+
+      return;
+    }
+
     this.error = error;
 
     const statusCode = StatusCode.InternalServerError;

@@ -17,6 +17,7 @@ export * from './functions/redirect-back.function.js';
 export * from './functions/route-url.function.js';
 export * from './functions/view.function.js';
 export * from './http-client.service.js';
+export * from './http-error.class.js';
 export * from './interfaces/middleware-handler.interface.js';
 export * from './json-response.service.js';
 export * from './redirect-back-response.service.js';

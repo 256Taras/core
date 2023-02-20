@@ -33,10 +33,10 @@ export class Response {
     return this;
   }
 
-  public async abort(status: StatusCode): Promise<this> {
+  public async abort(status: StatusCode, customMessage?: string): Promise<this> {
     this.instance?.status(status);
 
-    const message = Object.keys(StatusCode)
+    const message = customMessage ?? Object.keys(StatusCode)
       .find(
         (key: string) =>
           (StatusCode as unknown as Record<string, StatusCode>)[key] === status,
