@@ -3,12 +3,12 @@ import { fileURLToPath } from 'node:url';
 import { Configurator } from '../configurator/configurator.service.js';
 import { env } from '../configurator/functions/env.function.js';
 import { StatusCode } from '../http/enums/status-code.enum.js';
+import { HttpError } from '../http/http-error.class.js';
 import { Request } from '../http/request.service.js';
 import { Response } from '../http/response.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { Logger } from '../logger/logger.service.js';
 import { Integer } from '../utils/types/integer.type.js';
-import { HttpError } from '../http/http-error.class.js';
 
 @Service()
 export class Handler {
@@ -58,15 +58,7 @@ export class Handler {
           ?.slice(0, -1)
           ?.replaceAll('\\', '/') ?? file;
 
-      const isAppFile = !file.includes('/node_modules') && !file.includes('/core');
-
-      if (isAppFile) {
-        file = file.replace(/^.*?dist[/\\]/, `src/`);
-
-        const originalSourceFile = file.replace('.js', '.ts');
-
-        file = existsSync(originalSourceFile) ? originalSourceFile : file;
-      } else {
+      if (file.includes('/node_modules') || file.includes('/core')) {
         file = '@northle/core package file';
         line = null;
       }
@@ -100,18 +92,13 @@ export class Handler {
 
     await this.readErrorStack();
 
-    const undefinedVariableRegex = /(.*?) is not defined/;
-
-    const message = undefinedVariableRegex.test(error.message)
-      ? error.message.replace(undefinedVariableRegex, `Variable '$1' is not defined`)
-      : (error.message.charAt(0).toUpperCase() + error.message.slice(1)).replaceAll(
-          /\n|\r\n/g,
-          ' ',
-        );
+    const message = (
+      error.message.charAt(0).toUpperCase() + error.message.slice(1)
+    ).replaceAll(/\n|\r\n/g, ' ');
 
     this.logger.error(message);
 
-    this.logger.sub('---');
+    this.logger.sub('-----');
 
     if (this.file) {
       this.logger.sub(`in file: ${this.file}`);
@@ -147,12 +134,11 @@ export class Handler {
         ? `views/errors/${statusCode}`
         : `${fileURLToPath(import.meta.url)}/../../../views/error`;
 
-      const { caller, file } = this;
-
       await this.response.render(view, {
-        caller,
+        caller: this.caller,
         error,
-        file,
+        file: this.file,
+        line: this.line,
         message,
       });
 

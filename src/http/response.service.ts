@@ -36,12 +36,14 @@ export class Response {
   public async abort(status: StatusCode, customMessage?: string): Promise<this> {
     this.instance?.status(status);
 
-    const message = customMessage ?? Object.keys(StatusCode)
-      .find(
-        (key: string) =>
-          (StatusCode as unknown as Record<string, StatusCode>)[key] === status,
-      )
-      ?.replace(/([a-z])([A-Z])/g, '$1 $2');
+    const message =
+      customMessage ??
+      Object.keys(StatusCode)
+        .find(
+          (key: string) =>
+            (StatusCode as unknown as Record<string, StatusCode>)[key] === status,
+        )
+        ?.replace(/([a-z])([A-Z])/g, '$1 $2');
 
     const data = {
       statusCode: status,
