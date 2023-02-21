@@ -1,3 +1,5 @@
+(await import('source-map-support')).install();
+
 export * from './constants.js';
 
 export * from './auth/auth.module.js';

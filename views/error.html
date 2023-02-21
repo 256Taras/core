@@ -75,6 +75,14 @@
             </code>
           </p>
 
+          [if (line && file && file !== 'unknown')]
+            <p>
+              in line <code class="self-start text-rose-500 dark:text-rose-400 px-2 py-1 text-sm bg-rose-50 dark:bg-gray-700 rounded-md ml-1">
+                {{ line }}
+              </code>
+            </p>
+          [/if]
+
           <p>
             on route <code class="self-start text-rose-500 dark:text-rose-400 px-2 py-1 text-sm bg-rose-50 dark:bg-gray-700 rounded-md ml-1">
               {{ $request.method() }} <span class="border-b border-rose-500 dark:border-rose-400 pb-0.5">{{ $request.fullUrl() }}</span>
