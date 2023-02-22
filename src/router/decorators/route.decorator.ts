@@ -77,7 +77,7 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
       (session.get<Integer[]>(`_lastMinuteRequests:${request.url()}`) ?? [])
         .length >= maxRequestsPerMinute
     ) {
-      handler.handleTooManyRequests();
+      await handler.handleTooManyRequests();
     }
 
     await router.respond(target.constructor as Constructor, propertyKey, ...args);

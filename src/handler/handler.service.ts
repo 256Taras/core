@@ -74,7 +74,7 @@ export class Handler {
 
   public async handleError(error: Error): Promise<void> {
     if (error instanceof HttpError) {
-      this.response.abort(error.status, error.message);
+      await this.response.abort(error.statusCode, error.message);
 
       return;
     }
@@ -120,18 +120,7 @@ export class Handler {
       this.logger.sub(`from IP: ${this.request.ip()}`);
     }
 
-    const data = {
-      statusCode,
-      message: 'Internal Server Error',
-    };
-
-    if (this.request.isAjaxRequest()) {
-      this.response.send(data);
-
-      return;
-    }
-
-    if (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT')) {
+    if (!this.request.isAjaxRequest() && (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT'))) {
       const customViewTemplate = `views/errors/${statusCode}.html`;
 
       const view = existsSync(customViewTemplate)
@@ -149,15 +138,7 @@ export class Handler {
       return;
     }
 
-    const customTemplatePath = `views/errors/${statusCode}.html`;
-
-    const file = existsSync(customTemplatePath)
-      ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
-
-    this.response.terminate();
-
-    await this.response.render(file, data);
+    await this.response.abort(statusCode);
   }
 
   public async handleFatalError(error: Error): Promise<void> {
@@ -184,97 +165,28 @@ export class Handler {
     this.logger.warn('In production mode process will exit on fatal errors');
   }
 
-  public handleInvalidToken(): void {
-    const statusCode = StatusCode.InvalidToken;
-
-    this.response.status(statusCode);
-
-    const data = {
-      statusCode,
-      message: 'Invalid Token',
-    };
-
-    if (this.request.isAjaxRequest()) {
-      this.response.send(data);
-
-      return;
-    }
-
-    const customViewTemplate = `views/errors/${statusCode}.html`;
-
-    const view = existsSync(customViewTemplate)
-      ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
-
-    this.response.terminate();
-
-    this.response.render(view, data);
+  public async handleInvalidToken(): Promise<void> {
+    await this.response.abort(StatusCode.InvalidToken);
   }
 
-  public handleNotFound(): void {
-    const statusCode = StatusCode.NotFound;
-
-    this.response.status(statusCode);
-
+  public async handleNotFound(): Promise<void> {
     if (this.notFoundHandler) {
       this.notFoundHandler();
 
       return;
     }
 
-    const data = {
-      statusCode,
-      message: 'Not Found',
-    };
-
-    if (this.request.isAjaxRequest()) {
-      this.response.send(data);
-
-      return;
-    }
-
-    const customViewTemplate = `views/errors/${statusCode}.html`;
-
-    const view = existsSync(customViewTemplate)
-      ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
-
-    this.response.terminate();
-
-    this.response.render(view, data);
+    await this.response.abort(StatusCode.NotFound);
   }
 
-  public handleTooManyRequests(): void {
-    const statusCode = StatusCode.TooManyRequests;
-
-    this.response.status(statusCode);
-
+  public async handleTooManyRequests(): Promise<void> {
     if (this.tooManyRequestsHandler) {
       this.tooManyRequestsHandler();
 
       return;
     }
 
-    const data = {
-      statusCode,
-      message: 'Too Many Requests',
-    };
-
-    if (this.request.isAjaxRequest()) {
-      this.response.send(data);
-
-      return;
-    }
-
-    const customViewTemplate = `views/errors/${statusCode}.html`;
-
-    const view = existsSync(customViewTemplate)
-      ? `views/errors/${statusCode}`
-      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
-
-    this.response.terminate();
-
-    this.response.render(view, data);
+    await this.response.abort(StatusCode.TooManyRequests);
   }
 
   public setErrorHandler(callback: () => unknown): void {

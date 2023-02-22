@@ -33,20 +33,20 @@ export class Response {
     return this;
   }
 
-  public async abort(status: StatusCode, customMessage?: string): Promise<this> {
-    this.instance?.status(status);
+  public async abort(statusCode: StatusCode, customMessage?: string): Promise<this> {
+    this.instance?.status(statusCode);
 
     const message =
       customMessage ??
       Object.keys(StatusCode)
         .find(
           (key: string) =>
-            (StatusCode as unknown as Record<string, StatusCode>)[key] === status,
+            (StatusCode as unknown as Record<string, StatusCode>)[key] === statusCode,
         )
-        ?.replace(/([a-z])([A-Z])/g, '$1 $2');
+        ?.replace(/([a-z])([A-Z])/g, '$1 $2') ?? 'Unknown error';
 
     const data = {
-      statusCode: status,
+      statusCode,
       message,
     };
 
@@ -56,7 +56,13 @@ export class Response {
       return this;
     }
 
-    await this.render(`${fileURLToPath(import.meta.url)}/../../../views/http`, data);
+    this.terminate();
+
+    const view = existsSync(`views/errors/${statusCode}.html`)
+      ? `views/errors/${statusCode}`
+      : `${fileURLToPath(import.meta.url)}/../../../views/http`;
+
+    await this.render(view, data);
 
     return this;
   }

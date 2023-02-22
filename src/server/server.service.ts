@@ -62,7 +62,7 @@ export class Server {
     private translator: Translator,
   ) {}
 
-  private handleCsrfToken(): void {
+  private async handleCsrfToken(): Promise<void> {
     if (!this.session.has('_csrfToken')) {
       const token = this.encrypter.randomBytes(16);
 
@@ -78,7 +78,7 @@ export class Server {
         this.request.header('X-XSRF-TOKEN');
 
       if (!token || token !== this.session.get('_csrfToken')) {
-        this.handler.handleInvalidToken();
+        await this.handler.handleInvalidToken();
       }
     }
   }
@@ -354,7 +354,7 @@ export class Server {
 
       this.instance.addHook('preValidation', async () => {
         if (!this.request.isFileRequest()) {
-          this.handleCsrfToken();
+          await this.handleCsrfToken();
 
           if (this.request.isFormRequest()) {
             this.session.flash<Record<string, unknown>>(
@@ -432,8 +432,8 @@ export class Server {
 
       this.registerStaticFileServer();
 
-      this.instance.setNotFoundHandler(() => {
-        this.handler.handleNotFound();
+      this.instance.setNotFoundHandler(async () => {
+        await this.handler.handleNotFound();
       });
 
       await this.instance.listen({ port, host });
