@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { Configurator } from '../configurator/configurator.service.js';
 import { env } from '../configurator/functions/env.function.js';
@@ -121,13 +120,7 @@ export class Handler {
     }
 
     if (!this.request.isAjaxRequest() && (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT'))) {
-      const customViewTemplate = `views/errors/${statusCode}.html`;
-
-      const view = existsSync(customViewTemplate)
-        ? `views/errors/${statusCode}`
-        : `${fileURLToPath(import.meta.url)}/../../../views/error`;
-
-      await this.response.render(view, {
+      await this.response.render(`${fileURLToPath(import.meta.url)}/../../../views/error`, {
         caller: this.caller,
         error,
         file: this.file,
