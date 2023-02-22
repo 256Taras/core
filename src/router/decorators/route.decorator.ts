@@ -110,14 +110,15 @@ function createRouteDecorator(methods: HttpMethod[], options?: RouteOptions) {
 }
 
 export function Error(
-  statusCode: StatusCode.NotFound | StatusCode.InternalServerError,
+  statusCode:
+    | StatusCode.InternalServerError
+    | StatusCode.NotFound
+    | StatusCode.TooManyRequests,
 ): MethodDecorator {
   return (target, propertyKey) => {
     const callback = resolveRouteAction(target, propertyKey);
 
-    statusCode === StatusCode.InternalServerError
-      ? handler.setErrorHandler(callback)
-      : handler.setNotFoundHandler(callback);
+    handler.setCustomHandler(statusCode, callback);
   };
 }
 

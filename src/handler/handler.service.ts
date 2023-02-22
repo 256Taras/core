@@ -15,15 +15,11 @@ export class Handler {
 
   private caller: string | null = null;
 
-  private errorHandler: ((error: Error) => unknown) | null = null;
+  private customHandlers = new Map<StatusCode, Function>();
 
   private file: string | null = null;
 
   private line: number | null = null;
-
-  private notFoundHandler: (() => unknown) | null = null;
-
-  private tooManyRequestsHandler: (() => unknown) | null = null;
 
   constructor(
     private configurator: Configurator,
@@ -58,12 +54,13 @@ export class Handler {
         file = 'unknown';
       }
 
-      file =
-        `src/${file
+      file = `src/${
+        file
           .replace(file.replace(/([^:]*:){2}/, ''), '')
           ?.slice(0, -1)
           ?.replaceAll('\\', '/')
-          ?.split('src/')?.[1] ?? file}`;
+          ?.split('src/')?.[1] ?? file
+      }`;
     }
 
     this.caller = caller;
@@ -82,10 +79,8 @@ export class Handler {
 
     const statusCode = StatusCode.InternalServerError;
 
-    this.response.status(statusCode);
-
-    if (this.errorHandler) {
-      this.errorHandler(error);
+    if (this.customHandlers.has(statusCode)) {
+      this.customHandlers.get(statusCode)?.(error);
 
       return;
     }
@@ -119,14 +114,22 @@ export class Handler {
       this.logger.sub(`from IP: ${this.request.ip()}`);
     }
 
-    if (!this.request.isAjaxRequest() && (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT'))) {
-      await this.response.render(`${fileURLToPath(import.meta.url)}/../../../views/error`, {
-        caller: this.caller,
-        error,
-        file: this.file,
-        line: this.line,
-        message,
-      });
+    if (
+      !this.request.isAjaxRequest() &&
+      (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT'))
+    ) {
+      this.response.status(statusCode);
+
+      await this.response.render(
+        `${fileURLToPath(import.meta.url)}/../../../views/error`,
+        {
+          caller: this.caller,
+          error,
+          file: this.file,
+          line: this.line,
+          message,
+        },
+      );
 
       return;
     }
@@ -163,8 +166,10 @@ export class Handler {
   }
 
   public async handleNotFound(): Promise<void> {
-    if (this.notFoundHandler) {
-      this.notFoundHandler();
+    const statusCode = StatusCode.NotFound;
+
+    if (this.customHandlers.has(statusCode)) {
+      this.customHandlers.get(statusCode)?.();
 
       return;
     }
@@ -173,8 +178,10 @@ export class Handler {
   }
 
   public async handleTooManyRequests(): Promise<void> {
-    if (this.tooManyRequestsHandler) {
-      this.tooManyRequestsHandler();
+    const statusCode = StatusCode.TooManyRequests;
+
+    if (this.customHandlers.has(statusCode)) {
+      this.customHandlers.get(statusCode)?.();
 
       return;
     }
@@ -182,23 +189,11 @@ export class Handler {
     await this.response.abort(StatusCode.TooManyRequests);
   }
 
-  public setErrorHandler(callback: () => unknown): void {
-    this.errorHandler = callback;
+  public pass(): void {
+    return;
   }
 
-  public setNotFoundHandler(callback: () => unknown): void {
-    this.notFoundHandler = callback;
-  }
-
-  public setTooManyRequestsHandler(callback: () => unknown): void {
-    this.tooManyRequestsHandler = callback;
-  }
-
-  public useDefaultErrorHandler(): void {
-    this.errorHandler = null;
-  }
-
-  public useDefaultNotFound(): void {
-    this.notFoundHandler = null;
+  public setCustomHandler(statusCode: StatusCode, callback: () => unknown): void {
+    this.customHandlers.set(statusCode, callback);
   }
 }

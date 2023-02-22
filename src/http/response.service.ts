@@ -41,9 +41,11 @@ export class Response {
       Object.keys(StatusCode)
         .find(
           (key: string) =>
-            (StatusCode as unknown as Record<string, StatusCode>)[key] === statusCode,
+            (StatusCode as unknown as Record<string, StatusCode>)[key] ===
+            statusCode,
         )
-        ?.replace(/([a-z])([A-Z])/g, '$1 $2') ?? 'Unknown error';
+        ?.replace(/([a-z])([A-Z])/g, '$1 $2') ??
+      'Unknown error';
 
     const data = {
       statusCode,
