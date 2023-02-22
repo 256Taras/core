@@ -49,21 +49,22 @@ export class Handler {
     let file = '';
     let line: Integer | null = +(fileMatch?.[1]?.match(/(.*):(.*):(.*)/)?.[2] ?? 1);
 
-    try {
-      file = fileMatch ? fileURLToPath(fileMatch[1]) : 'unknown';
+    if (file.includes('/node_modules') && file.includes('/core')) {
+      file = '@northle/core package file';
+      line = null;
+    } else {
+      try {
+        file = fileMatch ? fileURLToPath(fileMatch[1]) : 'unknown';
+      } catch {
+        file = 'unknown';
+      }
 
       file =
-        file
+        `src/${file
           .replace(file.replace(/([^:]*:){2}/, ''), '')
           ?.slice(0, -1)
-          ?.replaceAll('\\', '/') ?? file;
-
-      if (file.includes('/node_modules') || file.includes('/core')) {
-        file = '@northle/core package file';
-        line = null;
-      }
-    } catch {
-      file = 'unknown';
+          ?.replaceAll('\\', '/')
+          ?.split('src/')?.[1] ?? file}`;
     }
 
     this.caller = caller;
@@ -92,9 +93,12 @@ export class Handler {
 
     await this.readErrorStack();
 
-    const message = (
-      error.message.charAt(0).toUpperCase() + error.message.slice(1)
-    ).replaceAll(/\n|\r\n/g, ' ');
+    const message = /(.*?) is not defined/.test(error.message)
+      ? error.message
+      : (error.message.charAt(0).toUpperCase() + error.message.slice(1)).replaceAll(
+          /\n|\r\n/g,
+          ' ',
+        );
 
     this.logger.error(message);
 
