@@ -11,15 +11,15 @@ import { Integer } from '../utils/types/integer.type.js';
 
 @Service()
 export class Handler {
-  private error: Error | null = null;
+  private currentCaller: string | null = null;
 
-  private caller: string | null = null;
+  private currentError: Error | null = null;
+
+  private currentFile: string | null = null;
+
+  private currentLine: Integer | null = null;
 
   private customHandlers = new Map<StatusCode, Function>();
-
-  private file: string | null = null;
-
-  private line: number | null = null;
 
   constructor(
     private configurator: Configurator,
@@ -29,17 +29,20 @@ export class Handler {
   ) {}
 
   private async readErrorStack(): Promise<void> {
-    const stack = this.error?.stack ?? 'Error\n    at <anonymous>:1:1';
+    const stack = this.currentError?.stack ?? 'Error\n    at <anonymous>:1:1';
 
     if (env<boolean>('DEVELOPER_MODE') ?? false) {
       console.log(stack);
     }
 
-    const where = stack.split('\n')[1];
+    const whereThrown = stack.split('\n')[1];
 
-    const at = where?.slice(where.indexOf('at ') + 2, where.length) ?? 'unknown';
-    const caller = at.split('(')[0] ?? 'unknown';
-    const fileMatch = at.match(/\((.*?)\)/);
+    const thrownAt = whereThrown?.slice(
+      whereThrown.indexOf('at ') + 2,
+      whereThrown.length,
+    );
+    const caller = thrownAt?.split('(')?.[0] ?? 'unknown';
+    const fileMatch = thrownAt?.match(/\((.*?)\)/);
 
     let file = '';
     let line: Integer | null = +(fileMatch?.[1]?.match(/(.*):(.*):(.*)/)?.[2] ?? 1);
@@ -63,9 +66,9 @@ export class Handler {
       }`;
     }
 
-    this.caller = caller;
-    this.file = file;
-    this.line = line;
+    this.currentCaller = caller;
+    this.currentFile = file;
+    this.currentLine = line;
   }
 
   public async handleError(error: Error): Promise<void> {
@@ -75,7 +78,7 @@ export class Handler {
       return;
     }
 
-    this.error = error;
+    this.currentError = error;
 
     const statusCode = StatusCode.InternalServerError;
 
@@ -98,12 +101,12 @@ export class Handler {
 
     this.logger.sub('-----');
 
-    if (this.file) {
-      this.logger.sub(`in file: ${this.file}`);
+    if (this.currentFile) {
+      this.logger.sub(`in file: ${this.currentFile}`);
     }
 
-    if (this.line && this.file && this.file !== 'unknown') {
-      this.logger.sub(`in line: ${this.line}`);
+    if (this.currentLine && this.currentFile && this.currentFile !== 'unknown') {
+      this.logger.sub(`in line: ${this.currentLine}`);
     }
 
     if (this.request.fullUrl()) {
@@ -123,10 +126,10 @@ export class Handler {
       await this.response.render(
         `${fileURLToPath(import.meta.url)}/../../../views/error`,
         {
-          caller: this.caller,
+          caller: this.currentCaller,
           error,
-          file: this.file,
-          line: this.line,
+          file: this.currentFile,
+          line: this.currentLine,
           message,
         },
       );
@@ -142,7 +145,7 @@ export class Handler {
       return;
     }
 
-    this.error = error;
+    this.currentError = error;
 
     await this.readErrorStack();
 
@@ -150,8 +153,8 @@ export class Handler {
 
     this.logger.error(message, 'fatal error');
 
-    if (this.file) {
-      this.logger.sub(`File: ${this.file} in line ${this.line}`);
+    if (this.currentFile) {
+      this.logger.sub(`File: ${this.currentFile} in line ${this.currentLine}`);
     }
 
     if (!(this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT'))) {

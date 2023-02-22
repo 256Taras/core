@@ -9,6 +9,7 @@ import { logInfo } from '../../logger/functions/log-info.function.js';
 import { cloneFiles } from '../../utils/functions/clone-files.function.js';
 import { debounce } from '../../utils/functions/debounce.function.js';
 import { runCommand } from '../../utils/functions/run-command.function.js';
+import { Integer } from '../../utils/types/integer.type.js';
 import { Command } from '../decorators/command.decorator.js';
 import { WebClientAlias } from '../enums/web-client-alias.enum.js';
 import { setupStdin } from '../functions/setup-stdin.function.js';
@@ -55,7 +56,7 @@ export class ServerDevCommand {
           `${
             WebClientAlias[process.platform as 'darwin' | 'linux' | 'win32'] ??
             'xdg-open'
-          } http://localhost:${env<number>('PORT') ?? 7000}`,
+          } http://localhost:${env<Integer>('PORT') ?? 7000}`,
         );
 
         openedWebClient = true;

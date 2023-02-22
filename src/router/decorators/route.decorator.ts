@@ -20,6 +20,17 @@ const response = inject(Response);
 const router = inject(Router);
 const session = inject(Session);
 
+function defineRouteMetadata(target: object | Function, options?: RouteOptions) {
+  Reflect.defineMetadata(
+    'maxRequestsPerMinute',
+    options?.maxRequestsPerMinute,
+    target,
+  );
+  Reflect.defineMetadata('middleware', options?.middleware, target);
+  Reflect.defineMetadata('redirectUrl', options?.redirectTo, target);
+  Reflect.defineMetadata('statusCode', options?.statusCode, target);
+}
+
 function resolveUrl(url: RouteUrl, controller: Constructor): RouteUrl {
   let baseUrl = Reflect.getMetadata<RouteUrl>('baseUrl', controller);
 
@@ -30,7 +41,10 @@ function resolveUrl(url: RouteUrl, controller: Constructor): RouteUrl {
   return baseUrl ? `${baseUrl}/${url}` : url;
 }
 
-function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
+function resolveRouteAction(
+  target: object | Function,
+  propertyKey: string | symbol,
+) {
   return async (...args: unknown[]) => {
     const middleware:
       | Constructor<MiddlewareHandler>
@@ -87,14 +101,7 @@ function resolveRouteAction(target: Constructor, propertyKey: string | symbol) {
 function createRouteDecorator(methods: HttpMethod[], options?: RouteOptions) {
   return (url: RouteUrl): MethodDecorator => {
     return (target, propertyKey) => {
-      Reflect.defineMetadata(
-        'maxRequestsPerMinute',
-        options?.maxRequestsPerMinute,
-        target,
-      );
-      Reflect.defineMetadata('middleware', options?.middleware, target);
-      Reflect.defineMetadata('redirectUrl', options?.redirectTo, target);
-      Reflect.defineMetadata('statusCode', options?.statusCode, target);
+      defineRouteMetadata(target, options);
 
       const callback = resolveRouteAction(target, propertyKey);
 
@@ -128,14 +135,7 @@ export function Methods(
   options?: RouteOptions,
 ): MethodDecorator {
   return (target, propertyKey) => {
-    Reflect.defineMetadata(
-      'maxRequestsPerMinute',
-      options?.maxRequestsPerMinute,
-      target,
-    );
-    Reflect.defineMetadata('middleware', options?.middleware, target);
-    Reflect.defineMetadata('redirectUrl', options?.redirectTo, target);
-    Reflect.defineMetadata('statusCode', options?.statusCode, target);
+    defineRouteMetadata(target, options);
 
     const callback = resolveRouteAction(target, propertyKey);
 
