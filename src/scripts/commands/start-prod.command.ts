@@ -19,7 +19,7 @@ export class StartProdCommand {
     logInfo(
       `Production server started ${chalk.gray(
         `[press ${chalk.white(
-          (platform() === 'darwin' ? 'command' : 'ctrl') + '+c',
+          `${platform() === 'darwin' ? 'command' : 'ctrl'}+c`,
         )} to quit]`,
       )}`,
     );

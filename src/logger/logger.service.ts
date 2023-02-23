@@ -22,7 +22,7 @@ export class Logger {
 
   private readonly logLabelPadding = 8;
 
-  private repeatedMessageCount = 0;
+  private repeatedMessagesCount = 0;
 
   private getDay(): string {
     const date = new Date();
@@ -55,7 +55,7 @@ export class Logger {
     const maxLength = Math.trunc(process.stdout.columns / 2);
 
     return stripAnsiChars(message).length > maxLength
-      ? message.slice(0, maxLength) + '...'
+      ? `${message.slice(0, maxLength)}...`
       : message;
   }
 
@@ -69,11 +69,11 @@ export class Logger {
     }
 
     if (message === this.lastMessage && label === this.lastLabel) {
-      this.repeatedMessageCount += 1;
+      this.repeatedMessagesCount += 1;
 
       clearLine(3);
     } else {
-      this.repeatedMessageCount = 0;
+      this.repeatedMessagesCount = 0;
     }
 
     const output = `\n${chalk
@@ -81,7 +81,7 @@ export class Logger {
       .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_RED)(
       `${message}${
         message === this.lastMessage && label === this.lastLabel
-          ? chalk.gray(` [x${this.repeatedMessageCount + 1}]`)
+          ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
           : ''
       }`,
     )}\n`;
@@ -99,11 +99,11 @@ export class Logger {
     }
 
     if (message === this.lastMessage && label === this.lastLabel) {
-      this.repeatedMessageCount += 1;
+      this.repeatedMessagesCount += 1;
 
       clearLine(3);
     } else {
-      this.repeatedMessageCount = 0;
+      this.repeatedMessagesCount = 0;
     }
 
     const output = `\n${chalk.bgGreen.black(
@@ -111,7 +111,7 @@ export class Logger {
     )} ${chalk.bold.green(
       `${message}${
         message === this.lastMessage && label === this.lastLabel
-          ? chalk.gray(` [x${this.repeatedMessageCount + 1}]`)
+          ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
           : ''
       }`,
     )}\n`;
@@ -133,11 +133,11 @@ export class Logger {
     }
 
     if (message === this.lastMessage && label === this.lastLabel) {
-      this.repeatedMessageCount += 1;
+      this.repeatedMessagesCount += 1;
 
       clearLine();
     } else {
-      this.repeatedMessageCount = 0;
+      this.repeatedMessagesCount = 0;
     }
 
     const day = this.getDay();
@@ -154,7 +154,7 @@ export class Logger {
     const mainOutput = this.truncate(
       `${message}${
         message === this.lastMessage && label === this.lastLabel
-          ? chalk.gray(` [x${this.repeatedMessageCount + 1}]`)
+          ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
           : ''
       }`,
     );
@@ -163,7 +163,7 @@ export class Logger {
     const right = chalk.gray(additionalmessage);
 
     const dots = this.renderDots(
-      timestamp + mainOutput + label + ' '.repeat(7 - label.length),
+      `${timestamp}${mainOutput}${label}${' '.repeat(7 - label.length)}`,
     );
 
     console.log(left, dots, right);
@@ -194,11 +194,11 @@ export class Logger {
     }
 
     if (message === this.lastMessage && label === this.lastLabel) {
-      this.repeatedMessageCount += 1;
+      this.repeatedMessagesCount += 1;
 
       clearLine(2);
     } else {
-      this.repeatedMessageCount = 0;
+      this.repeatedMessagesCount = 0;
     }
 
     const output = `\n${chalk
@@ -206,7 +206,7 @@ export class Logger {
       .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_YELLOW)(
       `${message}${
         message === this.lastMessage && label === this.lastLabel
-          ? chalk.gray(` [x${this.repeatedMessageCount + 1}]`)
+          ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
           : ''
       }`,
     )}\n`;
