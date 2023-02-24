@@ -28,7 +28,9 @@ export class ServerDevCommand {
   public async handle(flags: Record<string, boolean>): Promise<void> {
     const serverTempPath = `${tmpdir()}/northle/server`;
 
-    logInfo('Starting development server...');
+    logInfo(`Starting development server... ${chalk.gray(
+      `[press ${chalk.white('q')} or ${chalk.white('esc')} to quit]`,
+    )}`);
 
     const entryFile = 'dist/main.js';
 

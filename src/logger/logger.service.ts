@@ -32,7 +32,6 @@ export class Logger {
     return date.toLocaleString(this.locale, {
       hour: 'numeric',
       minute: 'numeric',
-      second: '2-digit',
       hour12: true,
     });
   }
@@ -50,7 +49,7 @@ export class Logger {
     if (message === this.lastMessage && label === this.lastLabel) {
       this.repeatedMessagesCount += 1;
 
-      clearLine(3);
+      clearLine();
     } else {
       this.repeatedMessagesCount = 0;
     }
@@ -143,7 +142,7 @@ export class Logger {
     this.write(message, label, false, LOGGER_COLOR_GREEN);
   }
 
-  public log(message: string, label = 'log', additionalmessage = ''): void {
+  public log(message: string, label = 'log', additionalMessage = ''): void {
     if (!this.enabled) {
       return;
     }
@@ -167,7 +166,7 @@ export class Logger {
       )}`,
     )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
-    const mainOutput = this.truncate(
+    const output = this.truncate(
       `${message}${
         message === this.lastMessage && label === this.lastLabel
           ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
@@ -175,11 +174,11 @@ export class Logger {
       }`,
     );
 
-    const left = `${timestamp} ${chalk.white.bold(mainOutput)}`;
-    const right = chalk.gray(additionalmessage);
+    const left = `${timestamp} ${chalk.white.bold(output)}`;
+    const right = chalk.gray(additionalMessage);
 
     const dots = this.renderDots(
-      `${timestamp}${mainOutput}${label}${this.paddingSign.repeat(
+      `${timestamp}${output}${label}${this.paddingSign.repeat(
         7 - label.length,
       )}`,
     );

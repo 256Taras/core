@@ -1,6 +1,7 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { parseArgs } from 'node:util';
 import { Configurator } from '../configurator/configurator.service.js';
+import { Handler } from '../handler/handler.service.js';
 import { inject } from '../injector/functions/inject.function.js';
 import { logError } from '../logger/functions/log-error.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
@@ -16,13 +17,16 @@ import { StartCommand } from './commands/start.command.js';
 import { Command } from './interfaces/command.interface.js';
 import { Parameter } from './interfaces/parameter.interface.js';
 
-process.on('uncaughtException', (error: Error) => {
-  logError(error.message);
+const configurator = inject(Configurator);
+const handler = inject(Handler);
+
+process.on('uncaughtException', async (error: Error) => {
+  handler.handleError(error);
 
   process.exit(1);
 });
 
-await inject(Configurator).loadEnvironment();
+configurator.loadEnvironment();
 
 const commands: Constructor<Command>[] = [
   BuildCommand,
