@@ -15,13 +15,16 @@ export interface AppConfig {
     key?: string;
   };
   development?: boolean;
-  env?: string;
+  envFile?: string;
   host?: string;
   jwt?: {
     key?: string;
   };
   locale?: string;
-  logger?: boolean;
+  logger?: {
+    enabled?: boolean;
+    stacking?: boolean;
+  };
   mail?: {
     address?: string;
     host?: string;

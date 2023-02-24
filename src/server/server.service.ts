@@ -229,7 +229,7 @@ export class Server {
         await this.handler.handleFatalError(error);
       });
 
-      const envFile = this.configurator.entries?.env ?? '.env';
+      const envFile = this.configurator.entries?.envFile ?? '.env';
 
       if (!existsSync(envFile)) {
         const error = new Error('Environment configuration file not found');
@@ -245,10 +245,6 @@ export class Server {
             'Generate *ENCRYPT_KEY* variable in *.env* file by running *npm run env:prepare* command',
           ),
         });
-      }
-
-      if (!(this.configurator.entries?.logger ?? true)) {
-        this.logger.$disable();
       }
 
       const channels = [];

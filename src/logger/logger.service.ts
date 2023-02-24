@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import { Configurator } from '../configurator/configurator.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { stripAnsiChars } from '../utils/functions/strip-ansi-chars.function.js';
 import {
@@ -10,7 +11,7 @@ import { clearLine } from './functions/clear-line.function.js';
 
 @Service()
 export class Logger {
-  private enabled = true;
+  private enabled = this.configurator.entries?.logger?.enabled ?? true;
 
   private lastColor = '#ffffff';
 
@@ -22,9 +23,13 @@ export class Logger {
 
   private readonly logLabelPadding = 8;
 
+  private logStackingEnabled = this.configurator.entries?.logger?.stacking ?? true;
+
   private readonly paddingSign = ' ';
 
   private repeatedMessagesCount = 0;
+
+  constructor(private configurator: Configurator) {}
 
   private getTime(): string {
     const date = new Date();
@@ -46,6 +51,10 @@ export class Logger {
   }
 
   private handleRepeatedMessage(message: string, label: string): void {
+    if (!this.logStackingEnabled) {
+      return;
+    }
+
     if (message === this.lastMessage && label === this.lastLabel) {
       this.repeatedMessagesCount += 1;
 
@@ -97,7 +106,9 @@ export class Logger {
         .bgHex(color)
         .black(` ${label!.toUpperCase()} `)} ${chalk.bold.hex(color)(
         `${message}${
-          message === this.lastMessage && label === this.lastLabel
+          this.logStackingEnabled &&
+          message === this.lastMessage &&
+          label === this.lastLabel
             ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
             : ''
         }`,
@@ -134,6 +145,10 @@ export class Logger {
     this.enabled = false;
   }
 
+  public $disableStacking(): void {
+    this.logStackingEnabled = false;
+  }
+
   public error(message: string, label = 'error'): void {
     this.write(message, label, false, LOGGER_COLOR_RED);
   }
@@ -168,7 +183,9 @@ export class Logger {
 
     const output = this.truncate(
       `${message}${
-        message === this.lastMessage && label === this.lastLabel
+        this.logStackingEnabled &&
+        message === this.lastMessage &&
+        label === this.lastLabel
           ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
           : ''
       }`,
@@ -178,9 +195,7 @@ export class Logger {
     const right = chalk.gray(additionalMessage);
 
     const dots = this.renderDots(
-      `${timestamp}${output}${label}${this.paddingSign.repeat(
-        7 - label.length,
-      )}`,
+      `${timestamp}${output}${label}${this.paddingSign.repeat(7 - label.length)}`,
     );
 
     console.log(left, dots, right);
