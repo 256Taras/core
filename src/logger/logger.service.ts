@@ -14,7 +14,7 @@ export class Logger {
 
   private lastColor = '#ffffff';
 
-  private lastLabel = 'log';
+  private lastLabel: string | null = null;
 
   private lastMessage: string | null = null;
 
@@ -22,16 +22,9 @@ export class Logger {
 
   private readonly logLabelPadding = 8;
 
+  private readonly paddingSign = ' ';
+
   private repeatedMessagesCount = 0;
-
-  private getDay(): string {
-    const date = new Date();
-
-    return date.toLocaleString(this.locale, {
-      month: 'short',
-      day: 'numeric',
-    });
-  }
 
   private getTime(): string {
     const date = new Date();
@@ -42,6 +35,25 @@ export class Logger {
       second: '2-digit',
       hour12: true,
     });
+  }
+
+  private getTimeDay(): string {
+    const date = new Date();
+
+    return date.toLocaleString(this.locale, {
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+
+  private handleRepeatedMessage(message: string, label: string): void {
+    if (message === this.lastMessage && label === this.lastLabel) {
+      this.repeatedMessagesCount += 1;
+
+      clearLine(3);
+    } else {
+      this.repeatedMessagesCount = 0;
+    }
   }
 
   private renderDots(message: string): string {
@@ -59,68 +71,76 @@ export class Logger {
       : message;
   }
 
+  private write(
+    message: string,
+    label: string | null,
+    isSub = false,
+    color = '#ffffff',
+  ): void {
+    if (!this.enabled) {
+      return;
+    }
+
+    let output = '';
+
+    if (isSub) {
+      this.lastMessage = null;
+
+      const indent = this.paddingSign.repeat((this.lastLabel ?? '').length + 2);
+
+      output = `${indent} ${chalk.bold.hex(this.lastColor)(message)}\n`;
+
+      clearLine();
+    } else {
+      this.handleRepeatedMessage(message, label!);
+
+      output = `\n${chalk
+        .bgHex(color)
+        .black(` ${label!.toUpperCase()} `)} ${chalk.bold.hex(color)(
+        `${message}${
+          message === this.lastMessage && label === this.lastLabel
+            ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
+            : ''
+        }`,
+      )}\n`;
+    }
+
+    switch (this.lastLabel) {
+      case 'error':
+        console.error(output);
+
+        break;
+
+      case 'warning':
+        console.warn(output);
+
+        break;
+
+      case 'log':
+      case 'info':
+      default:
+        console.log(output);
+
+        break;
+    }
+
+    if (!isSub) {
+      this.lastLabel = label;
+      this.lastColor = color;
+      this.lastMessage = message;
+    }
+  }
+
   public $disable(): void {
     this.enabled = false;
   }
 
   public error(message: string, label = 'error'): void {
-    if (!this.enabled) {
-      return;
-    }
-
-    if (message === this.lastMessage && label === this.lastLabel) {
-      this.repeatedMessagesCount += 1;
-
-      clearLine(3);
-    } else {
-      this.repeatedMessagesCount = 0;
-    }
-
-    const output = `\n${chalk
-      .bgHex(LOGGER_COLOR_RED)
-      .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_RED)(
-      `${message}${
-        message === this.lastMessage && label === this.lastLabel
-          ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
-          : ''
-      }`,
-    )}\n`;
-
-    console.error(output);
-
-    this.lastLabel = label;
-    this.lastColor = LOGGER_COLOR_RED;
-    this.lastMessage = message;
+    this.write(message, label, false, LOGGER_COLOR_RED);
   }
 
   public info(message: string, label = 'info'): void {
-    if (!this.enabled) {
-      return;
-    }
-
-    if (message === this.lastMessage && label === this.lastLabel) {
-      this.repeatedMessagesCount += 1;
-
-      clearLine(3);
-    } else {
-      this.repeatedMessagesCount = 0;
-    }
-
-    const output = `\n${chalk.bgGreen.black(
-      ` ${label.toUpperCase()} `,
-    )} ${chalk.bold.green(
-      `${message}${
-        message === this.lastMessage && label === this.lastLabel
-          ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
-          : ''
-      }`,
-    )}\n`;
-
-    console.log(output);
-
-    this.lastLabel = label;
-    this.lastColor = LOGGER_COLOR_GREEN;
-    this.lastMessage = message;
+    this.write(message, label, false, LOGGER_COLOR_GREEN);
   }
 
   public log(message: string, label = 'log', additionalmessage = ''): void {
@@ -128,19 +148,13 @@ export class Logger {
       return;
     }
 
+    this.handleRepeatedMessage(message, label);
+
     if (label.length > 8) {
       label = `${label.slice(0, 4)}...`;
     }
 
-    if (message === this.lastMessage && label === this.lastLabel) {
-      this.repeatedMessagesCount += 1;
-
-      clearLine();
-    } else {
-      this.repeatedMessagesCount = 0;
-    }
-
-    const day = this.getDay();
+    const day = this.getTimeDay();
     const time = this.getTime();
 
     const formattedLabel = `[${chalk.white(
@@ -148,7 +162,9 @@ export class Logger {
     )}]`;
 
     const timestamp = `${chalk.gray(
-      `${formattedLabel}${' '.repeat(this.logLabelPadding - label.length)}`,
+      `${formattedLabel}${this.paddingSign.repeat(
+        this.logLabelPadding - label.length,
+      )}`,
     )} ${chalk.gray(day)} ${chalk.gray(time)} `;
 
     const mainOutput = this.truncate(
@@ -163,7 +179,9 @@ export class Logger {
     const right = chalk.gray(additionalmessage);
 
     const dots = this.renderDots(
-      `${timestamp}${mainOutput}${label}${' '.repeat(7 - label.length)}`,
+      `${timestamp}${mainOutput}${label}${this.paddingSign.repeat(
+        7 - label.length,
+      )}`,
     );
 
     console.log(left, dots, right);
@@ -173,48 +191,10 @@ export class Logger {
   }
 
   public sub(message: string): void {
-    if (!this.enabled) {
-      return;
-    }
-
-    this.lastMessage = null;
-
-    const indent = ' '.repeat(this.lastLabel.length + 2);
-
-    const output = `${indent} ${chalk.bold.hex(this.lastColor)(message)}\n`;
-
-    clearLine();
-
-    console.log(output);
+    this.write(message, this.lastLabel, true);
   }
 
   public warn(message: string, label = 'warning'): void {
-    if (!this.enabled) {
-      return;
-    }
-
-    if (message === this.lastMessage && label === this.lastLabel) {
-      this.repeatedMessagesCount += 1;
-
-      clearLine(2);
-    } else {
-      this.repeatedMessagesCount = 0;
-    }
-
-    const output = `\n${chalk
-      .bgHex(LOGGER_COLOR_YELLOW)
-      .black(` ${label.toUpperCase()} `)} ${chalk.bold.hex(LOGGER_COLOR_YELLOW)(
-      `${message}${
-        message === this.lastMessage && label === this.lastLabel
-          ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
-          : ''
-      }`,
-    )}\n`;
-
-    console.warn(output);
-
-    this.lastLabel = label;
-    this.lastColor = LOGGER_COLOR_YELLOW;
-    this.lastMessage = message;
+    this.write(message, label, false, LOGGER_COLOR_YELLOW);
   }
 }
