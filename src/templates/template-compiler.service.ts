@@ -93,7 +93,7 @@ export class TemplateCompiler {
         type: 'block',
         render: (content: string) => {
           const isDevelopment =
-            this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+            this.configurator.entries.development ?? env<boolean>('DEVELOPMENT');
 
           return isDevelopment ? content : '';
         },
@@ -127,7 +127,7 @@ export class TemplateCompiler {
         type: 'single',
         render: () => {
           const isDevelopment =
-            this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+            this.configurator.entries.development ?? env<boolean>('DEVELOPMENT');
 
           return isDevelopment
             ? `
@@ -162,7 +162,7 @@ export class TemplateCompiler {
         type: 'block',
         render: (content: string) => {
           const isDevelopment =
-            this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT');
+            this.configurator.entries.development ?? env<boolean>('DEVELOPMENT');
 
           return isDevelopment ? '' : content;
         },
@@ -255,7 +255,7 @@ export class TemplateCompiler {
             const fileExtension = fileEntry.split('.').pop() ?? 'js';
 
             if (
-              this.configurator.entries?.development ??
+              this.configurator.entries.development ??
               env<boolean>('DEVELOPMENT')
             ) {
               output = `<script type="module" src="http://localhost:5173/app/${fileEntry}"></script>`;
@@ -313,7 +313,7 @@ export class TemplateCompiler {
           return output;
         },
       },
-      ...(this.configurator.entries?.templates?.directives ?? []),
+      ...(this.configurator.entries.templates?.directives ?? []),
     ];
   }
 

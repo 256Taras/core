@@ -119,7 +119,7 @@ export class Handler {
 
     if (
       !this.request.isAjaxRequest() &&
-      (this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT'))
+      (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT'))
     ) {
       this.response.status(statusCode);
 
@@ -157,7 +157,7 @@ export class Handler {
       this.logger.sub(`File: ${this.currentFile} in line ${this.currentLine}`);
     }
 
-    if (!(this.configurator.entries?.development ?? env<boolean>('DEVELOPMENT'))) {
+    if (!(this.configurator.entries.development ?? env<boolean>('DEVELOPMENT'))) {
       process.exit(1);
     }
 

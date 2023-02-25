@@ -16,7 +16,7 @@ export class Mailer {
     private configurator: Configurator,
     private templateCompiler: TemplateCompiler,
   ) {
-    const { address, host, password, port } = this.configurator.entries?.mail ?? {};
+    const { address, host, password, port } = this.configurator.entries.mail ?? {};
 
     try {
       this.transporter = createTransport({

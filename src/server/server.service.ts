@@ -118,7 +118,7 @@ export class Server {
   }
 
   private async registerMiddleware(): Promise<void> {
-    const cspOptions = this.configurator.entries?.contentSecurityPolicy;
+    const cspOptions = this.configurator.entries.contentSecurityPolicy;
 
     const helmetOptions: FastifyHelmetOptions = {
       contentSecurityPolicy:
@@ -143,30 +143,30 @@ export class Server {
                 'script-src-attr': `'unsafe-inline'`,
                 'style-src': [`'self'`, `'unsafe-inline'`, 'http://localhost:*'],
               },
-              ...((this.configurator.entries?.contentSecurityPolicy ?? {}) as Record<
+              ...((this.configurator.entries.contentSecurityPolicy ?? {}) as Record<
                 string,
                 unknown
               >),
             },
     };
 
-    const corsOptions: FastifyCorsOptions = this.configurator.entries?.cors ?? {};
+    const corsOptions: FastifyCorsOptions = this.configurator.entries.cors ?? {};
 
     const cookieOptions: FastifyCookieOptions = {
-      secret: this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY')!,
+      secret: this.configurator.entries.crypto?.key ?? env<string>('ENCRYPT_KEY')!,
     };
 
     const multipartOptions: FastifyMultipartOptions = {
       addToBody: true,
       limits: {
         fieldSize:
-          (this.configurator.entries?.upload?.fieldLimit ??
+          (this.configurator.entries.upload?.fieldLimit ??
             env<number>('UPLOAD_FIELD_LIMIT') ??
             10) *
           1024 *
           1024,
         fileSize:
-          (this.configurator.entries?.upload?.fileLimit ??
+          (this.configurator.entries.upload?.fileLimit ??
             env<number>('UPLOAD_FILE_LIMIT') ??
             100) *
           1024 *
@@ -217,7 +217,7 @@ export class Server {
       this.configurator.$setup(options.config ?? {});
 
       this.development =
-        this.configurator.entries?.development ??
+        this.configurator.entries.development ??
         env<boolean>('DEVELOPMENT') ??
         false;
 
@@ -229,7 +229,7 @@ export class Server {
         await this.handler.handleFatalError(error);
       });
 
-      const envFile = this.configurator.entries?.envFile ?? '.env';
+      const envFile = this.configurator.entries.envFile ?? '.env';
 
       if (!existsSync(envFile)) {
         const error = new Error('Environment configuration file not found');
@@ -239,7 +239,7 @@ export class Server {
 
       await this.configurator.loadEnvironment(envFile);
 
-      if (!(this.configurator.entries?.crypto?.key ?? env<string>('ENCRYPT_KEY'))) {
+      if (!(this.configurator.entries.crypto?.key ?? env<string>('ENCRYPT_KEY'))) {
         throw new Error('Encryption key is missing in environment configuration', {
           cause: new Error(
             'Generate *ENCRYPT_KEY* variable in *.env* file by running *npm run env:prepare* command',
@@ -270,7 +270,7 @@ export class Server {
         ...(channels.length
           ? {
               main:
-                this.configurator.entries?.websocket?.port ??
+                this.configurator.entries.websocket?.port ??
                 env<Integer>('WEBSOCKET_PORT') ??
                 this.defaultWebSocketPort,
             }
@@ -290,9 +290,9 @@ export class Server {
         });
       }
 
-      await this.translator.$setup(this.configurator.entries?.locale ?? 'en');
+      await this.translator.$setup(this.configurator.entries.locale ?? 'en');
 
-      this.translator.setRequestLocale(this.configurator.entries?.locale ?? 'en');
+      this.translator.setRequestLocale(this.configurator.entries.locale ?? 'en');
     } catch (error) {
       await this.handler.handleError(error as Error);
     }
@@ -301,10 +301,10 @@ export class Server {
   }
 
   public async start(
-    port = this.configurator.entries?.port ??
+    port = this.configurator.entries.port ??
       env<Integer>('PORT') ??
       this.defaultPort,
-    host = this.configurator.entries?.host ??
+    host = this.configurator.entries.host ??
       env<string>('HOST') ??
       this.defaultHost,
   ): Promise<void> {

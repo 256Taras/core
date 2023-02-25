@@ -276,7 +276,7 @@ export class Validator {
           return usernameRegexp.test(value);
         },
       },
-      ...(this.configurator.entries?.validation?.rules ?? []),
+      ...(this.configurator.entries.validation?.rules ?? []),
     ];
   }
 

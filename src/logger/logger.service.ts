@@ -11,7 +11,7 @@ import { clearLine } from './functions/clear-line.function.js';
 
 @Service()
 export class Logger {
-  private enabled = this.configurator.entries?.logger?.enabled ?? true;
+  private enabled = this.configurator.entries.logger?.enabled ?? true;
 
   private lastColor = '#ffffff';
 
@@ -23,7 +23,7 @@ export class Logger {
 
   private readonly logLabelPadding = 8;
 
-  private logStackingEnabled = this.configurator.entries?.logger?.stacking ?? true;
+  private logStackingEnabled = this.configurator.entries.logger?.stacking ?? true;
 
   private readonly paddingSign = ' ';
 
