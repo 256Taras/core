@@ -1,5 +1,7 @@
 <div align="center">
-  <img src=".github/logo-full.png" width="300">
+  <p align="center">
+    <img src=".github/logo-full.png" width="300" alt="Northle logo">
+  </p>
 
   <p align="center">Modern and declarative backend development framework for Node.js.</p>
 
@@ -31,9 +33,9 @@
 
 ## Introducing Northle
 
-Northle (pronounced `/nɑrθl/`) is a modern and declarative backend framework for Node.js. It makes it easy to create fast and secure web applications with awesome developer experience.
+Northle (pronounced `/nɑrðl/`) is a modern and declarative backend framework for Node.js. It makes it easy to create fast and secure web applications with awesome developer experience.
 
-> Northle is currently in the `alpha` stage. Although it is already suitable for creating apps, you may still encounter some bugs and breaking changes. The documentation is complete in about `90%`.
+> Northle is currently in the `alpha` stage. Although it is already suitable for creating apps, you may still encounter some bugs and breaking changes.
 
 ## Requirements
 
