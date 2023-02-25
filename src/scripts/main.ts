@@ -17,10 +17,12 @@ import { StartCommand } from './commands/start.command.js';
 import { Command } from './interfaces/command.interface.js';
 import { Parameter } from './interfaces/parameter.interface.js';
 
+(await import('source-map-support')).install();
+
 const configurator = inject(Configurator);
 const handler = inject(Handler);
 
-configurator.loadEnvironment();
+await configurator.loadEnvironment();
 
 process.on('uncaughtException', async (error: Error) => {
   handler.handleError(error);

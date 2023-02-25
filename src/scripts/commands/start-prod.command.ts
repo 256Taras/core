@@ -34,9 +34,7 @@ export class StartProdCommand {
 
     if (!existsSync(entryFile)) {
       logError(
-        `File ${chalk.gray(entryFile)} does not exist. Run ${chalk.white(
-          'npm run build',
-        )} to build your project`,
+        `File ${entryFile} does not exist. Run 'npm run build' to build your project`,
       );
 
       process.exit(1);
