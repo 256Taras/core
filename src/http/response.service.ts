@@ -2,6 +2,7 @@ import { FastifyReply } from 'fastify';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { MIME_TYPES } from '../http/constants.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { RouteUrl } from '../router/types/route-url.type.js';
@@ -187,9 +188,10 @@ export class Response {
     }
 
     if (!existsSync(file)) {
-      throw new Error(`View '${file}' does not exist`, {
-        cause: new Error(`Create '${file}' view file`),
-      });
+      throw new Error(
+        `View '${file}' does not exist`,
+        createErrorTip(`Create '${file}' view file`),
+      );
     }
 
     const fileContent = await readFile(file, 'utf8');

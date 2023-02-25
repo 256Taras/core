@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { AppConfig } from './interfaces/app-config.interface.js';
 
@@ -38,11 +39,12 @@ export class Configurator {
             line.trim() !== '' &&
             !line.match(/^(((export)?(\s+)?[a-zA-Z_]+[a-zA-Z0-9_]*=(.*?)?)|")$/)
           ) {
-            throw new Error('.env file syntax is not valid', {
-              cause: new Error(
-                'Check .env file syntax on https://northle.dev/docs/basics/configuration#environment-configuration',
+            throw new Error(
+              '.env file syntax is not valid',
+              createErrorTip(
+                'Check *.env* file syntax on https://northle.dev/docs/basics/configuration#environment-configuration',
               ),
-            });
+            );
           }
 
           if (line.trim() === '') {

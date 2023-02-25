@@ -6,6 +6,7 @@ import { dirname } from 'node:path';
 import { Configurator } from '../configurator/configurator.service.js';
 import { env } from '../configurator/functions/env.function.js';
 import { Encrypter } from '../encrypter/encrypter.service.js';
+import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { inject } from '../injector/functions/inject.function.js';
 import { readJson } from '../utils/functions/read-json.function.js';
@@ -123,9 +124,7 @@ export class Session {
     if (typeof this.data[key] !== 'number') {
       throw new Error(
         `Cannot decrement session value '${key}' as it is not a number`,
-        {
-          cause: new Error('Provide a key that has a number value'),
-        },
+        createErrorTip('Provide a key that has a number value'),
       );
     }
 
@@ -187,9 +186,7 @@ export class Session {
     if (typeof this.data[key] !== 'number') {
       throw new Error(
         `Cannot increment session value '${key}' as it is not a number`,
-        {
-          cause: new Error('Provide a key that has a number value'),
-        },
+        createErrorTip('Provide a key that has a number value'),
       );
     }
 

@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { Configurator } from '../configurator/configurator.service.js';
 import { env } from '../configurator/functions/env.function.js';
 import { Encrypter } from '../encrypter/encrypter.service.js';
+import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { Handler } from '../handler/handler.service.js';
 import { MIME_TYPES } from '../http/constants.js';
 import { Request } from '../http/request.service.js';
@@ -232,19 +233,19 @@ export class Server {
       const envFile = this.configurator.entries.envFile ?? '.env';
 
       if (!existsSync(envFile)) {
-        const error = new Error('Environment configuration file not found');
-
-        await this.handler.handleError(error as Error);
+        throw new Error(
+          'Environment configuration file not found',
+          createErrorTip('Run *npm run env:prepare* script'),
+        );
       }
 
       await this.configurator.loadEnvironment(envFile);
 
       if (!(this.configurator.entries.crypto?.key ?? env<string>('ENCRYPT_KEY'))) {
-        throw new Error('Encryption key is missing in environment configuration', {
-          cause: new Error(
-            'Generate *ENCRYPT_KEY* variable in *.env* file by running *npm run env:prepare* command',
-          ),
-        });
+        throw new Error(
+          'Encryption key is missing in environment configuration',
+          createErrorTip('Run *npm run env:prepare* script'),
+        );
       }
 
       const channels = [];
@@ -304,9 +305,7 @@ export class Server {
     port = this.configurator.entries.port ??
       env<Integer>('PORT') ??
       this.defaultPort,
-    host = this.configurator.entries.host ??
-      env<string>('HOST') ??
-      this.defaultHost,
+    host = this.configurator.entries.host ?? env<string>('HOST') ?? this.defaultHost,
   ): Promise<void> {
     try {
       let startTime: [number, number];

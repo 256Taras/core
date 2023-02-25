@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { Transporter, createTransport } from 'nodemailer';
 import { Configurator } from '../configurator/configurator.service.js';
 import { env } from '../configurator/functions/env.function.js';
+import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { callerFile } from '../utils/functions/caller-file.function.js';
@@ -29,9 +30,10 @@ export class Mailer {
         secure: (port ?? env('MAIL_PORT')) === 465 ? true : false,
       });
     } catch {
-      throw new Error('Mail service setup failed', {
-        cause: new Error('Check your server mail configuration and credentials'),
-      });
+      throw new Error(
+        'Mail service setup failed',
+        createErrorTip('Check your server mail configuration and credentials'),
+      );
     }
   }
 

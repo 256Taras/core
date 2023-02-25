@@ -5,6 +5,7 @@ import { Gate } from '../auth/gate.class.js';
 import { Configurator } from '../configurator/configurator.service.js';
 import { env } from '../configurator/functions/env.function.js';
 import * as constants from '../constants.js';
+import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { currentUrl } from '../http/functions/current-url.function.js';
 import { nonce } from '../http/functions/nonce.function.js';
 import { oldInput } from '../http/functions/old-input.function.js';
@@ -192,9 +193,10 @@ export class TemplateCompiler {
           }/${partial}.html`;
 
           if (!existsSync(file)) {
-            throw new Error(`View partial '${partial}' does not exist`, {
-              cause: new Error(`Create '${partial}' view partial file`),
-            });
+            throw new Error(
+              `View partial '${partial}' does not exist`,
+              createErrorTip(`Create '${partial}' view partial file`),
+            );
           }
 
           const compiler = inject(TemplateCompiler, { freshInstance: true });
@@ -214,9 +216,10 @@ export class TemplateCompiler {
           }/${layout}.html`;
 
           if (!existsSync(file)) {
-            throw new Error(`View layout '${layout}' does not exist`, {
-              cause: new Error(`Create '${layout}' view layout file`),
-            });
+            throw new Error(
+              `View layout '${layout}' does not exist`,
+              createErrorTip(`Create '${layout}' view layout file`),
+            );
           }
 
           const compiler = inject(TemplateCompiler, { freshInstance: true });
@@ -268,9 +271,10 @@ export class TemplateCompiler {
                 const manifestPath = 'public/manifest.json';
 
                 if (!existsSync(manifestPath)) {
-                  throw new Error('Vite manifest file not found', {
-                    cause: new Error('Run vite build'),
-                  });
+                  throw new Error(
+                    'Vite manifest file not found',
+                    createErrorTip('Build Vite assets'),
+                  );
                 }
 
                 const manifest = await readJson(manifestPath);
@@ -544,9 +548,10 @@ export class TemplateCompiler {
       for (const caseMatch of caseMatches) {
         if (caseMatch[1] === 'default') {
           if (defaultCaseValue) {
-            throw new Error('Switch directive can only have one default case', {
-              cause: new Error('Remove the extra default case'),
-            });
+            throw new Error(
+              'Switch directive can only have one default case',
+              createErrorTip('Remove the extra default case'),
+            );
           }
 
           defaultCaseValue = caseMatch[4];

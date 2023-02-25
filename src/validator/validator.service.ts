@@ -1,5 +1,6 @@
 import { isIP, isIPv4, isIPv6 } from 'node:net';
 import { Configurator } from '../configurator/configurator.service.js';
+import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { StatusCode } from '../http/enums/status-code.enum.js';
 import { Request } from '../http/request.service.js';
 import { Response } from '../http/response.service.js';
@@ -303,9 +304,10 @@ export class Validator {
         const ruleObject = this.rules.find((ruleData) => ruleData.name === rule);
 
         if (!ruleObject) {
-          throw new Error(`Invalid validation rule '${rule}'`, {
-            cause: new Error('Provide a valid validation rule'),
-          });
+          throw new Error(
+            `Invalid validation rule '${rule}'`,
+            createErrorTip('Provide a valid validation rule'),
+          );
         }
 
         const passes = ruleObject.validate.apply(this, [

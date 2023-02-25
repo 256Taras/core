@@ -1,4 +1,5 @@
 import { Reflection as Reflect } from '@abraham/reflection';
+import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { ResolveOptions } from './interfaces/resolve-options.interface.js';
 
@@ -43,9 +44,10 @@ export class Injector {
       ) ||
       ['null', 'undefined'].includes(typeof target)
     ) {
-      throw new Error('Primitive types are not injectable', {
-        cause: new Error('Remove primitive types from the constructor'),
-      });
+      throw new Error(
+        'Primitive types are not injectable',
+        createErrorTip('Remove primitive types from the constructor'),
+      );
     }
 
     const deps: Constructor[] =
