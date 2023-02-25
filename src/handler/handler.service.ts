@@ -192,10 +192,6 @@ export class Handler {
     await this.response.abort(StatusCode.TooManyRequests);
   }
 
-  public pass(): void {
-    return;
-  }
-
   public setCustomHandler(statusCode: StatusCode, callback: () => unknown): void {
     this.customHandlers.set(statusCode, callback);
   }
