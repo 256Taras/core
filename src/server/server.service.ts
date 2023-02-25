@@ -411,7 +411,7 @@ export class Server {
         }
 
         this.logger.log(
-          `[${statusColor(response.statusCode)}] ${this.request.method()} ${
+          `${chalk.gray(`[${statusColor(response.statusCode)}]`)} ${this.request.method()} ${
             request.url
           }`,
           'request',
