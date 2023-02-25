@@ -5,7 +5,7 @@ import { AppConfig } from './interfaces/app-config.interface.js';
 
 @Service()
 export class Configurator {
-  private options: AppConfig;
+  private options: AppConfig = {};
 
   public $setup(options: AppConfig): void {
     this.options = options;

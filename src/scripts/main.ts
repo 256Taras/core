@@ -20,13 +20,13 @@ import { Parameter } from './interfaces/parameter.interface.js';
 const configurator = inject(Configurator);
 const handler = inject(Handler);
 
+configurator.loadEnvironment();
+
 process.on('uncaughtException', async (error: Error) => {
   handler.handleError(error);
 
   process.exit(1);
 });
-
-configurator.loadEnvironment();
 
 const commands: Constructor<Command>[] = [
   BuildCommand,

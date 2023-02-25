@@ -1,4 +1,4 @@
-import { createErrorTip } from './create-error-tip.function';
+import { createErrorTip } from './create-error-tip.function.js';
 
 export function raise(message: string, cause?: string | { cause: Error }) {
   if (cause) {
