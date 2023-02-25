@@ -13,6 +13,7 @@ import { MethodDecorator } from '../../utils/types/method-decorator.type.js';
 import { RouteOptions } from '../interfaces/route-options.interface.js';
 import { Router } from '../router.service.js';
 import { RouteUrl } from '../types/route-url.type.js';
+import { HttpError } from '../../http/http-error.class.js';
 
 const handler = inject(Handler);
 const request = inject(Request);
@@ -91,7 +92,7 @@ function resolveRouteAction(
       (session.get<Integer[]>(`_lastMinuteRequests:${request.url()}`) ?? [])
         .length >= maxRequestsPerMinute
     ) {
-      await handler.handleTooManyRequests();
+      throw new HttpError(StatusCode.TooManyRequests);
     }
 
     await router.respond(target.constructor as Constructor, propertyKey, ...args);

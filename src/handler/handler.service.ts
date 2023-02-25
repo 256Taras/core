@@ -164,34 +164,6 @@ export class Handler {
     this.logger.warn('In production mode process will exit on fatal errors');
   }
 
-  public async handleInvalidToken(): Promise<void> {
-    await this.response.abort(StatusCode.InvalidToken);
-  }
-
-  public async handleNotFound(): Promise<void> {
-    const statusCode = StatusCode.NotFound;
-
-    if (this.customHandlers.has(statusCode)) {
-      this.customHandlers.get(statusCode)?.();
-
-      return;
-    }
-
-    await this.response.abort(StatusCode.NotFound);
-  }
-
-  public async handleTooManyRequests(): Promise<void> {
-    const statusCode = StatusCode.TooManyRequests;
-
-    if (this.customHandlers.has(statusCode)) {
-      this.customHandlers.get(statusCode)?.();
-
-      return;
-    }
-
-    await this.response.abort(StatusCode.TooManyRequests);
-  }
-
   public setCustomHandler(statusCode: StatusCode, callback: () => unknown): void {
     this.customHandlers.set(statusCode, callback);
   }

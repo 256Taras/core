@@ -33,6 +33,8 @@ import { readJson } from '../utils/functions/read-json.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { Integer } from '../utils/types/integer.type.js';
 import { ServerOptions } from './interfaces/server-options.interface.js';
+import { HttpError } from '../http/http-error.class.js';
+import { StatusCode } from '../http/enums/status-code.enum.js';
 
 @Service()
 export class Server {
@@ -63,7 +65,7 @@ export class Server {
     private translator: Translator,
   ) {}
 
-  private async handleCsrfToken(): Promise<void> {
+  private handleCsrfToken(): void {
     if (!this.session.has('_csrfToken')) {
       const token = this.encrypter.randomBytes(16);
 
@@ -79,7 +81,7 @@ export class Server {
         this.request.header('X-XSRF-TOKEN');
 
       if (!token || token !== this.session.get('_csrfToken')) {
-        await this.handler.handleInvalidToken();
+        throw new HttpError(StatusCode.InvalidToken);
       }
     }
   }
@@ -347,9 +349,9 @@ export class Server {
         startTime = process.hrtime();
       });
 
-      this.instance.addHook('preValidation', async () => {
+      this.instance.addHook('preValidation', () => {
         if (!this.request.isFileRequest()) {
-          await this.handleCsrfToken();
+          this.handleCsrfToken();
 
           if (this.request.isFormRequest()) {
             this.session.flash<Record<string, unknown>>(
@@ -428,7 +430,7 @@ export class Server {
       this.registerStaticFileServer();
 
       this.instance.setNotFoundHandler(async () => {
-        await this.handler.handleNotFound();
+        throw new HttpError(StatusCode.NotFound);
       });
 
       await this.instance.listen({ port, host });
