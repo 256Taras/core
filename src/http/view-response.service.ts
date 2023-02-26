@@ -1,4 +1,6 @@
 import { Service } from '../injector/decorators/service.decorator.js';
+import { callerFile } from '../utils/functions/caller-file.function.js';
+import { resolveViewFile } from '../utils/functions/resolve-view-file.function.js';
 import { Response } from './response.service.js';
 
 @Service()
@@ -6,6 +8,21 @@ export class ViewResponse extends Response {
   private $data: Record<string, unknown>;
 
   private $file: string;
+
+  constructor(
+    file: string,
+    data: Record<string, unknown> = {},
+    resolvedUrl = false,
+  ) {
+    super();
+
+    const caller = callerFile();
+
+    file = resolvedUrl ? file : resolveViewFile(caller, file);
+
+    this.$file = file;
+    this.$data = data;
+  }
 
   public get data(): Record<string, unknown> {
     return this.$data;

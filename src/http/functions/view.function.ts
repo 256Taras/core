@@ -1,4 +1,3 @@
-import { inject } from '../../injector/functions/inject.function.js';
 import { callerFile } from '../../utils/functions/caller-file.function.js';
 import { resolveViewFile } from '../../utils/functions/resolve-view-file.function.js';
 import { ViewResponse } from '../view-response.service.js';
@@ -9,12 +8,7 @@ export function view(
 ): ViewResponse {
   const caller = callerFile();
 
-  file = resolveViewFile(caller, file);
-
-  const instance = inject(ViewResponse);
-
-  instance.setData(data);
-  instance.setFile(file);
+  const instance = new ViewResponse(resolveViewFile(caller, file), data, true);
 
   return instance;
 }
