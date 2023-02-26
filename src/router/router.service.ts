@@ -28,6 +28,10 @@ export class Router {
     private response: Response,
   ) {}
 
+  public $routes(): Route[] {
+    return this.routes;
+  }
+
   public createRoute(
     url: RouteUrl,
     method: HttpMethod,

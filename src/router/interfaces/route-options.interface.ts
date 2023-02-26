@@ -5,8 +5,9 @@ import { Integer } from '../../utils/types/integer.type.js';
 import { RouteUrl } from '../types/route-url.type.js';
 
 export interface RouteOptions {
+  maxRequestsPerMinute?: Integer;
   middleware?: Constructor<MiddlewareHandler> | Constructor<MiddlewareHandler>[];
+  name?: string;
   redirectTo?: RouteUrl;
   statusCode?: StatusCode;
-  maxRequestsPerMinute?: Integer;
 }

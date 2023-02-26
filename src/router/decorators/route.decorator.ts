@@ -28,6 +28,7 @@ function defineRouteMetadata(target: object | Function, options?: RouteOptions) 
     target,
   );
   Reflect.defineMetadata('middleware', options?.middleware, target);
+  Reflect.defineMetadata('name', options?.name, target);
   Reflect.defineMetadata('redirectUrl', options?.redirectTo, target);
   Reflect.defineMetadata('statusCode', options?.statusCode, target);
 }

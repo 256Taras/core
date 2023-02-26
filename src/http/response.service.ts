@@ -144,7 +144,7 @@ export class Response {
   }
 
   public redirect(
-    url: RouteUrl,
+    to: RouteUrl | { name: string; params?: Record<string, string> },
     data: Record<string, unknown> = {},
     status: StatusCode = StatusCode.Found,
   ): this {
@@ -153,6 +153,18 @@ export class Response {
         this.session.flash(key, value);
       }
     }
+
+    // TODO: Make it working with named routes
+    const url = typeof to === 'string' ? to : '/';
+
+    /*
+    TODO: Get route list from the router service
+    const url = typeof to === 'string' ? to : routes.find((route) => route.name === to.name)?.url;
+
+    if (!url) {
+      throw new Error(`Route '${to.name}' does not exist`);
+    }
+    */
 
     this.instance?.redirect(url);
     this.instance?.status(status);
