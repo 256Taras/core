@@ -11,39 +11,6 @@ import { RouteUrl } from '../types/route-url.type.js';
 const handler = inject(Handler);
 const router = inject(Router);
 
-export function Error(
-  statusCode:
-    | StatusCode.InternalServerError
-    | StatusCode.NotFound
-    | StatusCode.TooManyRequests,
-): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = router.$resolveRouteAction(target, propertyKey);
-
-    handler.setCustomHandler(statusCode, callback);
-  };
-}
-
-export function Methods(
-  methods: HttpMethod[],
-  url: RouteUrl,
-  options?: RouteOptions,
-): MethodDecorator {
-  return (target, propertyKey) => {
-    router.$defineRouteMetadata(target, options);
-
-    const callback = router.$resolveRouteAction(target, propertyKey);
-
-    methods.map((method) => {
-      router.createRoute(
-        router.$resolveUrl(url, target.constructor as Constructor),
-        method,
-        callback,
-      );
-    });
-  };
-}
-
 export const Any = router.$createRouteDecorator(Object.values(HttpMethod));
 
 export const Copy = router.$createRouteDecorator([HttpMethod.Copy]);
@@ -77,3 +44,36 @@ export const Search = router.$createRouteDecorator([HttpMethod.Search]);
 export const Trace = router.$createRouteDecorator([HttpMethod.Trace]);
 
 export const Unlock = router.$createRouteDecorator([HttpMethod.Unlock]);
+
+export function Error(
+  statusCode:
+    | StatusCode.InternalServerError
+    | StatusCode.NotFound
+    | StatusCode.TooManyRequests,
+): MethodDecorator {
+  return (target, propertyKey) => {
+    const callback = router.$resolveRouteAction(target, propertyKey);
+
+    handler.setCustomHandler(statusCode, callback);
+  };
+}
+
+export function Methods(
+  methods: HttpMethod[],
+  url: RouteUrl,
+  options?: RouteOptions,
+): MethodDecorator {
+  return (target, propertyKey) => {
+    router.$defineRouteMetadata(target, options);
+
+    const callback = router.$resolveRouteAction(target, propertyKey);
+
+    methods.map((method) => {
+      router.createRoute(
+        router.$resolveUrl(url, target.constructor as Constructor),
+        method,
+        callback,
+      );
+    });
+  };
+}

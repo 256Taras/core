@@ -1,48 +1,37 @@
 import { Service } from '../injector/decorators/service.decorator.js';
 import { RouteUrl } from '../router/types/route-url.type.js';
-import { Session } from '../session/session.service.js';
-import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { StatusCode } from './enums/status-code.enum.js';
-import { Request } from './request.service.js';
 import { Response } from './response.service.js';
 
 @Service()
 export class RedirectResponse extends Response {
-  private path: RouteUrl;
+  private $data: Record<string, unknown>;
 
-  private variables: Record<string, unknown>;
+  private $status: StatusCode;
 
-  private httpStatus: StatusCode;
-
-  constructor(
-    request: Request,
-    session: Session,
-    templateCompiler: TemplateCompiler,
-  ) {
-    super(request, session, templateCompiler);
-  }
+  private $url: RouteUrl;
 
   public get data(): Record<string, unknown> {
-    return this.variables;
+    return this.$data;
   }
 
   public get statusCode(): StatusCode {
-    return this.httpStatus;
+    return this.$status;
   }
 
   public get url(): RouteUrl {
-    return this.path;
+    return this.$url;
   }
 
   public setData(data: Record<string, unknown> = {}): void {
-    this.variables = data;
+    this.$data = data;
   }
 
   public setStatus(status: StatusCode = StatusCode.Found): void {
-    this.httpStatus = status;
+    this.$status = status;
   }
 
   public setUrl(url: RouteUrl): void {
-    this.path = url;
+    this.$url = url;
   }
 }

@@ -11,6 +11,7 @@ import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { StatusCode } from './enums/status-code.enum.js';
 import { CookieOptions } from './interfaces/cookie-options.interface.js';
 import { Request } from './request.service.js';
+import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Response {
@@ -18,11 +19,11 @@ export class Response {
 
   private terminated = false;
 
-  constructor(
-    private request: Request,
-    private session: Session,
-    private templateCompiler: TemplateCompiler,
-  ) {}
+  protected request = inject(Request);
+
+  protected session = inject(Session);
+
+  protected templateCompiler = inject(TemplateCompiler);
 
   public $getInstance(): FastifyReply | null {
     return this.instance;

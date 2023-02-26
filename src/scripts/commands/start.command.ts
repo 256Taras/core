@@ -3,7 +3,6 @@ import { Command } from '../decorators/command.decorator.js';
 import { StartDevCommand } from './start-dev.command.js';
 import { StartProdCommand } from './start-prod.command.js';
 
-console.log(process.env);
 @Command({
   signature: 'start',
   parameters: {
