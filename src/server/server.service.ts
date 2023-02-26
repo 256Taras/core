@@ -18,6 +18,8 @@ import { Encrypter } from '../encrypter/encrypter.service.js';
 import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { Handler } from '../handler/handler.service.js';
 import { MIME_TYPES } from '../http/constants.js';
+import { StatusCode } from '../http/enums/status-code.enum.js';
+import { HttpError } from '../http/http-error.class.js';
 import { Request } from '../http/request.service.js';
 import { Response } from '../http/response.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
@@ -33,8 +35,6 @@ import { readJson } from '../utils/functions/read-json.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { Integer } from '../utils/types/integer.type.js';
 import { ServerOptions } from './interfaces/server-options.interface.js';
-import { HttpError } from '../http/http-error.class.js';
-import { StatusCode } from '../http/enums/status-code.enum.js';
 
 @Service()
 export class Server {
@@ -413,9 +413,9 @@ export class Server {
         }
 
         this.logger.log(
-          `${chalk.gray(`[${statusColor(response.statusCode)}]`)} ${this.request.method()} ${
-            request.url
-          }`,
+          `${chalk.gray(
+            `[${statusColor(response.statusCode)}]`,
+          )} ${this.request.method()} ${request.url}`,
           'request',
           elapsedTimeFormatted,
         );
