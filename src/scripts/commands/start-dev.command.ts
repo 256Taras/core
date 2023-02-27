@@ -8,7 +8,7 @@ import { runCommand } from '../../utils/functions/run-command.function.js';
 import { Command } from '../decorators/command.decorator.js';
 
 @Command({
-  signature: 'start:dev',
+  signatures: ['start:dev', 'start:development'],
   parameters: {
     open: {
       type: 'boolean',

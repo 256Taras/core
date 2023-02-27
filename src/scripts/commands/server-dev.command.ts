@@ -15,7 +15,7 @@ import { WebClientAlias } from '../enums/web-client-alias.enum.js';
 import { setupStdin } from '../functions/setup-stdin.function.js';
 
 @Command({
-  signature: 'server:dev',
+  signatures: ['server:dev', 'server:development'],
   parameters: {
     open: {
       type: 'boolean',

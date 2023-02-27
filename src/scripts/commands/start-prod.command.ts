@@ -12,7 +12,7 @@ import { Command } from '../decorators/command.decorator.js';
 import { setupStdin } from '../functions/setup-stdin.function.js';
 
 @Command({
-  signature: 'start:prod',
+  signatures: ['start:prod', 'start:production'],
 })
 export class StartProdCommand {
   public async handle(): Promise<void> {
