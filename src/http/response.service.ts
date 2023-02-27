@@ -12,6 +12,9 @@ import { StatusCode } from './enums/status-code.enum.js';
 import { CookieOptions } from './interfaces/cookie-options.interface.js';
 import { Request } from './request.service.js';
 import { inject } from '../injector/functions/inject.function.js';
+import { callerFile } from '../utils/functions/caller-file.function.js';
+import { resolveViewFile } from '../utils/functions/resolve-view-file.function.js';
+import { ViewResponse } from './view-response.service.js';
 
 @Service()
 export class Response {
@@ -237,5 +240,11 @@ export class Response {
 
   public terminate(terminate = true): void {
     this.terminated = terminate;
+  }
+
+  public view(file: string, data: Record<string, unknown> = {}): ViewResponse {
+    const caller = callerFile();
+
+    return new ViewResponse(resolveViewFile(caller, file), data, true);
   }
 }

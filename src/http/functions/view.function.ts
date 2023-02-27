@@ -8,7 +8,5 @@ export function view(
 ): ViewResponse {
   const caller = callerFile();
 
-  const instance = new ViewResponse(resolveViewFile(caller, file), data, true);
-
-  return instance;
+  return new ViewResponse(resolveViewFile(caller, file), data, true);
 }
