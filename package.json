@@ -40,7 +40,7 @@
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/bcrypt": "^5.0.0",
-    "@types/node": "^18.14.1",
+    "@types/node": "^18.14.2",
     "@types/node-cron": "^3.0.7",
     "@types/nodemailer": "^6.4.7",
     "@types/source-map-support": "^0.5.6",
