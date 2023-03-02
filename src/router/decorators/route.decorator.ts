@@ -51,10 +51,12 @@ export function Error(
     | StatusCode.NotFound
     | StatusCode.TooManyRequests,
 ): MethodDecorator {
-  return (target, propertyKey) => {
-    const callback = router.$resolveRouteAction(target, propertyKey);
+  return (originalMethod, context) => {
+    const callback = router.$resolveRouteAction(originalMethod, context.name);
 
     handler.setCustomHandler(statusCode, callback);
+
+    return originalMethod;
   };
 }
 
@@ -63,17 +65,19 @@ export function Methods(
   url: RouteUrl,
   options?: RouteOptions,
 ): MethodDecorator {
-  return (target, propertyKey) => {
-    router.$defineRouteMetadata(target, options);
+  return (originalMethod, context) => {
+    router.$defineRouteMetadata(originalMethod, options);
 
-    const callback = router.$resolveRouteAction(target, propertyKey);
+    const callback = router.$resolveRouteAction(originalMethod, context.name);
 
     methods.map((method) => {
       router.createRoute(
-        router.$resolveUrl(url, target.constructor as Constructor),
+        router.$resolveUrl(url, originalMethod.constructor as Constructor),
         method,
         callback,
       );
     });
+
+    return originalMethod;
   };
 }

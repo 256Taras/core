@@ -2,14 +2,15 @@ import { WebSocketServer } from 'ws';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { Logger } from '../logger/logger.service.js';
 import { Integer } from '../utils/types/integer.type.js';
+import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class SocketServer {
+  private readonly logger = inject(Logger);
+
   private nameIdentifier: string | null = null;
 
   private server: WebSocketServer;
-
-  constructor(private logger: Logger) {}
 
   public emit(event: string, ...payload: unknown[]): void {
     this.server.clients.forEach((client) => {

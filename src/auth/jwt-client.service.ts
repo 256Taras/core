@@ -7,9 +7,9 @@ import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class JwtClient {
-  private key = inject(Configurator).entries?.jwt?.key ?? env<string>('JWT_KEY')!;
+  private readonly encrypter = inject(Encrypter);
 
-  constructor(private encrypter: Encrypter) {}
+  private readonly key = inject(Configurator).entries?.jwt?.key ?? env<string>('JWT_KEY')!;
 
   private createHeader(): string {
     return this.encrypter.base64Encode(

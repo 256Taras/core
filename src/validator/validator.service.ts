@@ -9,17 +9,21 @@ import { Translator } from '../translator/translator.service.js';
 import { Integer } from '../utils/types/integer.type.js';
 import { ValidationRuleDefinition } from './interfaces/validation-rule-definition.interface.js';
 import { ValidationRules } from './interfaces/validation-rules.interface.js';
+import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Validator {
-  private rules: ValidationRuleDefinition[] = [];
+  private readonly configurator = inject(Configurator);
 
-  constructor(
-    private configurator: Configurator,
-    private request: Request,
-    private response: Response,
-    private translator: Translator,
-  ) {
+  private readonly request = inject(Request);
+
+  private readonly response = inject(Response);
+
+  private readonly rules: ValidationRuleDefinition[] = [];
+
+  private readonly translator = inject(Translator);
+
+  constructor() {
     this.rules = [
       {
         name: 'accepted',
@@ -279,14 +283,6 @@ export class Validator {
       },
       ...(this.configurator.entries.validation?.rules ?? []),
     ];
-  }
-
-  public $setRequest(request: Request): void {
-    this.request = request;
-  }
-
-  public $setResponse(response: Response): void {
-    this.response = response;
   }
 
   public assert<T = Record<string, any>>(

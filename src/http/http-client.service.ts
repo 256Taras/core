@@ -1,10 +1,11 @@
 import { Service } from '../injector/decorators/service.decorator.js';
 import { HttpMethod } from './enums/http-method.enum.js';
 import { Request } from './request.service.js';
+import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class HttpClient {
-  constructor(private request: Request) {}
+  private readonly request = inject(Request);
 
   private async fetch<T>(
     url: string,

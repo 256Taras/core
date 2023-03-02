@@ -25,6 +25,8 @@ import { TemplateDirectiveDefinition } from './interfaces/template-directive-def
 
 @Service()
 export class TemplateCompiler {
+  private readonly configurator = inject(Configurator);
+
   private data: Record<string, unknown> = {};
 
   private directives: TemplateDirectiveDefinition[] = [];
@@ -50,9 +52,11 @@ export class TemplateCompiler {
 
   private rawContent: string[] = [];
 
+  private readonly request = inject(Request);
+
   public static stacks = new Map<string, string[]>();
 
-  constructor(private configurator: Configurator, private request: Request) {
+  constructor() {
     this.directives = [
       {
         name: 'can',

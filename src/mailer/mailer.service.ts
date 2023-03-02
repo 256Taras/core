@@ -8,15 +8,17 @@ import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { callerFile } from '../utils/functions/caller-file.function.js';
 import { resolveViewFile } from '../utils/functions/resolve-view-file.function.js';
 import { MailData } from './interfaces/mail-data.interface.js';
+import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Mailer {
-  private transporter: Transporter;
+  private readonly configurator = inject(Configurator);
 
-  constructor(
-    private configurator: Configurator,
-    private templateCompiler: TemplateCompiler,
-  ) {
+  private readonly templateCompiler = inject(TemplateCompiler);
+
+  private readonly transporter: Transporter;
+
+  constructor() {
     const { address, host, password, port } = this.configurator.entries.mail ?? {};
 
     try {

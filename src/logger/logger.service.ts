@@ -8,9 +8,12 @@ import {
   LOGGER_COLOR_YELLOW,
 } from './constants.js';
 import { clearLine } from './functions/clear-line.function.js';
+import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Logger {
+  private readonly configurator = inject(Configurator);
+
   private enabled = this.configurator.entries.logger?.enabled ?? true;
 
   private lastColor = '#ffffff';
@@ -28,8 +31,6 @@ export class Logger {
   private readonly paddingSign = ' ';
 
   private repeatedMessagesCount = 0;
-
-  constructor(private configurator: Configurator) {}
 
   private getTime(): string {
     const date = new Date();

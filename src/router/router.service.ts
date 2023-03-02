@@ -22,28 +22,30 @@ import { RouteOptions } from './interfaces/route-options.interface.js';
 import { Route } from './interfaces/route.interface.js';
 import { ResponseContent } from './types/response-content.type.js';
 import { RouteUrl } from './types/route-url.type.js';
+import { MethodDecorator } from '../utils/types/method-decorator.type.js';
 
 @Service()
 export class Router {
+  private readonly encrypter = inject(Encrypter);
+
+  private readonly request = inject(Request);
+
+  private readonly response = inject(Response);
+
   private routes: Route[] = [];
 
-  constructor(
-    private encrypter: Encrypter,
-    private session: Session,
-    private request: Request,
-    private response: Response,
-  ) {}
+  private readonly session = inject(Session);
 
   public $createRouteDecorator(methods: HttpMethod[], options?: RouteOptions) {
     return (url: RouteUrl): MethodDecorator => {
-      return (target, propertyKey) => {
-        this.$defineRouteMetadata(target, options);
+      return (originalMethod, context) => {
+        this.$defineRouteMetadata(originalMethod, options);
 
-        const callback = this.$resolveRouteAction(target, propertyKey);
+        const callback = this.$resolveRouteAction(originalMethod, context.name);
 
         methods.map((method) => {
           this.createRoute(
-            this.$resolveUrl(url, target.constructor as Constructor),
+            this.$resolveUrl(url, originalMethod.constructor as Constructor),
             method,
             callback,
           );

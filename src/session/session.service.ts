@@ -14,12 +14,16 @@ import { FlashedData } from './interfaces/flashed-data.interface.js';
 
 @Service()
 export class Session {
+  private readonly configurator = inject(Configurator);
+
   private readonly directoryPath =
     this.configurator.entries.session?.path ??
     env<string>('SESSION_PATH') ??
     (this.configurator.entries.development ?? env<boolean>('DEVELOPMENT')
       ? 'node_modules/.northle/sessions'
       : `${tmpdir()}/northle/sessions`);
+
+  private readonly encrypter = inject(Encrypter);
 
   private key: string | null = null;
 
@@ -28,10 +32,6 @@ export class Session {
   private response: FastifyReply | null = null;
 
   private variables: Record<string, any> = {};
-
-  constructor(private configurator: Configurator, private encrypter: Encrypter) {
-    this.encrypter = inject(Encrypter);
-  }
 
   public $setRequest(request: FastifyRequest): this {
     this.request = request;

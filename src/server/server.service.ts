@@ -38,6 +38,8 @@ import { ServerOptions } from './interfaces/server-options.interface.js';
 
 @Service()
 export class Server {
+  private readonly configurator = inject(Configurator);
+
   private defaultHost = 'localhost';
 
   private readonly defaultPort: Integer = 7000;
@@ -46,24 +48,29 @@ export class Server {
 
   private development = false;
 
+  private readonly encrypter = inject(Encrypter);
+
+  private readonly handler = inject(Handler);
+
   private instance = fastify();
+
+  private readonly logger = inject(Logger);
 
   private modules: Constructor[] = [];
 
-  private tempFilePath = `${tmpdir()}/northle/server/server.tmp`;
+  private readonly request = inject(Request);
 
-  constructor(
-    private configurator: Configurator,
-    private encrypter: Encrypter,
-    private handler: Handler,
-    private logger: Logger,
-    private request: Request,
-    private response: Response,
-    private router: Router,
-    private session: Session,
-    private socketEmitter: SocketEmitter,
-    private translator: Translator,
-  ) {}
+  private readonly response = inject(Response);
+
+  private readonly router = inject(Router);
+
+  private readonly session = inject(Session);
+
+  private readonly socketEmitter = inject(SocketEmitter);
+
+  private readonly tempFilePath = `${tmpdir()}/northle/server/server.tmp`;
+
+  private readonly translator = inject(Translator);
 
   private handleCsrfToken(): void {
     if (!this.session.has('_csrfToken')) {

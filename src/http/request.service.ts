@@ -7,14 +7,17 @@ import { Session } from '../session/session.service.js';
 import { HttpMethod } from './enums/http-method.enum.js';
 import { File } from './file.class.js';
 import { FormFileField } from './interfaces/form-file-field.interface.js';
+import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Request {
   private cspNonce: string | null = null;
 
+  private readonly encrypter = inject(Encrypter);
+
   private instance: FastifyRequest | null = null;
 
-  constructor(private encrypter: Encrypter, private session: Session) {}
+  private readonly session = inject(Session);
 
   public $generateNonce(): this {
     this.cspNonce = this.encrypter.randomBytes(16, 'base64');

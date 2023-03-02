@@ -1,5 +1,6 @@
 import { Constructor } from '../interfaces/constructor.interface.js';
 
 export type ClassDecorator<T extends Function = any> = (
-  target: Constructor<T>,
+  originalClass: Constructor<T>,
+  context: ClassDecoratorContext,
 ) => T | void;

@@ -1,5 +1,3 @@
-import { Reflection as Reflect } from '@abraham/reflection';
-import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { ResolveOptions } from './interfaces/resolve-options.interface.js';
 
@@ -34,28 +32,7 @@ export class Injector {
       return this.cachedInstances.get(target) as T;
     }
 
-    if (
-      [String, Number, Boolean, Symbol].includes(
-        target as unknown as
-          | StringConstructor
-          | NumberConstructor
-          | BooleanConstructor
-          | SymbolConstructor,
-      ) ||
-      ['null', 'undefined'].includes(typeof target)
-    ) {
-      throw new Error(
-        'Primitive types are not injectable',
-        createErrorTip('Remove primitive types from the constructor'),
-      );
-    }
-
-    const deps: Constructor[] =
-      Reflect.getMetadata('design:paramtypes', target) ?? [];
-
-    const resolved = deps.map((param: Constructor) => this.resolve(param));
-
-    const instance = new target(...resolved);
+    const instance = new target();
 
     this.cachedInstances.set(target, instance);
 

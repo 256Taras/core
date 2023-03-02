@@ -1,5 +1,4 @@
-export type MethodDecorator = <T = any>(
-  target: object | Function,
-  propertyKey: string | symbol,
-  descriptor?: TypedPropertyDescriptor<T>,
-) => void | TypedPropertyDescriptor<T>;
+export type MethodDecorator = (
+  originalMethod: object | Function,
+  context: ClassMethodDecoratorContext,
+) => void | object | Function;

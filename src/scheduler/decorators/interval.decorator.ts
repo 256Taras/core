@@ -5,11 +5,11 @@ import { MethodDecorator } from '../../utils/types/method-decorator.type.js';
 import { Scheduler } from '../scheduler.service.js';
 
 export function Interval(milliseconds: Integer): MethodDecorator {
-  return (target, propertyKey) => {
+  return (originalMethod, context) => {
     const scheduler = inject(Scheduler);
 
     const callback = () => {
-      inject(target.constructor as Constructor)[propertyKey]();
+      inject(originalMethod.constructor as Constructor)[context.name]();
     };
 
     scheduler.interval(callback, milliseconds);

@@ -1,4 +1,3 @@
-export * from './decorators/encrypted-param.decorator.js';
 export * from './encrypter.service.js';
 export * from './functions/decrypt.function.js';
 export * from './functions/encrypt.function.js';

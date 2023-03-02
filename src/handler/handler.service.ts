@@ -8,9 +8,12 @@ import { Response } from '../http/response.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { Logger } from '../logger/logger.service.js';
 import { Integer } from '../utils/types/integer.type.js';
+import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Handler {
+  private readonly configurator = inject(Configurator);
+
   private currentCaller: string | null = null;
 
   private currentError: Error | null = null;
@@ -21,12 +24,11 @@ export class Handler {
 
   private customHandlers = new Map<StatusCode, Function>();
 
-  constructor(
-    private configurator: Configurator,
-    private logger: Logger,
-    private request: Request,
-    private response: Response,
-  ) {}
+  private readonly logger = inject(Logger);
+
+  private readonly request = inject(Request);
+
+  private readonly response = inject(Response);
 
   private async readErrorStack(): Promise<void> {
     const stack = this.currentError?.stack ?? 'Error\n    at <anonymous>:1:1';

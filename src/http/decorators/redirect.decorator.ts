@@ -7,8 +7,10 @@ export function Redirect(
   url: RouteUrl,
   status: StatusCode = StatusCode.Found,
 ): MethodDecorator {
-  return (target) => {
-    Reflect.defineMetadata('redirectUrl', url, target);
-    Reflect.defineMetadata('redirectStatus', status, target);
+  return (originalClass) => {
+    Reflect.defineMetadata('redirectUrl', url, originalClass);
+    Reflect.defineMetadata('redirectStatus', status, originalClass);
+
+    return originalClass;
   };
 }

@@ -12,9 +12,9 @@ import { Channel } from './types/channel.type.js';
 export class SocketEmitter {
   private channels: Channel[] = [];
 
-  private servers: SocketServer[] = [];
+  private readonly logger = inject(Logger);
 
-  constructor(private logger: Logger) {}
+  private servers: SocketServer[] = [];
 
   public $setup(servers: Record<string, Integer>): void {
     for (const [name, port] of Object.entries(servers)) {
