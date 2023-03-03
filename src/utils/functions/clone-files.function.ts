@@ -4,7 +4,7 @@ import { copyFile, lstat, mkdir, readdir, unlink } from 'node:fs/promises';
 export async function cloneFiles(
   source: string,
   destination: string,
-  extension: string,
+  extension?: string,
 ) {
   const files = await readdir(source);
 
@@ -15,7 +15,17 @@ export async function cloneFiles(
 
       if (stat.isDirectory()) {
         if (!existsSync(destinationPath)) {
-          await mkdir(destinationPath);
+          let created = false;
+
+          while (!created) {
+            try {
+              await mkdir(destinationPath);
+
+              created = true;
+            } catch {
+              await new Promise((resolve) => setTimeout(resolve, 40));
+            }
+          }
         }
 
         await cloneFiles(`${source}/${file}`, destinationPath, extension);
@@ -23,7 +33,7 @@ export async function cloneFiles(
         return;
       }
 
-      if (file.endsWith(extension)) {
+      if (!extension || file.endsWith(extension)) {
         if (existsSync(destinationPath)) {
           let deleted = false;
 

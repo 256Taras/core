@@ -4,6 +4,7 @@ import { Service } from '../injector/decorators/service.decorator.js';
 import { inject } from '../injector/functions/inject.function.js';
 import { stripAnsiChars } from '../utils/functions/strip-ansi-chars.function.js';
 import {
+  LOGGER_COLOR_BLUE,
   LOGGER_COLOR_GREEN,
   LOGGER_COLOR_RED,
   LOGGER_COLOR_YELLOW,
@@ -155,7 +156,7 @@ export class Logger {
   }
 
   public info(message: string, label = 'info'): void {
-    this.write(message, label, false, LOGGER_COLOR_GREEN);
+    this.write(message, label, false, LOGGER_COLOR_BLUE);
   }
 
   public log(message: string, label = 'log', additionalMessage = ''): void {
@@ -207,6 +208,10 @@ export class Logger {
 
   public sub(message: string): void {
     this.write(message, this.lastLabel, true);
+  }
+
+  public success(message: string, label = 'success'): void {
+    this.write(message, label, false, LOGGER_COLOR_GREEN);
   }
 
   public warn(message: string, label = 'warning'): void {
