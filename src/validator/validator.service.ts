@@ -5,11 +5,11 @@ import { StatusCode } from '../http/enums/status-code.enum.js';
 import { Request } from '../http/request.service.js';
 import { Response } from '../http/response.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
 import { Translator } from '../translator/translator.service.js';
 import { Integer } from '../utils/types/integer.type.js';
 import { ValidationRuleDefinition } from './interfaces/validation-rule-definition.interface.js';
 import { ValidationRules } from './interfaces/validation-rules.interface.js';
-import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Validator {

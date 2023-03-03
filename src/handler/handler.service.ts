@@ -6,9 +6,9 @@ import { HttpError } from '../http/http-error.class.js';
 import { Request } from '../http/request.service.js';
 import { Response } from '../http/response.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
 import { Logger } from '../logger/logger.service.js';
 import { Integer } from '../utils/types/integer.type.js';
-import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Handler {

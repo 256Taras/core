@@ -4,11 +4,11 @@ import { Configurator } from '../configurator/configurator.service.js';
 import { env } from '../configurator/functions/env.function.js';
 import { createErrorTip } from '../handler/functions/create-error-tip.function.js';
 import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
 import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { callerFile } from '../utils/functions/caller-file.function.js';
 import { resolveViewFile } from '../utils/functions/resolve-view-file.function.js';
 import { MailData } from './interfaces/mail-data.interface.js';
-import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Mailer {

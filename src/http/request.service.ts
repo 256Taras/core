@@ -2,12 +2,12 @@ import { FastifyRequest } from 'fastify';
 import { parse as parseUrl } from 'node:url';
 import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
 import { RouteUrl } from '../router/types/route-url.type.js';
 import { Session } from '../session/session.service.js';
 import { HttpMethod } from './enums/http-method.enum.js';
 import { File } from './file.class.js';
 import { FormFileField } from './interfaces/form-file-field.interface.js';
-import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Request {

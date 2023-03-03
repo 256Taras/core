@@ -4,7 +4,11 @@ import { MethodDecorator } from '../../utils/types/method-decorator.type.js';
 
 export function Throttle(maxRequestsPerMinute: Integer): MethodDecorator {
   return (originalClass) => {
-    Reflect.defineMetadata('maxRequestsPerMinute', maxRequestsPerMinute, originalClass);
+    Reflect.defineMetadata(
+      'maxRequestsPerMinute',
+      maxRequestsPerMinute,
+      originalClass,
+    );
 
     return originalClass;
   };

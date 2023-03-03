@@ -1,8 +1,8 @@
 import { WebSocketServer } from 'ws';
 import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
 import { Logger } from '../logger/logger.service.js';
 import { Integer } from '../utils/types/integer.type.js';
-import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class SocketServer {

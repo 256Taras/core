@@ -13,5 +13,7 @@ export function Timeout(milliseconds: Integer): MethodDecorator {
     };
 
     scheduler.timeout(callback, milliseconds);
+
+    return originalMethod;
   };
 }

@@ -1,7 +1,7 @@
 import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
 import { HttpMethod } from './enums/http-method.enum.js';
 import { Request } from './request.service.js';
-import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class HttpClient {

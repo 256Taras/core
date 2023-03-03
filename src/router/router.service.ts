@@ -1,7 +1,5 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { FastifyInstance } from 'fastify';
-import { Encrypter } from '../encrypter/encrypter.service.js';
-import { EncryptionAlgorithm } from '../encrypter/types/encryption-algorithm.type.js';
 import { DownloadResponse } from '../http/download-response.service.js';
 import { HttpMethod } from '../http/enums/http-method.enum.js';
 import { StatusCode } from '../http/enums/status-code.enum.js';
@@ -18,16 +16,14 @@ import { inject } from '../injector/functions/inject.function.js';
 import { Session } from '../session/session.service.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { Integer } from '../utils/types/integer.type.js';
+import { MethodDecorator } from '../utils/types/method-decorator.type.js';
 import { RouteOptions } from './interfaces/route-options.interface.js';
 import { Route } from './interfaces/route.interface.js';
 import { ResponseContent } from './types/response-content.type.js';
 import { RouteUrl } from './types/route-url.type.js';
-import { MethodDecorator } from '../utils/types/method-decorator.type.js';
 
 @Service()
 export class Router {
-  private readonly encrypter = inject(Encrypter);
-
   private readonly request = inject(Request);
 
   private readonly response = inject(Response);
@@ -41,7 +37,10 @@ export class Router {
       return (originalMethod, context) => {
         this.$defineRouteMetadata(originalMethod, options);
 
-        const callback = this.$resolveRouteAction(originalMethod, context.name);
+        const callback = this.$resolveRouteAction(
+          originalMethod,
+          context.name as string,
+        );
 
         methods.map((method) => {
           this.createRoute(
@@ -50,6 +49,8 @@ export class Router {
             callback,
           );
         });
+
+        return originalMethod;
       };
     };
   }
@@ -77,14 +78,14 @@ export class Router {
   }
 
   public $resolveRouteAction(
-    target: object | Function,
-    propertyKey: string | symbol,
+    originalMethod: object | Function,
+    methodName: string | symbol,
   ) {
     return async (...args: unknown[]) => {
       const middleware:
         | Constructor<MiddlewareHandler>
         | Constructor<MiddlewareHandler>[]
-        | undefined = Reflect.getMetadata('middleware', target);
+        | undefined = Reflect.getMetadata('middleware', originalMethod);
 
       if (middleware) {
         const items = Array.isArray(middleware) ? middleware : [middleware];
@@ -96,7 +97,10 @@ export class Router {
         });
       }
 
-      const redirectUrl = Reflect.getMetadata<RouteUrl>('redirectUrl', target);
+      const redirectUrl = Reflect.getMetadata<RouteUrl>(
+        'redirectUrl',
+        originalMethod,
+      );
 
       if (redirectUrl) {
         const response = inject(Response);
@@ -104,13 +108,16 @@ export class Router {
         response.redirect(
           redirectUrl,
           {},
-          Reflect.getMetadata('redirectStatus', target),
+          Reflect.getMetadata('redirectStatus', originalMethod),
         );
 
         return;
       }
 
-      const statusCode = Reflect.getMetadata<StatusCode>('statusCode', target);
+      const statusCode = Reflect.getMetadata<StatusCode>(
+        'statusCode',
+        originalMethod,
+      );
 
       if (statusCode) {
         this.response.status(statusCode);
@@ -118,7 +125,7 @@ export class Router {
 
       const maxRequestsPerMinute = Reflect.getMetadata<Integer>(
         'maxRequestsPerMinute',
-        target,
+        originalMethod,
       );
 
       if (
@@ -131,7 +138,11 @@ export class Router {
         throw new HttpError(StatusCode.TooManyRequests);
       }
 
-      await this.respond(target.constructor as Constructor, propertyKey, ...args);
+      await this.respond(
+        originalMethod.constructor as Constructor,
+        methodName,
+        ...args,
+      );
     };
   }
 
@@ -168,22 +179,11 @@ export class Router {
     method: string | symbol,
     ...args: unknown[]
   ): Promise<void> {
-    const requestParams = Object.values(this.request.params);
-
     if (this.response.isTerminated()) {
       return;
     }
 
-    const resolvedParams = requestParams.map((param, index) => {
-      const encryptionData = Reflect.getMetadata<{
-        algorithm: EncryptionAlgorithm;
-        indexes: Integer[];
-      }>('encryptedParams', inject(controller)[method]);
-
-      return encryptionData?.indexes?.includes(index)
-        ? this.encrypter.decrypt(param, encryptionData?.algorithm)
-        : param;
-    });
+    const resolvedParams = Object.values(this.request.params);
 
     let content = inject(controller)[method](...resolvedParams, ...args) as
       | Promise<ResponseContent>

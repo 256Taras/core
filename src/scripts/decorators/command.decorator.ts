@@ -10,13 +10,13 @@ interface Options {
 }
 
 export function Command(options: Options): ClassDecorator {
-  return (target: Constructor) => {
+  return (originalClass: Constructor) => {
     const { signature, signatures, parameters } = options;
 
-    Reflect.defineMetadata('signature', signature, target);
-    Reflect.defineMetadata('signatures', signatures, target);
-    Reflect.defineMetadata('parameters', parameters, target);
+    Reflect.defineMetadata('signature', signature, originalClass);
+    Reflect.defineMetadata('signatures', signatures, originalClass);
+    Reflect.defineMetadata('parameters', parameters, originalClass);
 
-    return target;
+    return originalClass;
   };
 }

@@ -13,5 +13,7 @@ export function Interval(milliseconds: Integer): MethodDecorator {
     };
 
     scheduler.interval(callback, milliseconds);
+
+    return originalMethod;
   };
 }

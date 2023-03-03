@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { Configurator } from '../configurator/configurator.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
+import { inject } from '../injector/functions/inject.function.js';
 import { stripAnsiChars } from '../utils/functions/strip-ansi-chars.function.js';
 import {
   LOGGER_COLOR_GREEN,
@@ -8,7 +9,6 @@ import {
   LOGGER_COLOR_YELLOW,
 } from './constants.js';
 import { clearLine } from './functions/clear-line.function.js';
-import { inject } from '../injector/functions/inject.function.js';
 
 @Service()
 export class Logger {

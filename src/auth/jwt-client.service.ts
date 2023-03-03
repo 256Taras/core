@@ -9,7 +9,8 @@ import { inject } from '../injector/functions/inject.function.js';
 export class JwtClient {
   private readonly encrypter = inject(Encrypter);
 
-  private readonly key = inject(Configurator).entries?.jwt?.key ?? env<string>('JWT_KEY')!;
+  private readonly key =
+    inject(Configurator).entries?.jwt?.key ?? env<string>('JWT_KEY')!;
 
   private createHeader(): string {
     return this.encrypter.base64Encode(

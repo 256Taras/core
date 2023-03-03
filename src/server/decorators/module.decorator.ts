@@ -4,10 +4,14 @@ import { ClassDecorator } from '../../utils/types/class-decorator.type.js';
 import { ModuleData } from '../interfaces/module-data.interface.js';
 
 export function Module(data?: ModuleData): ClassDecorator {
-  return (target: Constructor) => {
-    Reflect.defineMetadata('controllers', data?.controllers ?? [], target);
-    Reflect.defineMetadata('socketChannels', data?.socketChannels ?? [], target);
+  return (originalClass: Constructor) => {
+    Reflect.defineMetadata('controllers', data?.controllers ?? [], originalClass);
+    Reflect.defineMetadata(
+      'socketChannels',
+      data?.socketChannels ?? [],
+      originalClass,
+    );
 
-    return target;
+    return originalClass;
   };
 }

@@ -12,5 +12,7 @@ export function Schedule(pattern: string): MethodDecorator {
     };
 
     scheduler.schedule(pattern, callback);
+
+    return originalMethod;
   };
 }

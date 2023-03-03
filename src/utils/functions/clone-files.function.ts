@@ -1,5 +1,5 @@
-import { existsSync, unlinkSync } from 'node:fs';
-import { copyFile, lstat, mkdir, readdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { copyFile, lstat, mkdir, readdir, unlink } from 'node:fs/promises';
 
 export async function cloneFiles(
   source: string,
@@ -25,7 +25,17 @@ export async function cloneFiles(
 
       if (file.endsWith(extension)) {
         if (existsSync(destinationPath)) {
-          unlinkSync(destinationPath);
+          let deleted = false;
+
+          while (!deleted) {
+            try {
+              await unlink(destinationPath);
+
+              deleted = true;
+            } catch {
+              await new Promise((resolve) => setTimeout(resolve, 40));
+            }
+          }
         }
 
         let copied = false;
@@ -36,7 +46,7 @@ export async function cloneFiles(
 
             copied = true;
           } catch {
-            await new Promise((resolve) => setTimeout(resolve, 50));
+            await new Promise((resolve) => setTimeout(resolve, 40));
           }
         }
       }

@@ -1,5 +1,5 @@
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
-import { ResolveOptions } from './interfaces/resolve-options.interface.js';
+import { ServiceResolveOptions } from './interfaces/service-resolve-options.interface.js';
 
 export class Injector {
   private static cachedInstances = new Map<Constructor, unknown>();
@@ -26,7 +26,7 @@ export class Injector {
 
   public static resolve<T>(
     target: Constructor<T>,
-    options?: ResolveOptions,
+    options?: ServiceResolveOptions,
   ): T | never {
     if (!(options?.freshInstance ?? false) && this.has(target)) {
       return this.cachedInstances.get(target) as T;
