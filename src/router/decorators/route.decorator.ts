@@ -1,14 +1,12 @@
-import { Handler } from '../../handler/handler.service.js';
+import { Reflection as Reflect } from '@abraham/reflection';
 import { HttpMethod } from '../../http/enums/http-method.enum.js';
 import { StatusCode } from '../../http/enums/status-code.enum.js';
 import { inject } from '../../injector/functions/inject.function.js';
-import { Constructor } from '../../utils/interfaces/constructor.interface.js';
 import { MethodDecorator } from '../../utils/types/method-decorator.type.js';
 import { RouteOptions } from '../interfaces/route-options.interface.js';
 import { Router } from '../router.service.js';
 import { RouteUrl } from '../types/route-url.type.js';
 
-const handler = inject(Handler);
 const router = inject(Router);
 
 export const Any = router.$createRouteDecorator(Object.values(HttpMethod));
@@ -51,10 +49,14 @@ export function Error(
     | StatusCode.NotFound
     | StatusCode.TooManyRequests,
 ): MethodDecorator {
-  return (originalMethod, context) => {
-    const callback = router.$resolveRouteAction(originalMethod, context.name);
-
-    handler.setCustomHandler(statusCode, callback);
+  return (originalMethod) => {
+    Reflect.defineMetadata(
+      'errorHandler',
+      {
+        statusCode,
+      },
+      originalMethod,
+    );
 
     return originalMethod;
   };
@@ -66,17 +68,17 @@ export function Methods(
   options?: RouteOptions,
 ): MethodDecorator {
   return (originalMethod, context) => {
-    router.$defineRouteMetadata(originalMethod, options);
+    Reflect.defineMetadata('routeOptions', options, originalMethod);
 
-    const callback = router.$resolveRouteAction(originalMethod, context.name);
+    // const callback = router.$resolveRouteAction(originalMethod, context.name);
 
-    methods.map((method) => {
-      router.createRoute(
-        router.$resolveUrl(url, originalMethod.constructor as Constructor),
-        method,
-        callback,
-      );
-    });
+    // methods.map((method) => {
+    //   router.createRoute(
+    //     router.$resolveUrl(url, originalMethod.constructor),
+    //     method,
+    //     callback,
+    //   );
+    // });
 
     return originalMethod;
   };

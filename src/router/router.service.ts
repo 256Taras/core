@@ -1,10 +1,10 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { FastifyInstance } from 'fastify';
+import { Handler } from '../handler/handler.service.js';
 import { DownloadResponse } from '../http/download-response.service.js';
 import { HttpMethod } from '../http/enums/http-method.enum.js';
 import { StatusCode } from '../http/enums/status-code.enum.js';
 import { HttpError } from '../http/http-error.class.js';
-import { MiddlewareHandler } from '../http/interfaces/middleware-handler.interface.js';
 import { JsonResponse } from '../http/json-response.service.js';
 import { RedirectBackResponse } from '../http/redirect-back-response.service.js';
 import { RedirectResponse } from '../http/redirect-response.service.js';
@@ -24,47 +24,89 @@ import { RouteUrl } from './types/route-url.type.js';
 
 @Service()
 export class Router {
+  private readonly handler = inject(Handler);
+
   private readonly request = inject(Request);
 
   private readonly response = inject(Response);
 
-  private routes: Route[] = [];
+  private readonly routes: Route[] = [];
 
   private readonly session = inject(Session);
 
-  public $createRouteDecorator(methods: HttpMethod[], options?: RouteOptions) {
-    return (url: RouteUrl): MethodDecorator => {
-      return (originalMethod, context) => {
-        this.$defineRouteMetadata(originalMethod, options);
+  public $registerControllers(controllers: Constructor[]): void {
+    controllers.map((controller) => {
+      const properties = Object.getOwnPropertyNames(controller.prototype);
 
-        const callback = this.$resolveRouteAction(
-          originalMethod,
-          context.name as string,
+      const controllerRouteMethods = properties.filter((property) => {
+        return (
+          typeof controller.prototype[property] === 'function' &&
+          !['constructor', 'toString', 'toLocaleString'].includes(property) &&
+          !property.startsWith('_')
+        );
+      });
+
+      controllerRouteMethods.map((controllerRouteMethod) => {
+        const metadata = Reflect.getMetadata<RouteOptions>(
+          'routeOptions',
+          controller.prototype[controllerRouteMethod],
+        )!;
+
+        const action = this.$resolveRouteAction(
+          controller.prototype[controllerRouteMethod],
+          controllerRouteMethod,
+          controller,
         );
 
-        methods.map((method) => {
-          this.createRoute(
-            this.$resolveUrl(url, originalMethod.constructor as Constructor),
-            method,
-            callback,
-          );
+        const handler = Reflect.getMetadata<{ statusCode: StatusCode }>(
+          'errorHandler',
+          controller.prototype[controllerRouteMethod],
+        );
+
+        if (handler) {
+          this.handler.setCustomHandler(handler.statusCode, action);
+
+          return;
+        }
+
+        metadata.httpMethods.map((httpMethod) => {
+          this.routes.push({
+            url: this.$resolveUrl(metadata.url, controller),
+            method: httpMethod,
+            action,
+          });
         });
+      });
+    });
+  }
+
+  public $createRouteDecorator(httpMethods: HttpMethod[]) {
+    return (
+      url: RouteUrl,
+      additionalOptions?: Partial<RouteOptions>,
+    ): MethodDecorator => {
+      return (originalMethod, context) => {
+        if (context.private) {
+          throw new Error(
+            `Controller route ${context.name as string} must be public`,
+          );
+        }
+
+        if (context.static) {
+          throw new Error(
+            `Controller route ${context.name as string} cannot be static`,
+          );
+        }
+
+        Reflect.defineMetadata('routeOptions', {
+          httpMethods,
+          url,
+          ...additionalOptions,
+        }, originalMethod);
 
         return originalMethod;
       };
     };
-  }
-
-  public $defineRouteMetadata(target: object | Function, options?: RouteOptions) {
-    Reflect.defineMetadata(
-      'maxRequestsPerMinute',
-      options?.maxRequestsPerMinute,
-      target,
-    );
-    Reflect.defineMetadata('middleware', options?.middleware, target);
-    Reflect.defineMetadata('name', options?.name, target);
-    Reflect.defineMetadata('redirectUrl', options?.redirectTo, target);
-    Reflect.defineMetadata('statusCode', options?.statusCode, target);
   }
 
   public $resolveUrl(url: RouteUrl, controller: Constructor): RouteUrl {
@@ -78,14 +120,15 @@ export class Router {
   }
 
   public $resolveRouteAction(
-    originalMethod: object | Function,
+    method: object | Function,
     methodName: string | symbol,
+    controller: Constructor,
   ) {
     return async (...args: unknown[]) => {
-      const middleware:
-        | Constructor<MiddlewareHandler>
-        | Constructor<MiddlewareHandler>[]
-        | undefined = Reflect.getMetadata('middleware', originalMethod);
+      const metadata = Reflect.getMetadata<RouteOptions>('routeOptions', method)!;
+
+      console.log('called action');
+      const middleware = metadata.middleware;
 
       if (middleware) {
         const items = Array.isArray(middleware) ? middleware : [middleware];
@@ -97,36 +140,27 @@ export class Router {
         });
       }
 
-      const redirectUrl = Reflect.getMetadata<RouteUrl>(
-        'redirectUrl',
-        originalMethod,
-      );
+      const redirectTo = metadata.redirectTo;
 
-      if (redirectUrl) {
+      if (redirectTo) {
         const response = inject(Response);
 
         response.redirect(
-          redirectUrl,
+          redirectTo,
           {},
-          Reflect.getMetadata('redirectStatus', originalMethod),
+          Reflect.getMetadata('redirectStatus', method),
         );
 
         return;
       }
 
-      const statusCode = Reflect.getMetadata<StatusCode>(
-        'statusCode',
-        originalMethod,
-      );
+      const statusCode = metadata.statusCode;
 
       if (statusCode) {
         this.response.status(statusCode);
       }
 
-      const maxRequestsPerMinute = Reflect.getMetadata<Integer>(
-        'maxRequestsPerMinute',
-        originalMethod,
-      );
+      const maxRequestsPerMinute = metadata.maxRequestsPerMinute;
 
       if (
         maxRequestsPerMinute !== undefined &&
@@ -137,31 +171,13 @@ export class Router {
       ) {
         throw new HttpError(StatusCode.TooManyRequests);
       }
-
-      await this.respond(
-        originalMethod.constructor as Constructor,
-        methodName,
-        ...args,
-      );
+      console.log('calling respond...');
+      await this.respond(controller, methodName, ...args);
     };
   }
 
   public $routes(): Route[] {
     return this.routes;
-  }
-
-  public createRoute(
-    url: RouteUrl,
-    method: HttpMethod,
-    action: () => unknown,
-  ): void {
-    const route = {
-      url,
-      method,
-      action,
-    };
-
-    this.routes.push(route);
   }
 
   public registerRoutes(server: FastifyInstance): void {
@@ -179,6 +195,7 @@ export class Router {
     method: string | symbol,
     ...args: unknown[]
   ): Promise<void> {
+    console.log('called respond');
     if (this.response.isTerminated()) {
       return;
     }

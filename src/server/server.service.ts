@@ -262,8 +262,16 @@ export class Server {
       options.modules.map((module: Constructor) => {
         const instance = inject(module);
 
-        const socketChannels: (Constructor & Authorizer)[] =
-          Reflect.getMetadata('socketChannels', module) ?? [];
+        const controllers =
+          Reflect.getMetadata<Constructor[]>('controllers', module) ?? [];
+
+        this.router.$registerControllers(controllers);
+
+        const socketChannels =
+          Reflect.getMetadata<(Constructor & Authorizer)[]>(
+            'socketChannels',
+            module,
+          ) ?? [];
 
         this.modules.push(instance);
 
