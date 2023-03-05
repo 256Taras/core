@@ -16,6 +16,14 @@ export class SocketEmitter {
 
   private servers: SocketServer[] = [];
 
+  public $registerChannels(channels: Constructor<Authorizer>[]): void {
+    channels.map((channel) => {
+      const instance = inject(channel as unknown as Constructor);
+
+      this.channels.push(instance);
+    });
+  }
+
   public $setup(servers: Record<string, Integer>): void {
     for (const [name, port] of Object.entries(servers)) {
       const server = inject(SocketServer);
@@ -33,7 +41,7 @@ export class SocketEmitter {
   ): void {
     const pattern = pathToRegexp(name);
 
-    this.registerChannels([
+    this.$registerChannels([
       class implements Authorizer {
         public readonly namePattern = pattern;
 
@@ -66,14 +74,6 @@ export class SocketEmitter {
 
         return;
       }
-    });
-  }
-
-  public registerChannels(channels: Constructor<Authorizer>[]): void {
-    channels.map((channel) => {
-      const instance = inject(channel as unknown as Constructor);
-
-      this.channels.push(instance);
     });
   }
 }

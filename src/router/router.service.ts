@@ -18,7 +18,6 @@ import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { Integer } from '../utils/types/integer.type.js';
 import { MethodDecorator } from '../utils/types/method-decorator.type.js';
 import { RouteOptions } from './interfaces/route-options.interface.js';
-import { Route } from './interfaces/route.interface.js';
 import { ResponseContent } from './types/response-content.type.js';
 import { RouteUrl } from './types/route-url.type.js';
 
@@ -30,7 +29,8 @@ export class Router {
 
   private readonly response = inject(Response);
 
-  private readonly routes: Route[] = [];
+  private readonly routes: Pick<RouteOptions, 'httpMethods' | 'url' | 'action'>[] =
+    [];
 
   private readonly session = inject(Session);
 
@@ -69,12 +69,10 @@ export class Router {
           return;
         }
 
-        metadata.httpMethods.map((httpMethod) => {
-          this.routes.push({
-            url: this.$resolveUrl(metadata.url, controller),
-            method: httpMethod,
-            action,
-          });
+        this.routes.push({
+          url: this.$resolveUrl(metadata.url, controller),
+          httpMethods: metadata.httpMethods,
+          action,
         });
       });
     });
@@ -98,11 +96,15 @@ export class Router {
           );
         }
 
-        Reflect.defineMetadata('routeOptions', {
-          httpMethods,
-          url,
-          ...additionalOptions,
-        }, originalMethod);
+        Reflect.defineMetadata(
+          'routeOptions',
+          {
+            httpMethods,
+            url,
+            ...additionalOptions,
+          },
+          originalMethod,
+        );
 
         return originalMethod;
       };
@@ -127,7 +129,6 @@ export class Router {
     return async (...args: unknown[]) => {
       const metadata = Reflect.getMetadata<RouteOptions>('routeOptions', method)!;
 
-      console.log('called action');
       const middleware = metadata.middleware;
 
       if (middleware) {
@@ -171,19 +172,19 @@ export class Router {
       ) {
         throw new HttpError(StatusCode.TooManyRequests);
       }
-      console.log('calling respond...');
+
       await this.respond(controller, methodName, ...args);
     };
   }
 
-  public $routes(): Route[] {
+  public $routes(): Pick<RouteOptions, 'httpMethods' | 'url' | 'action'>[] {
     return this.routes;
   }
 
   public registerRoutes(server: FastifyInstance): void {
-    this.routes.map((route: Route) => {
+    this.routes.map((route) => {
       server.route({
-        method: route.method,
+        method: route.httpMethods[0],
         url: route.url,
         handler: route.action,
       });
@@ -195,7 +196,6 @@ export class Router {
     method: string | symbol,
     ...args: unknown[]
   ): Promise<void> {
-    console.log('called respond');
     if (this.response.isTerminated()) {
       return;
     }

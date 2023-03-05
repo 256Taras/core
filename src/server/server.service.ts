@@ -24,7 +24,12 @@ import { Request } from '../http/request.service.js';
 import { Response } from '../http/response.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { inject } from '../injector/functions/inject.function.js';
-import { LOGGER_COLOR_ORANGE, LOGGER_COLOR_RED } from '../logger/constants.js';
+import {
+  LOGGER_COLOR_BLUE,
+  LOGGER_COLOR_GREEN,
+  LOGGER_COLOR_ORANGE,
+  LOGGER_COLOR_RED,
+} from '../logger/constants.js';
 import { Logger } from '../logger/logger.service.js';
 import { Router } from '../router/router.service.js';
 import { Session } from '../session/session.service.js';
@@ -275,7 +280,7 @@ export class Server {
 
         this.modules.push(instance);
 
-        this.socketEmitter.registerChannels(socketChannels);
+        this.socketEmitter.$registerChannels(socketChannels);
 
         channels.push(...socketChannels);
       });
@@ -364,7 +369,7 @@ export class Server {
         startTime = process.hrtime();
       });
 
-      this.instance.addHook('preValidation', () => {
+      this.instance.addHook('preValidation', async () => {
         if (!this.request.isFileRequest()) {
           this.handleCsrfToken();
 
@@ -403,16 +408,16 @@ export class Server {
 
         const { statusCode } = response;
 
-        let statusColor = chalk.green;
+        let statusColor = chalk.hex(LOGGER_COLOR_GREEN);
 
         switch (true) {
           case statusCode >= 100 && statusCode < 200:
-            statusColor = chalk.blueBright;
+            statusColor = chalk.hex(LOGGER_COLOR_BLUE);
 
             break;
 
           case statusCode >= 200 && statusCode < 400:
-            statusColor = chalk.green;
+            statusColor = chalk.hex(LOGGER_COLOR_GREEN);
 
             break;
 

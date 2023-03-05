@@ -6,6 +6,7 @@ import { Integer } from '../../utils/types/integer.type.js';
 import { RouteUrl } from '../types/route-url.type.js';
 
 export interface RouteOptions {
+  action: () => unknown;
   httpMethods: HttpMethod[];
   maxRequestsPerMinute?: Integer;
   middleware?: Constructor<MiddlewareHandler> | Constructor<MiddlewareHandler>[];
