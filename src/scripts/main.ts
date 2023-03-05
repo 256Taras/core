@@ -4,6 +4,7 @@ import { Configurator } from '../configurator/configurator.service.js';
 import { Handler } from '../handler/handler.service.js';
 import { inject } from '../injector/functions/inject.function.js';
 import { logError } from '../logger/functions/log-error.function.js';
+import { logInfo } from '../logger/functions/log-info.function.js';
 import { Constructor } from '../utils/interfaces/constructor.interface.js';
 import { BuildCommand } from './commands/build.command.js';
 import { DbMigrateCommand } from './commands/db-migrate.command.js';
@@ -22,7 +23,11 @@ import { Parameter } from './interfaces/parameter.interface.js';
 const configurator = inject(Configurator);
 const handler = inject(Handler);
 
-await configurator.loadEnvironment();
+try {
+  await configurator.loadEnvironment();
+} catch {
+  logInfo('No .env file found, skipping environment loading');
+}
 
 process.on('uncaughtException', async (error: Error) => {
   handler.handleError(error);
