@@ -9,7 +9,7 @@ import { BuildCommand } from './commands/build.command.js';
 import { DbMigrateCommand } from './commands/db-migrate.command.js';
 import { DbSeedCommand } from './commands/db-seed.command.js';
 import { EnvPrepareCommand } from './commands/env-prepare.command.js';
-import { PreparePublishCommand } from './commands/prepare-publish.command.js';
+import { PublishPrepareCommand } from './commands/publish-prepare.command.js';
 import { ServerDevCommand } from './commands/server-dev.command.js';
 import { StartDevCommand } from './commands/start-dev.command.js';
 import { StartProdCommand } from './commands/start-prod.command.js';
@@ -35,7 +35,7 @@ const commands: Constructor<Command>[] = [
   DbMigrateCommand,
   DbSeedCommand,
   EnvPrepareCommand,
-  PreparePublishCommand,
+  PublishPrepareCommand,
   ServerDevCommand,
   StartCommand,
   StartDevCommand,

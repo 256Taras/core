@@ -4,9 +4,9 @@ import { runCommand } from '../../utils/functions/run-command.function.js';
 import { Command } from '../decorators/command.decorator.js';
 
 @Command({
-  signature: 'prepare:publish',
+  signature: 'publish:prepare',
 })
-export class PreparePublishCommand {
+export class PublishPrepareCommand {
   public async handle(): Promise<void> {
     logInfo('Preparing package for publishing...');
 
@@ -15,8 +15,8 @@ export class PreparePublishCommand {
     const cwd = process.cwd();
 
     const files = [
-      `${cwd}/dist/database/database-client.class.js`,
-      `${cwd}/dist/database/database-client.class.d.ts`,
+      `${cwd}/dist/database/database-client.service.js`,
+      `${cwd}/dist/database/database-client.service.d.ts`,
     ];
 
     const replaces = [

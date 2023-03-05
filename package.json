@@ -30,7 +30,7 @@
     "build:watch": "tsc --watch",
     "format": "prettier \"**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint .",
-    "prepare:publish": "app prepare:publish",
+    "publish:prepare": "app publish:prepare",
     "test": "vitest",
     "test:cov": "vitest run --coverage"
   },
