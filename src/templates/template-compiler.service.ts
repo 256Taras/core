@@ -139,7 +139,11 @@ export class TemplateCompiler {
             <script nonce="${nonce()}">
               const ws = new WebSocket('ws://localhost:6173');
 
-              ws.onmessage = () => window.location.reload();
+              ws.onmessage = (event) => {
+                if (JSON.parse(event.data).payload[0].endsWith('${this.file!.split('/').pop()}')) {
+                  window.location.reload();
+                }
+              };
               ws.onclose = () => console.log('[northle] Hot reload disconnected');
             </script>
           `
@@ -203,7 +207,9 @@ export class TemplateCompiler {
             );
           }
 
-          const compiler = inject(TemplateCompiler, { freshInstance: true });
+          const compiler = inject(TemplateCompiler, {
+            freshInstance: true,
+          });
 
           const fileContent = await readFile(file, 'utf8');
           const compiledPartial = await compiler.compile(fileContent, this.data);
@@ -226,7 +232,9 @@ export class TemplateCompiler {
             );
           }
 
-          const compiler = inject(TemplateCompiler, { freshInstance: true });
+          const compiler = inject(TemplateCompiler, {
+            freshInstance: true,
+          });
 
           const fileContent = await readFile(file, 'utf8');
           const compiledLayout = await compiler.compile(fileContent, this.data);
@@ -427,7 +435,11 @@ export class TemplateCompiler {
               $odd: index % 2 === 1,
             };
 
-            const compiler = inject(TemplateCompiler, { freshInstance: true });
+            iterator += 1;
+
+            const compiler = inject(TemplateCompiler, {
+              freshInstance: true,
+            });
 
             content = await compiler.compile(content, {
               ...this.data,
@@ -435,7 +447,6 @@ export class TemplateCompiler {
             });
 
             result += content;
-            iterator += 1;
           }
         }),
       );

@@ -308,8 +308,8 @@ export class Server {
       if (this.development) {
         const viewsWatcher = watch('dist/**/*.html');
 
-        viewsWatcher.on('all', () => {
-          this.socketEmitter.emit('hotReload', '$northle');
+        viewsWatcher.on('all', (_event, path) => {
+          this.socketEmitter.emit('hotReload', '$northle', path);
         });
       }
 
