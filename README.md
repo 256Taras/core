@@ -47,11 +47,11 @@ To run Northle, your environment has to meet below requirements:
 
 ## Creating a project
 
-To create a new Northle project you can use the NPM creator:
+To create a new Northle project you can use the `npx` creator:
 
 ```shell
-$ npm create @northle <app-name>
-$ cd <app-name>
+$ npx @northle/create [app-name]
+$ cd [app-name]
 $ npm start
 ```
 
