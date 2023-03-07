@@ -43,6 +43,8 @@ export const Trace = router.$createRouteDecorator([HttpMethod.Trace]);
 
 export const Unlock = router.$createRouteDecorator([HttpMethod.Unlock]);
 
+export const Methods = router.$createRouteDecorator([]);
+
 export function Error(
   statusCode:
     | StatusCode.InternalServerError
@@ -57,28 +59,6 @@ export function Error(
       },
       originalMethod,
     );
-
-    return originalMethod;
-  };
-}
-
-export function Methods(
-  methods: HttpMethod[],
-  url: RouteUrl,
-  options?: RouteOptions,
-): MethodDecorator {
-  return (originalMethod, context) => {
-    Reflect.defineMetadata('routeOptions', options, originalMethod);
-
-    // const callback = router.$resolveRouteAction(originalMethod, context.name);
-
-    // methods.map((method) => {
-    //   router.createRoute(
-    //     router.$resolveUrl(url, originalMethod.constructor),
-    //     method,
-    //     callback,
-    //   );
-    // });
 
     return originalMethod;
   };

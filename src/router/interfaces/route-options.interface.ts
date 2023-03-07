@@ -13,5 +13,5 @@ export interface RouteOptions {
   name?: string;
   redirectTo?: RouteUrl;
   statusCode?: StatusCode;
-  url: RouteUrl;
+  url: RouteUrl | RouteUrl[];
 }

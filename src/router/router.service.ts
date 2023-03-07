@@ -69,10 +69,14 @@ export class Router {
           return;
         }
 
-        this.routes.push({
-          url: this.$resolveUrl(metadata.url, controller),
-          httpMethods: metadata.httpMethods,
-          action,
+        const urls = Array.isArray(metadata.url) ? metadata.url : [metadata.url];
+
+        urls.map((url) => {
+          this.routes.push({
+            url: this.$resolveUrl(url, controller),
+            httpMethods: metadata.httpMethods,
+            action,
+          });
         });
       });
     });
@@ -80,7 +84,7 @@ export class Router {
 
   public $createRouteDecorator(httpMethods: HttpMethod[]) {
     return (
-      url: RouteUrl,
+      url: RouteUrl | RouteUrl[],
       additionalOptions?: Partial<RouteOptions>,
     ): MethodDecorator => {
       return (originalMethod, context) => {
@@ -185,7 +189,7 @@ export class Router {
     this.routes.map((route) => {
       server.route({
         method: route.httpMethods[0],
-        url: route.url,
+        url: route.url as RouteUrl,
         handler: route.action,
       });
     });
