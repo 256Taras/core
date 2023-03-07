@@ -270,7 +270,7 @@ export class Server {
         const controllers =
           Reflect.getMetadata<Constructor[]>('controllers', module) ?? [];
 
-        this.router.$registerControllers(controllers);
+        this.router.registerControllers(controllers);
 
         const socketChannels =
           Reflect.getMetadata<(Constructor & Authorizer)[]>(

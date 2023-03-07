@@ -34,7 +34,7 @@ export class Router {
 
   private readonly session = inject(Session);
 
-  public $registerControllers(controllers: Constructor[]): void {
+  public registerControllers(controllers: Constructor[]): void {
     controllers.map((controller) => {
       const properties = Object.getOwnPropertyNames(controller.prototype);
 
@@ -52,7 +52,7 @@ export class Router {
           controller.prototype[controllerRouteMethod],
         )!;
 
-        const action = this.$resolveRouteAction(
+        const action = this.resolveRouteAction(
           controller.prototype[controllerRouteMethod],
           controllerRouteMethod,
           controller,
@@ -73,7 +73,7 @@ export class Router {
 
         urls.map((url) => {
           this.routes.push({
-            url: this.$resolveUrl(url, controller),
+            url: this.resolveUrl(url, controller),
             httpMethods: metadata.httpMethods,
             action,
           });
@@ -82,7 +82,7 @@ export class Router {
     });
   }
 
-  public $createRouteDecorator(httpMethods: HttpMethod[]) {
+  public createRouteDecorator(httpMethods: HttpMethod[]) {
     return (
       url: RouteUrl | RouteUrl[],
       additionalOptions?: Partial<RouteOptions>,
@@ -115,7 +115,7 @@ export class Router {
     };
   }
 
-  public $resolveUrl(url: RouteUrl, controller: Constructor): RouteUrl {
+  public resolveUrl(url: RouteUrl, controller: Constructor): RouteUrl {
     let baseUrl = Reflect.getMetadata<RouteUrl>('baseUrl', controller);
 
     if (baseUrl && baseUrl.length > 1 && baseUrl.charAt(0) !== '/') {
@@ -125,7 +125,7 @@ export class Router {
     return baseUrl ? `${baseUrl}/${url}` : url;
   }
 
-  public $resolveRouteAction(
+  public resolveRouteAction(
     method: object | Function,
     methodName: string | symbol,
     controller: Constructor,
@@ -181,7 +181,7 @@ export class Router {
     };
   }
 
-  public $routes(): Pick<RouteOptions, 'httpMethods' | 'url' | 'action'>[] {
+  public routeListing(): Pick<RouteOptions, 'httpMethods' | 'url' | 'action'>[] {
     return this.routes;
   }
 

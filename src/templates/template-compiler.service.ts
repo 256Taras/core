@@ -140,7 +140,9 @@ export class TemplateCompiler {
               const ws = new WebSocket('ws://localhost:6173');
 
               ws.onmessage = (event) => {
-                if (JSON.parse(event.data).payload[0].endsWith('${this.file!.split('/').pop()}')) {
+                if (JSON.parse(event.data).payload[0].endsWith('${this.file!.split(
+                  '/',
+                ).pop()}')) {
                   window.location.reload();
                 }
               };
