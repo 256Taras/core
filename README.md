@@ -15,7 +15,7 @@
   </p>
 
   <h4>
-    <a href="README.md">Documentation</a>
+    <a href="https://northlejs.com">Documentation</a>
     <span> · </span>
     <a href="https://github.com/northle/core/blob/main/.github/CONTRIBUTING.md">Contributing</a>
   </h4>
