@@ -41,7 +41,7 @@ export const Trace = router.createRouteDecorator([HttpMethod.Trace]);
 
 export const Unlock = router.createRouteDecorator([HttpMethod.Unlock]);
 
-export const Methods = router.createRouteDecorator([]);
+export const Methods = router.createRouteDecorator();
 
 export function Error(
   statusCode:

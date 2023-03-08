@@ -82,9 +82,10 @@ export class Router {
     });
   }
 
-  public createRouteDecorator(httpMethods: HttpMethod[]) {
-    return (
+  public createRouteDecorator(httpMethods?: HttpMethod[]) {
+    const callback = (
       url: RouteUrl | RouteUrl[],
+      methods: HttpMethod[],
       additionalOptions?: Partial<RouteOptions>,
     ): MethodDecorator => {
       return (originalMethod, context) => {
@@ -103,7 +104,7 @@ export class Router {
         Reflect.defineMetadata(
           'routeOptions',
           {
-            httpMethods,
+            httpMethods: methods,
             url,
             ...additionalOptions,
           },
@@ -112,6 +113,23 @@ export class Router {
 
         return originalMethod;
       };
+    };
+
+    if (httpMethods) {
+      return (
+        url: RouteUrl | RouteUrl[],
+        additionalOptions?: Partial<RouteOptions>,
+      ) => {
+        return callback(url, httpMethods, additionalOptions);
+      };
+    }
+
+    return (
+      allowedMethods: HttpMethod[],
+      url: RouteUrl | RouteUrl[],
+      additionalOptions?: Partial<RouteOptions>,
+    ) => {
+      return callback(url, allowedMethods, additionalOptions);
     };
   }
 
