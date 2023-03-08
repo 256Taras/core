@@ -17,7 +17,7 @@
   <h4>
     <a href="https://northlejs.com">Documentation</a>
     <span> · </span>
-    <a href="https://github.com/northle/core/blob/main/.github/CONTRIBUTING.md">Contributing</a>
+    <a href="https://northlejs.com/docs/more/contributing">Contributing</a>
   </h4>
 </div>
 
@@ -55,11 +55,15 @@ $ cd [app-name]
 $ npm start
 ```
 
+More information about creating a project can be found in the [documentation](https://northlejs.com/docs/introduction/getting-started).
+
 ## Security
 
 If you discovered any bug or security issue please open new issue / pull request in the [repository](https://github.com/northle/core) or email me: dom.rajkowski@gmail.com.
 
 ## Information
+
+Documentation: [northlejs.com](https://northlejs.com)
 
 GitHub repository: [github.com/northle/core](https://github.com/northle/core)
 
@@ -67,4 +71,4 @@ Author: Dominik Rajkowski · [dominiq007](https://github.com/dominiq007)
 
 ## License
 
-Northle is an open-source framework licensed under the [MIT License](https://github.com/northle/core/blob/main/LICENSE).
+Northle.js is an open-source framework licensed under the [MIT License](https://github.com/northle/core/blob/main/LICENSE).
