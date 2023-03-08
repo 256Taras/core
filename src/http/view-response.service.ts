@@ -4,36 +4,13 @@ import { resolveViewFile } from '../utils/functions/resolve-view-file.function.j
 
 @Service()
 export class ViewResponse {
-  private $data: Record<string, unknown>;
-
-  private $file: string;
-
   constructor(
-    file: string,
-    data: Record<string, unknown> = {},
+    public readonly file: string,
+    public readonly data: Record<string, unknown> = {},
     resolvedUrl = false,
   ) {
     const caller = callerFile();
 
-    file = resolvedUrl ? file : resolveViewFile(caller, file);
-
-    this.$file = file;
-    this.$data = data;
-  }
-
-  public get data(): Record<string, unknown> {
-    return this.$data;
-  }
-
-  public get file(): string {
-    return this.$file;
-  }
-
-  public setData(data: Record<string, unknown> = {}): void {
-    this.$data = data;
-  }
-
-  public setFile(file: string): void {
-    this.$file = file;
+    this.file = resolvedUrl ? file : resolveViewFile(caller, file);
   }
 }
