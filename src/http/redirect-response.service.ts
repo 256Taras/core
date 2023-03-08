@@ -1,4 +1,5 @@
 import { Service } from '../injector/decorators/service.decorator.js';
+import { Endpoint } from '../router/types/endpoint.type.js';
 import { RouteUrl } from '../router/types/route-url.type.js';
 import { StatusCode } from './enums/status-code.enum.js';
 import { Response } from './response.service.js';
@@ -9,7 +10,7 @@ export class RedirectResponse extends Response {
 
   private $status: StatusCode;
 
-  private $url: RouteUrl;
+  private $url: RouteUrl | Endpoint;
 
   public get data(): Record<string, unknown> {
     return this.$data;
@@ -19,7 +20,7 @@ export class RedirectResponse extends Response {
     return this.$status;
   }
 
-  public get url(): RouteUrl {
+  public get url(): RouteUrl | Endpoint {
     return this.$url;
   }
 
@@ -31,7 +32,7 @@ export class RedirectResponse extends Response {
     this.$status = status;
   }
 
-  public setUrl(url: RouteUrl): void {
+  public setUrl(url: RouteUrl | Endpoint): void {
     this.$url = url;
   }
 }

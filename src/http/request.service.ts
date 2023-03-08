@@ -3,6 +3,7 @@ import { parse as parseUrl } from 'node:url';
 import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { inject } from '../injector/functions/inject.function.js';
+import { Endpoint } from '../router/types/endpoint.type.js';
 import { RouteUrl } from '../router/types/route-url.type.js';
 import { Session } from '../session/session.service.js';
 import { HttpMethod } from './enums/http-method.enum.js';
@@ -82,7 +83,7 @@ export class Request {
     return this.body as unknown as T;
   }
 
-  public fullUrl(): string | null {
+  public fullUrl(): Endpoint | null {
     if (!this.protocol() || !this.host()) {
       return null;
     }
@@ -186,8 +187,8 @@ export class Request {
     return this.session.get('_previousLocation') ?? this.url();
   }
 
-  public protocol(): string | null {
-    return this.instance?.protocol ?? null;
+  public protocol(): 'http' | 'https' {
+    return this.instance?.protocol ?? 'http';
   }
 
   public query(key: string): string {
