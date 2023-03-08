@@ -82,7 +82,18 @@ export class Router {
     });
   }
 
-  public createRouteDecorator(httpMethods?: HttpMethod[]) {
+  public createRouteDecorator<T extends HttpMethod[] | undefined = undefined>(
+    httpMethods?: T,
+  ): T extends HttpMethod[]
+    ? (
+        url: RouteUrl | RouteUrl[],
+        additionalOptions?: Partial<RouteOptions>,
+      ) => MethodDecorator
+    : (
+        url: RouteUrl | RouteUrl[],
+        allowedMethods: HttpMethod[],
+        additionalOptions?: Partial<RouteOptions>,
+      ) => MethodDecorator {
     const callback = (
       url: RouteUrl | RouteUrl[],
       methods: HttpMethod[],
@@ -115,7 +126,11 @@ export class Router {
       };
     };
 
-    if (httpMethods) {
+    function hasMethodList(httpMethods: HttpMethod[] | undefined): httpMethods is HttpMethod[] {
+      return Array.isArray(httpMethods);
+    }
+
+    if (hasMethodList(httpMethods)) {
       return (
         url: RouteUrl | RouteUrl[],
         additionalOptions?: Partial<RouteOptions>,
@@ -125,8 +140,8 @@ export class Router {
     }
 
     return (
-      allowedMethods: HttpMethod[],
       url: RouteUrl | RouteUrl[],
+      allowedMethods: HttpMethod[],
       additionalOptions?: Partial<RouteOptions>,
     ) => {
       return callback(url, allowedMethods, additionalOptions);

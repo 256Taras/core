@@ -46,6 +46,7 @@ export const Methods = router.createRouteDecorator();
 export function Error(
   statusCode:
     | StatusCode.InternalServerError
+    | StatusCode.InvalidToken
     | StatusCode.NotFound
     | StatusCode.TooManyRequests,
 ): MethodDecorator {
