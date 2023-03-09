@@ -90,8 +90,8 @@ export class Router {
         additionalOptions?: Partial<RouteOptions>,
       ) => MethodDecorator
     : (
-        url: RouteUrl | RouteUrl[],
         allowedMethods: HttpMethod[],
+        url: RouteUrl | RouteUrl[],
         additionalOptions?: Partial<RouteOptions>,
       ) => MethodDecorator {
     const callback = (
@@ -126,26 +126,31 @@ export class Router {
       };
     };
 
-    function hasMethodList(httpMethods: HttpMethod[] | undefined): httpMethods is HttpMethod[] {
-      return Array.isArray(httpMethods);
-    }
-
-    if (hasMethodList(httpMethods)) {
-      return (
-        url: RouteUrl | RouteUrl[],
-        additionalOptions?: Partial<RouteOptions>,
-      ) => {
-        return callback(url, httpMethods, additionalOptions);
-      };
-    }
-
     return (
-      url: RouteUrl | RouteUrl[],
-      allowedMethods: HttpMethod[],
-      additionalOptions?: Partial<RouteOptions>,
-    ) => {
-      return callback(url, allowedMethods, additionalOptions);
-    };
+      Array.isArray(httpMethods)
+        ? (
+            url: RouteUrl | RouteUrl[],
+            additionalOptions?: Partial<RouteOptions>,
+          ) => {
+            return callback(url, httpMethods, additionalOptions);
+          }
+        : (
+            allowedMethods: HttpMethod[],
+            url: RouteUrl | RouteUrl[],
+            additionalOptions?: Partial<RouteOptions>,
+          ) => {
+            return callback(url, allowedMethods, additionalOptions);
+          }
+    ) as T extends HttpMethod[]
+      ? (
+          url: RouteUrl | RouteUrl[],
+          additionalOptions?: Partial<RouteOptions>,
+        ) => MethodDecorator
+      : (
+          allowedMethods: HttpMethod[],
+          url: RouteUrl | RouteUrl[],
+          additionalOptions?: Partial<RouteOptions>,
+        ) => MethodDecorator;
   }
 
   public resolveUrl(url: RouteUrl, controller: Constructor): RouteUrl {
