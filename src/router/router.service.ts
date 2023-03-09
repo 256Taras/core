@@ -1,5 +1,6 @@
 import { Reflection as Reflect } from '@abraham/reflection';
 import { FastifyInstance } from 'fastify';
+import { writeFile } from 'node:fs/promises';
 import { Handler } from '../handler/handler.service.js';
 import { DownloadResponse } from '../http/download-response.service.js';
 import { HttpMethod } from '../http/enums/http-method.enum.js';
@@ -33,6 +34,29 @@ export class Router {
     [];
 
   private readonly session = inject(Session);
+
+  public async generateRouteTypes(): Promise<void> {
+    const urls: string[] = [];
+
+    this.routes.map((route) => {
+      if (Array.isArray(route.url)) {
+        urls.push(...(route.url.map((url) => `'${url}'`)));
+
+        return;
+      }
+
+      urls.push(`'${route.url}'`);
+    });
+
+    const union = urls.join(' | ');
+
+    const content = `export type RouteUrl = ${union};\n//# sourceMappingURL=route-url.type.d.ts.map`;
+
+    await writeFile(
+      'node_modules/@northle/core/dist/router/types/route-url.type.d.ts',
+      content,
+    );
+  }
 
   public registerControllers(controllers: Constructor[]): void {
     controllers.map((controller) => {
