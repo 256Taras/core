@@ -19,11 +19,11 @@ export function setupStdin(exitCallback?: () => Promise<boolean | void>) {
     }
 
     if ([...Object.values(exitKeys)].includes(key)) {
-      if (await exitCallback?.()) {
-        return;
-      }
+      const wantsExit = (await exitCallback?.()) ?? false;
 
-      process.exit();
+      if (wantsExit) {
+        process.exit();
+      }
     }
   });
 }

@@ -21,6 +21,8 @@ export class Logger {
 
   private lastLabel: string | null = null;
 
+  private lastLogType: string | null = null;
+
   private lastMessage: string | null = null;
 
   private readonly locale = 'en-us';
@@ -104,7 +106,7 @@ export class Logger {
     } else {
       this.handleRepeatedMessage(message, label!);
 
-      output = `\n${chalk
+      output = `${this.lastLogType === 'block' ? '' : '\n'}${chalk
         .bgHex(color)
         .black(` ${label!.toUpperCase()} `)} ${chalk.bold.hex(color)(
         `${message}${
@@ -140,6 +142,7 @@ export class Logger {
       this.lastLabel = label;
       this.lastColor = color;
       this.lastMessage = message;
+      this.lastLogType = 'block';
     }
   }
 
@@ -204,6 +207,7 @@ export class Logger {
 
     this.lastLabel = label;
     this.lastMessage = message;
+    this.lastLogType = 'log';
   }
 
   public sub(message: string): void {
