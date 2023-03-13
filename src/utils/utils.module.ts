@@ -1,5 +1,6 @@
 export * from './functions/csrf-token.function.js';
 export * from './functions/debounce.function.js';
+export * from './functions/list-files.function.js';
 export * from './functions/range.function.js';
 export * from './functions/read-json.function.js';
 export * from './functions/resolve-view-file.function.js';

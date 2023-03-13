@@ -40,7 +40,7 @@ export class Router {
 
     this.routes.map((route) => {
       if (Array.isArray(route.url)) {
-        urls.push(...(route.url.map((url) => `'${url}'`)));
+        urls.push(...route.url.map((url) => `'${url}'`));
 
         return;
       }

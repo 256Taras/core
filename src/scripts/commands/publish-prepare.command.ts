@@ -10,25 +10,29 @@ export class PublishPrepareCommand {
   public async handle(): Promise<void> {
     logInfo('Preparing package for publishing...');
 
-    runCommand('tsc', { showOutput: true });
+    runCommand('yarn build', {
+      showOutput: true,
+    });
 
     const cwd = process.cwd();
 
-    const files = [
+    const databaseImportsFiles = [
       `${cwd}/dist/database/database-client.service.js`,
       `${cwd}/dist/database/database-client.service.d.ts`,
     ];
 
-    const replaces = [
-      /import (.*?) from '.*?@prisma\/client.*?';/,
-      `import $1 from '@prisma/client';`,
-    ] as const;
-
     await Promise.all(
-      files.map(async (file) => {
+      databaseImportsFiles.map(async (file) => {
         const fileContent = await readFile(file, 'utf8');
 
-        await writeFile(file, fileContent.replace(...replaces), 'utf8');
+        await writeFile(
+          file,
+          fileContent.replace(
+            /import (.*?) from '.*?@prisma\/client.*?';/,
+            `import $1 from '@prisma/client';`,
+          ),
+          'utf8',
+        );
       }),
     );
 
