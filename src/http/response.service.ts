@@ -6,8 +6,8 @@ import { createErrorTip } from '../handler/functions/create-error-tip.function.j
 import { MIME_TYPES } from '../http/constants.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { inject } from '../injector/functions/inject.function.js';
-import { Endpoint } from '../router/types/endpoint.type.js';
 import { RouteUrl } from '../router/types/route-url.type.js';
+import { Url } from '../router/types/url.type.js';
 import { Session } from '../session/session.service.js';
 import { TemplateCompiler } from '../templates/template-compiler.service.js';
 import { callerFile } from '../utils/functions/caller-file.function.js';
@@ -149,7 +149,7 @@ export class Response {
   }
 
   public redirect(
-    to: RouteUrl | Endpoint | { name: string; params?: Record<string, string> },
+    to: RouteUrl | Url | { name: string; params?: Record<string, string> },
     data: Record<string, unknown> = {},
     status: StatusCode = StatusCode.Found,
   ): this {

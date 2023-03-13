@@ -3,8 +3,8 @@ import { parse as parseUrl } from 'node:url';
 import { Encrypter } from '../encrypter/encrypter.service.js';
 import { Service } from '../injector/decorators/service.decorator.js';
 import { inject } from '../injector/functions/inject.function.js';
-import { Endpoint } from '../router/types/endpoint.type.js';
 import { RouteUrl } from '../router/types/route-url.type.js';
+import { Url } from '../router/types/url.type.js';
 import { Session } from '../session/session.service.js';
 import { HttpMethod } from './enums/http-method.enum.js';
 import { File } from './file.class.js';
@@ -83,7 +83,7 @@ export class Request {
     return this.body as unknown as T;
   }
 
-  public fullUrl(): Endpoint | null {
+  public fullUrl(): Url | null {
     if (!this.protocol() || !this.host()) {
       return null;
     }

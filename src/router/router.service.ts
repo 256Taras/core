@@ -20,7 +20,19 @@ import { Integer } from '../utils/types/integer.type.js';
 import { MethodDecorator } from '../utils/types/method-decorator.type.js';
 import { RouteOptions } from './interfaces/route-options.interface.js';
 import { ResponseContent } from './types/response-content.type.js';
-import { RouteUrl } from './types/route-url.type.js';
+
+type Endpoint = `/${string}`;
+
+type RouteDecoratorFunction<T> = T extends HttpMethod[]
+  ? (
+      url: Endpoint | Endpoint[],
+      additionalOptions?: Partial<RouteOptions>,
+    ) => MethodDecorator
+  : (
+      allowedMethods: HttpMethod[],
+      url: Endpoint | Endpoint[],
+      additionalOptions?: Partial<RouteOptions>,
+    ) => MethodDecorator;
 
 @Service()
 export class Router {
@@ -108,18 +120,9 @@ export class Router {
 
   public createRouteDecorator<T extends HttpMethod[] | undefined = undefined>(
     httpMethods?: T,
-  ): T extends HttpMethod[]
-    ? (
-        url: RouteUrl | RouteUrl[],
-        additionalOptions?: Partial<RouteOptions>,
-      ) => MethodDecorator
-    : (
-        allowedMethods: HttpMethod[],
-        url: RouteUrl | RouteUrl[],
-        additionalOptions?: Partial<RouteOptions>,
-      ) => MethodDecorator {
+  ): RouteDecoratorFunction<T> {
     const callback = (
-      url: RouteUrl | RouteUrl[],
+      url: Endpoint | Endpoint[],
       methods: HttpMethod[],
       additionalOptions?: Partial<RouteOptions>,
     ): MethodDecorator => {
@@ -153,32 +156,23 @@ export class Router {
     return (
       Array.isArray(httpMethods)
         ? (
-            url: RouteUrl | RouteUrl[],
+            url: Endpoint | Endpoint[],
             additionalOptions?: Partial<RouteOptions>,
           ) => {
             return callback(url, httpMethods, additionalOptions);
           }
         : (
             allowedMethods: HttpMethod[],
-            url: RouteUrl | RouteUrl[],
+            url: Endpoint | Endpoint[],
             additionalOptions?: Partial<RouteOptions>,
           ) => {
             return callback(url, allowedMethods, additionalOptions);
           }
-    ) as T extends HttpMethod[]
-      ? (
-          url: RouteUrl | RouteUrl[],
-          additionalOptions?: Partial<RouteOptions>,
-        ) => MethodDecorator
-      : (
-          allowedMethods: HttpMethod[],
-          url: RouteUrl | RouteUrl[],
-          additionalOptions?: Partial<RouteOptions>,
-        ) => MethodDecorator;
+    ) as RouteDecoratorFunction<T>;
   }
 
-  public resolveUrl(url: RouteUrl, controller: Constructor): RouteUrl {
-    let baseUrl = Reflect.getMetadata<RouteUrl>('baseUrl', controller);
+  public resolveUrl(url: Endpoint, controller: Constructor): Endpoint {
+    let baseUrl = Reflect.getMetadata<Endpoint>('baseUrl', controller);
 
     if (baseUrl && baseUrl.length > 1 && baseUrl.charAt(0) !== '/') {
       baseUrl = `/${baseUrl}`;
@@ -251,7 +245,7 @@ export class Router {
     this.routes.map((route) => {
       server.route({
         method: route.httpMethods[0],
-        url: route.url as RouteUrl,
+        url: route.url as Endpoint,
         handler: route.action,
       });
     });
