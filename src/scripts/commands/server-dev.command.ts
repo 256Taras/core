@@ -83,7 +83,7 @@ export class ServerDevCommand {
 
         childProcess = fork(entryFile);
       },
-      env<boolean>('DEVELOPER_MODE') ? 400 : 550,
+      env<boolean>('DEVELOPER_MODE') ? 400 : 500,
     );
 
     sourceWatcher.on('all', async () => {
@@ -98,7 +98,11 @@ export class ServerDevCommand {
         watchOptions,
       );
 
-      frameworkWatcher.on('change', restartProcess);
+      frameworkWatcher.on('change', (path) => {
+        if (!path.includes('route-url')) {
+          restartProcess();
+        }
+      });
     }
 
     viewsWatcher.on('all', async () => {

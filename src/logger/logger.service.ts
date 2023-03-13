@@ -21,8 +21,6 @@ export class Logger {
 
   private lastLabel: string | null = null;
 
-  private lastLogType: string | null = null;
-
   private lastMessage: string | null = null;
 
   private readonly locale = 'en-us';
@@ -106,7 +104,7 @@ export class Logger {
     } else {
       this.handleRepeatedMessage(message, label!);
 
-      output = `${this.lastLogType === 'block' ? '' : '\n'}${chalk
+      output = `\n${chalk
         .bgHex(color)
         .black(` ${label!.toUpperCase()} `)} ${chalk.bold.hex(color)(
         `${message}${
@@ -116,7 +114,7 @@ export class Logger {
             ? chalk.gray(` [x${this.repeatedMessagesCount + 1}]`)
             : ''
         }`,
-      )}\n`;
+      )}`;
     }
 
     switch (this.lastLabel) {
@@ -142,7 +140,6 @@ export class Logger {
       this.lastLabel = label;
       this.lastColor = color;
       this.lastMessage = message;
-      this.lastLogType = 'block';
     }
   }
 
@@ -196,7 +193,13 @@ export class Logger {
       }`,
     );
 
-    const left = `${timestamp} ${chalk.white.bold(output)}`;
+    const left = `${
+      this.logStackingEnabled &&
+      message === this.lastMessage &&
+      label === this.lastLabel
+        ? ''
+        : '\n'
+    }${timestamp} ${chalk.white.bold(output)}`;
     const right = chalk.gray(additionalMessage);
 
     const dots = this.renderDots(
@@ -207,7 +210,6 @@ export class Logger {
 
     this.lastLabel = label;
     this.lastMessage = message;
-    this.lastLogType = 'log';
   }
 
   public sub(message: string): void {

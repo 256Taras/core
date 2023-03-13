@@ -50,11 +50,31 @@ export class StartDevCommand {
 
     const exitCallback = async () => {
       if (existsSync(serverTempPath)) {
-        await unlink(serverTempPath);
+        let deleted = false;
+
+        while (!deleted) {
+          try {
+            await unlink(serverTempPath);
+
+            deleted = true;
+          } catch {
+            await new Promise((resolve) => setTimeout(resolve, 40));
+          }
+        }
       }
 
       if (existsSync(buildLogsTempPath)) {
-        await unlink(buildLogsTempPath);
+        let deleted = false;
+
+        while (!deleted) {
+          try {
+            await unlink(buildLogsTempPath);
+
+            deleted = true;
+          } catch {
+            await new Promise((resolve) => setTimeout(resolve, 40));
+          }
+        }
       }
 
       logInfo('Server terminated');
