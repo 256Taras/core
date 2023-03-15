@@ -40,9 +40,9 @@ export class Configurator {
             !line.match(/^(((export)?(\s+)?[a-zA-Z_]+[a-zA-Z0-9_]*=(.*?)?)|")$/)
           ) {
             throw new Error(
-              '.env file syntax is not valid',
+              'Syntax of .env file is not valid',
               createErrorTip(
-                'Check *.env* file syntax on https://northle.dev/docs/basics/configuration#environment-configuration',
+                'Check *.env* file syntax on https://northlejs.com/docs/essentials/configuration#environment-configuration',
               ),
             );
           }
@@ -83,5 +83,7 @@ export class Configurator {
           }
         });
     }
+
+    process.env.NODE_ENV = process.env.DEVELOPMENT ? 'development' : 'production';
   }
 }
