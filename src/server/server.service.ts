@@ -434,13 +434,15 @@ export class Server {
             break;
         }
 
-        this.logger.log(
-          `${chalk.gray(
-            `[${statusColor(response.statusCode)}]`,
-          )} ${this.request.method()} ${request.url}`,
-          'request',
-          elapsedTimeFormatted,
-        );
+        if (!request.url.includes('$northle')) {
+          this.logger.log(
+            `${chalk.gray(
+              `[${statusColor(response.statusCode)}]`,
+            )} ${this.request.method()} ${request.url}`,
+            'request',
+            elapsedTimeFormatted,
+          );
+        }
       });
 
       this.instance.setErrorHandler(async (error) => {
