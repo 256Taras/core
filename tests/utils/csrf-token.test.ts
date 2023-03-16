@@ -1,9 +1,9 @@
 import fastify from 'fastify';
 import { describe, expect, it } from 'vitest';
-import { Request } from '../../src/http/request.class.js';
-import { Response } from '../../src/http/response.class.js';
+import { Request } from '../../src/http/request.service.js';
+import { Response } from '../../src/http/response.service.js';
 import { inject } from '../../src/injector/functions/inject.function.js';
-import { Session } from '../../src/session/session.class.js';
+import { Session } from '../../src/session/session.service.js';
 import { csrfToken } from '../../src/utils/functions/csrf-token.function.js';
 
 describe('csrfToken function', async () => {

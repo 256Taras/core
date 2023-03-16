@@ -6,7 +6,7 @@ import {
   LOGGER_COLOR_RED,
   LOGGER_COLOR_YELLOW,
 } from '../../src/logger/constants';
-import { Logger } from '../../src/logger/logger.class.js';
+import { Logger } from '../../src/logger/logger.service.js';
 
 describe('Logger class', () => {
   const logger = inject(Logger);

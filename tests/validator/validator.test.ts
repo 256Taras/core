@@ -1,19 +1,13 @@
 import cookieMiddleware from '@fastify/cookie';
 import fastify from 'fastify';
 import { describe, expect, it } from 'vitest';
-import { Request } from '../../src/http/request.class.js';
-import { Response } from '../../src/http/response.class.js';
+import { Request } from '../../src/http/request.service.js';
+import { Response } from '../../src/http/response.service.js';
 import { inject } from '../../src/injector/functions/inject.function.js';
-import { Session } from '../../src/session/session.class.js';
-import { Validator } from '../../src/validator/validator.class.js';
+import { Session } from '../../src/session/session.service.js';
+import { Validator } from '../../src/validator/validator.service.js';
 
 describe('Validator class', async () => {
-  const request = inject(Request);
-  const response = inject(Response);
-
-  inject(Validator).$setRequest(request);
-  inject(Validator).$setResponse(response);
-
   const app = fastify();
 
   await app.register(cookieMiddleware);
