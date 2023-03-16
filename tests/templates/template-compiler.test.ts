@@ -4,7 +4,7 @@ import { inject } from '../../src/injector/functions/inject.function.js';
 import { Session } from '../../src/session/session.service.js';
 import { TemplateCompiler } from '../../src/templates/template-compiler.service.js';
 
-describe('TemplateCompiler class', () => {
+describe('TemplateCompiler service', () => {
   const request = inject(Request);
 
   inject(Session).$setRequest(request);

@@ -4,7 +4,7 @@ import { inject } from '../../src/injector/functions/inject.function.js';
 import { Injector } from '../../src/injector/injector.service.js';
 import { Logger } from '../../src/logger/logger.service.js';
 
-describe('Injector class', () => {
+describe('Injector service', () => {
   it('properly binds services', () => {
     Injector.bind(Logger);
     Injector.bind([Encrypter]);

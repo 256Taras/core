@@ -8,7 +8,7 @@ import {
 } from '../../src/logger/constants';
 import { Logger } from '../../src/logger/logger.service.js';
 
-describe('Logger class', () => {
+describe('Logger service', () => {
   const logger = inject(Logger);
 
   logger.$disable();

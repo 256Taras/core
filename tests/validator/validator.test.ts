@@ -7,7 +7,7 @@ import { inject } from '../../src/injector/functions/inject.function.js';
 import { Session } from '../../src/session/session.service.js';
 import { Validator } from '../../src/validator/validator.service.js';
 
-describe('Validator class', async () => {
+describe('Validator service', async () => {
   const app = fastify();
 
   await app.register(cookieMiddleware);
@@ -18,6 +18,23 @@ describe('Validator class', async () => {
     inject(Response).$setInstance(response);
 
     response.send('Northle');
+  });
+
+  it('asserts data is invalid', async () => {
+    await app.inject({
+      method: 'GET',
+      url: '/',
+    });
+
+    const validator = inject(Validator);
+
+    const isValid = validator.assert({
+      name: {
+        required: true,
+      },
+    });
+
+    expect(isValid).toBe(false);
   });
 
   it('asserts data is valid', async () => {
@@ -34,6 +51,6 @@ describe('Validator class', async () => {
       },
     });
 
-    expect(isValid).toBe(false);
+    expect(isValid).toBe(true);
   });
 });
