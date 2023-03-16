@@ -285,9 +285,9 @@ export class Server {
         channels.push(...socketChannels);
       });
 
-      await this.router.generateRouteTypes();
-
       if (this.development) {
+        await this.router.generateRouteTypes();
+
         this.socketEmitter.createChannel('$northle', '$northleSocket');
       }
 
